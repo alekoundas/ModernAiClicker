@@ -9,6 +9,7 @@ namespace DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Flow> builder)
         {
             builder.HasIndex(x => x.Id).IsUnique();
+            builder.HasKey(x => x.Id);
 
         }
     }

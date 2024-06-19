@@ -16,9 +16,9 @@ namespace Model.Models
         public bool IsExpanded { get; set; }
 
         public int? ExecutionId { get; set; }
-        public Execution? Execution { get; set; }
+        public virtual Execution? Execution { get; set; }
 
-        public ObservableCollection<FlowStep> FlowSteps { get; set; } = new ObservableCollection<FlowStep>();
+        public virtual ObservableCollection<FlowStep> FlowSteps { get; set; } = new ObservableCollection<FlowStep>();
 
         public Flow CreateClone()
         {

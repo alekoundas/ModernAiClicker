@@ -16,6 +16,8 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Security;
+using System.Management;
+using System.Collections.ObjectModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -94,24 +96,13 @@ namespace ModernAiClicker.ViewModels.Pages
             TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(TemplateImgPath, searchRectangle);
 
 
+            int x = searchRectangle.Left;
+            int y = searchRectangle.Top;
 
+            x = x + result.ResultRectangle.Top;
+            y = y + result.ResultRectangle.Left;
 
-
-
-
-
-            int x = result.ResultRectangle.Left;
-            int y = result.ResultRectangle.Top;
-
-            int width = result.ResultRectangle.Right - x;
-            int height = result.ResultRectangle.Bottom - y;
-
-
-
-
-            var sdsdsds = DPIUtil.ScaleFactor(new Control(), new Point(0, 0));
-            var ddfdf = DPIUtil.ScaleFactor(new Control(), new Point(-20, 0));
-
+            //_systemService.SetCursorPossition(x, y);
 
 
             ShowResultImage?.Invoke(result.ResultImagePath);
@@ -128,13 +119,39 @@ namespace ModernAiClicker.ViewModels.Pages
         {
             if (FlowStep.ProcessName != null && TemplateImgPath != null)
             {
-                FlowStep newFlowStep = FlowStep.CreateModel();
-                newFlowStep.IsNew = false;
-                newFlowStep.TemplateImagePath = TemplateImgPath;
+                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
-                _baseDatawork.FlowSteps.Add(newFlowStep);
+                FlowStep.TemplateImagePath = TemplateImgPath;
+                FlowStep.Id = 0;
+
+
+
+                FlowStep newFlowStep = new FlowStep();
+                FlowStep newFlowStep2 = new FlowStep();
+                newFlowStep.IsNew = true;
+                newFlowStep2.IsNew = true;
+
+                FlowStep successFlowStep = new FlowStep();
+                successFlowStep.Name = "Success";
+                successFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>();
+                successFlowStep.ChildrenFlowSteps.Add(newFlowStep);
+
+                FlowStep failFlowStep = new FlowStep();
+                failFlowStep.Name = "Fail";
+                failFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>();
+
+                failFlowStep.ChildrenFlowSteps.Add(newFlowStep2);
+
+                FlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                {
+                    successFlowStep,
+                    failFlowStep
+                };
+                FlowStep.Flow = null;
+                _baseDatawork.FlowSteps.Add(FlowStep);
                 _baseDatawork.SaveChanges();
-                //RefreshData();
+                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+
 
                 _flowsViewModel.RefreshData();
                 //NavigationService.GetNavigationService().Source.
@@ -153,6 +170,60 @@ namespace ModernAiClicker.ViewModels.Pages
         public void OnNavigatedFrom()
         {
         }
+
+
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct PHYSICAL_MONITOR
+        {
+            public IntPtr hPhysicalMonitor;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szPhysicalMonitorDescription;
+        }
+
+
+
+
+
+
+        [DllImport("user32.dll", EntryPoint = "MonitorFromWindow")]
+        public static extern IntPtr MonitorFromWindow(
+           [In] IntPtr hwnd, uint dwFlags);
+
+
+        //[DllImport("dxva2.dll", EntryPoint = "GetMonitorTechnologyType")]
+        //[return: MarshalAs(UnmanagedType.Bool)]
+        //public static extern bool GetMonitorTechnologyType(
+        //    IntPtr hMonitor, ref MC_DISPLAY_TECHNOLOGY_TYPE pdtyDisplayTechnologyType);
+
+
+
+        [DllImport("dxva2.dll", EntryPoint = "GetMonitorCapabilities")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetMonitorCapabilities(
+            IntPtr hMonitor, ref uint pdwMonitorCapabilities, ref uint pdwSupportedColorTemperatures);
+
+
+
+        [DllImport("dxva2.dll", EntryPoint = "DestroyPhysicalMonitors")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DestroyPhysicalMonitors(
+            uint dwPhysicalMonitorArraySize, ref PHYSICAL_MONITOR[] pPhysicalMonitorArray);
+
+
+
+        [DllImport("dxva2.dll", EntryPoint = "GetNumberOfPhysicalMonitorsFromHMONITOR")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetNumberOfPhysicalMonitorsFromHMONITOR(
+            IntPtr hMonitor, ref uint pdwNumberOfPhysicalMonitors);
+
+
+
+        [DllImport("dxva2.dll", EntryPoint = "GetPhysicalMonitorsFromHMONITOR")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetPhysicalMonitorsFromHMONITOR(
+            IntPtr hMonitor, uint dwPhysicalMonitorArraySize, [Out] PHYSICAL_MONITOR[] pPhysicalMonitorArray);
+
     }
 
 
@@ -160,18 +231,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-public static class DPIUtil
+    public static class DPIUtil
     {
         /// <summary>
         /// Min OS version build that supports DPI per monitor
@@ -224,6 +284,10 @@ public static class DPIUtil
             }
         }
 
+
+
+
+
         /// <summary>
         /// Get scale factor for an each monitor
         /// </summary>
@@ -232,6 +296,8 @@ public static class DPIUtil
         /// <returns> Scale factor </returns>
         public static double ScaleFactor(Control control, Point monitorPoint)
         {
+
+
             var dpi = GetDpi(control, monitorPoint);
 
             return dpi * 100 / 96.0;
@@ -246,12 +312,13 @@ public static class DPIUtil
         public static uint GetDpi(Control control, Point monitorPoint)
         {
             uint dpiX;
+            uint dpiY;
 
             if (IsSupportingDpiPerMonitor)
             {
                 var monitorFromPoint = MonitorFromPoint(monitorPoint, 2);
 
-                GetDpiForMonitor(monitorFromPoint, DpiType.Effective, out dpiX, out _);
+                GetDpiForMonitor(monitorFromPoint, DpiType.Effective, out dpiX, out dpiY);
             }
             else
             {
@@ -389,6 +456,16 @@ public static class DPIUtil
             /// </summary>
             Raw = 2,
         }
+
+
+
+
+
+
+
+
+
+
     }
 }
 

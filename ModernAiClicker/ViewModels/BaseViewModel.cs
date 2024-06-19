@@ -71,30 +71,61 @@ namespace ModernAiClicker.ViewModels
             //var sss = dbContext.Flows.Include(x => x.FlowSteps).ToList();
             //var aaaa = mapper.Map<List<FlowDto>>(sss);
 
-            List<Flow> flows = _baseDatawork.Query.Flows.Include(x => x.FlowSteps).Select(x => new Flow()
-            {
-                Id = x.Id,
-                Name = x.Name,
-                IsNew = x.IsNew,
-                FlowSteps = new ObservableCollection<FlowStep>(x.FlowSteps.Select(y => new FlowStep()
+            List<Flow> flows = _baseDatawork.Query.Flows
+                .Include(x => x.FlowSteps)
+                .Select(x => new Flow()
                 {
-                    Id = y.Id,
-                    Name = y.Name,
-                    IsNew = y.IsNew,
-                    FlowStepType = y.FlowStepType,
-                    Accuracy = y.Accuracy,
-                    Disabled = y.Disabled,
-                    FlowStepActionsFound = y.FlowStepActionsFound,
-                    FlowStepActionsNotFound = y.FlowStepActionsNotFound,
-                    ProcessName = y.ProcessName,
-                    TemplateImagePath = y.TemplateImagePath,
-                    Status = y.Status,
-                    FlowId = y.FlowId,
-                    Flow = new Flow() { Id = y.Flow.Id }
-                })),
-            }).ToList();
+                    Id = x.Id,
+                    Name = x.Name,
+                    IsNew = x.IsNew,
+                    FlowSteps = new ObservableCollection<FlowStep>(x.FlowSteps.Select(y => new FlowStep()
+                    {
+                        Id = y.Id,
+                        Name = y.Name,
+                        IsNew = y.IsNew,
+                        FlowStepType = y.FlowStepType,
+                        Accuracy = y.Accuracy,
+                        Disabled = y.Disabled,
+                        FlowStepActionsFound = y.FlowStepActionsFound,
+                        FlowStepActionsNotFound = y.FlowStepActionsNotFound,
+                        ProcessName = y.ProcessName,
+                        TemplateImagePath = y.TemplateImagePath,
+                        Status = y.Status,
+                        FlowId = y.FlowId,
+                        Flow = new Flow()
+                        {
+                            Id = y.Flow.Id
+                        },
+                        ChildrenFlowSteps = new ObservableCollection<FlowStep>(y.ChildrenFlowSteps.Select(z => new FlowStep()
+                        {
+                            Id = z.Id,
+                            Name = z.Name,
+                            IsNew = z.IsNew,
+                            FlowStepType = z.FlowStepType,
+                            Accuracy = z.Accuracy,
+                            Disabled = z.Disabled,
+                            FlowStepActionsFound = z.FlowStepActionsFound,
+                            FlowStepActionsNotFound = z.FlowStepActionsNotFound,
+                            ProcessName = z.ProcessName,
+                            TemplateImagePath = z.TemplateImagePath,
+                            Status = z.Status,
 
-            FlowsList = new ObservableCollection<Flow>(flows);
+                        }).ToList()),
+
+                    })),
+                }).ToList();
+
+            var aaa = _baseDatawork.Query.Flows
+                .Include(x => x.FlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ToList();
+
+            FlowsList = new ObservableCollection<Flow>(aaa);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Enums;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -27,13 +28,19 @@ namespace Model.Models
         public FlowStepActionsFoundEnum FlowStepActionsFound { get; set; }
         public FlowStepActionsNotFoundEnum FlowStepActionsNotFound { get; set; }
 
-        public int FlowId { get; set; }
+        public int? FlowId { get; set; }
 
-        public Flow Flow { get; set; } = new Flow();
+        public virtual Flow? Flow { get; set; }
 
         public int? ExecutionId { get; set; }
-        public Execution? Execution { get; set; }
+        public virtual Execution? Execution { get; set; }
 
+
+        public int? ParentFlowStepId { get; set; }
+
+        public virtual FlowStep? ParentFlowStep { get; set; }
+
+        public virtual ObservableCollection<FlowStep>? ChildrenFlowSteps { get; set; } 
 
         public FlowStep Clone()
         {

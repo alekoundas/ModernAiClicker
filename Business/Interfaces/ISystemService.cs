@@ -11,8 +11,10 @@ namespace Business.Interfaces
 
         Model.Structs.Rectangle GetWindowSize(string processName);
         Model.Structs.Rectangle GetScreenSize();
-        void SetCursorPossition(Model.Structs.Rectangle rectangle);
+        void SetCursorPossition(int x, int y);
         Task UpdateFlowsJSON(List<Flow> flows);
         List<Flow>? LoadFlowsJSON();
+
+        List<double> GetScalingFactor2();
     }
 }

@@ -12,6 +12,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.DirectoryServices;
 using System.Windows.Forms;
 using System.Data;
+using System.Management;
 
 namespace Business.Services
 {
@@ -146,11 +147,8 @@ namespace Business.Services
             return windowRectangle;
         }
 
-        public void SetCursorPossition(Model.Structs.Rectangle rectangle)
+        public void SetCursorPossition(int x, int y)
         {
-            int x = rectangle.Left;
-            int y = rectangle.Top;
-
             SetCursorPos(x, y);
         }
 
@@ -181,5 +179,122 @@ namespace Business.Services
 
             return null;
         }
+
+
+
+
+
+
+
+
+        public void GetScalingFactor()
+        {
+            List<double> physicalWidths = new List<double>();
+
+            //Get physical width for each monitor
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("\\root\\wmi", "SELECT * FROM WmiMonitorBasicDisplayParams");
+
+            foreach (ManagementObject monitor in searcher.Get())
+            {
+                //Get the physical width (inch)
+                double width = (byte)monitor["MaxHorizontalImageSize"] / 2.54;
+                physicalWidths.Add(width);
+            }
+
+            //Get screen info for each monitor
+            Screen[] screenList = Screen.AllScreens;
+            int i = 0;
+
+            foreach (Screen screen in screenList)
+            {
+                //Get the physical width (pixel)
+                double physicalWidth;
+                if (i < physicalWidths.Count)
+                {
+                    //Get the DPI
+                    uint x, y;
+                    GetDpi2(screen, DpiType.Effective, out x, out y);
+
+                    //Convert inch to pixel
+                    physicalWidth = physicalWidths[i] * x;
+                }
+                else
+                {
+                    physicalWidth = SystemParameters.PrimaryScreenWidth;
+                }
+                i++;
+
+                //Calculate the scaling
+                double scaling = 100 * (physicalWidth / screen.Bounds.Width);
+                double scalingFactor = physicalWidth / screen.Bounds.Width;
+
+                //Output the result
+                Console.WriteLine(scalingFactor);
+            }
+        }
+
+        public void GetDpi2(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
+        {
+            var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
+            var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
+            GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
+        }
+
+        public List<double>  GetScalingFactor2()
+        {
+            List<double> physicalWidths = new List<double>();
+            List<double> monitorsfactor = new List<double>();
+
+            //Get physical width for each monitor
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("\\root\\wmi", "SELECT * FROM WmiMonitorBasicDisplayParams");
+
+            foreach (ManagementObject monitor in searcher.Get())
+            {
+                //Get the physical width (inch)
+                double width = (byte)monitor["MaxHorizontalImageSize"] / 2.54;
+                physicalWidths.Add(width);
+            }
+
+            //Get screen info for each monitor
+            Screen[] screenList = Screen.AllScreens;
+            int i = 0;
+
+            foreach (Screen screen in screenList)
+            {
+                //Get the physical width (pixel)
+                double physicalWidth;
+                if (i < physicalWidths.Count)
+                {
+                    //Get the DPI
+                    uint x, y;
+                    GetDpi3(screen, DpiType.Effective, out x, out y);
+
+                    //Convert inch to pixel
+                    physicalWidth = physicalWidths[i] * x;
+                }
+                else
+                {
+                    physicalWidth = SystemParameters.PrimaryScreenWidth;
+                }
+                i++;
+
+                //Calculate the scaling
+                double scaling = 100 * (physicalWidth / screen.Bounds.Width);
+                double scalingFactor = physicalWidth / screen.Bounds.Width;
+
+                //Output the result
+                Console.WriteLine(scalingFactor);
+                monitorsfactor.Add(scalingFactor);
+            }
+            return monitorsfactor;
+        }
+
+        public void GetDpi3(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
+        {
+            var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
+            var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
+            GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
+        }
+
     }
 }

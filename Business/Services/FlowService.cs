@@ -103,7 +103,7 @@ namespace Business.Services
                 System.Windows.Forms.Cursor.Position = new System.Drawing.Point(-1875,1375);
 
 
-                _systemService.SetCursorPossition(result.ResultRectangle);
+                _systemService.SetCursorPossition(result.ResultRectangle.Top, result.ResultRectangle.Left);
             }
         }
 

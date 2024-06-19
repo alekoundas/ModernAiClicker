@@ -43,12 +43,12 @@ namespace Business.Services
             {
                 Top = maxLoc.X,
                 Left = maxLoc.Y,
-                Right = maxLoc.X + matTemplate.Width,
-                Bottom = maxLoc.Y + matTemplate.Height,
+                Right = maxLoc.Y + matTemplate.Width,
+                Bottom = maxLoc.X + matTemplate.Height,
             };
 
             //Draws rectangle in result image
-            DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle);
+             DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle);
 
             //Save result image
             string resultFilePath = Path.Combine(PathHelper.GetAppDataPath(), "Result.png");
@@ -87,14 +87,14 @@ namespace Business.Services
         private static void DrawResultRectangle(double confidence, Mat matScreenshot, Model.Structs.Rectangle resultRectangle)
         {
             OpenCvSharp.Point point1 = new OpenCvSharp.Point(resultRectangle.Top, resultRectangle.Left);
-            OpenCvSharp.Point point2 = new OpenCvSharp.Point(resultRectangle.Right, resultRectangle.Bottom);
+            OpenCvSharp.Point point2 = new OpenCvSharp.Point(resultRectangle.Bottom, resultRectangle.Right);
 
             matScreenshot.Rectangle(point1, point2, new Scalar(0, 0, 255), 2);
 
             //string text = $"Confidence: {Math.Round((float)(maxVal), 2)}";
             string text = Math.Round((float)(confidence), 2).ToString();
             HersheyFonts font = HersheyFonts.HersheyPlain;
-            Scalar textColor = new Scalar(0, 0, 255);
+            Scalar textColor = new Scalar(255, 0, 0);
             int fontScale = 2;
             int thickness = 4;
 
