@@ -22,7 +22,12 @@ namespace Model.Models
         public double Accuracy { get; set; } = 0.00d;
         public bool Status { get; set; }
         public bool Disabled { get; set; }
-        public bool IsNew { get; set; }
+        [ObservableProperty]
+
+        public bool _isNew = false;
+        [ObservableProperty]
+        public bool _isExpanded = true;
+
 
         public FlowStepTypesEnum FlowStepType { get; set; }
         public FlowStepActionsFoundEnum FlowStepActionsFound { get; set; }

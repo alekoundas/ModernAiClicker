@@ -11,9 +11,13 @@ namespace Model.Models
         public string Name { get; set; } = string.Empty;
 
         public bool Favorite { get; set; }
-        public bool IsNew { get; set; }
+        [ObservableProperty]
+
+        public bool _isNew = false;
         public bool IsSelected { get; set; }
-        public bool IsExpanded { get; set; }
+
+        [ObservableProperty]
+        public bool _isExpanded = true;
 
         public int? ExecutionId { get; set; }
         public virtual Execution? Execution { get; set; }
