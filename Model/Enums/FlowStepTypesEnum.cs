@@ -8,11 +8,15 @@ namespace Model.Enums
 {
     public enum FlowStepTypesEnum
     {
-        NO_SELECTION = 0,
-        MOUSE_MOVE_SEARCH_TEMPLATE = 1,
-        MOUSE_MOVE_COORDINATES = 2,
-        MOUSE_CLICK = 3,
-        WAIT = 4,
+        NO_SELECTION,
+        TEMPLATE_SEARCH,
+        MOUSE_MOVE_COORDINATES,
+        MOUSE_CLICK,
+        WAIT,
+        IS_NEW,
+        IS_SUCCESS,
+        IS_FAILURE,
+
 
     }
 }

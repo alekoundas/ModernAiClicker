@@ -1,11 +1,8 @@
-﻿using AutoMapper;
-using Business.AutoMapper;
-using Business.DatabaseContext;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Models;
-using System;
+using OpenCvSharp;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -14,10 +11,6 @@ namespace ModernAiClicker.ViewModels
 {
     public partial class BaseViewModel : ObservableObject, INotifyPropertyChanged
     {
-        public event refreshtestEvent refreshtest;
-        public delegate void refreshtestEvent();
-
-
 
         private IBaseDatawork _baseDatawork { get; }
 
@@ -50,11 +43,6 @@ namespace ModernAiClicker.ViewModels
 
         public void RefreshData()
         {
-           
-
-
-
-
             List<Flow> flows = _baseDatawork.Query.Flows
                 .Include(x => x.FlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
@@ -63,9 +51,41 @@ namespace ModernAiClicker.ViewModels
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
-                .ToList();
+            .ToList();
+
+            SortFlows(flows);
 
             FlowsList = new ObservableCollection<Flow>(flows);
+        }
+
+        private void SortFlows(List<Flow> flows)
+        {
+            foreach (Flow flow in flows)
+            {
+                if (flow.FlowSteps.Count > 0)
+                {
+                    flow.FlowSteps.ToList().Sort((x, y) =>
+                    {
+                        return x.OrderingNum.CompareTo(y.OrderingNum);
+                    });
+                    SortFlowSteps(flow.FlowSteps.ToList());
+                }
+
+            }
+        }
+
+
+        //Recursion on every child of flow step
+        private void SortFlowSteps(List<FlowStep> flowSteps)
+        {
+            foreach (FlowStep flowStep in flowSteps)
+            {
+                if (flowStep.ChildrenFlowSteps?.Count > 0)
+                {
+                    flowStep.ChildrenFlowSteps.ToList().Sort((x, y) => y.OrderingNum.CompareTo(x.OrderingNum));
+                    SortFlowSteps(flowStep.ChildrenFlowSteps.ToList());
+                }
+            }
         }
     }
 }

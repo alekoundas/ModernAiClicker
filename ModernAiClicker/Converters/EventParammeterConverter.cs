@@ -13,10 +13,10 @@ namespace ModernAiClicker.Converters
             EventParammeters findCommandParameters = new EventParammeters();
 
             findCommandParameters.ElementName = button.Name;
-            findCommandParameters.Value = values[1]?.ToString();
+            findCommandParameters.FlowId = values[1]?.ToString();
 
             if (values.Length >= 3)
-                findCommandParameters.SecondValue = values[2].ToString();
+                findCommandParameters.FlowStepId = values[2].ToString();
 
             return findCommandParameters;
         }

@@ -4,7 +4,9 @@ using DataAccess.Repository.Interface;
 using Model.Models;
 using ModernAiClicker.ViewModels.Pages;
 using ModernAiClicker.Views.Pages.FlowStepDetail;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Forms;
 using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages
@@ -29,30 +31,19 @@ namespace ModernAiClicker.Views.Pages
             DataContext = this;
             InitializeComponent();
 
+
+
             viewModel.NavigateToFlowStepTypeSelectionPage += NavigateToFlowStepTypeSelectionPage;
-            viewModel.refreshtest += aaaa;
         }
 
 
         public void NavigateToFlowStepTypeSelectionPage(FlowStep flowStep)
         {
+
             FlowStepDetailNewSelectTypeViewModel detailViewModel = new FlowStepDetailNewSelectTypeViewModel(_baseDatawork);
             detailViewModel.FlowStep = flowStep;
-            //detailViewModel.FlowsList = ViewModel.FlowsList;
 
             UIFlowStepTypeSelectionFrame.Navigate(new FlowStepDetailNewSelectTypePage(detailViewModel, ViewModel, _systemService, _templateMatchingService, _flowService, _baseDatawork));
-        }
-
-        public void aaaa()
-        {
-            //NavigationService.
-        }
-
-        private void HandleChildEvent(object sender, RoutedEventArgs e)
-        {
-            // Code to handle the event raised from the child
-            // Use this line to stop the event bubbling further if you need to
-            e.Handled = true;
         }
 
     }

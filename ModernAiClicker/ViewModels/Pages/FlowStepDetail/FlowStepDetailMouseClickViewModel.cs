@@ -1,16 +1,11 @@
-﻿using Business.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using Model.Models;
 using Business.Interfaces;
 using Model.Structs;
 using Business.Helpers;
 using Model.Business;
-using Model.Enums;
 using DataAccess.Repository.Interface;
-using Force.DeepCloner;
-using System.Windows.Navigation;
 using System.Windows.Forms;
 
 namespace ModernAiClicker.ViewModels.Pages
@@ -115,14 +110,11 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
-        private async void OnButtonSaveClick()
+        private async Task OnButtonSaveClick()
         {
             if (FlowStep.ProcessName != null && TemplateImgPath != null)
             {
-                FlowStep newFlowStep = FlowStep.CreateModel();
-                newFlowStep.IsNew = false;
-
-                _baseDatawork.FlowSteps.Add(newFlowStep);
+                _baseDatawork.FlowSteps.Add(FlowStep);
                 _baseDatawork.SaveChanges();
                 //RefreshData();
 

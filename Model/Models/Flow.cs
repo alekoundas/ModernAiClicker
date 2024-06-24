@@ -19,24 +19,14 @@ namespace Model.Models
         [ObservableProperty]
         public bool _isExpanded = true;
 
+        [ObservableProperty]
+        public int _orderingNum;
+
         public int? ExecutionId { get; set; }
         public virtual Execution? Execution { get; set; }
 
         public virtual ObservableCollection<FlowStep> FlowSteps { get; set; } = new ObservableCollection<FlowStep>();
 
-        public Flow CreateClone()
-        {
-            return new Flow()
-            {
-                Id = Id,
-                Favorite = Favorite,
-                Name = Name,
-                FlowSteps = FlowSteps,
-                IsNew = IsNew,
-                IsExpanded = IsExpanded,
-                IsSelected = IsSelected,
-            };
-        }
     }
 
     public partial class FlowDto

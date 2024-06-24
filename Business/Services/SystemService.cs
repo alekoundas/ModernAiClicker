@@ -54,7 +54,7 @@ namespace Business.Services
 
 
 
-        public  void GetDpi(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
+        public void GetDpi(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
         {
             var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
             var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
@@ -161,7 +161,6 @@ namespace Business.Services
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
 
-            //string flowsJSON = JsonConvert.SerializeObject(flows);
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), "Flows.json");
             await File.WriteAllTextAsync(filePath, json);
         }
@@ -172,19 +171,13 @@ namespace Business.Services
             string flowsJSON = File.ReadAllText(filePath);
             if (flowsJSON != null)
             {
-                List<Flow> flows = JsonConvert.DeserializeObject<List<Flow>>(flowsJSON);
-
-                return flows;
+                var JsonFlows = JsonConvert.DeserializeObject<List<Flow>>(flowsJSON);
+                if (JsonFlows != null && JsonFlows.Count > 0)
+                    return JsonFlows;
             }
 
             return null;
         }
-
-
-
-
-
-
 
 
         public void GetScalingFactor()
@@ -240,7 +233,7 @@ namespace Business.Services
             GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
         }
 
-        public List<double>  GetScalingFactor2()
+        public List<double> GetScalingFactor2()
         {
             List<double> physicalWidths = new List<double>();
             List<double> monitorsfactor = new List<double>();

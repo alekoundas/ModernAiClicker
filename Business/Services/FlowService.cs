@@ -68,7 +68,7 @@ namespace Business.Services
 
         private void ExecuteStep(FlowStep flowStep)
         {
-            if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_MOVE_SEARCH_TEMPLATE)
+            if (flowStep.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
             {
                 Rectangle screenshotRect = new Rectangle();
 

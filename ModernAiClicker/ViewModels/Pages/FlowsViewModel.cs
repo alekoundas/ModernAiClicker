@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Wpf.Ui.Controls;
 using Business.Services;
+using Model.Enums;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -39,24 +40,22 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
         [RelayCommand]
-        private void TreeViewItem_OnButtonNewClick(EventParammeters eventParameters)
+        private void OnTreeViewItemButtonNewClick(EventParammeters eventParameters)
         {
             FlowStep flowStep = new FlowStep();
 
             // If flowId is available
-            if (eventParameters.Value != null)
+            if (eventParameters.FlowId != null)
             {
-                bool isFlowIdParsable = Int32.TryParse(eventParameters.Value.ToString(), out int flowId);
+                bool isFlowIdParsable = Int32.TryParse(eventParameters.FlowId.ToString(), out int flowId);
 
                 if (isFlowIdParsable)
                     flowStep.FlowId = flowId;
             }
             // If flowStepId is available
-            else if (eventParameters.SecondValue != null)
+            else if (eventParameters.FlowStepId != null)
             {
-                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.SecondValue.ToString(), out int flowStepId);
-
-
+                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
                 if (isFlowStepIdParsable)
                 {
 
@@ -73,34 +72,32 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
-        private async Task OnTreeViewItemButtonDeleteClick(EventParammeters eventParameters)
+        private async Task OnTreeViewItemFlowStepButtonDeleteClick(EventParammeters eventParameters)
         {
-            if (eventParameters.Value == null || eventParameters.SecondValue == null)
+            if (eventParameters.FlowStepId == null)
                 return;
 
-            bool isFlowIdParsable = Int32.TryParse(eventParameters.Value.ToString(), out int flowId);
-            bool isFlowStepIdParsable = Int32.TryParse(eventParameters.SecondValue.ToString(), out int flowStepId);
-
-            if (isFlowIdParsable && isFlowStepIdParsable)
+            bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
+            if (isFlowStepIdParsable)
             {
-                FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.FlowId == flowId && x.id == flowStepId);
+                FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
                 _baseDatawork.FlowSteps.Remove(flowStep);
                 _baseDatawork.SaveChanges();
 
 
-                _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
                 RefreshData();
             }
         }
 
         [RelayCommand]
-        private async Task OnTreeViewItemFlowDeleteButtonClick(EventParammeters eventParameters)
+        private async Task OnTreeViewItemFlowButtonDeleteClick(EventParammeters eventParameters)
         {
-            if (eventParameters.Value == null)
+            if (eventParameters.FlowId == null)
                 return;
 
-            bool isFlowIdParsable = Int32.TryParse(eventParameters.Value.ToString(), out int flowId);
+            bool isFlowIdParsable = Int32.TryParse(eventParameters.FlowId.ToString(), out int flowId);
             if (isFlowIdParsable)
             {
                 Flow flow = await _baseDatawork.Flows.FirstOrDefaultAsync(x => x.Id == flowId);
@@ -108,18 +105,89 @@ namespace ModernAiClicker.ViewModels.Pages
                 _baseDatawork.SaveChanges();
 
 
-                _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
                 RefreshData();
             }
         }
 
+        [RelayCommand]
+        private async Task OnTreeViewItemFlowStepButtonUpClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowStepId != null)
+            {
+                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
+
+                if (isFlowStepIdParsable)
+                {
+                    FlowStep simplingAbove;
+                    FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+                    if (flowStep.OrderingNum == 0)
+                        return;
+
+                    if (flowStep.ParentFlowStepId != null)
+                        simplingAbove = _baseDatawork.FlowSteps
+                            .Where(x => x.Id == flowStep.ParentFlowStepId)
+                            .Select(x => x.ChildrenFlowSteps.First(y => y.OrderingNum == flowStep.OrderingNum - 1))
+                            .First();
+                    else
+                        simplingAbove = _baseDatawork.Flows
+                            .Where(x => x.Id == flowStep.FlowId)
+                            .Select(x => x.FlowSteps.First(y => y.OrderingNum == flowStep.OrderingNum - 1))
+                            .First();
+
+
+                    flowStep.OrderingNum--;
+                    simplingAbove.OrderingNum++;
+
+                    _baseDatawork.SaveChanges();
+                    await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                    RefreshData();
+                }
+            }
+        }
 
         [RelayCommand]
-        private void TreeViewItem_OnItemSelected(RoutedPropertyChangedEventArgs<object> routedPropertyChangedEventArgs)
+        private async Task OnTreeViewItemFlowStepButtonDownClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowStepId != null)
+            {
+                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
+
+                if (isFlowStepIdParsable)
+                {
+                    FlowStep simplingBellow;
+                    FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+
+                    if (flowStep.ParentFlowStepId != null)
+                        simplingBellow = _baseDatawork.FlowSteps
+                            .Where(x => x.Id == flowStep.ParentFlowStepId)
+                            .Select(x => x.ChildrenFlowSteps.FirstOrDefault(y => y.OrderingNum == flowStep.OrderingNum + 1 && y.FlowStepType != FlowStepTypesEnum.IS_NEW))
+                            .FirstOrDefault();
+                    else
+                        simplingBellow = _baseDatawork.Flows
+                            .Where(x => x.Id == flowStep.FlowId)
+                            .Select(x => x.FlowSteps.FirstOrDefault(y => y.OrderingNum == flowStep.OrderingNum + 1 && y.FlowStepType != FlowStepTypesEnum.IS_NEW))
+                            .FirstOrDefault();
+
+                    if (simplingBellow == null)
+                        return;
+
+                    flowStep.OrderingNum++;
+                    simplingBellow.OrderingNum--;
+
+                    _baseDatawork.SaveChanges();
+                    await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                    RefreshData();
+                }
+            }
+        }
+
+
+        [RelayCommand]
+        private void OnTreeViewItemSelected(RoutedPropertyChangedEventArgs<object> routedPropertyChangedEventArgs)
         {
             object selectedItem = routedPropertyChangedEventArgs.NewValue;
-
             if (selectedItem is FlowStep)
             {
                 _selectedFlowStep = (FlowStep)selectedItem;
@@ -132,10 +200,11 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
         [RelayCommand]
-        private void ButtonAddClick()
+        private void OnButtonAddFlowClick()
         {
             Flow flow = new Flow();
             FlowStep newFlowStep = new FlowStep() { IsNew = true };
+            newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
 
             flow.FlowSteps.Add(newFlowStep);
 
@@ -146,16 +215,6 @@ namespace ModernAiClicker.ViewModels.Pages
             RefreshData();
         }
 
-
-        [RelayCommand]
-        private void ButtonEditClick(RoutedPropertyChangedEventArgs<object> eventArgs)
-        {
-        }
-
-        [RelayCommand]
-        private void OnButtonOpenFileClick(object eventArgs)
-        {
-        }
 
         public void OnNavigatedTo() { }
 

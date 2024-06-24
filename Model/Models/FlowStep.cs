@@ -24,12 +24,22 @@ namespace Model.Models
         public bool Disabled { get; set; }
         [ObservableProperty]
 
-        public bool _isNew = false;
+        public bool _isNew;
+        [ObservableProperty]
+
+        public bool _isSuccess;
+        [ObservableProperty]
+
+        public bool _isFailure;
         [ObservableProperty]
         public bool _isExpanded = true;
 
+        [ObservableProperty]
+        public int _orderingNum;
 
-        public FlowStepTypesEnum FlowStepType { get; set; }
+
+        [ObservableProperty]
+        public FlowStepTypesEnum _flowStepType;
         public FlowStepActionsFoundEnum FlowStepActionsFound { get; set; }
         public FlowStepActionsNotFoundEnum FlowStepActionsNotFound { get; set; }
 
@@ -45,28 +55,8 @@ namespace Model.Models
 
         public virtual FlowStep? ParentFlowStep { get; set; }
 
-        public virtual ObservableCollection<FlowStep>? ChildrenFlowSteps { get; set; } 
+        public virtual ObservableCollection<FlowStep>? ChildrenFlowSteps { get; set; }
 
-        public FlowStep Clone()
-        {
-            return new FlowStep()
-            {
-                Id = Id,
-                id = Id,
-                Name = Name,
-                ProcessName = ProcessName,
-                TemplateImagePath = TemplateImagePath,
-                Accuracy = Accuracy,
-                Status = Status,
-                Disabled = Disabled,
-                IsNew = IsNew,
-                Flow = Flow,
-                FlowId = FlowId,
-                FlowStepActionsFound = FlowStepActionsFound,
-                FlowStepActionsNotFound = FlowStepActionsNotFound,
-                FlowStepType = FlowStepType,
-            };
-        }
 
         public FlowStep CreateModel()
         {

@@ -40,7 +40,7 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
         public void NavigateToFlowStepDetailPage(FlowStep flowStep)
         {
 
-            if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_MOVE_SEARCH_TEMPLATE)
+            if (flowStep.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
             {
 
                 FlowStepDetailTemplateMatchingViewModel viewModel = new FlowStepDetailTemplateMatchingViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _flowService, _baseDatawork);

@@ -93,7 +93,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 searchRectangle = _systemService.GetScreenSize();
 
 
-            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(TemplateImgPath, searchRectangle);
+            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(TemplateImgPath ?? "", searchRectangle);
 
 
             int x = searchRectangle.Left;
@@ -115,46 +115,85 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
-        private async void OnButtonSaveClick()
+        private async Task OnButtonSaveClick()
         {
             if (FlowStep.ProcessName != null && TemplateImgPath != null)
             {
                 await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
                 FlowStep.TemplateImagePath = TemplateImgPath;
-                FlowStep.Id = 0;
 
-
-
-                FlowStep newFlowStep = new FlowStep();
-                FlowStep newFlowStep2 = new FlowStep();
-                newFlowStep.IsNew = true;
-                newFlowStep2.IsNew = true;
-
-                FlowStep successFlowStep = new FlowStep();
-                successFlowStep.Name = "Success";
-                successFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>();
-                successFlowStep.ChildrenFlowSteps.Add(newFlowStep);
-
-                FlowStep failFlowStep = new FlowStep();
-                failFlowStep.Name = "Fail";
-                failFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>();
-
-                failFlowStep.ChildrenFlowSteps.Add(newFlowStep2);
-
-                FlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                // Edit mode
+                if (FlowStep.Id > 0)
                 {
-                    successFlowStep,
-                    failFlowStep
-                };
-                FlowStep.Flow = null;
-                _baseDatawork.FlowSteps.Add(FlowStep);
+
+                }
+
+                /// Add mode
+                else
+                {
+
+                    if (FlowStep.ParentFlowStepId != null)
+                    {
+                        FlowStep isNewSimpling = _baseDatawork.FlowSteps
+                            .Where(x => x.Id == FlowStep.ParentFlowStepId)
+                            .Select(x => x.ChildrenFlowSteps.First(y => y.IsNew == true)).First();
+
+                        FlowStep.OrderingNum = isNewSimpling.OrderingNum;
+                        isNewSimpling.OrderingNum++;
+
+                    }
+                    else
+                    {
+                        FlowStep isNewSimpling = _baseDatawork.Flows
+                            .Where(x => x.Id == FlowStep.FlowId)
+                            .Select(x => x.FlowSteps.First(y => y.IsNew == true)).First();
+
+                        FlowStep.OrderingNum = isNewSimpling.OrderingNum;
+                        isNewSimpling.OrderingNum++;
+                    }
+
+                    // "Add" Flow steps
+                    FlowStep newFlowStep = new FlowStep();
+                    FlowStep newFlowStep2 = new FlowStep();
+                    newFlowStep.FlowStepType= FlowStepTypesEnum.IS_NEW;
+                    newFlowStep2.FlowStepType= FlowStepTypesEnum.IS_NEW;
+
+                    // "Success" Flow step
+                    FlowStep successFlowStep = new FlowStep();
+                    successFlowStep.Name = "Success";
+                    successFlowStep.IsExpanded = false;
+                    successFlowStep.FlowStepType = FlowStepTypesEnum.IS_SUCCESS;
+                    successFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                    {
+                        newFlowStep
+                    };
+
+                    // "Fail" Flow step
+                    FlowStep failFlowStep = new FlowStep();
+                    failFlowStep.Name = "Fail";
+                    failFlowStep.IsExpanded = false;
+                    failFlowStep.FlowStepType = FlowStepTypesEnum.IS_FAILURE;
+                    failFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                    {
+                        newFlowStep2
+                    };
+
+                    FlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                    {
+                        successFlowStep,
+                        failFlowStep
+                    };
+
+                    //FlowStep.Flow = null;
+                    _baseDatawork.FlowSteps.Add(FlowStep);
+                }
+
+
+
                 _baseDatawork.SaveChanges();
                 await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
-
-
                 _flowsViewModel.RefreshData();
-                //NavigationService.GetNavigationService().Source.
             }
 
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());

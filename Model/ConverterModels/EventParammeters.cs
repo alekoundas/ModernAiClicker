@@ -3,7 +3,7 @@
     public class EventParammeters
     {
         public string? ElementName { get; set; }
-        public object? Value { get; set; }
-        public object? SecondValue { get; set; }
+        public object? FlowId { get; set; }
+        public object? FlowStepId { get; set; }
     }
 }

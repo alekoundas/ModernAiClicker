@@ -52,11 +52,3 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
         }
     }
 }
-//1.0f1.0f1.0f1.0f1.0f}}
-    
-    
-    
-    
-//    1,604166666666667
-//    3.840
-//    3.071
