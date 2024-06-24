@@ -119,8 +119,6 @@ namespace ModernAiClicker.ViewModels.Pages
         {
             if (FlowStep.ProcessName != null && TemplateImgPath != null)
             {
-                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
-
                 FlowStep.TemplateImagePath = TemplateImgPath;
 
                 // Edit mode
@@ -137,7 +135,7 @@ namespace ModernAiClicker.ViewModels.Pages
                     {
                         FlowStep isNewSimpling = _baseDatawork.FlowSteps
                             .Where(x => x.Id == FlowStep.ParentFlowStepId)
-                            .Select(x => x.ChildrenFlowSteps.First(y => y.IsNew == true)).First();
+                            .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
 
                         FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                         isNewSimpling.OrderingNum++;
@@ -147,7 +145,7 @@ namespace ModernAiClicker.ViewModels.Pages
                     {
                         FlowStep isNewSimpling = _baseDatawork.Flows
                             .Where(x => x.Id == FlowStep.FlowId)
-                            .Select(x => x.FlowSteps.First(y => y.IsNew == true)).First();
+                            .Select(x => x.FlowSteps.First(y => y.FlowStepType== FlowStepTypesEnum.IS_NEW)).First();
 
                         FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                         isNewSimpling.OrderingNum++;

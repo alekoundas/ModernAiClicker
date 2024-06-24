@@ -58,7 +58,7 @@ namespace Business.Services
         private FlowStep? FindNextStep(Flow flow)
         {
             FlowStep nextFlowStep = flow.FlowSteps
-                .Where(x => x.IsNew == false)
+                .Where(x => x.FlowStepType == FlowStepTypesEnum.IS_NEW)
                 .Where(x => x.Execution?.IsExecuted == false)
                 .OrderBy(x => x.Id)
                 .FirstOrDefault();

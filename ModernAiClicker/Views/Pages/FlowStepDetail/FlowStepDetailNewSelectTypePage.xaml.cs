@@ -30,7 +30,7 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
 
 
             ViewModel = viewModel;
-            DataContext = this;
+            DataContext = this; 
             InitializeComponent();
 
             viewModel.NavigateToFlowStepDetailPage += NavigateToFlowStepDetailPage;
@@ -53,6 +53,14 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
 
                 FlowStepDetailMouseClickViewModel viewModel = new FlowStepDetailMouseClickViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _flowService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new FlowStepDetailMouseClickPage(viewModel));
+
+                //this.UIFlowStepDetailFrame.RaiseEvent();
+            }
+            else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_MOVE_COORDINATES)
+            {
+
+                FlowStepDetailMouseMoveViewModel viewModel = new FlowStepDetailMouseMoveViewModel(flowStep,  _systemService, _templateMatchingService,  _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new FlowStepDetailMouseMovePage(viewModel));
 
                 //this.UIFlowStepDetailFrame.RaiseEvent();
             }

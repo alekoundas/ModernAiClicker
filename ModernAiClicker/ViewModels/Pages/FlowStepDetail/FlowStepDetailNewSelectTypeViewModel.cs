@@ -2,8 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
-using System.Collections.ObjectModel;
 using DataAccess.Repository.Interface;
+using Business.Extensions;
+using System.Collections.ObjectModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -13,7 +14,6 @@ namespace ModernAiClicker.ViewModels.Pages
         public delegate void NavigateToFlowStepDetailPageEvent(FlowStep flowStep);
 
         private readonly IBaseDatawork _baseDatawork;
-
 
 
         [ObservableProperty]
@@ -26,6 +26,7 @@ namespace ModernAiClicker.ViewModels.Pages
         {
             _baseDatawork = baseDatawork;
         }
+       
 
         [RelayCommand]
         private void Combobox_OnDropDownClosed()
@@ -33,6 +34,5 @@ namespace ModernAiClicker.ViewModels.Pages
             if (FlowStep != null && NavigateToFlowStepDetailPage != null)
                 NavigateToFlowStepDetailPage.Invoke(FlowStep);
         }
-
     }
 }

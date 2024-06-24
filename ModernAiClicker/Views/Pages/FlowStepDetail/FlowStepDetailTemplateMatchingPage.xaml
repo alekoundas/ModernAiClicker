@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="FlowStepDetailTemplateMatchingPage"
     d:DataContext="{d:DesignInstance local:FlowStepDetailTemplateMatchingPage,
-                                     IsDesignTimeCreatable=False}"
+    IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -55,7 +55,10 @@
         <StackPanel Grid.Column="1">
             <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
 
-            <Label>1. Select Process (leave empty for screen search)</Label>
+            <Label>1. Set Name</Label>
+            <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
+
+            <Label>2. Select Process (leave empty for screen search)</Label>
             <ComboBox
                 VerticalAlignment="Center"
                 ItemsSource="{Binding ViewModel.ProcessList}"
@@ -63,7 +66,7 @@
 
 
 
-            <Label>2. Select image for search</Label>
+            <Label>3. Select image for search</Label>
             <Button Grid.Column="1" Content="Open file">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
@@ -87,7 +90,7 @@
 
 
 
-            <Label>3. Select minimum accuracy</Label>
+            <Label>4. Select minimum accuracy</Label>
             <TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay, StringFormat=0{0.0}}" />
 
             <Label>4. Test</Label>
@@ -104,22 +107,22 @@
 
             <!--<Label>5. Actions</Label>
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                    <Label>No succesfull find</Label>
-                    <ComboBox ItemsSource="{Binding Source={StaticResource FlowStepActionsNotFoundEnum}}" SelectedItem="{Binding ViewModel.FlowStep.FlowStepActionsNotFound, Mode=TwoWay}" />
+            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+            <Label>No succesfull find</Label>
+            <ComboBox ItemsSource="{Binding Source={StaticResource FlowStepActionsNotFoundEnum}}" SelectedItem="{Binding ViewModel.FlowStep.FlowStepActionsNotFound, Mode=TwoWay}" />
 
-                </StackPanel>
+            </StackPanel>
 
-                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                    <Label>Sucessfull find</Label>
-                    <ComboBox ItemsSource="{Binding Source={StaticResource FlowStepActionsFoundEnum}}" SelectedItem="{Binding ViewModel.FlowStep.FlowStepActionsFound, Mode=TwoWay}" />
+            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+            <Label>Sucessfull find</Label>
+            <ComboBox ItemsSource="{Binding Source={StaticResource FlowStepActionsFoundEnum}}" SelectedItem="{Binding ViewModel.FlowStep.FlowStepActionsFound, Mode=TwoWay}" />
 
-                </StackPanel>
+            </StackPanel>
 
 
             </Grid>-->

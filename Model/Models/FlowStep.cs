@@ -12,25 +12,15 @@ namespace Model.Models
         [ObservableProperty]
         public int id;
 
-        public string Name { get; set; } = string.Empty;
+        [ObservableProperty]
+        public string _name = "";
 
         [ObservableProperty]
         public string _processName = string.Empty;
 
         [ObservableProperty]
         public string _templateImagePath = "";
-        public double Accuracy { get; set; } = 0.00d;
-        public bool Status { get; set; }
-        public bool Disabled { get; set; }
-        [ObservableProperty]
 
-        public bool _isNew;
-        [ObservableProperty]
-
-        public bool _isSuccess;
-        [ObservableProperty]
-
-        public bool _isFailure;
         [ObservableProperty]
         public bool _isExpanded = true;
 
@@ -40,43 +30,41 @@ namespace Model.Models
 
         [ObservableProperty]
         public FlowStepTypesEnum _flowStepType;
-        public FlowStepActionsFoundEnum FlowStepActionsFound { get; set; }
-        public FlowStepActionsNotFoundEnum FlowStepActionsNotFound { get; set; }
+
+        public double Accuracy { get; set; } = 0.00d;
+        public bool Disabled { get; set; }
 
         public int? FlowId { get; set; }
-
         public virtual Flow? Flow { get; set; }
 
         public int? ExecutionId { get; set; }
         public virtual Execution? Execution { get; set; }
 
-
         public int? ParentFlowStepId { get; set; }
-
         public virtual FlowStep? ParentFlowStep { get; set; }
 
         public virtual ObservableCollection<FlowStep>? ChildrenFlowSteps { get; set; }
 
+        //TODO create tables for the bellow
 
-        public FlowStep CreateModel()
-        {
-            return new FlowStep()
-            {
-                FlowId = FlowId,
-                Flow = null,
-                Name = Name,
-                ProcessName = ProcessName,
-                TemplateImagePath = TemplateImagePath,
-                Accuracy = Accuracy,
-                Status = Status,
-                Disabled = Disabled,
-                IsNew = IsNew,
-                FlowStepActionsFound = FlowStepActionsFound,
-                FlowStepActionsNotFound = FlowStepActionsNotFound,
-                FlowStepType = FlowStepType,
-            };
-        }
+        // Mouse
+        [ObservableProperty]
+        public MouseActionsEnum _mouseAction;
 
+        [ObservableProperty]
+        public MouseButtonsEnum _mouseButton;
+
+        [ObservableProperty]
+        public bool _mouseLoopInfinite;
+
+        [ObservableProperty]
+        public int? _mouseLoopTimes;
+
+        [ObservableProperty]
+        public int? _mouseLoopDebounceTime;
+
+        [ObservableProperty]
+        public TimeOnly? _mouseLoopTime;
     }
 
     public partial class FlowStepDto

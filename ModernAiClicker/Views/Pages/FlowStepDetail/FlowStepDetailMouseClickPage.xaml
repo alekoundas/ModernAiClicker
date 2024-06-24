@@ -10,54 +10,127 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="FlowStepDetailMouseClickPage"
     d:DataContext="{d:DesignInstance local:FlowStepDetailMouseClickPage,
-                                     IsDesignTimeCreatable=False}"
+    IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
+    <StackPanel>
 
-    <Grid VerticalAlignment="Top">
-        <Grid.Resources>
-            <ObjectDataProvider
-                x:Key="FlowStepTypesEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepTypesEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-            <ObjectDataProvider
-                x:Key="FlowStepActionsFoundEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepActionsFoundEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-            <ObjectDataProvider
-                x:Key="FlowStepActionsNotFoundEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepActionsNotFoundEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-        </Grid.Resources>
+        <Label>Configure click action</Label>
 
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
+        <Grid Margin="10,10,10,50">
+
+            <Grid.Resources>
+
+                <ObjectDataProvider
+                    x:Key="MouseActionsEnum"
+                    MethodName="GetValues"
+                    ObjectType="{x:Type System:Enum}">
+                    <ObjectDataProvider.MethodParameters>
+                        <x:Type TypeName="enum:MouseActionsEnum" />
+                    </ObjectDataProvider.MethodParameters>
+                </ObjectDataProvider>
+                <ObjectDataProvider
+                    x:Key="MouseButtonEnum"
+                    MethodName="GetValues"
+                    ObjectType="{x:Type System:Enum}">
+                    <ObjectDataProvider.MethodParameters>
+                        <x:Type TypeName="enum:MouseButtonEnum" />
+                    </ObjectDataProvider.MethodParameters>
+                </ObjectDataProvider>
+            </Grid.Resources>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.3*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+
+                <RowDefinition Name="rowToHide">
+                    <RowDefinition.Style>
+                        <Style TargetType="{x:Type RowDefinition}">
+                            <Setter Property="Height" Value="0" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ViewModel.FlowStep.MouseAction}" Value="{x:Static enum:MouseActionsEnum.LOOP_CLICK}">
+                                    <Setter Property="Height" Value="Auto" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RowDefinition.Style>
+                </RowDefinition>
+
+            </Grid.RowDefinitions>
 
 
 
 
-        <StackPanel Grid.Column="1">
-            <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
 
 
-        </StackPanel>
 
 
-    </Grid>
+            <StackPanel>
+
+                <Label>Click button</Label>
+                <ComboBox ItemsSource="{Binding ViewModel.MouseButtonsEnum}" SelectedItem="{Binding ViewModel.FlowStep.MouseButton}" />
+
+                <Label>Click action</Label>
+                <ComboBox ItemsSource="{Binding ViewModel.MouseActionsEnum}" SelectedItem="{Binding ViewModel.FlowStep.MouseAction}" />
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="1">
+
+                <Label>Debounce time (miliseconds)</Label>
+                <TextBox Text="{Binding ViewModel.FlowStep.MouseLoopDebounceTime, Mode=TwoWay}" />
+
+
+                <Label>Loop times</Label>
+                <TextBox Text="{Binding ViewModel.FlowStep.MouseLoopTimes, Mode=TwoWay}" />
+
+
+                <Label>Infinite loop</Label>
+                <CheckBox IsChecked="{Binding ViewModel.FlowStep.MouseLoopInfinite}" />
+
+            </StackPanel>
+
+        </Grid>
+
+
+
+
+
+
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+                <Button Content="Cancel">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" HorizontalAlignment="right">
+                <Button Content="Save">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+
 </Page>

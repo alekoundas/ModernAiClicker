@@ -53,39 +53,8 @@ namespace ModernAiClicker.ViewModels
                 .ThenInclude(x => x.ChildrenFlowSteps)
             .ToList();
 
-            SortFlows(flows);
 
             FlowsList = new ObservableCollection<Flow>(flows);
-        }
-
-        private void SortFlows(List<Flow> flows)
-        {
-            foreach (Flow flow in flows)
-            {
-                if (flow.FlowSteps.Count > 0)
-                {
-                    flow.FlowSteps.ToList().Sort((x, y) =>
-                    {
-                        return x.OrderingNum.CompareTo(y.OrderingNum);
-                    });
-                    SortFlowSteps(flow.FlowSteps.ToList());
-                }
-
-            }
-        }
-
-
-        //Recursion on every child of flow step
-        private void SortFlowSteps(List<FlowStep> flowSteps)
-        {
-            foreach (FlowStep flowStep in flowSteps)
-            {
-                if (flowStep.ChildrenFlowSteps?.Count > 0)
-                {
-                    flowStep.ChildrenFlowSteps.ToList().Sort((x, y) => y.OrderingNum.CompareTo(x.OrderingNum));
-                    SortFlowSteps(flowStep.ChildrenFlowSteps.ToList());
-                }
-            }
         }
     }
 }

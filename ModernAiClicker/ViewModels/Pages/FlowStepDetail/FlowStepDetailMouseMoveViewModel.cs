@@ -7,50 +7,36 @@ using Business.Helpers;
 using Model.Business;
 using DataAccess.Repository.Interface;
 using System.Windows.Forms;
-using Model.Enums;
 using System.Collections.ObjectModel;
+using Business.Extensions;
+using Model.Enums;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowStepDetailMouseClickViewModel : ObservableObject
+    public partial class FlowStepDetailMouseMoveViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateMatchingService _templateMatchingService;
-        private readonly IFlowService _flowService;
         private readonly IBaseDatawork _baseDatawork;
-        private FlowsViewModel _flowsViewModel;
-
         private bool _isInitialized = false;
-
 
         [ObservableProperty]
         private FlowStep _flowStep;
 
-
         [ObservableProperty]
-        private IEnumerable<MouseButtonsEnum> _mouseButtonsEnum;
+        private ObservableCollection<FlowStep> _parents;
 
-
-        [ObservableProperty]
-        private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
-
-
-        public FlowStepDetailMouseClickViewModel(FlowStep flowStep,FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateMatchingService templateMatchingService, IFlowService flowService, IBaseDatawork baseDatawork) 
+        public FlowStepDetailMouseMoveViewModel(FlowStep flowStep, ISystemService systemService, ITemplateMatchingService templateMatchingService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-            _flowService = flowService;
 
-            _flowStep = flowStep;
-            _flowsViewModel = flowsViewModel;
+            FlowStep = flowStep;
+            Parents = GetParents();
 
-
-            MouseButtonsEnum = Enum.GetValues(typeof(MouseButtonsEnum)).Cast<MouseButtonsEnum>();
-            MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
         }
-
 
         [RelayCommand]
         private void OnButtonCancelClick()
@@ -96,5 +82,22 @@ namespace ModernAiClicker.ViewModels.Pages
             _baseDatawork.SaveChanges();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
+
+        private ObservableCollection<FlowStep> GetParents()
+        {
+            if (FlowStep.ParentFlowStepId == null)
+                return new ObservableCollection<FlowStep>();
+
+
+            List<FlowStep> parents = _baseDatawork.FlowSteps
+                .GetAll()
+                .First(x => x.Id == FlowStep.ParentFlowStepId)
+                .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
+                .ToList();
+
+            return new ObservableCollection<FlowStep>(parents);
+
+        }
+
     }
 }

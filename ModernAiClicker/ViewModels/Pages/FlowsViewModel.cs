@@ -203,7 +203,7 @@ namespace ModernAiClicker.ViewModels.Pages
         private void OnButtonAddFlowClick()
         {
             Flow flow = new Flow();
-            FlowStep newFlowStep = new FlowStep() { IsNew = true };
+            FlowStep newFlowStep = new FlowStep();
             newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
 
             flow.FlowSteps.Add(newFlowStep);
