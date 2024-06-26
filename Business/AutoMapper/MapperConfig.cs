@@ -8,24 +8,21 @@ using System.Threading.Tasks;
 
 namespace Business.AutoMapper
 {
-    public class MapperConfig: Profile
+    public class MapperConfig : Profile
     {
         public MapperConfig()
         {
-            CreateMap<Flow, FlowDto>().MaxDepth(1);
-            CreateMap<FlowDto, Flow>().MaxDepth(1);
+            CreateMap<Flow, FlowDto>();
+            CreateMap<FlowDto, Flow>();
 
-            CreateMap<FlowStep, FlowStepDto>().MaxDepth(1);
-            CreateMap<FlowStepDto, FlowStep>().MaxDepth(1);
+            CreateMap<FlowStep, FlowStepDto>();
+            CreateMap<FlowStepDto, FlowStep>();
+
+            CreateMap<Execution, ExecutionDto>();
+            CreateMap<ExecutionDto, Execution>();
         }
     }
 }
-
-
-
-
-
-
 
 
 

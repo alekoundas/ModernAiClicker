@@ -13,6 +13,8 @@ using System.DirectoryServices;
 using System.Windows.Forms;
 using System.Data;
 using System.Management;
+using AutoMapper;
+using System.Runtime.Intrinsics.X86;
 
 namespace Business.Services
 {
@@ -152,11 +154,21 @@ namespace Business.Services
             SetCursorPos(x, y);
         }
 
-
         public async Task UpdateFlowsJSON(List<Flow> flows)
         {
+            var mapper = new MapperConfiguration(x =>
+            {
+                x.CreateMap<Flow, FlowDto>();
+                x.CreateMap<FlowStep, FlowStepDto>();
+                x.CreateMap<Execution, ExecutionDto>();
+            }
+            ).CreateMapper();
 
-            string json = JsonConvert.SerializeObject(flows, Formatting.Indented, new JsonSerializerSettings
+
+            List<FlowDto> flowsDto = mapper.Map<List<FlowDto>>(flows);
+
+
+            string json = JsonConvert.SerializeObject(flowsDto, Formatting.Indented, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
@@ -164,6 +176,18 @@ namespace Business.Services
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), "Flows.json");
             await File.WriteAllTextAsync(filePath, json);
         }
+
+        //public async Task UpdateFlowsJSON(List<Flow> flows)
+        //{
+
+        //    string json = JsonConvert.SerializeObject(flows, Formatting.Indented, new JsonSerializerSettings
+        //    {
+        //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        //    });
+
+        //    string filePath = Path.Combine(PathHelper.GetAppDataPath(), "Flows.json");
+        //    await File.WriteAllTextAsync(filePath, json);
+        //}
 
         public List<Flow>? LoadFlowsJSON()
         {

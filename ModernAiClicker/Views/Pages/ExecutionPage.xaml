@@ -10,6 +10,7 @@
     xmlns:local="clr-namespace:ModernAiClicker.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Model.Models;assembly=Model"
+    xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:ModernAiClicker.ViewModels.Pages"
     Title="ExecutionPage"
@@ -182,383 +183,351 @@
 
 
 
-    <StackPanel>
+
+
+    <Grid VerticalAlignment="Top">
+
+        <!--  Grid Definition  -->
+        <Grid.Resources>
+            <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
+            <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
+            <ObjectDataProvider
+                x:Key="FlowStepTypesEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="enum:FlowStepTypesEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="0.6*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+
+
+
         <!--  Flows Dropdown  -->
-        <Grid VerticalAlignment="Top">
+        <ComboBox
+            Name="ProcessList"
+            Margin="0,0,0,20"
+            DisplayMemberPath="Id"
+            ItemsSource="{Binding ViewModel.ComboBoxFlows}"
+            SelectedItem="{Binding ViewModel.ComboBoxSelectedFlow}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ComboBox>
 
-            <!--  Grid Definition  -->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="0.1*" />
-            </Grid.ColumnDefinitions>
+        <!--  Frame  -->
 
-            <ComboBox
-                Name="ProcessList"
-                Grid.Column="2"
-                Grid.ColumnSpan="2"
-                Margin="0,0,0,20"
-                DisplayMemberPath="Id"
-                ItemsSource="{Binding ViewModel.ComboBoxFlows}"
-                SelectedItem="{Binding ViewModel.ComboBoxSelectedFlow}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-        </Grid>
-
-        <Grid VerticalAlignment="Top">
-
-            <!--  Grid Definition  -->
-            <Grid.Resources>
-                <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
-                <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
-                <ObjectDataProvider
-                    x:Key="FlowStepTypesEnum"
-                    MethodName="GetValues"
-                    ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:FlowStepTypesEnum" />
-                    </ObjectDataProvider.MethodParameters>
-                </ObjectDataProvider>
-            </Grid.Resources>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="0.1*" />
-            </Grid.ColumnDefinitions>
-
-            <!--  Frame  -->
-            <GroupBox
-                Grid.Row="0"
-                Grid.Column="0"
-                Grid.ColumnSpan="3"
-                MinHeight="400"
-                Margin="0,0,20,50"
-                Padding="10,20,0,10">
-                <ScrollViewer>
-                    <Frame
-                        x:Name="UIFlowStepDetailFrame"
-                        ScrollViewer.CanContentScroll="True"
-                        ScrollViewer.VerticalScrollBarVisibility="Visible" />
-                </ScrollViewer>
-            </GroupBox>
+        <GroupBox
+            Grid.Row="1"
+            Margin="0,0,20,50"
+            Padding="10,20,0,10">
+            <ScrollViewer>
+                <Frame
+                    x:Name="UIFlowStepDetailFrame"
+                    ScrollViewer.CanContentScroll="True"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible" />
+            </ScrollViewer>
+        </GroupBox>
 
 
-            <!--  TreeView  -->
-            <StackPanel
-                Grid.Row="0"
-                Grid.Column="3"
-                Grid.ColumnSpan="2"
-                VerticalAlignment="Top">
-
-                <!--  TreeView  -->
-                <Border
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    BorderBrush="White"
-                    BorderThickness="2"
-                    CornerRadius="2">
-
-                    <TreeView
-                        x:Name="FlowsTreeview"
-                        HorizontalContentAlignment="Stretch"
-                        AllowDrop="True"
-                        ItemContainerStyle="{StaticResource TreeViewItemStyle1}"
-                        ItemsSource="{Binding ViewModel.TreeviewFlows}">
-                        <!--  Set SelectedItem on change  -->
-                        <!--<i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectedItemChanged">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.TreeViewItemSelectedCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <i:Interaction.Behaviors>
-                        <converters:TreeViewDragDropBehavior />
-                        </i:Interaction.Behaviors>-->
 
 
-                        <TreeView.Resources>
-                            <!--<CollectionViewSource x:Key="Items" Source="{Binding OrderingNum}">
-                            <CollectionViewSource.SortDescriptions>
-                            <scm:SortDescription PropertyName="OrderingNum" />
-                            </CollectionViewSource.SortDescriptions>
-                            </CollectionViewSource>-->
 
 
-                            <!--  Parent TreeViewItem  -->
-                            <HierarchicalDataTemplate DataType="{x:Type models:Flow}" ItemsSource="{Binding FlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">
-                                <Border
-                                    BorderBrush="White"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="0.4*" />
-                                            <ColumnDefinition Width="1*" />
-                                            <ColumnDefinition Width="1*" />
-                                            <ColumnDefinition Width="0.1*" />
-                                        </Grid.ColumnDefinitions>
+        <!--  TreeView  -->
+        <Border
+            Grid.Row="1"
+            Grid.Column="1"
+            BorderBrush="White"
+            BorderThickness="2"
+            CornerRadius="2">
 
 
-                                        <TextBlock
-                                            Grid.Column="0"
+            <TreeView
+                x:Name="FlowsTreeview"
+                HorizontalContentAlignment="Stretch"
+                AllowDrop="True"
+                ItemContainerStyle="{StaticResource TreeViewItemStyle1}"
+                ItemsSource="{Binding ViewModel.TreeviewFlows}">
+
+
+                <TreeView.Resources>
+
+                    <!--  Parent TreeViewItem  -->
+                    <HierarchicalDataTemplate DataType="{x:Type models:Flow}" ItemsSource="{Binding FlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">
+                        <Border
+                            BorderBrush="White"
+                            BorderThickness="1"
+                            CornerRadius="5">
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.4*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="0.1*" />
+                                </Grid.ColumnDefinitions>
+
+
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Padding="10"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
+                                    <Run Text="{Binding OrderingNum}" />
+                                    <Run Text="." />
+                                </TextBlock>
+
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Padding="10"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
+                                    Text="{Binding Name}" />
+
+                                <Button
+                                    x:Name="TreeViewItemFlowDeleteButton"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="2"
+                                    Grid.ColumnSpan="2"
+                                    Margin="5"
+                                    Padding="10"
+                                    HorizontalAlignment="Right"
+                                    Content="Delete">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowButtonDeleteClickCommand}">
+                                                <i:InvokeCommandAction.CommandParameter>
+                                                    <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                        <Binding ElementName="TreeViewItemFlowDeleteButton" />
+                                                        <Binding Path="Id" />
+                                                    </MultiBinding>
+                                                </i:InvokeCommandAction.CommandParameter>
+                                            </i:InvokeCommandAction>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+
+                            </Grid>
+                        </Border>
+
+                    </HierarchicalDataTemplate>
+
+
+                    <HierarchicalDataTemplate DataType="{x:Type models:FlowStep}" ItemsSource="{Binding ChildrenFlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">
+                        <Border
+                            BorderBrush="White"
+                            BorderThickness="1"
+                            CornerRadius="5">
+
+                            <!--  TreeViewItem ContentPresenter Presentations  -->
+                            <ContentPresenter Content="{Binding}">
+                                <ContentPresenter.Resources>
+
+
+                                    <!--  Child TreeViewItem Existing ContentPresenter (Existing Flow Step)  -->
+                                    <DataTemplate x:Key="FlowStepExisting">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="0.4*" />
+                                                <ColumnDefinition Width="1*" />
+                                                <ColumnDefinition Width="0.1*" />
+                                                <ColumnDefinition Width="0*" />
+                                                <ColumnDefinition Width="0*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="1*" />
+                                                <RowDefinition Height="1*" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="0"
+                                                Padding="10"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
+                                                <Run Text="{Binding OrderingNum}" />
+                                                <Run Text="." />
+                                            </TextBlock>
+
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Padding="10"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
+                                                Text="{Binding Name}" />
+
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Padding="10"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
+                                                Text="{Binding FlowStepType}" />
+
+                                            <!--  Arrows Up/Down  -->
+                                            <Button
+                                                x:Name="TreeViewItemButtonUp"
+                                                Grid.Column="2"
+                                                Margin="5"
+                                                Padding="10"
+                                                HorizontalAlignment="Right"
+                                                Content="^">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="Click">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
+                                                            <i:InvokeCommandAction.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
+                                                                    <Binding Path="FlowId" />
+                                                                    <Binding Path="Id" />
+                                                                </MultiBinding>
+                                                            </i:InvokeCommandAction.CommandParameter>
+                                                        </i:InvokeCommandAction>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </Button>
+                                            <Button
+                                                x:Name="TreeViewItemButtonDown"
+                                                Grid.Row="1"
+                                                Grid.Column="2"
+                                                Margin="5"
+                                                Padding="10"
+                                                HorizontalAlignment="Right"
+                                                Content="^">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="Click">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
+                                                            <i:InvokeCommandAction.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
+                                                                    <Binding Path="FlowId" />
+                                                                    <Binding Path="Id" />
+                                                                </MultiBinding>
+                                                            </i:InvokeCommandAction.CommandParameter>
+                                                        </i:InvokeCommandAction>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </Button>
+
+                                            <!--  Delete  -->
+                                            <Button
+                                                x:Name="TreeViewItemButtonDelete"
+                                                Grid.Row="0"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="3"
+                                                Margin="5"
+                                                Padding="10"
+                                                HorizontalAlignment="Right"
+                                                Content="Delete">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="Click">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
+                                                            <i:InvokeCommandAction.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
+                                                                    <Binding Path="FlowId" />
+                                                                    <Binding Path="Id" />
+                                                                </MultiBinding>
+                                                            </i:InvokeCommandAction.CommandParameter>
+                                                        </i:InvokeCommandAction>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+
+
+
+                                    <!--  Child TreeViewItem New ContentPresenter  (New Flow Step)  -->
+                                    <DataTemplate x:Key="FlowStepNew">
+                                        <ui:Button
+                                            x:Name="TreeViewItemButtonNew"
                                             Padding="10"
-                                            VerticalAlignment="Center"
-                                            Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
-                                            <Run Text="{Binding OrderingNum}" />
-                                            <Run Text="." />
-                                        </TextBlock>
-
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            Padding="10"
-                                            VerticalAlignment="Center"
-                                            Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
-                                            Text="{Binding Name}" />
-
-                                        <Button
-                                            x:Name="TreeViewItemFlowDeleteButton"
-                                            Grid.Row="0"
-                                            Grid.RowSpan="2"
-                                            Grid.Column="2"
-                                            Grid.ColumnSpan="2"
-                                            Margin="5"
-                                            Padding="10"
-                                            HorizontalAlignment="Right"
-                                            Content="Delete">
+                                            HorizontalAlignment="Center"
+                                            Content="Add">
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="Click">
-                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowButtonDeleteClickCommand}">
+                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemButtonNewClickCommand}" PassEventArgsToCommand="True">
                                                         <i:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemFlowDeleteButton" />
+                                                                <Binding ElementName="TreeViewItemButtonNew" />
+                                                                <Binding Path="FlowId" />
                                                                 <Binding Path="Id" />
                                                             </MultiBinding>
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>
-                                        </Button>
-
-                                    </Grid>
-                                </Border>
-
-                            </HierarchicalDataTemplate>
-
-
-                            <HierarchicalDataTemplate DataType="{x:Type models:FlowStep}" ItemsSource="{Binding ChildrenFlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">
-                                <Border
-                                    BorderBrush="White"
-                                    BorderThickness="1"
-                                    CornerRadius="5">
-
-                                    <!--  TreeViewItem ContentPresenter Presentations  -->
-                                    <ContentPresenter Content="{Binding}">
-                                        <ContentPresenter.Resources>
-
-
-                                            <!--  Child TreeViewItem Existing ContentPresenter (Existing Flow Step)  -->
-                                            <DataTemplate x:Key="FlowStepExisting">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="0.4*" />
-                                                        <ColumnDefinition Width="1*" />
-                                                        <ColumnDefinition Width="0.1*" />
-                                                        <ColumnDefinition Width="0*" />
-                                                        <ColumnDefinition Width="0*" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="1*" />
-                                                        <RowDefinition Height="1*" />
-                                                    </Grid.RowDefinitions>
-
-                                                    <TextBlock
-                                                        Grid.Row="0"
-                                                        Grid.RowSpan="2"
-                                                        Grid.Column="0"
-                                                        Padding="10"
-                                                        VerticalAlignment="Center"
-                                                        Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
-                                                        <Run Text="{Binding OrderingNum}" />
-                                                        <Run Text="." />
-                                                    </TextBlock>
-
-                                                    <TextBlock
-                                                        Grid.Row="0"
-                                                        Grid.Column="1"
-                                                        Padding="10"
-                                                        VerticalAlignment="Center"
-                                                        Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
-                                                        Text="{Binding Name}" />
-
-                                                    <TextBlock
-                                                        Grid.Row="1"
-                                                        Grid.Column="1"
-                                                        Padding="10"
-                                                        VerticalAlignment="Center"
-                                                        Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
-                                                        Text="{Binding FlowStepType}" />
-
-                                                    <!--  Arrows Up/Down  -->
-                                                    <Button
-                                                        x:Name="TreeViewItemButtonUp"
-                                                        Grid.Column="2"
-                                                        Margin="5"
-                                                        Padding="10"
-                                                        HorizontalAlignment="Right"
-                                                        Content="^">
-                                                        <i:Interaction.Triggers>
-                                                            <i:EventTrigger EventName="Click">
-                                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
-                                                                    <i:InvokeCommandAction.CommandParameter>
-                                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                            <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                            <Binding Path="FlowId" />
-                                                                            <Binding Path="Id" />
-                                                                        </MultiBinding>
-                                                                    </i:InvokeCommandAction.CommandParameter>
-                                                                </i:InvokeCommandAction>
-                                                            </i:EventTrigger>
-                                                        </i:Interaction.Triggers>
-                                                    </Button>
-                                                    <Button
-                                                        x:Name="TreeViewItemButtonDown"
-                                                        Grid.Row="1"
-                                                        Grid.Column="2"
-                                                        Margin="5"
-                                                        Padding="10"
-                                                        HorizontalAlignment="Right"
-                                                        Content="^">
-                                                        <i:Interaction.Triggers>
-                                                            <i:EventTrigger EventName="Click">
-                                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
-                                                                    <i:InvokeCommandAction.CommandParameter>
-                                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                            <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                            <Binding Path="FlowId" />
-                                                                            <Binding Path="Id" />
-                                                                        </MultiBinding>
-                                                                    </i:InvokeCommandAction.CommandParameter>
-                                                                </i:InvokeCommandAction>
-                                                            </i:EventTrigger>
-                                                        </i:Interaction.Triggers>
-                                                    </Button>
-
-                                                    <!--  Delete  -->
-                                                    <Button
-                                                        x:Name="TreeViewItemButtonDelete"
-                                                        Grid.Row="0"
-                                                        Grid.RowSpan="2"
-                                                        Grid.Column="3"
-                                                        Margin="5"
-                                                        Padding="10"
-                                                        HorizontalAlignment="Right"
-                                                        Content="Delete">
-                                                        <i:Interaction.Triggers>
-                                                            <i:EventTrigger EventName="Click">
-                                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
-                                                                    <i:InvokeCommandAction.CommandParameter>
-                                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                            <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                            <Binding Path="FlowId" />
-                                                                            <Binding Path="Id" />
-                                                                        </MultiBinding>
-                                                                    </i:InvokeCommandAction.CommandParameter>
-                                                                </i:InvokeCommandAction>
-                                                            </i:EventTrigger>
-                                                        </i:Interaction.Triggers>
-                                                    </Button>
-                                                </Grid>
-                                            </DataTemplate>
+                                        </ui:Button>
+                                    </DataTemplate>
 
 
 
-                                            <!--  Child TreeViewItem New ContentPresenter  (New Flow Step)  -->
-                                            <DataTemplate x:Key="FlowStepNew">
-                                                <ui:Button
-                                                    x:Name="TreeViewItemButtonNew"
-                                                    Padding="10"
-                                                    HorizontalAlignment="Center"
-                                                    Content="Add">
-                                                    <i:Interaction.Triggers>
-                                                        <i:EventTrigger EventName="Click">
-                                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemButtonNewClickCommand}" PassEventArgsToCommand="True">
-                                                                <i:InvokeCommandAction.CommandParameter>
-                                                                    <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                        <Binding ElementName="TreeViewItemButtonNew" />
-                                                                        <Binding Path="FlowId" />
-                                                                        <Binding Path="Id" />
-                                                                    </MultiBinding>
-                                                                </i:InvokeCommandAction.CommandParameter>
-                                                            </i:InvokeCommandAction>
-                                                        </i:EventTrigger>
-                                                    </i:Interaction.Triggers>
-                                                </ui:Button>
-                                            </DataTemplate>
+                                    <!--  Child TreeViewItem Success/Fail ContentPresenter  (Success/Fail Flow Step)  -->
+                                    <DataTemplate x:Key="FlowStepSuccessFail">
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Padding="10"
+                                            VerticalAlignment="Center"
+                                            Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
+                                            Text="{Binding Name}" />
+                                    </DataTemplate>
+
+
+                                </ContentPresenter.Resources>
 
 
 
-                                            <!--  Child TreeViewItem Success/Fail ContentPresenter  (Success/Fail Flow Step)  -->
-                                            <DataTemplate x:Key="FlowStepSuccessFail">
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    Padding="10"
-                                                    VerticalAlignment="Center"
-                                                    Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
-                                                    Text="{Binding Name}" />
-                                            </DataTemplate>
+                                <!--  ContentPresenter Triggers  -->
+                                <ContentPresenter.Style>
+                                    <Style TargetType="{x:Type ContentPresenter}">
+                                        <!--  Default  -->
+                                        <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExisting}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}">
+                                                <Setter Property="ContentTemplate" Value="{StaticResource FlowStepNew}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_FAILURE}">
+                                                <Setter Property="ContentTemplate" Value="{StaticResource FlowStepSuccessFail}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_SUCCESS}">
+                                                <Setter Property="ContentTemplate" Value="{StaticResource FlowStepSuccessFail}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ContentPresenter.Style>
 
+                            </ContentPresenter>
+                        </Border>
 
-                                        </ContentPresenter.Resources>
-
-
-
-                                        <!--  ContentPresenter Triggers  -->
-                                        <ContentPresenter.Style>
-                                            <Style TargetType="{x:Type ContentPresenter}">
-                                                <!--  Default  -->
-                                                <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExisting}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}">
-                                                        <Setter Property="ContentTemplate" Value="{StaticResource FlowStepNew}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_FAILURE}">
-                                                        <Setter Property="ContentTemplate" Value="{StaticResource FlowStepSuccessFail}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_SUCCESS}">
-                                                        <Setter Property="ContentTemplate" Value="{StaticResource FlowStepSuccessFail}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ContentPresenter.Style>
-
-                                    </ContentPresenter>
-                                </Border>
-
-                            </HierarchicalDataTemplate>
+                    </HierarchicalDataTemplate>
 
 
 
 
-                        </TreeView.Resources>
-                    </TreeView>
-                </Border>
+                </TreeView.Resources>
+            </TreeView>
+        </Border>
 
-            </StackPanel>
-        </Grid>
-    </StackPanel>
+    </Grid>
 </Page>
 
 

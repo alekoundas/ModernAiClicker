@@ -14,6 +14,7 @@ namespace DataAccess
 
         public IFlowRepository Flows { get; set; }
         public IFlowStepRepository FlowSteps { get; set; }
+        public IExecutionRepository Executions { get; set; }
 
         public BaseDatawork(InMemoryDbContext baseDbContext)
         {
@@ -21,6 +22,7 @@ namespace DataAccess
             _dbContext = baseDbContext;
             Flows = new FlowRepository(_dbContext);
             FlowSteps = new FlowStepRepository(_dbContext);
+            Executions = new ExecutionRepository(_dbContext);
         }
 
 

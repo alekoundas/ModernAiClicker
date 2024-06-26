@@ -1,20 +1,18 @@
 ﻿using Business.Helpers;
 using Business.Interfaces;
 using Model.Business;
-using Model.Structs;
 using OpenCvSharp;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Business.Services
 {
-    public class TemplateMatchingService : ITemplateMatchingService
+    public class TemplateSearchService : ITemplateSearchService
     {
         public ISystemService SystemService;
-        public TemplateMatchingService(ISystemService systemService)
+        public TemplateSearchService(ISystemService systemService)
         {
             SystemService = systemService;
         }

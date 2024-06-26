@@ -38,7 +38,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
         private ObservableCollection<Flow> GetFlows()
         {
-            List<Flow> flows = _baseDatawork.Flows.Query.ToList();
+            List<Flow> flows = _baseDatawork.Flows.GetAll();
 
             return new ObservableCollection<Flow>(flows);
         }

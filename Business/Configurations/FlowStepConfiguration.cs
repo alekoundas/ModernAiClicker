@@ -16,6 +16,7 @@ namespace DataAccess.Configurations
                 .WithMany(x => x.FlowSteps)
                 .HasForeignKey(x => x.FlowId)
                 .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasOne(x => x.ParentFlowStep)
                 .WithMany(x => x.ChildrenFlowSteps)
                 .HasForeignKey(x => x.ParentFlowStepId)

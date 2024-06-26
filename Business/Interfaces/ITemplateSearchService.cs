@@ -3,7 +3,7 @@ using Model.Structs;
 
 namespace Business.Interfaces
 {
-    public interface ITemplateMatchingService
+    public interface ITemplateSearchService
     {
         TemplateMatchingResult SearchForTemplate(string templatePath, Rectangle windowRectangle);
     }

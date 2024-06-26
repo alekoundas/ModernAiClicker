@@ -24,13 +24,11 @@ namespace ModernAiClicker.ViewModels.Pages
         private Flow? _selectedFlow;
         private FlowStep? _selectedFlowStep;
 
-        public readonly IFlowService FlowService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
-        public FlowsViewModel(IFlowService flowService, IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork)
+        public FlowsViewModel( IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork)
         {
-            FlowService = flowService;
             _baseDatawork = baseDatawork;
             _systemService = systemService;
 
@@ -200,7 +198,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
         [RelayCommand]
-        private void OnButtonAddFlowClick()
+        private async Task OnButtonAddFlowClick()
         {
             Flow flow = new Flow();
             FlowStep newFlowStep = new FlowStep();
@@ -210,7 +208,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
             _baseDatawork.Flows.Add(flow);
             _baseDatawork.SaveChanges();
-            _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+           await  _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
             RefreshData();
         }

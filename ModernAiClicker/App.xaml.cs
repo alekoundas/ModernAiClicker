@@ -6,6 +6,7 @@
 using AutoMapper;
 using Business.AutoMapper;
 using Business.DatabaseContext;
+using Business.Factories;
 using Business.Interfaces;
 using Business.Repository.Entities;
 using Business.Repository.Interfaces;
@@ -52,10 +53,6 @@ namespace ModernAiClicker
             {
                 services.AddHostedService<ApplicationHostService>();
 
-                //services.addj()
-                //       .AddJsonOptions(
-                //           options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                //       );
 
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
@@ -64,8 +61,9 @@ namespace ModernAiClicker
                 services.AddSingleton<ISnackbarService, SnackbarService>();
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
                 services.AddSingleton<ISystemService, SystemService>();
-                services.AddSingleton<ITemplateMatchingService, TemplateMatchingService>();
-                services.AddSingleton<IFlowService, FlowService>();
+                services.AddSingleton<ITemplateSearchService, TemplateSearchService>();
+                services.AddSingleton<IExecutionFactory, ExecutionFactory>();
+
 
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
@@ -86,8 +84,8 @@ namespace ModernAiClicker
                 services.AddSingleton<FrameExecutionFlowPage>();
                 services.AddSingleton<FrameExecutionFlowViewModel>();
 
-                services.AddSingleton<FlowStepDetailTemplateMatchingPage>();
-                services.AddSingleton<FlowStepDetailTemplateMatchingViewModel>();
+                services.AddSingleton<FlowStepDetailTemplateSearchPage>();
+                services.AddSingleton<FlowStepDetailTemplateSearchViewModel>();
 
                 services.AddSingleton<FlowStepDetailMouseClickPage>();
                 services.AddSingleton<FlowStepDetailMouseClickViewModel>();
@@ -95,33 +93,17 @@ namespace ModernAiClicker
                 services.AddSingleton<SettingsPage>();
                 services.AddSingleton<SettingsViewModel>();
 
-                //services.AddAutoMapper(x => new MapperConfig());
+                services.AddAutoMapper(x => new MapperConfig());
 
                 services.AddDbContext<InMemoryDbContext>();
-                //options =>
-                //{
-                //    options..UseSqlite("Data Source=customers.db");
-                //    options.UseLazyLoadingProxies();
-                //});
 
 
                 var dbContext = services.BuildServiceProvider().GetService<InMemoryDbContext>();
                 if (dbContext != null)
                 {
-                    //var steps = new ObservableCollection<FlowStep>();
-                    //steps.Add(new FlowStep() { IsNew = true });
-
-                    //dbContext.Flows.Add(new Flow()
-                    //{
-                    //    Name = "",
-                    //    Favorite = true,
-                    //    IsNew = true,
-                    //    FlowSteps = steps
-                    //});
                     var ss = SetTestData();
                     if (ss != null)
                     {
-
                         dbContext.Flows.AddRange(ss);
                         dbContext.SaveChanges();
                     }

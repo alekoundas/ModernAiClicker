@@ -15,8 +15,7 @@ namespace ModernAiClicker.ViewModels.Pages
     public partial class FlowStepDetailMouseClickViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
-        private readonly ITemplateMatchingService _templateMatchingService;
-        private readonly IFlowService _flowService;
+        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private FlowsViewModel _flowsViewModel;
 
@@ -35,13 +34,12 @@ namespace ModernAiClicker.ViewModels.Pages
         private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
 
 
-        public FlowStepDetailMouseClickViewModel(FlowStep flowStep,FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateMatchingService templateMatchingService, IFlowService flowService, IBaseDatawork baseDatawork) 
+        public FlowStepDetailMouseClickViewModel(FlowStep flowStep,FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork) 
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-            _flowService = flowService;
 
             _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;

@@ -16,7 +16,7 @@ namespace ModernAiClicker.ViewModels.Pages
     public partial class FlowStepDetailMouseMoveViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
-        private readonly ITemplateMatchingService _templateMatchingService;
+        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private bool _isInitialized = false;
 
@@ -26,7 +26,7 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents;
 
-        public FlowStepDetailMouseMoveViewModel(FlowStep flowStep, ISystemService systemService, ITemplateMatchingService templateMatchingService, IBaseDatawork baseDatawork)
+        public FlowStepDetailMouseMoveViewModel(FlowStep flowStep, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;

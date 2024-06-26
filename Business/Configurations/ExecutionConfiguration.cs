@@ -9,16 +9,31 @@ namespace DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Execution> builder)
         {
             builder.HasIndex(x => x.Id).IsUnique();
+            builder.HasKey(x => x.Id);
 
             builder.HasOne(x => x.Flow)
-                .WithOne(x => x.Execution)
-                .HasForeignKey<Execution>(x => x.FlowId)
+                .WithMany(x => x.Executions)
+                .HasForeignKey(x => x.FlowId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.FlowStep)
+                .WithMany(x => x.Executions)
+                .HasForeignKey(x => x.FlowStepId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 
 
-            builder.HasOne(x => x.FlowStep)
-                .WithOne(x => x.Execution)
-                .HasForeignKey<Execution>(x => x.FlowStepId)
+            builder.HasOne(x => x.ParentExecution)
+                .WithOne(x => x.ChildExecution)
+                .HasForeignKey<Execution>(x => x.ParentExecutionId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.ChildExecution)
+                .WithOne(x => x.ParentExecution)
+                .HasForeignKey<Execution>(x => x.ChildExecutionId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

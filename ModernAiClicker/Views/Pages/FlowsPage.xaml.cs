@@ -15,17 +15,15 @@ namespace ModernAiClicker.Views.Pages
     {
         public FlowsViewModel ViewModel { get; }
         private readonly ISystemService _systemService;
-        private readonly ITemplateMatchingService _templateMatchingService;
-        private readonly IFlowService _flowService;
+        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
 
 
-        public FlowsPage(FlowsViewModel viewModel, ISystemService systemService, ITemplateMatchingService templateMatchingService, IFlowService flowService, IBaseDatawork baseDatawork)
+        public FlowsPage(FlowsViewModel viewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-            _flowService = flowService;
 
             ViewModel = viewModel;
             DataContext = this;
@@ -43,7 +41,7 @@ namespace ModernAiClicker.Views.Pages
             FlowStepDetailNewSelectTypeViewModel detailViewModel = new FlowStepDetailNewSelectTypeViewModel(_baseDatawork);
             detailViewModel.FlowStep = flowStep;
 
-            UIFlowStepTypeSelectionFrame.Navigate(new FlowStepDetailNewSelectTypePage(detailViewModel, ViewModel, _systemService, _templateMatchingService, _flowService, _baseDatawork));
+            UIFlowStepTypeSelectionFrame.Navigate(new FlowStepDetailNewSelectTypePage(detailViewModel, ViewModel, _systemService, _templateMatchingService, _baseDatawork));
         }
 
     }

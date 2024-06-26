@@ -23,8 +23,6 @@ namespace DataAccess.Repository
 
         public IQueryable<TEntity> Query => Context.Set<TEntity>();
 
-
-        //excell reflection call
         public async Task<List<TEntity>> GetAllAsync()
         {
             return await _set.ToListAsync();
@@ -181,8 +179,6 @@ namespace DataAccess.Repository
             return await qry.FirstOrDefaultAsync(filter);
         }
 
-
-        //Reflection
         public async Task<List<TEntity>> GetFiltered(Expression<Func<TEntity, bool>> filter)
         {
             return await _set.Where(filter).ToListAsync();

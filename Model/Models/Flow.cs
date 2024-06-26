@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Model.Enums;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -10,10 +11,6 @@ namespace Model.Models
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
 
-        public bool Favorite { get; set; }
-        [ObservableProperty]
-
-        public bool _isNew = false;
         public bool IsSelected { get; set; }
 
         [ObservableProperty]
@@ -22,23 +19,8 @@ namespace Model.Models
         [ObservableProperty]
         public int _orderingNum;
 
-        public int? ExecutionId { get; set; }
-        public virtual Execution? Execution { get; set; }
-
         public virtual ObservableCollection<FlowStep> FlowSteps { get; set; } = new ObservableCollection<FlowStep>();
+        public virtual ObservableCollection<Execution>? Executions { get; set; } = new ObservableCollection<Execution>();
 
     }
-
-    public partial class FlowDto
-    {
-        public int Id;
-        public string Name { get; set; } = string.Empty;
-
-        public bool Favorite { get; set; }
-        public bool IsNew { get; set; }
-
-        public ObservableCollection<FlowStepDto> FlowSteps { get; set; } = new ObservableCollection<FlowStepDto>();
-
-    }
-
 }

@@ -19,33 +19,41 @@ namespace Model.Models
         public string _processName = string.Empty;
 
         [ObservableProperty]
-        public string _templateImagePath = "";
-
-        [ObservableProperty]
         public bool _isExpanded = true;
 
         [ObservableProperty]
         public int _orderingNum;
 
-
         [ObservableProperty]
         public FlowStepTypesEnum _flowStepType;
 
-        public double Accuracy { get; set; } = 0.00d;
+     
         public bool Disabled { get; set; }
 
         public int? FlowId { get; set; }
         public virtual Flow? Flow { get; set; }
 
-        public int? ExecutionId { get; set; }
-        public virtual Execution? Execution { get; set; }
-
         public int? ParentFlowStepId { get; set; }
         public virtual FlowStep? ParentFlowStep { get; set; }
 
         public virtual ObservableCollection<FlowStep>? ChildrenFlowSteps { get; set; }
+        public virtual ObservableCollection<Execution>?  Executions { get; set; }
+
+
+
+
+
+
 
         //TODO create tables for the bellow
+
+        // Template search
+        [ObservableProperty]
+        public string _templateImagePath = "";
+
+        [ObservableProperty]
+        public double _accuracy = 0.00d;
+
 
         // Mouse
         [ObservableProperty]
@@ -66,26 +74,4 @@ namespace Model.Models
         [ObservableProperty]
         public TimeOnly? _mouseLoopTime;
     }
-
-    public partial class FlowStepDto
-    {
-        public int id;
-
-        public string Name { get; set; } = string.Empty;
-        public string ProcessName { get; set; } = string.Empty;
-        public string TemplateImagePath { get; set; } = "";
-        public double Accuracy { get; set; } = 0.00d;
-        public bool Status { get; set; }
-        public bool Disabled { get; set; }
-        public bool IsNew { get; set; }
-
-        public FlowStepTypesEnum FlowStepType { get; set; }
-        public FlowStepActionsFoundEnum FlowStepActionsFound { get; set; }
-        public FlowStepActionsNotFoundEnum FlowStepActionsNotFound { get; set; }
-        [JsonIgnore]
-        public int FlowId { get; set; }
-        [JsonIgnore]
-        public FlowDto Flow { get; set; } = new FlowDto();
-    }
-
 }

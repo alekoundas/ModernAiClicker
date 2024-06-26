@@ -21,14 +21,13 @@ using System.Collections.ObjectModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowStepDetailTemplateMatchingViewModel : ObservableObject, INavigationAware
+    public partial class FlowStepDetailTemplateSearchViewModel : ObservableObject, INavigationAware
     {
         public event NavigateToFlowStepTypeSelectionPageEvent? NavigateToFlowStepTypeSelectionPage;
         public delegate void NavigateToFlowStepTypeSelectionPageEvent(FlowStep flowStep);
 
         private readonly ISystemService _systemService;
-        private readonly ITemplateMatchingService _templateMatchingService;
-        private readonly IFlowService _flowService;
+        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private FlowsViewModel _flowsViewModel;
 
@@ -49,13 +48,12 @@ namespace ModernAiClicker.ViewModels.Pages
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
-        public FlowStepDetailTemplateMatchingViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateMatchingService templateMatchingService, IFlowService flowService, IBaseDatawork baseDatawork)
+        public FlowStepDetailTemplateSearchViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-            _flowService = flowService;
 
             _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;

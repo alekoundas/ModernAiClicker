@@ -37,7 +37,7 @@
                     MethodName="GetValues"
                     ObjectType="{x:Type System:Enum}">
                     <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:MouseButtonEnum" />
+                        <x:Type TypeName="enum:MouseButtonsEnum" />
                     </ObjectDataProvider.MethodParameters>
                 </ObjectDataProvider>
             </Grid.Resources>

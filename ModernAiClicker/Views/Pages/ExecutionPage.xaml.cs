@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using Business.Factories;
+using Business.Interfaces;
 using DataAccess;
 using DataAccess.Repository.Interface;
 using Model.Models;
@@ -13,17 +14,22 @@ namespace ModernAiClicker.Views.Pages
     {
         public ExecutionViewModel ViewModel { get; }
         private readonly ISystemService _systemService;
-        private readonly ITemplateMatchingService _templateMatchingService;
-        private readonly IFlowService _flowService;
+        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
+        private readonly IExecutionFactory _executionFactory;
 
 
-        public ExecutionPage(ExecutionViewModel viewModel, ISystemService systemService, ITemplateMatchingService templateMatchingService, IFlowService flowService, IBaseDatawork baseDatawork)
+        public ExecutionPage(
+              ExecutionViewModel viewModel
+            , ISystemService systemService
+            , ITemplateSearchService templateMatchingService
+            , IBaseDatawork baseDatawork
+            , IExecutionFactory executionFactory)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-            _flowService = flowService;
+            _executionFactory = executionFactory;
 
             ViewModel = viewModel;
             DataContext = this;
@@ -35,10 +41,9 @@ namespace ModernAiClicker.Views.Pages
 
         public void FrameNavigateToFlow(Flow flow)
         {
-            FrameExecutionFlowViewModel frameViewModel = new FrameExecutionFlowViewModel(_baseDatawork, _flowService);
-            frameViewModel.Flow= flow;
-            _flowService.InitializeExecutionModels(flow);
-            UIFlowStepDetailFrame.Navigate(new FrameExecutionFlowPage(frameViewModel,_baseDatawork));
+            FrameExecutionFlowViewModel frameViewModel = new FrameExecutionFlowViewModel(_baseDatawork, _executionFactory);
+            frameViewModel.Flow = flow;
+            UIFlowStepDetailFrame.Navigate(new FrameExecutionFlowPage(frameViewModel, _baseDatawork));
         }
 
     }

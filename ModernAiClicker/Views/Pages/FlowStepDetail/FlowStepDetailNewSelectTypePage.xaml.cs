@@ -14,18 +14,16 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
     public partial class FlowStepDetailNewSelectTypePage : Page
     {
         private readonly ISystemService _systemService;
-        private readonly ITemplateMatchingService _templateMatchingService;
-        private readonly IFlowService _flowService;
+        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private FlowsViewModel _flowsViewModel;
         public FlowStepDetailNewSelectTypeViewModel ViewModel { get; }
 
-        public FlowStepDetailNewSelectTypePage(FlowStepDetailNewSelectTypeViewModel viewModel, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateMatchingService templateMatchingService, IFlowService flowService, IBaseDatawork baseDatawork)
+        public FlowStepDetailNewSelectTypePage(FlowStepDetailNewSelectTypeViewModel viewModel, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-            _flowService = flowService;
             _flowsViewModel = flowsViewModel;
 
 
@@ -43,15 +41,15 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
             if (flowStep.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
             {
 
-                FlowStepDetailTemplateMatchingViewModel viewModel = new FlowStepDetailTemplateMatchingViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _flowService, _baseDatawork);
-                this.UIFlowStepDetailFrame.Navigate(new FlowStepDetailTemplateMatchingPage(viewModel));
+                FlowStepDetailTemplateSearchViewModel viewModel = new FlowStepDetailTemplateSearchViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService,  _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new FlowStepDetailTemplateSearchPage(viewModel));
 
                 //this.UIFlowStepDetailFrame.RaiseEvent();
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_CLICK)
             {
 
-                FlowStepDetailMouseClickViewModel viewModel = new FlowStepDetailMouseClickViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _flowService, _baseDatawork);
+                FlowStepDetailMouseClickViewModel viewModel = new FlowStepDetailMouseClickViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new FlowStepDetailMouseClickPage(viewModel));
 
                 //this.UIFlowStepDetailFrame.RaiseEvent();
