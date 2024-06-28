@@ -20,7 +20,7 @@ namespace Model.Models
         public int _orderingNum;
 
         public virtual ObservableCollection<FlowStep> FlowSteps { get; set; } = new ObservableCollection<FlowStep>();
-        public virtual ObservableCollection<Execution>? Executions { get; set; } = new ObservableCollection<Execution>();
+        public virtual ObservableCollection<Execution> Executions { get; set; } = new ObservableCollection<Execution>();
 
     }
 }

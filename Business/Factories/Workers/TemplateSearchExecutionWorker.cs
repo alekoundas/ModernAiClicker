@@ -1,6 +1,7 @@
 ﻿using Business.Helpers;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 using Model.Business;
 using Model.Enums;
 using Model.Models;
@@ -68,14 +69,14 @@ namespace Business.Factories.Workers
             if (execution.IsSuccessful)
                 nextFlowStep = _baseDatawork.FlowSteps
                     .Where(x => x.Id == execution.FlowStepId)
-                    .Select(x => x.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
-                    .Select(x => x.ChildrenFlowSteps?.FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0))
+                    .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
+                    .Select(x => x?.ChildrenFlowSteps?.FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0))
                     .FirstOrDefault();
             else
                 nextFlowStep = _baseDatawork.FlowSteps
                     .Where(x => x.Id == execution.FlowStepId)
-                    .Select(x => x.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
-                    .Select(x => x.ChildrenFlowSteps?.FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0))
+                    .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
+                    .Select(x => x?.ChildrenFlowSteps?.FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0))
                     .FirstOrDefault();
 
 
@@ -91,19 +92,26 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            // Get next sibling flow step.
-            FlowStep? nextFlowStep;
-            Expression<Func<FlowStep, bool>> nextFlowStepFilter;
+            // Get next sibling flow step. 
+            Expression<Func<FlowStep, bool>> nextStepFilter;
 
-            nextFlowStepFilter = PredicateHelper.Create<FlowStep>(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
-            nextFlowStepFilter = nextFlowStepFilter.And(x => x.OrderingNum == execution.FlowStep.OrderingNum + 1);
-
-            if (execution.FlowStep?.ParentFlowStepId != null)
-                nextFlowStepFilter = nextFlowStepFilter.And(x => x.ParentFlowStepId == execution.FlowStep.ParentFlowStepId);
+            if (execution.FlowStep.ParentFlowStepId != null)
+                nextStepFilter = (x) =>
+                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
+                    && x.OrderingNum > execution.FlowStep.OrderingNum
+                    && x.ParentFlowStepId == execution.FlowStep.ParentFlowStepId;
             else
-                nextFlowStepFilter = nextFlowStepFilter.And(x => x.FlowId == execution.FlowStep.FlowId);
+                nextStepFilter = (x) =>
+                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
+                    && x.OrderingNum > execution.FlowStep.OrderingNum
+                    && x.FlowId == execution.FlowStep.FlowId;
 
-            nextFlowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(nextFlowStepFilter);
+            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps
+                .Where(nextStepFilter)
+                .ToListAsync();
+
+            FlowStep? nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
+
 
             //TODO return error message 
             if (nextFlowStep == null)

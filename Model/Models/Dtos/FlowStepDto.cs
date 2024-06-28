@@ -24,8 +24,8 @@ namespace Model.Models
         public int? FlowId { get; set; }
         public int? ParentFlowStepId { get; set; }
 
-        public virtual ObservableCollection<FlowStepDto>? ChildrenFlowSteps { get; set; }
-        public virtual ObservableCollection<ExecutionDto>? Executions { get; set; }
+        public virtual ObservableCollection<FlowStepDto> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStepDto>();
+        public virtual ObservableCollection<ExecutionDto> Executions { get; set; } = new ObservableCollection<ExecutionDto>();
 
 
 

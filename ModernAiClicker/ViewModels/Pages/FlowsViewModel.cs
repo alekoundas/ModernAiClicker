@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using Wpf.Ui.Controls;
 using Business.Services;
 using Model.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -27,7 +28,7 @@ namespace ModernAiClicker.ViewModels.Pages
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
-        public FlowsViewModel( IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork)
+        public FlowsViewModel(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
@@ -148,36 +149,38 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private async Task OnTreeViewItemFlowStepButtonDownClick(EventParammeters eventParameters)
         {
-            if (eventParameters.FlowStepId != null)
+            if (eventParameters.FlowStepId == null)
+                return;
+
+            bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
+
+            if (isFlowStepIdParsable)
             {
-                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
+                FlowStep? simplingBellow;
+                FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
 
-                if (isFlowStepIdParsable)
-                {
-                    FlowStep simplingBellow;
-                    FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+                if (flowStep.ParentFlowStepId != null)
+                    simplingBellow = await _baseDatawork.Query.FlowSteps
+                        .Where(x => x.Id == flowStep.ParentFlowStepId)
+                        .Select(x => x.ChildrenFlowSteps.FirstOrDefault(y => y.OrderingNum == flowStep.OrderingNum + 1
+                                                                          && y.FlowStepType != FlowStepTypesEnum.IS_NEW))
+                        .FirstOrDefaultAsync();
+                else
+                    simplingBellow = await _baseDatawork.Query.Flows
+                        .Where(x => x.Id == flowStep.FlowId)
+                        .Select(x => x.FlowSteps.FirstOrDefault(y => y.OrderingNum == flowStep.OrderingNum + 1
+                                                                  && y.FlowStepType != FlowStepTypesEnum.IS_NEW))
+                        .FirstOrDefaultAsync();
 
-                    if (flowStep.ParentFlowStepId != null)
-                        simplingBellow = _baseDatawork.FlowSteps
-                            .Where(x => x.Id == flowStep.ParentFlowStepId)
-                            .Select(x => x.ChildrenFlowSteps.FirstOrDefault(y => y.OrderingNum == flowStep.OrderingNum + 1 && y.FlowStepType != FlowStepTypesEnum.IS_NEW))
-                            .FirstOrDefault();
-                    else
-                        simplingBellow = _baseDatawork.Flows
-                            .Where(x => x.Id == flowStep.FlowId)
-                            .Select(x => x.FlowSteps.FirstOrDefault(y => y.OrderingNum == flowStep.OrderingNum + 1 && y.FlowStepType != FlowStepTypesEnum.IS_NEW))
-                            .FirstOrDefault();
+                if (simplingBellow == null)
+                    return;
 
-                    if (simplingBellow == null)
-                        return;
+                flowStep.OrderingNum++;
+                simplingBellow.OrderingNum--;
 
-                    flowStep.OrderingNum++;
-                    simplingBellow.OrderingNum--;
-
-                    _baseDatawork.SaveChanges();
-                    await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
-                    RefreshData();
-                }
+                _baseDatawork.SaveChanges();
+                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                RefreshData();
             }
         }
 
@@ -208,7 +211,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
             _baseDatawork.Flows.Add(flow);
             _baseDatawork.SaveChanges();
-           await  _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+            await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
             RefreshData();
         }

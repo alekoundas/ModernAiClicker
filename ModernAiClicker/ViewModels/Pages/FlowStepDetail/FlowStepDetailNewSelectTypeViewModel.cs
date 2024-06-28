@@ -19,8 +19,6 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private FlowStep? _flowStep;
 
-        private bool _isInitialized = false;
-
 
         public FlowStepDetailNewSelectTypeViewModel(IBaseDatawork baseDatawork)
         {

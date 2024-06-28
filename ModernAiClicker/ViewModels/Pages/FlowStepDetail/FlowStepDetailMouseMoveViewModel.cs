@@ -18,7 +18,6 @@ namespace ModernAiClicker.ViewModels.Pages
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
-        private bool _isInitialized = false;
 
         [ObservableProperty]
         private FlowStep _flowStep;

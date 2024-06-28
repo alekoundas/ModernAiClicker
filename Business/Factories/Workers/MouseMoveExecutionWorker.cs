@@ -38,10 +38,10 @@ namespace Business.Factories.Workers
             return execution;
         }
 
-        public async Task ExecuteFlowStepAction(Execution execution)
+        public Task ExecuteFlowStepAction(Execution execution)
         {
             if (execution.FlowStep == null)
-                return;
+                return Task.CompletedTask;
 
             Point pointToMove;
 
@@ -55,7 +55,7 @@ namespace Business.Factories.Workers
 
             _systemService.SetCursorPossition(pointToMove);
 
-            return;
+            return Task.CompletedTask;
         }
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)

@@ -31,8 +31,6 @@ namespace ModernAiClicker.ViewModels.Pages
         private readonly IBaseDatawork _baseDatawork;
         private FlowsViewModel _flowsViewModel;
 
-        private bool _isInitialized = false;
-
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 

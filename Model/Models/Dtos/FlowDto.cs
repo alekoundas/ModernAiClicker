@@ -13,8 +13,8 @@ namespace Model.Models
 
         public int OrderingNum;
 
-        public virtual ObservableCollection<FlowStepDto> FlowSteps { get; set; }
-        public virtual ObservableCollection<ExecutionDto>? Executions { get; set; }
+        public virtual ObservableCollection<FlowStepDto> FlowSteps { get; set; } = new ObservableCollection<FlowStepDto>();
+        public virtual ObservableCollection<ExecutionDto> Executions { get; set; } = new ObservableCollection<ExecutionDto>();
 
     }
 }

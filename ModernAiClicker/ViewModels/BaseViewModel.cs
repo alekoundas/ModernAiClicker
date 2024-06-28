@@ -14,11 +14,11 @@ namespace ModernAiClicker.ViewModels
 
         private IBaseDatawork _baseDatawork { get; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChangedEvent;
 
 
-        private ObservableCollection<Flow> _flowsList;
-        public ObservableCollection<Flow> FlowsList
+        private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
+        public ObservableCollection<Flow> FlowsList 
         {
             get { return _flowsList; }
             set
@@ -36,7 +36,7 @@ namespace ModernAiClicker.ViewModels
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
 

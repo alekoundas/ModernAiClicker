@@ -35,11 +35,11 @@ namespace DataAccess.Repository
 
         public async Task<List<TResult>> SelectAllAsync<TResult>(Expression<Func<TEntity, TResult>> selector)
         {
-            return (List<TResult>)await _set.Select(selector).ToListAsync();
+            return await _set.Select(selector).ToListAsync();
         }
         public async Task<List<TResult>> SelectAllAsyncFiltered<TResult>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TResult>> selector)
         {
-            return (List<TResult>)await _set.Where(predicate).Select(selector).ToListAsync();
+            return await _set.Where(predicate).Select(selector).ToListAsync();
         }
 
         public async Task<int> CountAllAsync()

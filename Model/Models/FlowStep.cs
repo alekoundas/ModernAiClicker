@@ -37,8 +37,8 @@ namespace Model.Models
         public int? ParentFlowStepId { get; set; }
         public virtual FlowStep? ParentFlowStep { get; set; }
 
-        public virtual ObservableCollection<FlowStep>? ChildrenFlowSteps { get; set; }
-        public virtual ObservableCollection<Execution>? Executions { get; set; }
+        public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
+        public virtual ObservableCollection<Execution> Executions { get; set; } = new ObservableCollection<Execution>();
 
 
 
@@ -79,7 +79,7 @@ namespace Model.Models
 
         public int? ParentTemplateSearchFlowStepId { get; set; }
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
-        public virtual ObservableCollection<FlowStep>? ChildrenTemplateSearchFlowSteps { get; set; }
+        public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
 
     }
 }

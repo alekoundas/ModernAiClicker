@@ -25,7 +25,7 @@ namespace ModernAiClicker.ViewModels.Pages
         private ObservableCollection<Flow> _treeviewFlows = new ObservableCollection<Flow>();
 
         [ObservableProperty]
-        private Flow _comboBoxSelectedFlow;
+        private Flow? _comboBoxSelectedFlow;
 
         private readonly IBaseDatawork _baseDatawork;
 
@@ -47,6 +47,9 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private void OnComboBoxSelectionChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
         {
+            if (ComboBoxSelectedFlow == null)
+                return;
+
             Flow flow = _baseDatawork.Flows.Query
                 .Include(x => x.FlowSteps)
                 .Where(x => x.Id == ComboBoxSelectedFlow.Id)
@@ -55,10 +58,7 @@ namespace ModernAiClicker.ViewModels.Pages
             TreeviewFlows.Clear();
             TreeviewFlows.Add(flow);
 
-
-            //TODO: select and expand item
             FrameNavigateToFlow?.Invoke(flow);
-
         }
 
         public void OnNavigatedTo()

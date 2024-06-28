@@ -20,6 +20,7 @@ using Model.Enums;
 
 namespace Business.Services
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class SystemService : ISystemService
     {
         public enum DpiType
@@ -40,7 +41,7 @@ namespace Business.Services
 
         [DllImport("user32.dll")]
         private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
-        
+
 
         //[DllImport("user32.dll")]
         //public static extern bool GetCursorPos(out Point lpPoint);
@@ -59,7 +60,11 @@ namespace Business.Services
             int Y = Cursor.Position.Y;
             int mouseButton = (int)mouseButtonEnum;
 
-            mouse_event(mouseButton, X, Y, 0, 0);
+            if (mouseButtonEnum == MouseButtonsEnum.RIGHT_BUTTON)
+                mouse_event(0x08, X, Y, 0, 0);
+            else if (mouseButtonEnum == MouseButtonsEnum.LEFT_BUTTON)
+                mouse_event(0x02, X, Y, 0, 0);
+
         }
 
 
@@ -102,27 +107,26 @@ namespace Business.Services
             int width = rectangle.Right - rectangle.Left;
             int height = rectangle.Bottom - rectangle.Top;
 
-            if (width > 0 && height > 0)
+            if (width <= 0 && height <= 0)
+                return null;
+
+            //Take screenshot
+            using (Bitmap bmp = new Bitmap(Math.Abs(width), height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
             {
-
-                //Take screenshot
-                using (Bitmap bmp = new Bitmap(Math.Abs(width), height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+                using (Graphics graphics = Graphics.FromImage(bmp))
                 {
-                    using (Graphics graphics = Graphics.FromImage(bmp))
-                    {
-                        graphics.CopyFromScreen(rectangle.Left, rectangle.Top, 0, 0, new System.Drawing.Size(width, height));
-                    }
-
+                    graphics.CopyFromScreen(rectangle.Left, rectangle.Top, 0, 0, new System.Drawing.Size(width, height));
                     bmp.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+
+                    graphics.Dispose();
+                    bmp.Dispose();
                 }
-
-                //Return it
-                Bitmap img = (Bitmap)System.Drawing.Image.FromFile(filePath);
-
-                return img;
             }
 
-            return null;
+            //Return it
+            Bitmap img = (Bitmap)Image.FromFile(filePath);
+            return img;
+
         }
 
         public Model.Structs.Rectangle GetWindowSize(string processName)

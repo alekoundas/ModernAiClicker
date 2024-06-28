@@ -37,6 +37,9 @@ namespace DataAccess
 
         public void Update<TEntity>(TEntity model)
         {
+            if (model == null)
+                return;
+
             _dbContext.Entry(model).State = EntityState.Modified;
         }
 
