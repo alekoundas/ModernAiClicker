@@ -39,6 +39,13 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
+        private void OnComboBoxSelectionChanged()
+        {
+            //TODO
+        }
+
+
+        [RelayCommand]
         private void OnButtonCancelClick()
         {
             //TODO
@@ -88,11 +95,15 @@ namespace ModernAiClicker.ViewModels.Pages
             if (FlowStep.ParentFlowStepId == null)
                 return new ObservableCollection<FlowStep>();
 
-
+            // Get recursively all parents.
             List<FlowStep> parents = _baseDatawork.FlowSteps
                 .GetAll()
                 .First(x => x.Id == FlowStep.ParentFlowStepId)
                 .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
+                .ToList();
+
+            parents = parents
+                .Where(x => x != null && x.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
                 .ToList();
 
             return new ObservableCollection<FlowStep>(parents);

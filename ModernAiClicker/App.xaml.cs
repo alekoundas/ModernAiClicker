@@ -3,8 +3,6 @@
 // Copyright (C) Leszek Pomianowski and WPF UI Contributors.
 // All Rights Reserved.
 
-using AutoMapper;
-using Business.AutoMapper;
 using Business.DatabaseContext;
 using Business.Factories;
 using Business.Interfaces;
@@ -16,7 +14,6 @@ using DataAccess.Repository.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Model.Models;
 using ModernAiClicker.Services;
 using ModernAiClicker.ViewModels;
@@ -28,7 +25,6 @@ using ModernAiClicker.Views.Windows;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Intrinsics.X86;
 using System.Windows;
 using System.Windows.Threading;
 using Wpf.Ui.Contracts;
@@ -64,7 +60,6 @@ namespace ModernAiClicker
                 services.AddSingleton<ITemplateSearchService, TemplateSearchService>();
                 services.AddSingleton<IExecutionFactory, ExecutionFactory>();
 
-
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
 
@@ -76,7 +71,6 @@ namespace ModernAiClicker
 
                 services.AddSingleton<ExecutionPage>();
                 services.AddSingleton<ExecutionViewModel>();
-
 
                 services.AddSingleton<FlowStepDetailNewSelectTypePage>();
                 services.AddSingleton<FlowStepDetailNewSelectTypeViewModel>();
@@ -93,7 +87,6 @@ namespace ModernAiClicker
                 services.AddSingleton<SettingsPage>();
                 services.AddSingleton<SettingsViewModel>();
 
-                services.AddAutoMapper(x => new MapperConfig());
 
                 services.AddDbContext<InMemoryDbContext>();
 
@@ -101,12 +94,12 @@ namespace ModernAiClicker
                 var dbContext = services.BuildServiceProvider().GetService<InMemoryDbContext>();
                 if (dbContext != null)
                 {
-                    var ss = SetTestData();
-                    if (ss != null)
-                    {
-                        dbContext.Flows.AddRange(ss);
-                        dbContext.SaveChanges();
-                    }
+                    var jsonFlows = GetFlowsFromJson();
+                    if (jsonFlows == null)
+                        return;
+
+                    dbContext.Flows.AddRange(jsonFlows);
+                    dbContext.SaveChanges();
                 }
 
                 services.AddScoped<IBaseDatawork, BaseDatawork>();
@@ -162,7 +155,7 @@ namespace ModernAiClicker
 
 
 
-        private static ObservableCollection<Flow>? SetTestData()
+        private static ObservableCollection<Flow>? GetFlowsFromJson()
         {
             var systemService = new SystemService();
 

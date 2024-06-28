@@ -1,4 +1,5 @@
-﻿using Model.Models;
+﻿using Model.Enums;
+using Model.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,13 @@ namespace Business.Factories
 {
     public interface IExecutionWorker
     {
-        Task<Execution?> GetNextStep(int id);
+        Task<Execution> CreateExecutionModel(int id, int? parentExecutionId);
         Task ExecuteFlowStepAction(Execution execution);
+        Task<FlowStep?> GetNextChildFlowStep(Execution execution);
+        Task<FlowStep?> GetNextSiblingFlowStep(Execution execution);
+        Task SetExecutionModelStateRunning(Execution execution);
+        Task SetExecutionModelStateComplete(Execution execution);
+        void ExpandAndSelectFlowStep(Execution execution);
+
     }
 }

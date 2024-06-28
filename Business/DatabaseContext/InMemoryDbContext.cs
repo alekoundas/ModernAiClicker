@@ -9,8 +9,9 @@ namespace Business.DatabaseContext
     {
         public DbSet<Flow> Flows { get; set; }
         public DbSet<FlowStep> FlowSteps { get; set; }
+        public DbSet<Execution> Executions { get; set; }
 
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseInMemoryDatabase(databaseName: "FlowAutoClicker");

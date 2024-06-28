@@ -1,10 +1,11 @@
-﻿using Business.Interfaces;
+﻿using Business.Helpers;
+using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Business;
 using Model.Enums;
 using Model.Models;
 using Model.Structs;
-using System.Windows.Forms;
+using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
 {
@@ -21,47 +22,121 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public Task<Execution?> GetNextStep(int id)
+        public async Task<Execution> CreateExecutionModel(int flowStepId, int? parentExecutionId)
         {
-            throw new NotImplementedException();
-        }
+            Execution execution = new Execution();
+            execution.FlowStepId = flowStepId;
+            execution.ParentExecutionId = parentExecutionId;
 
+            _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+
+            return execution;
+        }
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
-            FlowStep? flowStep = execution.FlowStep;
+            if (execution.FlowStep == null)
+                return;
+            execution.FlowStep.IsSelected = true;
+            Rectangle searchRectangle;
 
+            if (execution.FlowStep.ProcessName.Length > 0)
+                searchRectangle = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
+            else
+                searchRectangle = _systemService.GetScreenSize();
+
+
+            TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImagePath, searchRectangle);
+            int x = searchRectangle.Left + result.ResultRectangle.Top;
+            int y = searchRectangle.Top + result.ResultRectangle.Left;
+
+            execution.IsSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
+            execution.ResultLocation = new Point(x, y);
+
+            await _baseDatawork.SaveChangesAsync();
+        }
+
+        public async Task<FlowStep?> GetNextChildFlowStep(Execution execution)
+        {
+            if (execution.FlowStep == null)
+                return await Task.FromResult<FlowStep?>(null);
+
+            FlowStep? nextFlowStep;
+
+            // Get next executable child.
+            if (execution.IsSuccessful)
+                nextFlowStep = _baseDatawork.FlowSteps
+                    .Where(x => x.Id == execution.FlowStepId)
+                    .Select(x => x.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
+                    .Select(x => x.ChildrenFlowSteps?.FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0))
+                    .FirstOrDefault();
+            else
+                nextFlowStep = _baseDatawork.FlowSteps
+                    .Where(x => x.Id == execution.FlowStepId)
+                    .Select(x => x.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
+                    .Select(x => x.ChildrenFlowSteps?.FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0))
+                    .FirstOrDefault();
+
+
+            //TODO return error message 
+            if (nextFlowStep == null)
+                return null;
+
+            return nextFlowStep;
+        }
+
+        public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)
+        {
+            if (execution.FlowStep == null)
+                return await Task.FromResult<FlowStep?>(null);
+
+            // Get next sibling flow step.
+            FlowStep? nextFlowStep;
+            Expression<Func<FlowStep, bool>> nextFlowStepFilter;
+
+            nextFlowStepFilter = PredicateHelper.Create<FlowStep>(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
+            nextFlowStepFilter = nextFlowStepFilter.And(x => x.OrderingNum == execution.FlowStep.OrderingNum + 1);
+
+            if (execution.FlowStep?.ParentFlowStepId != null)
+                nextFlowStepFilter = nextFlowStepFilter.And(x => x.ParentFlowStepId == execution.FlowStep.ParentFlowStepId);
+            else
+                nextFlowStepFilter = nextFlowStepFilter.And(x => x.FlowId == execution.FlowStep.FlowId);
+
+            nextFlowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(nextFlowStepFilter);
+
+            //TODO return error message 
+            if (nextFlowStep == null)
+                return null;
+
+            return nextFlowStep;
+        }
+
+        public async Task SetExecutionModelStateRunning(Execution execution)
+        {
             execution.Status = ExecutionStatusEnum.RUNNING;
             execution.StartedOn = DateTime.Now;
 
-            if (flowStep?.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
-            {
-                Rectangle searchRectangle = new Rectangle();
-
-                if (flowStep.ProcessName.Length > 0)
-                    searchRectangle = _systemService.GetWindowSize(flowStep.ProcessName);
-                else
-                    searchRectangle = _systemService.GetScreenSize();
-
-
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(flowStep.TemplateImagePath, searchRectangle);
-
-
-                _systemService.SetCursorPossition(result.ResultRectangle.Top, result.ResultRectangle.Left);
-
-                int x = searchRectangle.Left;
-                int y = searchRectangle.Top;
-
-                x = x + result.ResultRectangle.Top;
-                y = y + result.ResultRectangle.Left;
-
-                _systemService.SetCursorPossition(x, y);
-
-                execution.Status = ExecutionStatusEnum.COMPLETED;
-                await _baseDatawork.SaveChangesAsync();
-            }
-
+            await _baseDatawork.SaveChangesAsync();
         }
+
+        public async Task SetExecutionModelStateComplete(Execution execution)
+        {
+            execution.Status = execution.IsSuccessful ? ExecutionStatusEnum.COMPLETED : ExecutionStatusEnum.ACCURACY_FAIL;
+            execution.EndedOn = DateTime.Now;
+
+            await _baseDatawork.SaveChangesAsync();
+        }
+
+        public void ExpandAndSelectFlowStep(Execution execution)
+        {
+            if (execution.FlowStep == null)
+                return;
+
+            execution.FlowStep.IsSelected = true;
+            execution.FlowStep.IsExpanded = true;
+        }
+
 
 
     }

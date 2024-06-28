@@ -91,6 +91,7 @@
 
 
             <Label>4. Select minimum accuracy</Label>
+            <!--<TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay}" />-->
             <TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay, StringFormat=0{0.0}}" />
 
             <Label>4. Test</Label>

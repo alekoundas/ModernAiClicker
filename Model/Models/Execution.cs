@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Enums;
+using Model.Structs;
 
 namespace Model.Models
 {
@@ -17,22 +18,29 @@ namespace Model.Models
         public string _runFor = "";
 
         [ObservableProperty]
-        public DateTime _startedOn = new DateTime();
+        public DateTime? _startedOn;
+
+        [ObservableProperty]
+        public DateTime? _endedOn;
 
         [ObservableProperty]
         public string _remainingSteps = "";
 
+        public bool IsSuccessful { get; set; }
+        public Point ResultLocation { get; set; }
+
+
         public int? FlowId { get; set; }
-        public Flow? Flow { get; set; }
+        public virtual Flow? Flow { get; set; }
 
         public int? FlowStepId { get; set; }
-        public FlowStep? FlowStep { get; set; }
+        public virtual FlowStep? FlowStep { get; set; }
 
         public int? ParentExecutionId { get; set; }
-        public Execution? ParentExecution { get; set; }
+        public virtual Execution? ParentExecution { get; set; }
 
         public int? ChildExecutionId { get; set; }
-        public Execution? ChildExecution { get; set; }
+        public virtual Execution? ChildExecution { get; set; }
 
     }
 

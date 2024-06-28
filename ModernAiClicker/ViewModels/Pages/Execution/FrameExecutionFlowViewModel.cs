@@ -5,6 +5,7 @@ using Business.Interfaces;
 using System.Collections.ObjectModel;
 using DataAccess.Repository.Interface;
 using Business.Factories;
+using System.Windows.Threading;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -30,31 +31,48 @@ namespace ModernAiClicker.ViewModels.Pages
             if (Flow == null)
                 return;
 
-            IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
-            Execution? firstExecutionStep =  await flowWorker.GetNextStep(Flow.Id);
+            // Create new thread so UI doesnt freeze.
+            await Task.Run(async () =>
+            {
+                IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
+                Execution flowExecution = await flowWorker.CreateExecutionModel(Flow.Id, null);
 
-            //Cant execute flow because no executable steps found!
-            if(firstExecutionStep == null)
-                return;
+                // Start execution.
+                await flowWorker.SetExecutionModelStateRunning(flowExecution);
 
-            //Should never hapen.
-            if (firstExecutionStep.FlowStep == null)
-                return;
+                // Get next flow step and recursively execute every other step.
+                FlowStep? nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
+                await ExecuteStepRecursion(nextFlowStep, flowExecution.Id);
 
-
-            IExecutionWorker flowStepWorker = _executionFactory.GetWorker(firstExecutionStep.FlowStep);
-            await flowStepWorker.ExecuteFlowStepAction(firstExecutionStep);
-
-
-
-
+                // Complete execution.
+                await flowWorker.SetExecutionModelStateComplete(flowExecution);
+            });
         }
 
-
-        private void whatever()
+        private async Task<Execution?> ExecuteStepRecursion(FlowStep? flowStep, int parentExecutionId)
         {
+            if (flowStep == null)
+                return await Task.FromResult<Execution?>(null);
 
+            IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
+            Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecutionId);
+
+            factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
+            await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
+            await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
+            await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
+
+            FlowStep? nextFlowStep;
+            nextFlowStep = await factoryWorker.GetNextChildFlowStep(flowStepExecution);
+
+            // If no executable children are found check for siblings
+            if (nextFlowStep == null)
+                nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
+
+
+            return await ExecuteStepRecursion(nextFlowStep, flowStepExecution.Id);
         }
+
 
 
         [RelayCommand]

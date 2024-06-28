@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Enums;
+using Model.Structs;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace Model.Models
 {
@@ -39,6 +37,7 @@ namespace Model.Models
         public string TemplateImagePath = "";
 
         public double Accuracy = 0.00d;
+        public Point ResultLocation { get; set; }
 
 
         // Mouse
@@ -53,5 +52,7 @@ namespace Model.Models
         public int? MouseLoopDebounceTime;
 
         public TimeOnly? MouseLoopTime;
+
+        public int? ParentTemplateSearchFlowStepId;
     }
 }

@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Enums;
+using Model.Structs;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace Model.Models
 {
@@ -22,12 +20,15 @@ namespace Model.Models
         public bool _isExpanded = true;
 
         [ObservableProperty]
+        public bool _isSelected = true;
+
+        [ObservableProperty]
         public int _orderingNum;
 
         [ObservableProperty]
         public FlowStepTypesEnum _flowStepType;
 
-     
+
         public bool Disabled { get; set; }
 
         public int? FlowId { get; set; }
@@ -37,7 +38,7 @@ namespace Model.Models
         public virtual FlowStep? ParentFlowStep { get; set; }
 
         public virtual ObservableCollection<FlowStep>? ChildrenFlowSteps { get; set; }
-        public virtual ObservableCollection<Execution>?  Executions { get; set; }
+        public virtual ObservableCollection<Execution>? Executions { get; set; }
 
 
 
@@ -53,6 +54,8 @@ namespace Model.Models
 
         [ObservableProperty]
         public double _accuracy = 0.00d;
+
+        public Point ResultLocation { get; set; }
 
 
         // Mouse
@@ -73,5 +76,10 @@ namespace Model.Models
 
         [ObservableProperty]
         public TimeOnly? _mouseLoopTime;
+
+        public int? ParentTemplateSearchFlowStepId { get; set; }
+        public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
+        public virtual ObservableCollection<FlowStep>? ChildrenTemplateSearchFlowSteps { get; set; }
+
     }
 }

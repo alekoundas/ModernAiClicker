@@ -10,7 +10,6 @@ namespace Model.Business
     public class TemplateMatchingResult
     {
         public Rectangle ResultRectangle { get; set; }
-        //public Rectangle NeedleImageRectangle { get; set; }
 
         public double Confidence { get; set; }
 

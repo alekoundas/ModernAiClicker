@@ -329,7 +329,7 @@ namespace ModernAiClicker.ViewModels.Pages
         /// <param name="control"> Any control for OS who doesn't support DPI per monitor </param>
         /// <param name="monitorPoint"> Monitor point (Screen.Bounds) </param>
         /// <returns> Scale factor </returns>
-        public static double ScaleFactor(Control control, Point monitorPoint)
+        public static double ScaleFactor(Control control, Model.Structs.Point monitorPoint)
         {
 
 
@@ -344,7 +344,7 @@ namespace ModernAiClicker.ViewModels.Pages
         /// <param name="control"> Any control for OS who doesn't support DPI per monitor </param>
         /// <param name="monitorPoint"> Monitor point (Screen.Bounds) </param>
         /// <returns> DPI </returns>
-        public static uint GetDpi(Control control, Point monitorPoint)
+        public static uint GetDpi(Control control, Model.Structs.Point monitorPoint)
         {
             uint dpiX;
             uint dpiY;
@@ -374,7 +374,7 @@ namespace ModernAiClicker.ViewModels.Pages
         /// <see cref="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-monitorfrompoint"/>
         /// </remarks>
         [DllImport("User32.dll")]
-        internal static extern IntPtr MonitorFromPoint([In] Point pt, [In] uint dwFlags);
+        internal static extern IntPtr MonitorFromPoint([In] Model.Structs.Point pt, [In] uint dwFlags);
 
         /// <summary>
         /// Queries the dots per inch (dpi) of a display.

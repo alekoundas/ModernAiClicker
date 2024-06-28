@@ -1,4 +1,5 @@
 ﻿
+using Model.Enums;
 using Model.Models;
 using Model.Structs;
 using System.Drawing;
@@ -11,7 +12,8 @@ namespace Business.Interfaces
 
         Model.Structs.Rectangle GetWindowSize(string processName);
         Model.Structs.Rectangle GetScreenSize();
-        void SetCursorPossition(int x, int y);
+        void SetCursorPossition(Model.Structs.Point point);
+        void CursorClick(MouseButtonsEnum mouseButtonEnum);
         Task UpdateFlowsJSON(List<Flow> flows);
         List<Flow>? LoadFlowsJSON();
 

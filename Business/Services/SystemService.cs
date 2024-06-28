@@ -15,6 +15,8 @@ using System.Data;
 using System.Management;
 using AutoMapper;
 using System.Runtime.Intrinsics.X86;
+using System.Windows.Media;
+using Model.Enums;
 
 namespace Business.Services
 {
@@ -27,6 +29,8 @@ namespace Business.Services
             Raw = 2,
         }
 
+        [DllImport("user32.dll")]
+        static extern bool GetCursorPos(out Model.Structs.Point point);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool GetWindowRect(int hWnd, out Model.Structs.Rectangle lpPoint);
@@ -36,10 +40,7 @@ namespace Business.Services
 
         [DllImport("user32.dll")]
         private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
-        private const int MOUSEEVENTF_RIGHTUP = 0x10;
+        
 
         //[DllImport("user32.dll")]
         //public static extern bool GetCursorPos(out Point lpPoint);
@@ -52,6 +53,14 @@ namespace Business.Services
         [DllImport("Shcore.dll")]
         private static extern IntPtr GetDpiForMonitor([In] IntPtr hmonitor, [In] DpiType dpiType, [Out] out uint dpiX, [Out] out uint dpiY);
 
+        public void CursorClick(MouseButtonsEnum mouseButtonEnum)
+        {
+            int X = Cursor.Position.X;
+            int Y = Cursor.Position.Y;
+            int mouseButton = (int)mouseButtonEnum;
+
+            mouse_event(mouseButton, X, Y, 0, 0);
+        }
 
 
 
@@ -149,9 +158,9 @@ namespace Business.Services
             return windowRectangle;
         }
 
-        public void SetCursorPossition(int x, int y)
+        public void SetCursorPossition(Model.Structs.Point point)
         {
-            SetCursorPos(x, y);
+            SetCursorPos(point.X, point.Y);
         }
 
         public async Task UpdateFlowsJSON(List<Flow> flows)

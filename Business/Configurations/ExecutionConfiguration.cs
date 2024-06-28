@@ -30,11 +30,11 @@ namespace DataAccess.Configurations
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.ChildExecution)
-                .WithOne(x => x.ParentExecution)
-                .HasForeignKey<Execution>(x => x.ChildExecutionId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.HasOne(x => x.ChildExecution)
+            //    .WithOne(x => x.ParentExecution)
+            //    .HasForeignKey<Execution>(x => x.ChildExecutionId)
+                //.IsRequired(false)
+            //    .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

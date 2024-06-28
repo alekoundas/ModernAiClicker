@@ -40,7 +40,7 @@ namespace ModernAiClicker.ViewModels
         }
 
 
-
+        //TODO find a fix for includes
         public void RefreshData()
         {
             List<Flow> flows = _baseDatawork.Query.Flows
@@ -51,6 +51,18 @@ namespace ModernAiClicker.ViewModels
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps).ThenInclude(x=>x.Executions)
             .ToList();
 
 
