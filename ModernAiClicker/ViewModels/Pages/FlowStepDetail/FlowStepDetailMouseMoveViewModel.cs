@@ -2,11 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
-using Model.Structs;
-using Business.Helpers;
-using Model.Business;
 using DataAccess.Repository.Interface;
-using System.Windows.Forms;
 using System.Collections.ObjectModel;
 using Business.Extensions;
 using Model.Enums;

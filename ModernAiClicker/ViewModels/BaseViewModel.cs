@@ -28,6 +28,17 @@ namespace ModernAiClicker.ViewModels
             }
         }
 
+        private bool _isLocked;
+        public bool IsLocked
+        {
+            get { return _isLocked; }
+            set
+            {
+                _isLocked = value;
+                NotifyPropertyChanged(nameof(IsLocked));
+            }
+        }
+
 
         public BaseViewModel(IBaseDatawork baseDatawork)
         {

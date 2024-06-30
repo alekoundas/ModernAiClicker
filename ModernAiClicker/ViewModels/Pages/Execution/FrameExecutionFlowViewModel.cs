@@ -7,6 +7,7 @@ using DataAccess.Repository.Interface;
 using Business.Factories;
 using System.Windows.Threading;
 using System.Windows;
+using System.Text.RegularExpressions;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -15,8 +16,11 @@ namespace ModernAiClicker.ViewModels.Pages
         private readonly IBaseDatawork _baseDatawork;
         private readonly IExecutionFactory _executionFactory;
 
-        [ObservableProperty]
-        private Flow? _flow;
+        public Flow? Flow;
+
+        public ObservableCollection<Execution> Executions;
+        public bool StopExecution { get; set; }
+
 
 
         public FrameExecutionFlowViewModel(IBaseDatawork baseDatawork, IExecutionFactory executionFactory)
@@ -38,6 +42,12 @@ namespace ModernAiClicker.ViewModels.Pages
                 IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
                 Execution flowExecution = await flowWorker.CreateExecutionModel(Flow.Id, null);
 
+                App.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    Executions.Add(flowExecution);
+                });
+
+
                 // Start execution.
                 flowWorker.ExpandAndSelectFlowStep(flowExecution);
                 AllowUIToUpdate();
@@ -50,16 +60,23 @@ namespace ModernAiClicker.ViewModels.Pages
                 // Complete execution.
                 await flowWorker.SetExecutionModelStateComplete(flowExecution);
             });
+
+            StopExecution = false;
         }
 
         private async Task<Execution?> ExecuteStepRecursion(FlowStep? flowStep, int parentExecutionId)
         {
             // Recursion ends here.
-            if (flowStep == null)
+            if (flowStep == null || StopExecution == true)
                 return await Task.FromResult<Execution?>(null);
 
             IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
             Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecutionId);
+            App.Current.Dispatcher.Invoke((Action)delegate
+            {
+                Executions.Add(flowStepExecution);
+            });
+
 
             factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
             AllowUIToUpdate();
@@ -110,6 +127,7 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private void OnButtonStopClick()
         {
+            StopExecution = true;
         }
 
     }

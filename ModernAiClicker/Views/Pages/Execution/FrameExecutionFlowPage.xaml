@@ -69,8 +69,8 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
-        <!--  Stop Button  -->
 
+        <!--  Stop Button  -->
         <Button
             Grid.Row="0"
             Grid.Column="6"

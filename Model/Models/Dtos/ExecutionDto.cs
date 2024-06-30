@@ -20,6 +20,7 @@ namespace Model.Models
 
 
         public string RemainingSteps = "";
+        public bool IsSelected;
         public bool IsSuccessful { get; set; }
         public Point ResultLocation { get; set; }
 

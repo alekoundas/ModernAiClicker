@@ -26,6 +26,9 @@ namespace Model.Models
         [ObservableProperty]
         public string _remainingSteps = "";
 
+        [ObservableProperty]
+        public bool _isSelected = true;
+
         public bool IsSuccessful { get; set; }
         public Point ResultLocation { get; set; }
 

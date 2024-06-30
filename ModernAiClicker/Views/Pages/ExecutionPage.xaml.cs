@@ -5,6 +5,7 @@ using DataAccess.Repository.Interface;
 using Model.Models;
 using ModernAiClicker.ViewModels.Pages;
 using ModernAiClicker.Views.Pages.FlowStepDetail;
+using System.Collections.ObjectModel;
 using System.Windows;
 using Wpf.Ui.Controls;
 
@@ -39,11 +40,13 @@ namespace ModernAiClicker.Views.Pages
         }
 
 
-        public void FrameNavigateToFlow(Flow flow)
+        public void FrameNavigateToFlow(Flow flow, ObservableCollection<Execution> executions)
         {
             FrameExecutionFlowViewModel frameViewModel = new FrameExecutionFlowViewModel(_baseDatawork, _executionFactory);
             frameViewModel.Flow = flow;
-            UIFlowStepDetailFrame.Navigate(new FrameExecutionFlowPage(frameViewModel, _baseDatawork));
+            frameViewModel.Executions = executions;
+
+            UIFlowStepDetailFrame.Navigate(new FrameExecutionFlowPage(frameViewModel));
         }
 
     }

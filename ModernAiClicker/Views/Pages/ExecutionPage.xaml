@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:icons="https://github.com/helluvamatt/BootstrapIcons.Wpf/"
     xmlns:local="clr-namespace:ModernAiClicker.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Model.Models;assembly=Model"
@@ -36,6 +37,27 @@
         <PathGeometry x:Key="TreeArrow" Figures="M0,0 L0,6 L6,0 z" />
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Fill" Color="#FFFFFFFF" />
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Stroke" Color="#FF818181" />
+
+        <Style x:Key="_ListBoxItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border
+                            Name="_Border"
+                            Padding="2"
+                            SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="_Border" Property="Background" Value="Yellow" />
+                                <Setter Property="Foreground" Value="Red" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
 
         <!--  expander style  -->
@@ -110,7 +132,7 @@
 
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="19" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -122,10 +144,10 @@
                                 IsChecked="{Binding IsExpanded}"
                                 Style="{StaticResource ExpandCollapseToggleStyle}" />
                             <Border
-                                x:Name="Bd"
+                                x:Name="FlowStepBorder"
                                 Grid.Column="1"
                                 Padding="{TemplateBinding Padding}"
-                                Background="{TemplateBinding Background}"
+                                Background="#25272a"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 SnapsToDevicePixels="true">
@@ -150,7 +172,7 @@
                                 <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="Bd" Property="Background" Value="#403d7c" />
+                                <Setter TargetName="FlowStepBorder" Property="Background" Value="#303236" />
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
@@ -159,7 +181,7 @@
                                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}" />
                             </MultiTrigger>
                             <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}">
-                                <Setter TargetName="PART_Header" Property="HorizontalAlignment" Value="Center" />
+                                <Setter TargetName="FlowStepBorder" Property="HorizontalAlignment" Value="Center" />
                                 <Setter Property="Padding" Value="0,0,0,10" />
                                 <Setter Property="Focusable" Value="False" />
                             </DataTrigger>
@@ -204,16 +226,19 @@
             </ObjectDataProvider>
 
         </Grid.Resources>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.3*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="0.6*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.2*" />
+            <RowDefinition Height="0.7*" />
+            <RowDefinition Height="0.7*" />
+            <RowDefinition Height="0.2*" />
+            <RowDefinition Height="0.2*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
 
 
@@ -234,17 +259,24 @@
 
         <!--  Frame  -->
 
-        <GroupBox
+        <Border
             Grid.Row="1"
-            Margin="0,0,20,50"
-            Padding="10,20,0,10">
+            Margin="0,0,20,0"
+            Padding="10,20,0,0"
+            Background="#272727"
+            BorderBrush="#C4C4C4"
+            BorderThickness="2"
+            CornerRadius="10">
+            <Border.Effect>
+                <DropShadowEffect Opacity="1" ShadowDepth="5" />
+            </Border.Effect>
             <ScrollViewer>
                 <Frame
                     x:Name="UIFlowStepDetailFrame"
                     ScrollViewer.CanContentScroll="True"
                     ScrollViewer.VerticalScrollBarVisibility="Visible" />
             </ScrollViewer>
-        </GroupBox>
+        </Border>
 
 
 
@@ -254,10 +286,15 @@
         <!--  TreeView  -->
         <Border
             Grid.Row="1"
+            Grid.RowSpan="2"
             Grid.Column="1"
-            BorderBrush="White"
+            Background="#272727"
+            BorderBrush="#C4C4C4"
             BorderThickness="2"
-            CornerRadius="2">
+            CornerRadius="10">
+            <Border.Effect>
+                <DropShadowEffect Opacity="1" ShadowDepth="5" />
+            </Border.Effect>
 
 
             <TreeView
@@ -286,23 +323,23 @@
                                 </Grid.ColumnDefinitions>
 
 
-                                <TextBlock
+                                <ui:TextBlock
                                     Grid.Column="0"
                                     Padding="10"
                                     VerticalAlignment="Center"
                                     Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
                                     <Run Text="{Binding OrderingNum}" />
                                     <Run Text="." />
-                                </TextBlock>
+                                </ui:TextBlock>
 
-                                <TextBlock
+                                <ui:TextBlock
                                     Grid.Column="2"
                                     Padding="10"
                                     VerticalAlignment="Center"
                                     Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
                                     Text="{Binding Name}" />
 
-                                <Button
+                                <ui:Button
                                     x:Name="TreeViewItemFlowDeleteButton"
                                     Grid.Row="0"
                                     Grid.RowSpan="2"
@@ -324,7 +361,7 @@
                                             </i:InvokeCommandAction>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
-                                </Button>
+                                </ui:Button>
 
                             </Grid>
                         </Border>
@@ -347,19 +384,46 @@
                                     <DataTemplate x:Key="FlowStepExisting">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="0.4*" />
-                                                <ColumnDefinition Width="1*" />
                                                 <ColumnDefinition Width="0.1*" />
-                                                <ColumnDefinition Width="0*" />
-                                                <ColumnDefinition Width="0*" />
+                                                <ColumnDefinition Width="1*" />
+
+                                                <ColumnDefinition Name="columnToHide">
+                                                    <ColumnDefinition.Style>
+                                                        <Style TargetType="{x:Type ColumnDefinition}">
+                                                            <Setter Property="Width" Value="0" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.IsLocked}" Value="false">
+                                                                    <Setter Property="Width" Value="0.1*" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ColumnDefinition.Style>
+                                                </ColumnDefinition>
+
+                                                <ColumnDefinition Name="columnToHide2">
+                                                    <ColumnDefinition.Style>
+                                                        <Style TargetType="{x:Type ColumnDefinition}">
+                                                            <Setter Property="Width" Value="0" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.IsLocked}" Value="false">
+                                                                    <Setter Property="Width" Value="0.1*" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ColumnDefinition.Style>
+                                                </ColumnDefinition>
+
                                                 <ColumnDefinition Width="Auto" />
+
+
+
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="1*" />
                                                 <RowDefinition Height="1*" />
                                             </Grid.RowDefinitions>
 
-                                            <TextBlock
+                                            <ui:TextBlock
                                                 Grid.Row="0"
                                                 Grid.RowSpan="2"
                                                 Grid.Column="0"
@@ -368,9 +432,9 @@
                                                 Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
                                                 <Run Text="{Binding OrderingNum}" />
                                                 <Run Text="." />
-                                            </TextBlock>
+                                            </ui:TextBlock>
 
-                                            <TextBlock
+                                            <ui:TextBlock
                                                 Grid.Row="0"
                                                 Grid.Column="1"
                                                 Padding="10"
@@ -378,7 +442,7 @@
                                                 Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
                                                 Text="{Binding Name}" />
 
-                                            <TextBlock
+                                            <ui:TextBlock
                                                 Grid.Row="1"
                                                 Grid.Column="1"
                                                 Padding="10"
@@ -387,13 +451,14 @@
                                                 Text="{Binding FlowStepType}" />
 
                                             <!--  Arrows Up/Down  -->
-                                            <Button
+                                            <ui:Button
                                                 x:Name="TreeViewItemButtonUp"
                                                 Grid.Column="2"
                                                 Margin="5"
-                                                Padding="10"
-                                                HorizontalAlignment="Right"
-                                                Content="^">
+                                                HorizontalAlignment="Right">
+
+                                                <icons:BootstrapIcon Width="20" Icon="ArrowUpShort" />
+
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="Click">
                                                         <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
@@ -407,15 +472,16 @@
                                                         </i:InvokeCommandAction>
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
-                                            </Button>
-                                            <Button
+                                            </ui:Button>
+                                            <ui:Button
                                                 x:Name="TreeViewItemButtonDown"
                                                 Grid.Row="1"
                                                 Grid.Column="2"
                                                 Margin="5"
-                                                Padding="10"
-                                                HorizontalAlignment="Right"
-                                                Content="^">
+                                                HorizontalAlignment="Right">
+
+                                                <icons:BootstrapIcon Width="20" Icon="ArrowDownShort" />
+
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="Click">
                                                         <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
@@ -429,18 +495,20 @@
                                                         </i:InvokeCommandAction>
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
-                                            </Button>
+                                            </ui:Button>
 
                                             <!--  Delete  -->
-                                            <Button
+                                            <ui:Button
                                                 x:Name="TreeViewItemButtonDelete"
                                                 Grid.Row="0"
                                                 Grid.RowSpan="2"
                                                 Grid.Column="3"
                                                 Margin="5"
-                                                Padding="10"
-                                                HorizontalAlignment="Right"
-                                                Content="Delete">
+                                                Padding="5"
+                                                HorizontalAlignment="Right">
+
+                                                <icons:BootstrapIcon Icon="Trash" />
+
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="Click">
                                                         <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
@@ -454,7 +522,7 @@
                                                         </i:InvokeCommandAction>
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
-                                            </Button>
+                                            </ui:Button>
                                         </Grid>
                                     </DataTemplate>
 
@@ -487,7 +555,7 @@
 
                                     <!--  Child TreeViewItem Success/Fail ContentPresenter  (Success/Fail Flow Step)  -->
                                     <DataTemplate x:Key="FlowStepSuccessFail">
-                                        <TextBlock
+                                        <ui:TextBlock
                                             Grid.Column="1"
                                             Padding="10"
                                             VerticalAlignment="Center"
@@ -531,6 +599,67 @@
             </TreeView>
         </Border>
 
+
+        <Border
+            Grid.Row="2"
+            Margin="0,0,20,0"
+            Padding="10,20,0,0"
+            Background="#272727"
+            BorderBrush="#C4C4C4"
+            BorderThickness="2"
+            CornerRadius="10">
+            <Border.Effect>
+                <DropShadowEffect Opacity="1" ShadowDepth="5" />
+            </Border.Effect>
+            <ScrollViewer>
+                <Frame
+                    x:Name="UIFlowStepDetailFrame2"
+                    ScrollViewer.CanContentScroll="True"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible" />
+            </ScrollViewer>
+        </Border>
+
+        <!--<ListBox Name="lbTodoList" HorizontalContentAlignment="Stretch" SelectionMode="Extended" SelectionChanged="lbTodoList_SelectionChanged" Grid.Row="2">-->
+        <TextBlock
+            Grid.Row="3"
+            Margin="0,20,0,0"
+            Text="Execution history" />
+        <Border
+            Grid.Row="4"
+            Grid.ColumnSpan="2"
+            Background="#272727"
+            BorderBrush="#C4C4C4"
+            BorderThickness="2">
+            <Border.Effect>
+                <DropShadowEffect Opacity="1" ShadowDepth="5" />
+            </Border.Effect>
+            <ScrollViewer>
+
+                <ListBox ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" ItemsSource="{Binding ViewModel.Executions}">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Background="#303236"
+                                BorderBrush="#C4C4C4"
+                                BorderThickness="2">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Id}" />
+                                    <TextBlock Text="{Binding FlowStep.FlowStepType}" />
+
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+
+        </Border>
     </Grid>
 </Page>
 

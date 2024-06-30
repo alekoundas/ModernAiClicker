@@ -1,18 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Model.Models;
-using System.Collections.ObjectModel;
+﻿using Model.Models;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using Model.ConverterModels;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
-using System.Windows.Data;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Wpf.Ui.Controls;
-using Business.Services;
 using Model.Enums;
 using Microsoft.EntityFrameworkCore;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows.Threading;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -22,8 +20,11 @@ namespace ModernAiClicker.ViewModels.Pages
         public delegate void NavigateToFlowStepTypeSelectionPageEvent(FlowStep flowStep);
 
 
-        private Flow? _selectedFlow;
-        private FlowStep? _selectedFlowStep;
+        public new event PropertyChangedEventHandler? PropertyChanged;
+
+
+
+
 
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
@@ -37,6 +38,28 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
 
+        [RelayCommand]
+        private async Task OnButtonAddFlowClick()
+        {
+            Flow flow = new Flow();
+            FlowStep newFlowStep = new FlowStep();
+            newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
+
+            flow.FlowSteps.Add(newFlowStep);
+
+            _baseDatawork.Flows.Add(flow);
+            _baseDatawork.SaveChanges();
+            await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+
+            RefreshData();
+        }
+
+
+        [RelayCommand]
+        private void OnButtonLockClick()
+        {
+            IsLocked = !IsLocked;
+        }
 
         [RelayCommand]
         private void OnTreeViewItemButtonNewClick(EventParammeters eventParameters)
@@ -190,31 +213,10 @@ namespace ModernAiClicker.ViewModels.Pages
         {
             object selectedItem = routedPropertyChangedEventArgs.NewValue;
             if (selectedItem is FlowStep)
-            {
-                _selectedFlowStep = (FlowStep)selectedItem;
-                NavigateToFlowStepTypeSelectionPage?.Invoke(_selectedFlowStep);
-            }
-            else if (selectedItem is Flow)
-                _selectedFlow = (Flow)selectedItem;
+                NavigateToFlowStepTypeSelectionPage?.Invoke((FlowStep)selectedItem);
 
         }
 
-
-        [RelayCommand]
-        private async Task OnButtonAddFlowClick()
-        {
-            Flow flow = new Flow();
-            FlowStep newFlowStep = new FlowStep();
-            newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
-
-            flow.FlowSteps.Add(newFlowStep);
-
-            _baseDatawork.Flows.Add(flow);
-            _baseDatawork.SaveChanges();
-            await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
-
-            RefreshData();
-        }
 
 
         public void OnNavigatedTo() { }

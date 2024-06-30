@@ -15,8 +15,11 @@ namespace ModernAiClicker.ViewModels.Pages
     public partial class ExecutionViewModel : ObservableObject, INavigationAware
     {
         public event FrameNavigateToFlowEvent? FrameNavigateToFlow;
-        public delegate void FrameNavigateToFlowEvent(Flow flowStep);
+        public delegate void FrameNavigateToFlowEvent(Flow flowStep, ObservableCollection<Execution> Executions);
 
+        [ObservableProperty]
+
+        public ObservableCollection<Execution> _executions = new ObservableCollection<Execution>();
 
         [ObservableProperty]
         private ObservableCollection<Flow> _comboBoxFlows = new ObservableCollection<Flow>();
@@ -29,11 +32,12 @@ namespace ModernAiClicker.ViewModels.Pages
 
         private readonly IBaseDatawork _baseDatawork;
 
-
+        public bool IsLocked;
         public ExecutionViewModel(IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
             ComboBoxFlows = GetFlows();
+            IsLocked = true;
         }
 
         private ObservableCollection<Flow> GetFlows()
@@ -58,7 +62,7 @@ namespace ModernAiClicker.ViewModels.Pages
             TreeviewFlows.Clear();
             TreeviewFlows.Add(flow);
 
-            FrameNavigateToFlow?.Invoke(flow);
+            FrameNavigateToFlow?.Invoke(flow, Executions);
         }
 
         public void OnNavigatedTo()
