@@ -77,6 +77,20 @@ namespace Model.Models
         [ObservableProperty]
         public TimeOnly? _mouseLoopTime;
 
+        //System
+        [ObservableProperty]
+        public int? _sleepForHours;
+
+        [ObservableProperty]
+        public int? _sleepForMinutes;
+
+        [ObservableProperty]
+        public int? _sleepForSeconds;
+
+        [ObservableProperty]
+        public int? _sleepForMilliseconds;
+
+
         public int? ParentTemplateSearchFlowStepId { get; set; }
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
         public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();

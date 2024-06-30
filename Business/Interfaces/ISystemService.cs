@@ -1,4 +1,5 @@
 ﻿
+using Model.Business;
 using Model.Enums;
 using Model.Models;
 using Model.Structs;
@@ -18,5 +19,6 @@ namespace Business.Interfaces
         List<Flow>? LoadFlowsJSON();
 
         List<double> GetScalingFactor2();
+        ImageSizeResult GetImageSize(string imagePath);
     }
 }

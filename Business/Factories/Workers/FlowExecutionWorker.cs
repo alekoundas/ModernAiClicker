@@ -80,11 +80,11 @@ namespace Business.Factories.Workers
 
         public void ExpandAndSelectFlowStep(Execution execution)
         {
-            if (execution.FlowStep == null)
+            if (execution.Flow == null)
                 return;
 
-            execution.FlowStep.IsSelected = true;
-            execution.FlowStep.IsExpanded = true;
+                execution.Flow.IsExpanded = true;
+            execution.Flow.IsSelected = true;
         }
     }
 }

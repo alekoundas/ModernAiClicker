@@ -54,5 +54,10 @@ namespace Model.Models
         public TimeOnly? MouseLoopTime;
 
         public int? ParentTemplateSearchFlowStepId;
+
+        //System
+        public int? SleepForHours;
+        public int? SleepForMinutes;
+        public int? SleepForSeconds;
     }
 }

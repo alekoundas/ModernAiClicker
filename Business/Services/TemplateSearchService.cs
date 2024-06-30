@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 
 namespace Business.Services
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class TemplateSearchService : ITemplateSearchService
     {
         public ISystemService SystemService;
@@ -78,6 +79,7 @@ namespace Business.Services
                 bitmapData.Stride);
 
             bitmap.UnlockBits(bitmapData);
+            bitmap.Dispose();
 
             return bitmapSource;
         }

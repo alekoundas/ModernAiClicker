@@ -54,6 +54,12 @@
     <Compile Update="Views\Pages\Execution\FrameExecutionFlowPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\FlowStepDetail\FlowStepDetailGoToPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\FlowStepDetail\FlowStepDetailSleepPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\FlowStepDetailMouseClickPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

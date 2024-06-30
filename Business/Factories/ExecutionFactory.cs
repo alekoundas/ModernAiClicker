@@ -31,6 +31,10 @@ namespace Business.Factories
                     return new MouseClickExecutionWorker(_baseDatawork, _systemService);
                 case FlowStepTypesEnum.TEMPLATE_SEARCH:
                     return new TemplateSearchExecutionWorker(_baseDatawork, _templateSearchService, _systemService);
+                case FlowStepTypesEnum.SLEEP:
+                    return new SleepExecutionWorker(_baseDatawork, _systemService);
+                case FlowStepTypesEnum.GO_TO:
+                    return new GoToExecutionWorker(_baseDatawork, _systemService);
                 default:
                     return new FlowExecutionWorker(_baseDatawork, _systemService);
             }

@@ -23,9 +23,6 @@ namespace ModernAiClicker.ViewModels.Pages
 {
     public partial class FlowStepDetailTemplateSearchViewModel : ObservableObject, INavigationAware
     {
-        public event NavigateToFlowStepTypeSelectionPageEvent? NavigateToFlowStepTypeSelectionPage;
-        public delegate void NavigateToFlowStepTypeSelectionPageEvent(FlowStep flowStep);
-
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;

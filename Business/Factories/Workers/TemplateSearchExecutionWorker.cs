@@ -39,18 +39,17 @@ namespace Business.Factories.Workers
         {
             if (execution.FlowStep == null)
                 return;
-            execution.FlowStep.IsSelected = true;
-            Rectangle searchRectangle;
 
+            Rectangle searchRectangle;
             if (execution.FlowStep.ProcessName.Length > 0)
                 searchRectangle = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
             else
                 searchRectangle = _systemService.GetScreenSize();
 
-
+            ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImagePath);
             TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImagePath, searchRectangle);
-            int x = searchRectangle.Left + result.ResultRectangle.Top;
-            int y = searchRectangle.Top + result.ResultRectangle.Left;
+            int x = searchRectangle.Left + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
+            int y = searchRectangle.Top + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
 
             execution.IsSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
             execution.ResultLocation = new Point(x, y);
@@ -110,7 +109,9 @@ namespace Business.Factories.Workers
                 .Where(nextStepFilter)
                 .ToListAsync();
 
-            FlowStep? nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
+            FlowStep? nextFlowStep = null;
+            if (nextFlowSteps.Any())
+                nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
 
 
             //TODO return error message 
@@ -140,12 +141,26 @@ namespace Business.Factories.Workers
         {
             if (execution.FlowStep == null)
                 return;
+            FlowStep? nextFlowStep = null;
 
-            execution.FlowStep.IsSelected = true;
+            if (execution.IsSuccessful)
+                nextFlowStep = _baseDatawork.FlowSteps
+                    .Where(x => x.Id == execution.FlowStepId)
+                    .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
+                    .FirstOrDefault();
+            else
+                nextFlowStep = _baseDatawork.FlowSteps
+                    .Where(x => x.Id == execution.FlowStepId)
+                    .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
+                    .FirstOrDefault();
+
+            if (nextFlowStep != null)
+                nextFlowStep.IsExpanded = true;
+
+
+            execution.FlowStep.ChildrenFlowSteps.First().IsExpanded = true;
             execution.FlowStep.IsExpanded = true;
+            execution.FlowStep.IsSelected = true;
         }
-
-
-
     }
 }

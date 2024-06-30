@@ -55,6 +55,7 @@ namespace ModernAiClicker
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<BaseViewModel>();
+
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<ISnackbarService, SnackbarService>();
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
@@ -62,6 +63,7 @@ namespace ModernAiClicker
                 services.AddSingleton<ITemplateSearchService, TemplateSearchService>();
                 services.AddSingleton<IExecutionFactory, ExecutionFactory>();
 
+                // Pages
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
 
@@ -86,13 +88,19 @@ namespace ModernAiClicker
                 services.AddSingleton<FlowStepDetailMouseClickPage>();
                 services.AddSingleton<FlowStepDetailMouseClickViewModel>();
 
+                services.AddSingleton<FlowStepDetailSleepPage>();
+                services.AddSingleton<FlowStepDetailSleepViewModel>();
+
+                services.AddSingleton<FlowStepDetailGoToPage>();
+                services.AddSingleton<FlowStepDetailGoToViewModel>();
+
                 services.AddSingleton<SettingsPage>();
                 services.AddSingleton<SettingsViewModel>();
 
 
+
+                // DB context
                 services.AddDbContext<InMemoryDbContext>();
-
-
                 var dbContext = services.BuildServiceProvider().GetService<InMemoryDbContext>();
                 if (dbContext != null)
                 {
@@ -104,14 +112,11 @@ namespace ModernAiClicker
                     dbContext.SaveChanges();
                 }
 
+                // Repository
                 services.AddScoped<IBaseDatawork, BaseDatawork>();
-
                 services.AddScoped<IFlowRepository, FlowRepository>();
                 services.AddScoped<IFlowStepRepository, FlowStepRepository>();
-
-
-
-                //MapperConfig.InitializeAutomapper();
+                services.AddScoped<IExecutionRepository, ExecutionRepository>();
 
             }).Build();
 

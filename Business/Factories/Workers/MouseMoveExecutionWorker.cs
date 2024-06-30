@@ -81,7 +81,9 @@ namespace Business.Factories.Workers
                 .Where(nextStepFilter)
                 .ToListAsync();
 
-            FlowStep? nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
+            FlowStep? nextFlowStep = null;
+            if (nextFlowSteps.Any())
+                nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
 
             //TODO return error message 
             if (nextFlowStep == null)
@@ -89,6 +91,7 @@ namespace Business.Factories.Workers
 
             return nextFlowStep;
         }
+
         public async Task<FlowStep?> GetNextChildFlowStep(Execution execution)
         {
             // Cursor move doesnt contain any children.
@@ -110,13 +113,14 @@ namespace Business.Factories.Workers
 
             await _baseDatawork.SaveChangesAsync();
         }
+
         public void ExpandAndSelectFlowStep(Execution execution)
         {
             if (execution.FlowStep == null)
                 return;
 
-            execution.FlowStep.IsSelected = true;
             execution.FlowStep.IsExpanded = true;
+            execution.FlowStep.IsSelected = true;
         }
 
 

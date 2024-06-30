@@ -2,21 +2,15 @@
 using Business.Helpers;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Model.Structs;
 using System.Drawing;
 using Model.Models;
-using OpenCvSharp;
 using Newtonsoft.Json;
 using System.Windows;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.DirectoryServices;
 using System.Windows.Forms;
-using System.Data;
 using System.Management;
 using AutoMapper;
-using System.Runtime.Intrinsics.X86;
-using System.Windows.Media;
 using Model.Enums;
+using Model.Business;
 
 namespace Business.Services
 {
@@ -56,14 +50,21 @@ namespace Business.Services
 
         public void CursorClick(MouseButtonsEnum mouseButtonEnum)
         {
-            int X = Cursor.Position.X;
-            int Y = Cursor.Position.Y;
-            int mouseButton = (int)mouseButtonEnum;
+            int x = Cursor.Position.X;
+            int y = Cursor.Position.Y;
 
             if (mouseButtonEnum == MouseButtonsEnum.RIGHT_BUTTON)
-                mouse_event(0x08, X, Y, 0, 0);
+            {
+                mouse_event(0x08, x, y, 0, 0);
+                Thread.Sleep(100);
+                mouse_event(0x010, x, y, 0, 0);
+            }
             else if (mouseButtonEnum == MouseButtonsEnum.LEFT_BUTTON)
-                mouse_event(0x02, X, Y, 0, 0);
+            {
+                mouse_event(0x02, x, y, 0, 0);
+                Thread.Sleep(100);
+                mouse_event(0x04, x, y, 0, 0);
+            }
 
         }
 
@@ -104,6 +105,11 @@ namespace Business.Services
         {
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), filename + ".png");
 
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
             int width = rectangle.Right - rectangle.Left;
             int height = rectangle.Bottom - rectangle.Top;
 
@@ -127,6 +133,7 @@ namespace Business.Services
             Bitmap img = (Bitmap)Image.FromFile(filePath);
             return img;
 
+
         }
 
         public Model.Structs.Rectangle GetWindowSize(string processName)
@@ -148,9 +155,6 @@ namespace Business.Services
 
         public Model.Structs.Rectangle GetScreenSize()
         {
-            var aa1 = kek(DpiType.Effective);
-            var aa2 = kek(DpiType.Raw);
-            var aa3 = kek(DpiType.Angular);
             Model.Structs.Rectangle windowRectangle = new Model.Structs.Rectangle();
 
             windowRectangle.Top = SystemInformation.VirtualScreen.Top;
@@ -160,6 +164,19 @@ namespace Business.Services
 
 
             return windowRectangle;
+        }
+
+        public ImageSizeResult GetImageSize(string imagePath)
+        {
+            ImageSizeResult imageSizeResult = new ImageSizeResult();
+
+            using (var image = new Bitmap(imagePath))
+            {
+                imageSizeResult.Height = image.Height;
+                imageSizeResult.Width = image.Width;
+            }
+
+            return imageSizeResult;
         }
 
         public void SetCursorPossition(Model.Structs.Point point)

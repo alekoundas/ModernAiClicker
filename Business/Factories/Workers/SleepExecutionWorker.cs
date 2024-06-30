@@ -1,26 +1,19 @@
-﻿using Business.Helpers;
-using Business.Interfaces;
+﻿using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using Model.Business;
 using Model.Enums;
 using Model.Models;
 using Model.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Business.Factories.Workers
 {
-    public class MouseClickExecutionWorker : IExecutionWorker
+    public class SleepExecutionWorker : IExecutionWorker
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
-        public MouseClickExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService)
+        public SleepExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
@@ -43,24 +36,23 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return Task.CompletedTask;
 
-            switch (execution.FlowStep.MouseAction)
-            {
-                case MouseActionsEnum.SINGLE_CLICK:
-                    _systemService.CursorClick(execution.FlowStep.MouseButton);
-                    break;
-                case MouseActionsEnum.DOUBLE_CLICK:
-                    _systemService.CursorClick(execution.FlowStep.MouseButton);
-                    _systemService.CursorClick(execution.FlowStep.MouseButton);
-                    break;
-                // TODO
-                case MouseActionsEnum.LOOP_CLICK:
-                    do
-                    {
-                        _systemService.CursorClick(execution.FlowStep.MouseButton);
-                    } while (true);
-                default:
-                    break;
-            }
+            int miliseconds = 0;
+
+            if (execution.FlowStep.SleepForMilliseconds.HasValue)
+                miliseconds += execution.FlowStep.SleepForMilliseconds.Value;
+
+            if (execution.FlowStep.SleepForSeconds.HasValue)
+                miliseconds += execution.FlowStep.SleepForSeconds.Value * 1000;
+
+            if (execution.FlowStep.SleepForMinutes.HasValue)
+                miliseconds += execution.FlowStep.SleepForMinutes.Value * 60 * 100;
+
+            if (execution.FlowStep.SleepForHours.HasValue)
+                miliseconds += execution.FlowStep.SleepForHours.Value * 60 * 60 * 100;
+
+
+            Thread.Sleep(miliseconds);
+
 
             return Task.CompletedTask;
         }
@@ -129,6 +121,7 @@ namespace Business.Factories.Workers
             execution.FlowStep.IsExpanded = true;
             execution.FlowStep.IsSelected = true;
         }
+
 
     }
 }

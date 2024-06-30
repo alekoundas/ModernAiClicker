@@ -14,7 +14,7 @@ namespace ModernAiClicker.ViewModels
 
         private IBaseDatawork _baseDatawork { get; }
 
-        public event PropertyChangedEventHandler? PropertyChangedEvent;
+        public new event PropertyChangedEventHandler? PropertyChanged;
 
 
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
@@ -36,7 +36,7 @@ namespace ModernAiClicker.ViewModels
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            PropertyChangedEvent?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
 
