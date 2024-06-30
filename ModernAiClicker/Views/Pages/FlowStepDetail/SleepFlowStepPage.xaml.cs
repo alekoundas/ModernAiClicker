@@ -3,10 +3,10 @@ using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.FlowStepDetail
 {
-    public partial class FlowStepDetailSleepPage : INavigableView<FlowStepDetailSleepViewModel>
+    public partial class SleepFlowStepPage : INavigableView<SleepFlowStepViewModel>
     {
-        public FlowStepDetailSleepViewModel ViewModel { get; }
-        public FlowStepDetailSleepPage(FlowStepDetailSleepViewModel viewModel)
+        public SleepFlowStepViewModel ViewModel { get; }
+        public SleepFlowStepPage(SleepFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();

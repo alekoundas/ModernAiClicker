@@ -55,13 +55,13 @@
     <Compile Update="Views\Pages\Execution\FrameExecutionFlowPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\FlowStepDetail\FlowStepDetailGoToPage.xaml.cs">
+    <Compile Update="Views\Pages\FlowStepDetail\GoToFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\FlowStepDetail\FlowStepDetailSleepPage.xaml.cs">
+    <Compile Update="Views\Pages\FlowStepDetail\SleepFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\FlowStepDetail\FlowStepDetailMouseClickPage.xaml.cs">
+    <Compile Update="Views\Pages\FlowStepDetail\CursorClickFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

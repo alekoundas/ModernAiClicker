@@ -21,7 +21,7 @@ using System.Collections.ObjectModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowStepDetailTemplateSearchViewModel : ObservableObject, INavigationAware
+    public partial class TemplateSearchFlowStepViewModel : ObservableObject, INavigationAware
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
@@ -43,7 +43,7 @@ namespace ModernAiClicker.ViewModels.Pages
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
-        public FlowStepDetailTemplateSearchViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public TemplateSearchFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;

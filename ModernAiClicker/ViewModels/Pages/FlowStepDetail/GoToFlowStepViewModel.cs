@@ -2,17 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
-using Model.Structs;
-using Business.Helpers;
-using Model.Business;
 using DataAccess.Repository.Interface;
-using System.Windows.Forms;
 using Model.Enums;
-using System.Collections.ObjectModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowStepDetailSleepViewModel : ObservableObject
+    public partial class GoToFlowStepViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
@@ -21,9 +16,8 @@ namespace ModernAiClicker.ViewModels.Pages
         private FlowStep _flowStep;
 
 
-        public FlowStepDetailSleepViewModel(FlowStep flowStep, ISystemService systemService,  IBaseDatawork baseDatawork) 
+        public GoToFlowStepViewModel(FlowStep flowStep, ISystemService systemService,  IBaseDatawork baseDatawork) 
         {
-
             _baseDatawork = baseDatawork;
             _systemService = systemService;
 
@@ -70,7 +64,6 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }
-
 
             _baseDatawork.SaveChanges();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());

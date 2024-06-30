@@ -76,23 +76,23 @@ namespace ModernAiClicker
                 services.AddSingleton<ExecutionPage>();
                 services.AddSingleton<ExecutionViewModel>();
 
-                services.AddSingleton<FlowStepDetailNewSelectTypePage>();
-                services.AddSingleton<FlowStepDetailNewSelectTypeViewModel>();
+                services.AddSingleton<NewSelectTypeFlowStepPage>();
+                services.AddSingleton<NewSelectTypeFlowStepViewModel>();
 
                 services.AddSingleton<FrameExecutionFlowPage>();
                 services.AddSingleton<FrameExecutionFlowViewModel>();
 
-                services.AddSingleton<FlowStepDetailTemplateSearchPage>();
-                services.AddSingleton<FlowStepDetailTemplateSearchViewModel>();
+                services.AddSingleton<TemplateSearchFlowStepPage>();
+                services.AddSingleton<TemplateSearchFlowStepViewModel>();
 
-                services.AddSingleton<FlowStepDetailMouseClickPage>();
-                services.AddSingleton<FlowStepDetailMouseClickViewModel>();
+                services.AddSingleton<CursorClickFlowStepPage>();
+                services.AddSingleton<CursorClickFlowStepViewModel>();
 
-                services.AddSingleton<FlowStepDetailSleepPage>();
-                services.AddSingleton<FlowStepDetailSleepViewModel>();
+                services.AddSingleton<SleepFlowStepPage>();
+                services.AddSingleton<SleepFlowStepViewModel>();
 
-                services.AddSingleton<FlowStepDetailGoToPage>();
-                services.AddSingleton<FlowStepDetailGoToViewModel>();
+                services.AddSingleton<GoToFlowStepPage>();
+                services.AddSingleton<GoToFlowStepViewModel>();
 
                 services.AddSingleton<SettingsPage>();
                 services.AddSingleton<SettingsViewModel>();

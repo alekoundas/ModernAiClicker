@@ -2,41 +2,32 @@
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
+using Model.Structs;
+using Business.Helpers;
+using Model.Business;
 using DataAccess.Repository.Interface;
-using System.Collections.ObjectModel;
-using Business.Extensions;
+using System.Windows.Forms;
 using Model.Enums;
+using System.Collections.ObjectModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowStepDetailMouseMoveViewModel : ObservableObject
+    public partial class SleepFlowStepViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
-        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
 
         [ObservableProperty]
         private FlowStep _flowStep;
 
-        [ObservableProperty]
-        private ObservableCollection<FlowStep> _parents;
 
-        public FlowStepDetailMouseMoveViewModel(FlowStep flowStep, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public SleepFlowStepViewModel(FlowStep flowStep, ISystemService systemService,  IBaseDatawork baseDatawork) 
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _templateMatchingService = templateMatchingService;
 
-            FlowStep = flowStep;
-            Parents = GetParents();
-
-        }
-
-        [RelayCommand]
-        private void OnComboBoxSelectionChanged()
-        {
-            //TODO
+            _flowStep = flowStep;
         }
 
 
@@ -84,26 +75,5 @@ namespace ModernAiClicker.ViewModels.Pages
             _baseDatawork.SaveChanges();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
-
-        private ObservableCollection<FlowStep> GetParents()
-        {
-            if (FlowStep.ParentFlowStepId == null)
-                return new ObservableCollection<FlowStep>();
-
-            // Get recursively all parents.
-            List<FlowStep> parents = _baseDatawork.FlowSteps
-                .GetAll()
-                .First(x => x.Id == FlowStep.ParentFlowStepId)
-                .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
-                .ToList();
-
-            parents = parents
-                .Where(x => x != null && x.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
-                .ToList();
-
-            return new ObservableCollection<FlowStep>(parents);
-
-        }
-
     }
 }

@@ -5,11 +5,11 @@ using System.Windows.Media.Imaging;
 
 namespace ModernAiClicker.Views.Pages.FlowStepDetail
 {
-    public partial class FlowStepDetailTemplateSearchPage : Page
+    public partial class TemplateSearchFlowStepPage : Page
     {
-        public FlowStepDetailTemplateSearchViewModel ViewModel { get; }
+        public TemplateSearchFlowStepViewModel ViewModel { get; }
 
-        public FlowStepDetailTemplateSearchPage(FlowStepDetailTemplateSearchViewModel viewModel)
+        public TemplateSearchFlowStepPage(TemplateSearchFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

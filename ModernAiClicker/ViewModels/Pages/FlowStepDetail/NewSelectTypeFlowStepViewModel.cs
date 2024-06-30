@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowStepDetailNewSelectTypeViewModel : ObservableObject
+    public partial class NewSelectTypeFlowStepViewModel : ObservableObject
     {
         public event NavigateToFlowStepDetailPageEvent? NavigateToFlowStepDetailPage;
         public delegate void NavigateToFlowStepDetailPageEvent(FlowStep flowStep);
@@ -20,7 +20,7 @@ namespace ModernAiClicker.ViewModels.Pages
         private FlowStep? _flowStep;
 
 
-        public FlowStepDetailNewSelectTypeViewModel(IBaseDatawork baseDatawork)
+        public NewSelectTypeFlowStepViewModel(IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
         }

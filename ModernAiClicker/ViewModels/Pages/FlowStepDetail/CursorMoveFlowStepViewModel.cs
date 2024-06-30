@@ -2,48 +2,41 @@
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
-using Model.Structs;
-using Business.Helpers;
-using Model.Business;
 using DataAccess.Repository.Interface;
-using System.Windows.Forms;
-using Model.Enums;
 using System.Collections.ObjectModel;
+using Business.Extensions;
+using Model.Enums;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowStepDetailMouseClickViewModel : ObservableObject
+    public partial class CursorMoveFlowStepViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
-        private FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
 
-
         [ObservableProperty]
-        private IEnumerable<MouseButtonsEnum> _mouseButtonsEnum;
+        private ObservableCollection<FlowStep> _parents;
 
-
-        [ObservableProperty]
-        private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
-
-
-        public FlowStepDetailMouseClickViewModel(FlowStep flowStep,FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork) 
+        public CursorMoveFlowStepViewModel(FlowStep flowStep, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
 
-            _flowStep = flowStep;
-            _flowsViewModel = flowsViewModel;
+            FlowStep = flowStep;
+            Parents = GetParents();
 
+        }
 
-            MouseButtonsEnum = Enum.GetValues(typeof(MouseButtonsEnum)).Cast<MouseButtonsEnum>();
-            MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
+        [RelayCommand]
+        private void OnComboBoxSelectionChanged()
+        {
+            //TODO
         }
 
 
@@ -91,5 +84,26 @@ namespace ModernAiClicker.ViewModels.Pages
             _baseDatawork.SaveChanges();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
+
+        private ObservableCollection<FlowStep> GetParents()
+        {
+            if (FlowStep.ParentFlowStepId == null)
+                return new ObservableCollection<FlowStep>();
+
+            // Get recursively all parents.
+            List<FlowStep> parents = _baseDatawork.FlowSteps
+                .GetAll()
+                .First(x => x.Id == FlowStep.ParentFlowStepId)
+                .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
+                .ToList();
+
+            parents = parents
+                .Where(x => x != null && x.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
+                .ToList();
+
+            return new ObservableCollection<FlowStep>(parents);
+
+        }
+
     }
 }

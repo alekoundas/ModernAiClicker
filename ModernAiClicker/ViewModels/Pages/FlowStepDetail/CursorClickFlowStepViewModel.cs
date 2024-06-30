@@ -2,26 +2,48 @@
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
+using Model.Structs;
+using Business.Helpers;
+using Model.Business;
 using DataAccess.Repository.Interface;
+using System.Windows.Forms;
 using Model.Enums;
+using System.Collections.ObjectModel;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowStepDetailGoToViewModel : ObservableObject
+    public partial class CursorClickFlowStepViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
+        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
+        private FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
 
 
-        public FlowStepDetailGoToViewModel(FlowStep flowStep, ISystemService systemService,  IBaseDatawork baseDatawork) 
+        [ObservableProperty]
+        private IEnumerable<MouseButtonsEnum> _mouseButtonsEnum;
+
+
+        [ObservableProperty]
+        private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
+
+
+        public CursorClickFlowStepViewModel(FlowStep flowStep,FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork) 
         {
+
             _baseDatawork = baseDatawork;
             _systemService = systemService;
+            _templateMatchingService = templateMatchingService;
 
             _flowStep = flowStep;
+            _flowsViewModel = flowsViewModel;
+
+
+            MouseButtonsEnum = Enum.GetValues(typeof(MouseButtonsEnum)).Cast<MouseButtonsEnum>();
+            MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
         }
 
 
@@ -64,6 +86,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }
+
 
             _baseDatawork.SaveChanges();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());

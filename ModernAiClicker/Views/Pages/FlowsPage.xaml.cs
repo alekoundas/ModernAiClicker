@@ -38,10 +38,10 @@ namespace ModernAiClicker.Views.Pages
         public void NavigateToFlowStepTypeSelectionPage(FlowStep flowStep)
         {
 
-            FlowStepDetailNewSelectTypeViewModel detailViewModel = new FlowStepDetailNewSelectTypeViewModel(_baseDatawork);
+            NewSelectTypeFlowStepViewModel detailViewModel = new NewSelectTypeFlowStepViewModel(_baseDatawork);
             detailViewModel.FlowStep = flowStep;
 
-            UIFlowStepTypeSelectionFrame.Navigate(new FlowStepDetailNewSelectTypePage(detailViewModel, ViewModel, _systemService, _templateMatchingService, _baseDatawork));
+            UIFlowStepTypeSelectionFrame.Navigate(new NewSelectTypeFlowStepPage(detailViewModel, ViewModel, _systemService, _templateMatchingService, _baseDatawork));
         }
 
     }

@@ -6,10 +6,10 @@ using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.FlowStepDetail
 {
-    public partial class FlowStepDetailMouseClickPage : INavigableView<FlowStepDetailMouseClickViewModel>
+    public partial class CursorClickFlowStepPage : INavigableView<CursorClickFlowStepViewModel>
     {
-        public FlowStepDetailMouseClickViewModel ViewModel { get; }
-        public FlowStepDetailMouseClickPage(FlowStepDetailMouseClickViewModel viewModel)
+        public CursorClickFlowStepViewModel ViewModel { get; }
+        public CursorClickFlowStepPage(CursorClickFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();
