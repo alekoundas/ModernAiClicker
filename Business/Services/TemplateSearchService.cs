@@ -42,8 +42,8 @@ namespace Business.Services
             {
                 Top = maxLoc.X,
                 Left = maxLoc.Y,
-                Right = maxLoc.Y + matTemplate.Width,
-                Bottom = maxLoc.X + matTemplate.Height,
+                Right = maxLoc.Y + matTemplate.Height,
+                Bottom = maxLoc.X + matTemplate.Width,
             };
 
             //Draws rectangle in result image
@@ -57,8 +57,9 @@ namespace Business.Services
             return new TemplateMatchingResult()
             {
                 ResultRectangle = resultRectangle,
-                Confidence = maxConfidence,
-                ResultImagePath = resultFilePath
+                Confidence = (decimal)maxConfidence,
+                ResultImagePath = resultFilePath,
+                ResultImage = matScreenshot.ToBytes()
             };
         }
 

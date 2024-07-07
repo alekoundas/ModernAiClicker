@@ -10,26 +10,31 @@ using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
 {
-    public class TemplateSearchExecutionWorker : IExecutionWorker
+    public class TemplateSearchExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
-        public TemplateSearchExecutionWorker(IBaseDatawork baseDatawork, ITemplateSearchService templateSearchService, ISystemService systemService)
+        public TemplateSearchExecutionWorker(
+              IBaseDatawork baseDatawork
+            , ITemplateSearchService templateSearchService
+            , ISystemService systemService
+            ) : base(baseDatawork, systemService)
         {
             _baseDatawork = baseDatawork;
             _templateSearchService = templateSearchService;
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, int? parentExecutionId)
+        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution parentExecution)
         {
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
-            execution.ParentExecutionId = parentExecutionId;
-
+            execution.ParentExecutionId = parentExecution.Id;
+            
             _baseDatawork.Executions.Add(execution);
+            parentExecution.ChildExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
             return execution;
@@ -53,6 +58,8 @@ namespace Business.Factories.Workers
 
             execution.IsSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
             execution.ResultLocation = new Point(x, y);
+            execution.ResultImage = result.ResultImage;
+            execution.ResultAccuracy = result.Confidence;
 
             await _baseDatawork.SaveChangesAsync();
         }

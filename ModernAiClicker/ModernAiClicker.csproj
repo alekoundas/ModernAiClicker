@@ -45,14 +45,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\UserControls\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Views\Pages\ExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Execution\FrameExecutionFlowPage.xaml.cs">
+    <Compile Update="Views\Pages\Executions\CursorClickExecutionPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\Executions\CursorMoveExecutionPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\Executions\FrameExecutionFlowPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\Executions\GoToExecutionPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\Executions\SleepExecutionPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\Executions\TemplateSearchExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\GoToFlowStepPage.xaml.cs">

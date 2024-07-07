@@ -9,21 +9,34 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Business.Factories.Workers
 {
-    public class FlowExecutionWorker : IExecutionWorker
+    public class FlowExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
-        public FlowExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService)
+        public FlowExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService): base(baseDatawork, systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowId, int? _)
+        //public async Task<Execution> CreateExecutionModel(int flowId, int? _)
+        //{
+        //    Execution execution = new Execution();
+        //    execution.FlowId = flowId;
+        //    Application.Current.Dispatcher.Invoke((Action)delegate
+        //    {
+        //         _baseDatawork.Executions.Add(execution);
+        //    });
+        //        await _baseDatawork.SaveChangesAsync();
+
+        //    return execution;
+        //}
+        public async Task<Execution> CreateExecutionModel(int flowId, Execution _)
         {
             Execution execution = new Execution();
             execution.FlowId = flowId;
@@ -33,6 +46,7 @@ namespace Business.Factories.Workers
 
             return execution;
         }
+
 
         public Task ExecuteFlowStepAction(Execution execution)
         {
@@ -83,7 +97,7 @@ namespace Business.Factories.Workers
             if (execution.Flow == null)
                 return;
 
-                execution.Flow.IsExpanded = true;
+            execution.Flow.IsExpanded = true;
             execution.Flow.IsSelected = true;
         }
     }

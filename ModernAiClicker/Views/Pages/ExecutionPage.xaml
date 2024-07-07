@@ -39,20 +39,41 @@
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Stroke" Color="#FF818181" />
 
         <Style x:Key="_ListBoxItemStyle" TargetType="ListBoxItem">
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
                         <Border
                             Name="_Border"
+                            Margin="3"
                             Padding="2"
+                            Background="#25272a"
+                            BorderBrush="Black"
+                            BorderThickness="2"
+                            CornerRadius="5"
                             SnapsToDevicePixels="true">
-                            <ContentPresenter />
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="_Border" Property="Background" Value="Yellow" />
-                                <Setter Property="Foreground" Value="Red" />
+                                <Setter TargetName="_Border" Property="Background" Value="#303236" />
                             </Trigger>
+
+                            <DataTrigger Binding="{Binding IsSuccessful}" Value="false">
+                                <!--<Setter TargetName="_Border" Property="Visibility" Value="Collapsed" />-->
+                                <Setter TargetName="_Border" Property="Background" Value="#802426" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding IsSuccessful}" Value="true">
+                                <!--<Setter TargetName="_Border" Property="Visibility" Value="Collapsed" />-->
+                                <Setter TargetName="_Border" Property="Background" Value="#1a5b1f" />
+                            </DataTrigger>
+
+
+
+
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -118,14 +139,12 @@
 
 
         <Style x:Key="TreeViewItemStyle1" TargetType="{x:Type TreeViewItem}">
-            <Setter Property="Background" Value="Transparent" />
             <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
             <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
             <Setter Property="Padding" Value="1,0,0,0" />
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
             <Setter Property="behavior:ScrollToSelectedItemBehavior.IsBroughtIntoViewWhenSelected" Value="True" />
 
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TreeViewItem}">
@@ -185,6 +204,105 @@
                                 <Setter Property="Padding" Value="0,0,0,10" />
                                 <Setter Property="Focusable" Value="False" />
                             </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}" />
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="true" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="FlowStepBorder" Property="Visibility" Value="Collapsed" />
+                            </MultiDataTrigger>
+
+                            <DataTrigger Binding="{Binding IsExpanded}" Value="false">
+                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="ItemsHost" Property="Width" Value="50" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="2" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+
+        <Style x:Key="TreeViewItemStyle2" TargetType="{x:Type TreeViewItem}">
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+            <Setter Property="Padding" Value="1,0,0,0" />
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+            <Setter Property="behavior:ScrollToSelectedItemBehavior.IsBroughtIntoViewWhenSelected" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ToggleButton
+                                x:Name="Expander"
+                                IsChecked="{Binding IsExpanded}"
+                                Style="{StaticResource ExpandCollapseToggleStyle}" />
+                            <Border
+                                x:Name="FlowStepBorder"
+                                Grid.Column="1"
+                                Padding="{TemplateBinding Padding}"
+                                Background="#25272a"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter
+                                    x:Name="PART_Header"
+                                    HorizontalAlignment="Stretch"
+                                    ContentSource="Header"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                            <ItemsPresenter
+                                x:Name="ItemsHost"
+                                Grid.Row="1"
+                                Grid.Column="1" />
+
+                        </Grid>
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsExpanded" Value="false">
+                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="ItemsHost" Property="Width" Value="50" />
+                            </Trigger>
+
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="FlowStepBorder" Property="Background" Value="#303236" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}" />
+                            </MultiTrigger>
+                            <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}">
+                                <Setter TargetName="FlowStepBorder" Property="HorizontalAlignment" Value="Center" />
+                                <Setter Property="Padding" Value="0,0,0,10" />
+                                <Setter Property="Focusable" Value="False" />
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}" />
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="true" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="FlowStepBorder" Property="Visibility" Value="Collapsed" />
+                            </MultiDataTrigger>
 
                             <DataTrigger Binding="{Binding IsExpanded}" Value="false">
                                 <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
@@ -237,6 +355,7 @@
             <RowDefinition Height="0.7*" />
             <RowDefinition Height="0.2*" />
             <RowDefinition Height="0.2*" />
+            <RowDefinition Height="0.25*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -250,9 +369,10 @@
             DisplayMemberPath="Id"
             ItemsSource="{Binding ViewModel.ComboBoxFlows}"
             SelectedItem="{Binding ViewModel.ComboBoxSelectedFlow}">
+
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedFlowCommand}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </ComboBox>
@@ -303,7 +423,12 @@
                 AllowDrop="True"
                 ItemContainerStyle="{StaticResource TreeViewItemStyle1}"
                 ItemsSource="{Binding ViewModel.TreeviewFlows}">
-
+                <!--  Set SelectedItem on change  -->
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.TreeViewSelectedItemChangedCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
 
                 <TreeView.Resources>
 
@@ -339,6 +464,7 @@
                                     Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
                                     Text="{Binding Name}" />
 
+                                <!--  Delete  -->
                                 <ui:Button
                                     x:Name="TreeViewItemFlowDeleteButton"
                                     Grid.Row="0"
@@ -346,12 +472,28 @@
                                     Grid.Column="2"
                                     Grid.ColumnSpan="2"
                                     Margin="5"
-                                    Padding="10"
+                                    Padding="5"
                                     HorizontalAlignment="Right"
-                                    Content="Delete">
+                                    Background="#323437"
+                                    BorderBrush="#3D3F42">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="5" />
+                                        </Style>
+                                    </Button.Resources>
+                                    <ui:Button.Style>
+                                        <Style TargetType="{x:Type ui:Button}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="true">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ui:Button.Style>
+                                    <icons:BootstrapIcon Icon="Trash" />
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Click">
-                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowButtonDeleteClickCommand}">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowButtonDeleteClickCommand}">
                                                 <i:InvokeCommandAction.CommandParameter>
                                                     <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                         <Binding ElementName="TreeViewItemFlowDeleteButton" />
@@ -392,7 +534,7 @@
                                                         <Style TargetType="{x:Type ColumnDefinition}">
                                                             <Setter Property="Width" Value="0" />
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.IsLocked}" Value="false">
+                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="false">
                                                                     <Setter Property="Width" Value="0.1*" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -405,7 +547,7 @@
                                                         <Style TargetType="{x:Type ColumnDefinition}">
                                                             <Setter Property="Width" Value="0" />
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.IsLocked}" Value="false">
+                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="false">
                                                                     <Setter Property="Width" Value="0.1*" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -461,7 +603,7 @@
 
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
@@ -484,7 +626,7 @@
 
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
@@ -511,7 +653,7 @@
 
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
@@ -537,7 +679,7 @@
                                             Content="Add">
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="Click">
-                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemButtonNewClickCommand}" PassEventArgsToCommand="True">
+                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemButtonNewClickCommand}" PassEventArgsToCommand="True">
                                                         <i:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                 <Binding ElementName="TreeViewItemButtonNew" />
@@ -613,7 +755,7 @@
             </Border.Effect>
             <ScrollViewer>
                 <Frame
-                    x:Name="UIFlowStepDetailFrame2"
+                    x:Name="UIExecutionDetailFrame"
                     ScrollViewer.CanContentScroll="True"
                     ScrollViewer.VerticalScrollBarVisibility="Visible" />
             </ScrollViewer>
@@ -624,8 +766,21 @@
             Grid.Row="3"
             Margin="0,20,0,0"
             Text="Execution history" />
-        <Border
+
+        <ComboBox
             Grid.Row="4"
+            Margin="0,0,0,20"
+            DisplayMemberPath="Id"
+            ItemsSource="{Binding ViewModel.ComboBoxExecutions}"
+            SelectedItem="{Binding ViewModel.ComboBoxSelectedExecution}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedExecutionCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ComboBox>
+        <Border
+            Grid.Row="5"
             Grid.ColumnSpan="2"
             Background="#272727"
             BorderBrush="#C4C4C4"
@@ -635,7 +790,16 @@
             </Border.Effect>
             <ScrollViewer>
 
-                <ListBox ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" ItemsSource="{Binding ViewModel.Executions}">
+                <ListBox
+                    Name="ExecutionsListBox"
+                    ItemContainerStyle="{DynamicResource _ListBoxItemStyle}"
+                    ItemsSource="{Binding ViewModel.ListBoxExecutions}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ViewModel.ListBoxSelectedItemChangedCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel Orientation="Horizontal" />
@@ -644,10 +808,7 @@
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border
-                                Background="#303236"
-                                BorderBrush="#C4C4C4"
-                                BorderThickness="2">
+                            <Border BorderThickness="2" CornerRadius="5">
                                 <StackPanel>
                                     <TextBlock Text="{Binding Id}" />
                                     <TextBlock Text="{Binding FlowStep.FlowStepType}" />
@@ -657,6 +818,25 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+
+                <!--<TreeView HorizontalContentAlignment="Stretch" ItemsSource="{Binding ViewModel.TreeviewFlows}">
+
+
+                <TreeView.Resources>
+                -->
+                <!--  Parent TreeViewItem  -->
+                <!--
+                <HierarchicalDataTemplate DataType="{x:Type models:Flow}" ItemsSource="{Binding Executions}">
+                <TextBlock Text="asdasd" />
+
+                </HierarchicalDataTemplate>
+
+
+                <HierarchicalDataTemplate DataType="{x:Type models:Execution}" ItemsSource="{Binding ChildExecution}">
+                <TextBlock Text="3333" />
+                </HierarchicalDataTemplate>
+                </TreeView.Resources>
+                </TreeView>-->
             </ScrollViewer>
 
         </Border>

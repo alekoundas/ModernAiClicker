@@ -1,5 +1,4 @@
-﻿using DataAccess.Repository.Interface;
-using ModernAiClicker.ViewModels.Pages;
+﻿using ModernAiClicker.ViewModels.Pages.Executions;
 using System.Windows.Controls;
 
 namespace ModernAiClicker.Views.Pages.FlowStepDetail

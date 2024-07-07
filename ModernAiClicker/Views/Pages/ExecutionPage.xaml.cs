@@ -1,12 +1,13 @@
 ﻿using Business.Factories;
 using Business.Interfaces;
-using DataAccess;
 using DataAccess.Repository.Interface;
+using Model.Enums;
 using Model.Models;
 using ModernAiClicker.ViewModels.Pages;
+using ModernAiClicker.ViewModels.Pages.Executions;
+using ModernAiClicker.Views.Pages.Executions;
 using ModernAiClicker.Views.Pages.FlowStepDetail;
 using System.Collections.ObjectModel;
-using System.Windows;
 using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages
@@ -37,6 +38,13 @@ namespace ModernAiClicker.Views.Pages
             InitializeComponent();
 
             viewModel.FrameNavigateToFlow += FrameNavigateToFlow;
+            viewModel.NavigateToExecutionDetail += NavigateToExecutionDetailEvent;
+
+            //        ExecutionsListBox.Items.SortDescriptions.Add(
+
+            //new System.ComponentModel.SortDescription("Id",
+
+            //   System.ComponentModel.ListSortDirection.Ascending));
         }
 
 
@@ -47,6 +55,39 @@ namespace ModernAiClicker.Views.Pages
             frameViewModel.Executions = executions;
 
             UIFlowStepDetailFrame.Navigate(new FrameExecutionFlowPage(frameViewModel));
+        }
+
+
+        public void NavigateToExecutionDetailEvent(FlowStepTypesEnum flowStepType, Execution? execution)
+        {
+
+            if (flowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
+            {
+                if(execution == null)
+                    execution = new Execution()
+                    {
+                        
+                    };
+
+                TemplateSearchExecutionViewModel viewModel = new TemplateSearchExecutionViewModel(execution, _systemService, _templateMatchingService, _baseDatawork);
+                this.UIExecutionDetailFrame.Navigate(new TemplateSearchExecutionPage(viewModel));
+            }
+            else if (flowStepType == FlowStepTypesEnum.MOUSE_CLICK)
+            {
+                CursorClickExecutionViewModel viewModel = new CursorClickExecutionViewModel(execution, _systemService, _templateMatchingService, _baseDatawork);
+                this.UIExecutionDetailFrame.Navigate(new CursorClickExecutionPage(viewModel));
+            }
+            else if (flowStepType == FlowStepTypesEnum.MOUSE_MOVE_COORDINATES)
+            {
+                CursorMoveExecutionViewModel viewModel = new CursorMoveExecutionViewModel(execution,_systemService, _baseDatawork);
+                this.UIExecutionDetailFrame.Navigate(new CursorMoveExecutionPage(viewModel));
+            }
+            else if (flowStepType == FlowStepTypesEnum.SLEEP)
+            {
+                SleepExecutionViewModel viewModel = new SleepExecutionViewModel(execution, _systemService, _baseDatawork);
+                this.UIExecutionDetailFrame.Navigate(new SleepExecutionPage(viewModel));
+            }
+
         }
 
     }

@@ -11,10 +11,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class FlowsViewModel : BaseViewModel, INavigationAware
+    public partial class FlowsViewModel : ObservableObject, INavigationAware, INotifyPropertyChanged
     {
         public event NavigateToFlowStepTypeSelectionPageEvent? NavigateToFlowStepTypeSelectionPage;
         public delegate void NavigateToFlowStepTypeSelectionPageEvent(FlowStep flowStep);
@@ -23,13 +24,69 @@ namespace ModernAiClicker.ViewModels.Pages
         public new event PropertyChangedEventHandler? PropertyChanged;
 
 
+        private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
+        public ObservableCollection<Flow> FlowsList
+        {
+            get { return _flowsList; }
+            set
+            {
+                _flowsList = value;
+                NotifyPropertyChanged(nameof(FlowsList));
+            }
+        }
+
+        private bool _isLocked;
+        public bool IsLocked
+        {
+            get { return _isLocked; }
+            set
+            {
+                _isLocked = value;
+                NotifyPropertyChanged(nameof(IsLocked));
+            }
+        }
+
+
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        //TODO find a fix for includes
+        public void RefreshData()
+        {
+            List<Flow> flows = _baseDatawork.Query.Flows
+                .Include(x => x.FlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps).ThenInclude(x => x.Executions)
+            .ToList();
+
+            FlowsList = new ObservableCollection<Flow>(flows);
+        }
+
 
 
 
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
-        public FlowsViewModel(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork)
+        public FlowsViewModel(IBaseDatawork baseDatawork, ISystemService systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
@@ -46,12 +103,12 @@ namespace ModernAiClicker.ViewModels.Pages
             newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
 
             flow.FlowSteps.Add(newFlowStep);
-
             _baseDatawork.Flows.Add(flow);
             _baseDatawork.SaveChanges();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
-            RefreshData();
+            FlowsList.Add(flow);
+            //RefreshData();
         }
 
 

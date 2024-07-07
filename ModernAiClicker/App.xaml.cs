@@ -18,8 +18,10 @@ using Model.Models;
 using ModernAiClicker.Services;
 using ModernAiClicker.ViewModels;
 using ModernAiClicker.ViewModels.Pages;
+using ModernAiClicker.ViewModels.Pages.Executions;
 using ModernAiClicker.ViewModels.Windows;
 using ModernAiClicker.Views.Pages;
+using ModernAiClicker.Views.Pages.Executions;
 using ModernAiClicker.Views.Pages.FlowStepDetail;
 using ModernAiClicker.Views.Windows;
 using System.Collections.ObjectModel;
@@ -54,7 +56,6 @@ namespace ModernAiClicker
 
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
-                services.AddSingleton<BaseViewModel>();
 
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<ISnackbarService, SnackbarService>();
@@ -64,6 +65,7 @@ namespace ModernAiClicker
                 services.AddSingleton<IExecutionFactory, ExecutionFactory>();
 
                 // Pages
+                //Tabs
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
 
@@ -76,11 +78,14 @@ namespace ModernAiClicker
                 services.AddSingleton<ExecutionPage>();
                 services.AddSingleton<ExecutionViewModel>();
 
+                services.AddSingleton<SettingsPage>();
+                services.AddSingleton<SettingsViewModel>();
+
+                //Flow step detail
                 services.AddSingleton<NewSelectTypeFlowStepPage>();
                 services.AddSingleton<NewSelectTypeFlowStepViewModel>();
 
-                services.AddSingleton<FrameExecutionFlowPage>();
-                services.AddSingleton<FrameExecutionFlowViewModel>();
+               
 
                 services.AddSingleton<TemplateSearchFlowStepPage>();
                 services.AddSingleton<TemplateSearchFlowStepViewModel>();
@@ -88,14 +93,33 @@ namespace ModernAiClicker
                 services.AddSingleton<CursorClickFlowStepPage>();
                 services.AddSingleton<CursorClickFlowStepViewModel>();
 
+                services.AddSingleton<CursorMoveFlowStepPage>();
+                services.AddSingleton<CursorMoveFlowStepViewModel>();
+
                 services.AddSingleton<SleepFlowStepPage>();
                 services.AddSingleton<SleepFlowStepViewModel>();
 
                 services.AddSingleton<GoToFlowStepPage>();
                 services.AddSingleton<GoToFlowStepViewModel>();
 
-                services.AddSingleton<SettingsPage>();
-                services.AddSingleton<SettingsViewModel>();
+                //Flow execution step detail
+                services.AddSingleton<FrameExecutionFlowPage>();
+                services.AddSingleton<FrameExecutionFlowViewModel>();
+
+                services.AddSingleton<TemplateSearchExecutionPage>();
+                services.AddSingleton<TemplateSearchExecutionViewModel>();
+
+                services.AddSingleton<CursorClickExecutionPage>();
+                services.AddSingleton<CursorClickExecutionViewModel>();
+
+                services.AddSingleton<CursorMoveExecutionPage>();
+                services.AddSingleton<CursorMoveExecutionViewModel>();
+
+                services.AddSingleton<SleepExecutionPage>();
+                services.AddSingleton<SleepExecutionViewModel>();
+
+                services.AddSingleton<GoToExecutionPage>();
+                services.AddSingleton<GoToExecutionViewModel>();
 
 
 

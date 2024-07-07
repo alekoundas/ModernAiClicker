@@ -19,8 +19,11 @@ namespace Model.Models
         public DateTime? EndedOn;
 
 
-        public string RemainingSteps = "";
         public bool IsSelected;
+
+        public byte[]? ResultImage;
+
+        public double ResultAccuracy;
         public bool IsSuccessful { get; set; }
         public Point ResultLocation { get; set; }
 

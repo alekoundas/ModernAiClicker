@@ -24,14 +24,19 @@ namespace Model.Models
         public DateTime? _endedOn;
 
         [ObservableProperty]
-        public string _remainingSteps = "";
-
-        [ObservableProperty]
         public bool _isSelected = true;
 
-        public bool IsSuccessful { get; set; }
-        public Point ResultLocation { get; set; }
+        [ObservableProperty]
+        public Point _resultLocation;
 
+        [ObservableProperty]
+        public byte[]? _resultImage;
+
+        [ObservableProperty]
+        public decimal _resultAccuracy= 0.00m;
+
+        [ObservableProperty]
+        public bool _isSuccessful;
 
         public int? FlowId { get; set; }
         public virtual Flow? Flow { get; set; }

@@ -15,28 +15,30 @@ using System.Threading.Tasks;
 
 namespace Business.Factories.Workers
 {
-    public class MouseMoveExecutionWorker : IExecutionWorker
+    public class MouseMoveExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
-        public MouseMoveExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService)
+        public MouseMoveExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork, systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, int? parentExecutionId)
+        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution parentExecution)
         {
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
-            execution.ParentExecutionId = parentExecutionId;
+            execution.ParentExecutionId = parentExecution.Id;
 
             _baseDatawork.Executions.Add(execution);
+            parentExecution.ChildExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
             return execution;
         }
+
 
         public Task ExecuteFlowStepAction(Execution execution)
         {

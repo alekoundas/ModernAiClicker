@@ -9,7 +9,7 @@ using System.Windows.Threading;
 using System.Windows;
 using System.Text.RegularExpressions;
 
-namespace ModernAiClicker.ViewModels.Pages
+namespace ModernAiClicker.ViewModels.Pages.Executions
 {
     public partial class FrameExecutionFlowViewModel : ObservableObject
     {
@@ -36,13 +36,15 @@ namespace ModernAiClicker.ViewModels.Pages
             if (Flow == null)
                 return;
 
+            Executions = new ObservableCollection<Execution>();
+
             // Create new thread so UI doesnt freeze.
             await Task.Run(async () =>
             {
                 IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
                 Execution flowExecution = await flowWorker.CreateExecutionModel(Flow.Id, null);
 
-                App.Current.Dispatcher.Invoke((Action)delegate
+                Application.Current.Dispatcher.Invoke((Action)delegate
                 {
                     Executions.Add(flowExecution);
                 });
@@ -55,7 +57,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 // Get next flow step and recursively execute every other step.
                 FlowStep? nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
-                await ExecuteStepRecursion(nextFlowStep, flowExecution.Id);
+                await ExecuteStepRecursion(nextFlowStep, flowExecution);
 
                 // Complete execution.
                 await flowWorker.SetExecutionModelStateComplete(flowExecution);
@@ -64,26 +66,27 @@ namespace ModernAiClicker.ViewModels.Pages
             StopExecution = false;
         }
 
-        private async Task<Execution?> ExecuteStepRecursion(FlowStep? flowStep, int parentExecutionId)
+        private async Task<Execution?> ExecuteStepRecursion(FlowStep? flowStep, Execution parentExecution)
         {
             // Recursion ends here.
             if (flowStep == null || StopExecution == true)
                 return await Task.FromResult<Execution?>(null);
 
             IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
-            Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecutionId);
-            App.Current.Dispatcher.Invoke((Action)delegate
+            Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecution);
+            Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 Executions.Add(flowStepExecution);
             });
 
 
             factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
-            AllowUIToUpdate();
-            Thread.Sleep(100);
+            factoryWorker.RefreshUI();
             await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
             await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
             await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
+            await factoryWorker.SaveToJson();
+
 
             FlowStep? nextFlowStep;
             nextFlowStep = await factoryWorker.GetNextChildFlowStep(flowStepExecution);
@@ -93,7 +96,7 @@ namespace ModernAiClicker.ViewModels.Pages
             // and then continue recursion to children.
             if (nextFlowStep != null)
             {
-                await ExecuteStepRecursion(nextFlowStep, flowStepExecution.Id);
+                await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
                 nextFlowStep = null;
             }
 
@@ -103,7 +106,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
 
 
-            return await ExecuteStepRecursion(nextFlowStep, flowStepExecution.Id);
+            return await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
         }
 
         // Refresh UI with magic.
