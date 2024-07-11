@@ -49,7 +49,5 @@ namespace Model.Models
 
         public int? ChildExecutionId { get; set; }
         public virtual Execution? ChildExecution { get; set; }
-
     }
-
 }

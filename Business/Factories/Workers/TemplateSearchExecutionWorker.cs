@@ -53,8 +53,9 @@ namespace Business.Factories.Workers
 
             ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImagePath);
             TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImagePath, searchRectangle);
-            int x = searchRectangle.Left + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
-            int y = searchRectangle.Top + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
+
+            int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
+            int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height/ 2);
 
             execution.IsSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
             execution.ResultLocation = new Point(x, y);

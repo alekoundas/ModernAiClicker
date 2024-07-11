@@ -76,6 +76,8 @@ namespace ModernAiClicker.ViewModels.Pages
                     FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                     isNewSimpling.OrderingNum++;
                 }
+                if (FlowStep.Name.Length == 0)
+                    FlowStep.Name = "Set cursor possition.";
 
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }

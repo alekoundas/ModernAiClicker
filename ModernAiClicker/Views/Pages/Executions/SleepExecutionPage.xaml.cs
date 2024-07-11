@@ -5,13 +5,15 @@ using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.Executions
 {
-    public partial class SleepExecutionPage : Page
+    public partial class SleepExecutionPage : INavigableView<SleepExecutionViewModel>
     {
         public SleepExecutionViewModel ViewModel { get; }
         public SleepExecutionPage(SleepExecutionViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
+
+            InitializeComponent();
         }
     }
 }

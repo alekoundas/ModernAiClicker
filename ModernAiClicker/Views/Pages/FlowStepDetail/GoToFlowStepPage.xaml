@@ -16,38 +16,39 @@
     mc:Ignorable="d">
 
     <StackPanel>
-
-        <Label>Configure wait time.</Label>
-
         <Grid Margin="10,10,10,50">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="0.3*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
 
+            <StackPanel HorizontalAlignment="Center">
+                <Label>Select previous step to run again:</Label>
+                <ComboBox ItemsSource="{Binding ViewModel.PreviousSteps}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Id}" />
+                                <TextBlock Text=" - " />
+                                <TextBlock Text="{Binding Path=Name}" />
+                            </StackPanel>
+                        </DataTemplate>
 
+                    </ComboBox.ItemTemplate>
+                    <!--<i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" />
+                    </i:EventTrigger>
+                    </i:Interaction.Triggers>-->
+                </ComboBox>
 
-
-
-
-
-            <StackPanel>
-                <Label>Set hours:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForHours, Mode=TwoWay}" />
-
-                <Label>Set minutes:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForMinutes, Mode=TwoWay}" />
-
-                <Label>Set seconds:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForSeconds, Mode=TwoWay}" />
-
-                <Label>Set milliseconds:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 

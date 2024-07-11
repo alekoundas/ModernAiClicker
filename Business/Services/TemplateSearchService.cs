@@ -40,10 +40,10 @@ namespace Business.Services
             //Get center possition of needle image
             Model.Structs.Rectangle resultRectangle = new Model.Structs.Rectangle()
             {
-                Top = maxLoc.X,
-                Left = maxLoc.Y,
-                Right = maxLoc.Y + matTemplate.Height,
-                Bottom = maxLoc.X + matTemplate.Width,
+                Top = maxLoc.Y,
+                Left = maxLoc.X,
+                Right = maxLoc.X + matTemplate.Width,
+                Bottom = maxLoc.Y + matTemplate.Height,
             };
 
             //Draws rectangle in result image
@@ -87,8 +87,8 @@ namespace Business.Services
 
         private static void DrawResultRectangle(double confidence, Mat matScreenshot, Model.Structs.Rectangle resultRectangle)
         {
-            OpenCvSharp.Point point1 = new OpenCvSharp.Point(resultRectangle.Top, resultRectangle.Left);
-            OpenCvSharp.Point point2 = new OpenCvSharp.Point(resultRectangle.Bottom, resultRectangle.Right);
+            OpenCvSharp.Point point1 = new OpenCvSharp.Point(resultRectangle.Left, resultRectangle.Top);
+            OpenCvSharp.Point point2 = new OpenCvSharp.Point(resultRectangle.Right, resultRectangle.Bottom);
 
             matScreenshot.Rectangle(point1, point2, new Scalar(0, 0, 255), 2);
 

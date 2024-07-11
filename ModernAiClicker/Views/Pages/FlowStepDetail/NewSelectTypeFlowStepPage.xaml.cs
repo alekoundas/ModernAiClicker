@@ -58,6 +58,11 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
                 SleepFlowStepViewModel viewModel = new SleepFlowStepViewModel(flowStep, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new SleepFlowStepPage(viewModel));
             }
+            else if (flowStep.FlowStepType == FlowStepTypesEnum.GO_TO)
+            {
+                GoToFlowStepViewModel viewModel = new GoToFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new GoToFlowStepPage(viewModel));
+            }
 
         }
 

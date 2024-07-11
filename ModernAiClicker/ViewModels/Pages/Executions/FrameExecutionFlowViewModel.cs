@@ -36,7 +36,6 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             if (Flow == null)
                 return;
 
-            Executions = new ObservableCollection<Execution>();
 
             // Create new thread so UI doesnt freeze.
             await Task.Run(async () =>

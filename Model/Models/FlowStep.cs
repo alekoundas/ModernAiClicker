@@ -53,6 +53,9 @@ namespace Model.Models
         public string _templateImagePath = "";
 
         [ObservableProperty]
+        public byte[]? _templateImage;
+
+        [ObservableProperty]
         public decimal _accuracy = 0.00m;
 
         public Point ResultLocation { get; set; }

@@ -18,6 +18,7 @@ using System.Windows;
 using System.Security;
 using System.Management;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -69,6 +70,7 @@ namespace ModernAiClicker.ViewModels.Pages
             if (openFileDialog.ShowDialog() == true)
             {
                 TemplateImgPath = openFileDialog.FileName;
+                FlowStep.TemplateImage = File.ReadAllBytes(TemplateImgPath);
                 ShowTemplateImg?.Invoke(openFileDialog.FileName);
             }
 
@@ -176,7 +178,9 @@ namespace ModernAiClicker.ViewModels.Pages
                         failFlowStep
                     };
 
-                    //FlowStep.Flow = null;
+                    if (FlowStep.Name.Length == 0)
+                        FlowStep.Name = "Template search";
+
                     _baseDatawork.FlowSteps.Add(FlowStep);
                 }
 

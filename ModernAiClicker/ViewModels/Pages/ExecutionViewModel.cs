@@ -42,6 +42,9 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private Execution? _comboBoxSelectedExecution;
 
+        [ObservableProperty]
+        private Execution? _listboxSelectedExecution;
+
         private readonly IBaseDatawork _baseDatawork;
 
         public bool IsLocked = true;
@@ -66,8 +69,8 @@ namespace ModernAiClicker.ViewModels.Pages
             if (ComboBoxSelectedFlow == null)
                 return;
 
-            Flow flow = await _baseDatawork.Flows
-                .FirstOrDefaultAsync(x => x.Id == ComboBoxSelectedFlow.Id);
+            var flow = _baseDatawork.Query.Flows
+                .FirstOrDefault(x => x.Id == ComboBoxSelectedFlow.Id);
 
             List<Execution> executions = await _baseDatawork.Executions.Query
                 .Where(x => x.FlowId == ComboBoxSelectedFlow.Id)
@@ -77,39 +80,49 @@ namespace ModernAiClicker.ViewModels.Pages
 
             TreeviewFlows.Clear();
             TreeviewFlows.Add(flow);
-
             FrameNavigateToFlow?.Invoke(flow, ListBoxExecutions);
         }
 
 
-        [RelayCommand]
-        private void OnTreeViewSelectedItemChanged(RoutedPropertyChangedEventArgs<object> routedPropertyChangedEventArgs)
-        {
-            object selectedItem = routedPropertyChangedEventArgs.NewValue;
-            if (selectedItem is not FlowStep)
-                return;
+        //[RelayCommand]
+        //private void OnTreeViewSelectedItemChanged(RoutedPropertyChangedEventArgs<object> routedPropertyChangedEventArgs)
+        //{
+        //    object selectedItem = routedPropertyChangedEventArgs.NewValue;
+        //    if (selectedItem is not FlowStep)
+        //        return;
 
-            FlowStepTypesEnum flowStepType = ((FlowStep)selectedItem).FlowStepType;
+        //    FlowStepTypesEnum flowStepType = ((FlowStep)selectedItem).FlowStepType;
 
-            if (ComboBoxSelectedExecution != null)
-                NavigateToExecutionDetail?.Invoke(flowStepType, ComboBoxSelectedExecution);
+        //    if (ListboxSelectedExecution != null)
+        //        NavigateToExecutionDetail?.Invoke(flowStepType, ListboxSelectedExecution);
 
-            NavigateToExecutionDetail?.Invoke(flowStepType, null);
-        }
+        //    NavigateToExecutionDetail?.Invoke(flowStepType, null);
+        //}
 
         [RelayCommand]
         private void OnListBoxSelectedItemChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
         {
-            object selectedItem = routedPropertyChangedEventArgs?.AddedItems[0];
-            if (selectedItem is not Execution)
-                return;
+            if (routedPropertyChangedEventArgs?.AddedItems.Count > 0)
+            {
 
-            Execution selectedExecution = selectedItem as Execution;
-            if (selectedExecution.Flow != null)
-                selectedExecution.Flow.IsSelected = true;
+                object selectedItem = routedPropertyChangedEventArgs?.AddedItems[0];
+                if (selectedItem is not Execution)
+                    return;
 
-            if (selectedExecution.FlowStep != null)
-                selectedExecution.FlowStep.IsSelected = true;
+                Execution selectedExecution = selectedItem as Execution;
+                ListboxSelectedExecution = selectedExecution;
+
+
+                if (selectedExecution.Flow != null)
+                    selectedExecution.Flow.IsSelected = true;
+
+                if (selectedExecution.FlowStep != null)
+                {
+                    selectedExecution.FlowStep.IsSelected = true;
+
+                    NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
+                }
+            }
         }
 
         [RelayCommand]
@@ -121,25 +134,25 @@ namespace ModernAiClicker.ViewModels.Pages
             // Get recursively all parents.
             Execution execution = await _baseDatawork.Executions.Query
 
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
-                .Include(x => x.ChildExecution).ThenInclude(x => x.FlowStep)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
                 .FirstAsync(x => x.Id == ComboBoxSelectedExecution.Id);
 
 

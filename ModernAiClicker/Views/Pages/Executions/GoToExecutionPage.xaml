@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ModernAiClicker.Views.Pages.FlowStepDetail"
+    xmlns:local="clr-namespace:ModernAiClicker.Views.Pages.Executions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="GoToExecutionPage"
     d:DataContext="{d:DesignInstance local:GoToExecutionPage,
@@ -38,45 +38,19 @@
 
             <StackPanel>
                 <Label>Set hours:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForHours, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.SleepForHours, Mode=TwoWay}" />
 
                 <Label>Set minutes:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForMinutes, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.SleepForMinutes, Mode=TwoWay}" />
 
                 <Label>Set seconds:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForSeconds, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.SleepForSeconds, Mode=TwoWay}" />
 
                 <Label>Set milliseconds:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                <Button Content="Cancel">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" HorizontalAlignment="right">
-                <Button Content="Save">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-            </StackPanel>
-        </Grid>
     </StackPanel>
 
 </Page>

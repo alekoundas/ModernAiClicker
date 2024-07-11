@@ -1,14 +1,8 @@
-﻿using AutoMapper;
-using Business.Interfaces;
+﻿using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using Model.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Business.Factories.Workers
@@ -24,24 +18,15 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        //public async Task<Execution> CreateExecutionModel(int flowId, int? _)
-        //{
-        //    Execution execution = new Execution();
-        //    execution.FlowId = flowId;
-        //    Application.Current.Dispatcher.Invoke((Action)delegate
-        //    {
-        //         _baseDatawork.Executions.Add(execution);
-        //    });
-        //        await _baseDatawork.SaveChangesAsync();
-
-        //    return execution;
-        //}
+     
         public async Task<Execution> CreateExecutionModel(int flowId, Execution _)
         {
             Execution execution = new Execution();
             execution.FlowId = flowId;
-
+            Application.Current.Dispatcher.Invoke((Action)delegate
+            {
             _baseDatawork.Executions.Add(execution);
+            });
             await _baseDatawork.SaveChangesAsync();
 
             return execution;

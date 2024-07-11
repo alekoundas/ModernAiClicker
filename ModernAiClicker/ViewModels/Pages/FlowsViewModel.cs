@@ -57,7 +57,7 @@ namespace ModernAiClicker.ViewModels.Pages
         public void RefreshData()
         {
             List<Flow> flows = _baseDatawork.Query.Flows
-                .Include(x => x.FlowSteps)
+                .Include(x => x.FlowSteps).ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
@@ -74,10 +74,32 @@ namespace ModernAiClicker.ViewModels.Pages
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps).ThenInclude(x => x.Executions)
+                .Include(x => x.Executions).ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildExecution)
             .ToList();
 
             FlowsList = new ObservableCollection<Flow>(flows);
+
+            var asdasdflows = _baseDatawork.Query.Executions
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution)
+                .Include(x => x.ChildExecution).ToList();
+
         }
 
 
@@ -100,8 +122,9 @@ namespace ModernAiClicker.ViewModels.Pages
         {
             Flow flow = new Flow();
             FlowStep newFlowStep = new FlowStep();
-            newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
 
+            newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
+            flow.Name = "Flow";
             flow.FlowSteps.Add(newFlowStep);
             _baseDatawork.Flows.Add(flow);
             _baseDatawork.SaveChanges();
@@ -199,25 +222,30 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 if (isFlowStepIdParsable)
                 {
+                    List<FlowStep> simplingsAbove;
                     FlowStep simplingAbove;
                     FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
                     if (flowStep.OrderingNum == 0)
                         return;
 
                     if (flowStep.ParentFlowStepId != null)
-                        simplingAbove = _baseDatawork.FlowSteps
+                    {
+
+                        simplingsAbove = _baseDatawork.FlowSteps
                             .Where(x => x.Id == flowStep.ParentFlowStepId)
-                            .Select(x => x.ChildrenFlowSteps.First(y => y.OrderingNum == flowStep.OrderingNum - 1))
-                            .First();
-                    else
-                        simplingAbove = _baseDatawork.Flows
-                            .Where(x => x.Id == flowStep.FlowId)
-                            .Select(x => x.FlowSteps.First(y => y.OrderingNum == flowStep.OrderingNum - 1))
-                            .First();
+                            .SelectMany(x => x.ChildrenFlowSteps)
+                            .Where(x => x.OrderingNum < flowStep.OrderingNum )
+                            .ToList();
 
+                        if (simplingsAbove.Any())
+                        {
+                            // Find max
+                            simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
 
-                    flowStep.OrderingNum--;
-                    simplingAbove.OrderingNum++;
+                            // Swap values
+                            (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
+                        }
+                    }
 
                     _baseDatawork.SaveChanges();
                     await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
@@ -229,38 +257,41 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private async Task OnTreeViewItemFlowStepButtonDownClick(EventParammeters eventParameters)
         {
-            if (eventParameters.FlowStepId == null)
-                return;
-
-            bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
-
-            if (isFlowStepIdParsable)
+            if (eventParameters.FlowStepId != null)
             {
-                FlowStep? simplingBellow;
-                FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
 
-                if (flowStep.ParentFlowStepId != null)
-                    simplingBellow = await _baseDatawork.Query.FlowSteps
-                        .Where(x => x.Id == flowStep.ParentFlowStepId)
-                        .Select(x => x.ChildrenFlowSteps.FirstOrDefault(y => y.OrderingNum == flowStep.OrderingNum + 1
-                                                                          && y.FlowStepType != FlowStepTypesEnum.IS_NEW))
-                        .FirstOrDefaultAsync();
-                else
-                    simplingBellow = await _baseDatawork.Query.Flows
-                        .Where(x => x.Id == flowStep.FlowId)
-                        .Select(x => x.FlowSteps.FirstOrDefault(y => y.OrderingNum == flowStep.OrderingNum + 1
-                                                                  && y.FlowStepType != FlowStepTypesEnum.IS_NEW))
-                        .FirstOrDefaultAsync();
+                if (isFlowStepIdParsable)
+                {
+                    List<FlowStep> simplingsAbove;
+                    FlowStep simplingAbove;
+                    FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+                    if (flowStep.OrderingNum == 0)
+                        return;
 
-                if (simplingBellow == null)
-                    return;
+                    if (flowStep.ParentFlowStepId != null)
+                    {
 
-                flowStep.OrderingNum++;
-                simplingBellow.OrderingNum--;
+                        simplingsAbove = _baseDatawork.FlowSteps
+                            .Where(x => x.Id == flowStep.ParentFlowStepId)
+                            .SelectMany(x => x.ChildrenFlowSteps)
+                            .Where(x => x.OrderingNum > flowStep.OrderingNum )
+                            .ToList();
 
-                _baseDatawork.SaveChanges();
-                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
-                RefreshData();
+                        if (simplingsAbove.Any())
+                        {
+                            // Find min
+                            simplingAbove = simplingsAbove.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
+
+                            // Swap values
+                            (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
+                        }
+                    }
+
+                    _baseDatawork.SaveChanges();
+                    await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                    RefreshData();
+                }
             }
         }
 

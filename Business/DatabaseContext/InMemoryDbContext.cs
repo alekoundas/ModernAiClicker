@@ -16,6 +16,7 @@ namespace Business.DatabaseContext
         {
             optionsBuilder.UseInMemoryDatabase(databaseName: "FlowAutoClicker");
             optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.EnableDetailedErrors();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

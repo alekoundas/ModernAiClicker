@@ -35,6 +35,8 @@ namespace Model.Models
 
         // Template search
         public string TemplateImagePath = "";
+        public byte[]? TemplateImage;
+
 
         public double Accuracy = 0.00d;
         public Point ResultLocation { get; set; }
@@ -59,5 +61,6 @@ namespace Model.Models
         public int? SleepForHours;
         public int? SleepForMinutes;
         public int? SleepForSeconds;
+        public int? SleepForMilliseconds;
     }
 }

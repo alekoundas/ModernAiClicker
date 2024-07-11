@@ -58,27 +58,37 @@
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding ViewModel.FlowStep.Name}" />
+                Text="{Binding ViewModel.Execution.FlowStep.Name, Mode=TwoWay}" />
 
             <Label>Process</Label>
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding ViewModel.FlowStep.ProcessName}" />
+                Text="{Binding ViewModel.Execution.FlowStep.ProcessName}" />
 
-            <Label>Minimum accuracy</Label>
-            <TextBox
-                Margin="0,0,0,20"
-                IsReadOnly="True"
-                Text="{Binding ViewModel.FlowStep.Accuracy}" />
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <StackPanel>
+                    <Label>Set accuracy</Label>
+                    <TextBox
+                        Margin="0,0,0,20"
+                        IsReadOnly="True"
+                        Text="{Binding ViewModel.Execution.FlowStep.Accuracy}" />
+                </StackPanel>
+                <StackPanel>
+                    <Label>Result accuracy</Label>
+                    <TextBox
+                        Margin="0,0,0,20"
+                        IsReadOnly="True"
+                        Text="{Binding ViewModel.Execution.ResultAccuracy}" />
+                </StackPanel>
+            </StackPanel>
 
-            <Label>Selected image for search</Label>
+
+            <Label>Result image.</Label>
             <Image
-                x:Name="UITemplateImage"
                 Grid.Column="0"
-                MaxWidth="100"
-                MaxHeight="100"
-                Margin="0,0,0,20" />
+                Margin="0,0,0,20"
+                Source="{Binding ViewModel.Execution.ResultImage}" />
 
 
 

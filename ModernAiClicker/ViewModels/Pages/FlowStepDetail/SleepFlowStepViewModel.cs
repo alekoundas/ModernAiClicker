@@ -68,6 +68,9 @@ namespace ModernAiClicker.ViewModels.Pages
                     isNewSimpling.OrderingNum++;
                 }
 
+                if (FlowStep.Name.Length == 0)
+                    FlowStep.Name = "Wait";
+
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }
 
