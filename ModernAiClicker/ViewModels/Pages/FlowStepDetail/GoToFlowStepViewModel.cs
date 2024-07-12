@@ -30,24 +30,51 @@ namespace ModernAiClicker.ViewModels.Pages
         }
         private ObservableCollection<FlowStep> GetParents()
         {
-            if (FlowStep?.ParentFlowStepId == null)
-                return new ObservableCollection<FlowStep>();
 
-            // Get recursively all parents.
-            List<FlowStep> parents = _baseDatawork.FlowSteps
-                .GetAll()
-                .First(x => x.Id == FlowStep.ParentFlowStepId)
-                .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
-                .ToList();
 
-            // Add Siblings needs fix
-            parents.AddRange( parents.SelectMany(x => x.ChildrenFlowSteps));
 
-            parents = parents.OrderByDescending(x=>x.Id)
-                .ToList();
 
-            return new ObservableCollection<FlowStep>(parents);
 
+
+            if (FlowStep?.FlowId != null)
+            {
+                List<FlowStep> siblings = _baseDatawork.Query.Flows
+                    .First(x=>x.Id == FlowStep.FlowId)
+                    .FlowSteps
+                    .Where(x => x.Id != FlowStep.Id)
+                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_SUCCESS)
+                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_FAILURE)
+                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                    .OrderBy(x => x.Id)
+                    .ToList();
+
+                return new ObservableCollection<FlowStep>(siblings);
+            }
+
+            if (FlowStep?.ParentFlowStepId != null)
+            {
+                List<FlowStep> parents = _baseDatawork.FlowSteps
+                 .GetAll()
+                 .First(x => x.Id == FlowStep.ParentFlowStepId)
+                 .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
+                 .Where(x => x != null)
+                 .ToList();
+
+                List<FlowStep> parentsChildrensFlatten = parents
+                    .SelectMany(x => x.ChildrenFlowSteps.Append(x))
+                    .OrderBy(y => y.Id)
+                    .ToList();
+
+                parentsChildrensFlatten = parentsChildrensFlatten
+                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_SUCCESS)
+                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_FAILURE)
+                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                    .ToList();
+
+                return new ObservableCollection<FlowStep>(parentsChildrensFlatten);
+            }
+
+            return new ObservableCollection<FlowStep>();
         }
 
         [RelayCommand]

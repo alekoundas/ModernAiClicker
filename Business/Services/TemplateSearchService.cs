@@ -31,6 +31,7 @@ namespace Business.Services
             Mat matScreenshot = OpenCvSharp.WpfExtensions.BitmapSourceConverter.ToMat(Convert(screenshot));
             Mat result = matScreenshot.MatchTemplate(matTemplate, OpenCvSharp.TemplateMatchModes.CCoeffNormed);
 
+
             result.MinMaxLoc(out double minConfidence,
                              out double maxConfidence,
                              out OpenCvSharp.Point minLoc,

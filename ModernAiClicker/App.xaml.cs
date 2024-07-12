@@ -11,6 +11,7 @@ using Business.Repository.Interfaces;
 using Business.Services;
 using DataAccess;
 using DataAccess.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +25,7 @@ using ModernAiClicker.Views.Pages;
 using ModernAiClicker.Views.Pages.Executions;
 using ModernAiClicker.Views.Pages.FlowStepDetail;
 using ModernAiClicker.Views.Windows;
+using OpenCvSharp;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
@@ -85,7 +87,7 @@ namespace ModernAiClicker
                 services.AddSingleton<NewSelectTypeFlowStepPage>();
                 services.AddSingleton<NewSelectTypeFlowStepViewModel>();
 
-               
+
 
                 services.AddSingleton<TemplateSearchFlowStepPage>();
                 services.AddSingleton<TemplateSearchFlowStepViewModel>();

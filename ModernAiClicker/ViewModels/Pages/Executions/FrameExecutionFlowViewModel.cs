@@ -78,7 +78,6 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
                 Executions.Add(flowStepExecution);
             });
 
-
             factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
             factoryWorker.RefreshUI();
             await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
@@ -86,29 +85,21 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
             await factoryWorker.SaveToJson();
 
-
             FlowStep? nextFlowStep;
             nextFlowStep = await factoryWorker.GetNextChildFlowStep(flowStepExecution);
 
 
-            // If step contains children, execute recursion for children first
-            // and then continue recursion to children.
+            // If step contains children, execute recursion for children first.
+            // Else if no executable children are found, continue recursion for siblings.
             if (nextFlowStep != null)
-            {
                 await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
-                nextFlowStep = null;
-            }
-
-
-            // If no executable children are found, check for siblings
-            if (nextFlowStep == null)
+            else
                 nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
-
 
             return await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
         }
 
-        // Refresh UI with magic.
+        // Refresh UI.
         private static void AllowUIToUpdate()
         {
             DispatcherFrame frame = new();

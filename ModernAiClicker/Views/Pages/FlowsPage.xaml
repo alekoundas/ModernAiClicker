@@ -595,7 +595,7 @@
                                                     Padding="10"
                                                     VerticalAlignment="Center"
                                                     Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}">
-                                                    <Run Text="{Binding OrderingNum}" />
+                                                    <Run Text="{Binding Id}" />
                                                     <Run Text="." />
                                                 </ui:TextBlock>
                                                 <Image
@@ -748,7 +748,7 @@
                                             Padding="10"
                                             VerticalAlignment="Center"
                                             Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
-                                            Text="{Binding Name}" />
+                                            Text="{Binding Id}" />
                                     </DataTemplate>
 
 

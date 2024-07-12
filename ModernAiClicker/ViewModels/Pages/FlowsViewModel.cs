@@ -57,7 +57,7 @@ namespace ModernAiClicker.ViewModels.Pages
         public void RefreshData()
         {
             List<Flow> flows = _baseDatawork.Query.Flows
-                .Include(x => x.FlowSteps).ThenInclude(x => x.ChildrenFlowSteps)
+                .Include(x => x.FlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
@@ -74,7 +74,9 @@ namespace ModernAiClicker.ViewModels.Pages
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
-                .Include(x => x.Executions).ThenInclude(x => x.ChildExecution)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .Include(x => x.Executions)
+                .ThenInclude(x => x.ChildExecution)
                 .ThenInclude(x => x.ChildExecution)
                 .ThenInclude(x => x.ChildExecution)
                 .ThenInclude(x => x.ChildExecution)
@@ -94,12 +96,6 @@ namespace ModernAiClicker.ViewModels.Pages
             .ToList();
 
             FlowsList = new ObservableCollection<Flow>(flows);
-
-            var asdasdflows = _baseDatawork.Query.Executions
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution).ToList();
-
         }
 
 

@@ -28,7 +28,7 @@
 
             <StackPanel HorizontalAlignment="Center">
                 <Label>Select previous step to run again:</Label>
-                <ComboBox ItemsSource="{Binding ViewModel.PreviousSteps}">
+                <ComboBox ItemsSource="{Binding ViewModel.PreviousSteps}" SelectedItem="{Binding ViewModel.FlowStep.ParentTemplateSearchFlowStep, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

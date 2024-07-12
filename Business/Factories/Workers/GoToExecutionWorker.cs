@@ -47,27 +47,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            // Get next sibling flow step. 
-            Expression<Func<FlowStep, bool>> nextStepFilter;
-
-            if (execution.FlowStep.ParentFlowStepId != null)
-                nextStepFilter = (x) =>
-                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
-                    && x.OrderingNum > execution.FlowStep.OrderingNum
-                    && x.ParentFlowStepId == execution.FlowStep.ParentFlowStepId;
-            else
-                nextStepFilter = (x) =>
-                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
-                    && x.OrderingNum > execution.FlowStep.OrderingNum
-                    && x.FlowId == execution.FlowStep.FlowId;
-
-            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps
-                .Where(nextStepFilter)
-                .ToListAsync();
-
-            FlowStep? nextFlowStep = null;
-            if (nextFlowSteps.Any())
-                nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
+            FlowStep nextFlowStep = execution.FlowStep.ParentTemplateSearchFlowStep;
 
             //TODO return error message 
             if (nextFlowStep == null)
@@ -78,7 +58,7 @@ namespace Business.Factories.Workers
 
         public async Task<FlowStep?> GetNextChildFlowStep(Execution execution)
         {
-            // Cursor move doesnt contain any children.
+            // GoTo doesnt contain any children.
             return await Task.FromResult<FlowStep?>(null);
         }
 

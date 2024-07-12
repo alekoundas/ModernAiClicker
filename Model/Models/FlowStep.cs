@@ -93,7 +93,7 @@ namespace Model.Models
         [ObservableProperty]
         public int? _sleepForMilliseconds;
 
-
+        // TODO: rename prop since its also used by GoTo
         public int? ParentTemplateSearchFlowStepId { get; set; }
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
         public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
