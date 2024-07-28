@@ -62,5 +62,9 @@ namespace Model.Models
         public int? SleepForMinutes;
         public int? SleepForSeconds;
         public int? SleepForMilliseconds;
+
+        // Window
+        public int WindowHeight;
+        public int WindowWidth;
     }
 }

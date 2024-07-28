@@ -20,7 +20,7 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
         public delegate void ShowTemplateImgEvent(string filePath);
 
         public event ShowResultImageEvent? ShowResultImage;
-        public delegate void ShowResultImageEvent(byte[] imageArray);
+        public delegate void ShowResultImageEvent(string filePath);
 
         public TemplateSearchExecutionViewModel(Execution execution, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
@@ -35,7 +35,7 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             {
 
                 ShowTemplateImg?.Invoke(execution.FlowStep.TemplateImagePath);
-                ShowResultImage?.Invoke(execution.ResultImage);
+                ShowResultImage?.Invoke(execution.ResultImagePath);
 
             }
 

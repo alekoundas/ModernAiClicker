@@ -56,7 +56,6 @@ namespace ModernAiClicker.ViewModels.Pages
 
                     Wpf.Ui.Appearance.Theme.Apply(Wpf.Ui.Appearance.ThemeType.Dark);
                     CurrentTheme = Wpf.Ui.Appearance.ThemeType.Dark;
-
                     break;
             }
         }

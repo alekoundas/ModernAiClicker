@@ -33,6 +33,9 @@ namespace Model.Models
         public byte[]? _resultImage;
 
         [ObservableProperty]
+        public string? _resultImagePath;
+
+        [ObservableProperty]
         public decimal _resultAccuracy= 0.00m;
 
         [ObservableProperty]

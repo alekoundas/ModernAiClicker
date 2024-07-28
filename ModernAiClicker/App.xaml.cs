@@ -55,6 +55,12 @@ namespace ModernAiClicker
             {
                 services.AddHostedService<ApplicationHostService>();
 
+                // Repository
+                services.AddScoped<IBaseDatawork, BaseDatawork>();
+                services.AddScoped<IFlowRepository, FlowRepository>();
+                services.AddScoped<IFlowStepRepository, FlowStepRepository>();
+                services.AddScoped<IExecutionRepository, ExecutionRepository>();
+
 
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
@@ -87,8 +93,6 @@ namespace ModernAiClicker
                 services.AddSingleton<NewSelectTypeFlowStepPage>();
                 services.AddSingleton<NewSelectTypeFlowStepViewModel>();
 
-
-
                 services.AddSingleton<TemplateSearchFlowStepPage>();
                 services.AddSingleton<TemplateSearchFlowStepViewModel>();
 
@@ -103,6 +107,12 @@ namespace ModernAiClicker
 
                 services.AddSingleton<GoToFlowStepPage>();
                 services.AddSingleton<GoToFlowStepViewModel>();
+
+                services.AddSingleton<WindowResizeFlowStepViewModel>();
+                services.AddSingleton<WindowResizeFlowStepPage>();
+
+                services.AddSingleton<WindowMoveFlowStepViewModel>();
+                services.AddSingleton<WindowMoveFlowStepPage>();
 
                 //Flow execution step detail
                 services.AddSingleton<FrameExecutionFlowPage>();
@@ -123,6 +133,12 @@ namespace ModernAiClicker
                 services.AddSingleton<GoToExecutionPage>();
                 services.AddSingleton<GoToExecutionViewModel>();
 
+                services.AddSingleton<WindowResizeExecutionViewModel>();
+                services.AddSingleton<WindowResizeExecutionPage>();
+
+                services.AddSingleton<WindowMoveExecutionViewModel>();
+                services.AddSingleton<WindowMoveExecutionPage>();
+
 
 
                 // DB context
@@ -138,11 +154,7 @@ namespace ModernAiClicker
                     dbContext.SaveChanges();
                 }
 
-                // Repository
-                services.AddScoped<IBaseDatawork, BaseDatawork>();
-                services.AddScoped<IFlowRepository, FlowRepository>();
-                services.AddScoped<IFlowStepRepository, FlowStepRepository>();
-                services.AddScoped<IExecutionRepository, ExecutionRepository>();
+
 
             }).Build();
 
@@ -199,7 +211,5 @@ namespace ModernAiClicker
 
             return new ObservableCollection<Flow>(flows);
         }
-
-
     }
 }

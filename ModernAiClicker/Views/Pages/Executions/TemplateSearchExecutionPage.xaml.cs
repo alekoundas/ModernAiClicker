@@ -30,33 +30,34 @@ namespace ModernAiClicker.Views.Pages.Executions
 
 
         //public void ShowTemplateImg(string filename)
-        //{
-        //    BitmapImage bitmap = new BitmapImage();
-        //    bitmap.BeginInit();
-        //    bitmap.CacheOption = BitmapCacheOption.None;
-        //    bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
-        //    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-        //    bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-        //    bitmap.UriSource = new Uri(filename);
-        //    bitmap.EndInit();
-        //    this.UITemplateImage.Source = bitmap;
-        //}
-
-        public void ShowResultImage(byte[] imageArray)
+        public void ShowResultImage(string filePath)
         {
-                BitmapImage bitmap = new BitmapImage();
-            using (var ms = new System.IO.MemoryStream(imageArray))
-            {
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.None;
-                bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                bitmap.StreamSource = ms;
-                bitmap.EndInit();
-            }
-
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.None;
+            bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            bitmap.UriSource = new Uri(filePath);
+            bitmap.EndInit();
             this.UIResultImage.Source = bitmap;
         }
+
+        //public void ShowResultImage(byte[] imageArray)
+        //{
+        //        BitmapImage bitmap = new BitmapImage();
+        //    using (var ms = new System.IO.MemoryStream(imageArray))
+        //    {
+        //        bitmap.BeginInit();
+        //        bitmap.CacheOption = BitmapCacheOption.None;
+        //        bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
+        //        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+        //        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+        //        bitmap.StreamSource = ms;
+        //        bitmap.EndInit();
+        //    }
+
+        //    this.UIResultImage.Source = bitmap;
+        //}
     }
 }

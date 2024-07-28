@@ -63,7 +63,16 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
                 GoToFlowStepViewModel viewModel = new GoToFlowStepViewModel(flowStep, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new GoToFlowStepPage(viewModel));
             }
-
+            else if (flowStep.FlowStepType == FlowStepTypesEnum.WINDOW_RESIZE)
+            {
+                WindowResizeFlowStepViewModel viewModel = new WindowResizeFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new WindowResizeFlowStepPage(viewModel));
+            }
+            else if (flowStep.FlowStepType == FlowStepTypesEnum.WINDOW_MOVE)
+            {
+                WindowMoveFlowStepViewModel viewModel = new WindowMoveFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new WindowMoveFlowStepPage(viewModel));
+            }
         }
 
         public static readonly RoutedEvent MyCustomEvent = EventManager.RegisterRoutedEvent(

@@ -22,6 +22,8 @@ namespace Model.Models
         public bool IsSelected;
 
         public byte[]? ResultImage;
+        public string? ResultImagePath;
+
 
         public double ResultAccuracy;
         public bool IsSuccessful { get; set; }

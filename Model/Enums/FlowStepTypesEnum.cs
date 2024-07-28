@@ -12,5 +12,7 @@ namespace Model.Enums
         IS_NEW,
         IS_SUCCESS,
         IS_FAILURE,
+        WINDOW_RESIZE,
+        WINDOW_MOVE,
     }
 }

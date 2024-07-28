@@ -3,7 +3,6 @@ using Business.Repository.Entities;
 using Business.Repository.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccess
 {

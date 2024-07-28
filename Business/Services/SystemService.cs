@@ -11,6 +11,9 @@ using System.Management;
 using AutoMapper;
 using Model.Enums;
 using Model.Business;
+using System.Windows.Shapes;
+using Path = System.IO.Path;
+using System.Windows.Media.Media3D;
 
 namespace Business.Services
 {
@@ -25,20 +28,19 @@ namespace Business.Services
         }
 
         [DllImport("user32.dll")]
-        static extern bool GetCursorPos(out Model.Structs.Point point);
+        private static extern bool GetCursorPos(out Model.Structs.Point point);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool GetWindowRect(int hWnd, out Model.Structs.Rectangle lpPoint);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool MoveWindow(int hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
         [DllImport("user32.dll")]
-        static extern bool SetCursorPos(int X, int Y);
+        private static extern bool SetCursorPos(int X, int Y);
 
         [DllImport("user32.dll")]
         private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
-
-
-        //[DllImport("user32.dll")]
-        //public static extern bool GetCursorPos(out Point lpPoint);
 
         //https://msdn.microsoft.com/en-us/library/windows/desktop/dd145062(v=vs.85).aspx
         [DllImport("User32.dll")]
@@ -68,7 +70,14 @@ namespace Business.Services
 
         }
 
-
+        public List<string> GetProcessWindowTitles()
+        {
+            return Process
+                .GetProcesses()
+                .Where(process => !String.IsNullOrEmpty(process.MainWindowTitle))
+                .Select(x => x.MainWindowTitle)
+                .ToList();
+        }
 
 
         public void GetDpi(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
@@ -138,18 +147,35 @@ namespace Business.Services
 
         public Model.Structs.Rectangle GetWindowSize(string processName)
         {
-            var firestoneProcess = Process.GetProcessesByName(processName).FirstOrDefault();
-            if (firestoneProcess != null)
+            var applicationProcess = Process.GetProcessesByName(processName).FirstOrDefault();
+            if (applicationProcess != null)
             {
 
-                var firestoneHandle = firestoneProcess.MainWindowHandle.ToInt32();
+                var applicationHandle = applicationProcess.MainWindowHandle.ToInt32();
 
-                GetWindowRect(firestoneHandle, out Model.Structs.Rectangle windowRectangle);
+                GetWindowRect(applicationHandle, out Model.Structs.Rectangle windowRectangle);
 
                 return windowRectangle;
             }
 
             return new Model.Structs.Rectangle();
+        }
+
+        public bool MoveWindow(string processName, Model.Structs.Rectangle newWindowSize)
+        {
+            var applicationProcess = Process.GetProcessesByName(processName).FirstOrDefault();
+            if (applicationProcess == null)
+                return false;
+
+            var applicationHandle = applicationProcess.MainWindowHandle.ToInt32();
+
+            int x = newWindowSize.Left;
+            int y = newWindowSize.Top;
+            int width = newWindowSize.Right - newWindowSize.Left;
+            int height = newWindowSize.Bottom - newWindowSize.Top;
+
+            bool result = MoveWindow(applicationHandle, x, y, width, height, true);
+            return result;
         }
 
 
@@ -196,16 +222,29 @@ namespace Business.Services
 
 
             List<FlowDto> flowsDto = mapper.Map<List<FlowDto>>(flows);
+            //var json = System.Text.Json.JsonSerializer.Serialize( flowsDto );
 
-
-            string json = JsonConvert.SerializeObject(flowsDto, Formatting.Indented, new JsonSerializerSettings
+            string json = JsonConvert.SerializeObject(flowsDto, new JsonSerializerSettings
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                Formatting = Formatting.Indented
             });
 
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), "Flows.json");
             await File.WriteAllTextAsync(filePath, json);
+            //return Task.CompletedTask;
         }
+
+        //public static object DeserializeFromStream(Stream stream)
+        //{
+        //    var serializer = new JsonSerializer();
+
+        //    using (var sr = new StringWriter(stream))
+        //    using (var jsonTextReader = new JsonTextWriter(sr))
+        //    {
+        //        return serializer.Serialize(jsonTextReader);
+        //    }
+        //}
 
         //public async Task UpdateFlowsJSON(List<Flow> flows)
         //{

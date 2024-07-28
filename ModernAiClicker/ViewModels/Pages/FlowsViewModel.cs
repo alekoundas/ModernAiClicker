@@ -52,6 +52,16 @@ namespace ModernAiClicker.ViewModels.Pages
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private readonly IBaseDatawork _baseDatawork;
+        private readonly ISystemService _systemService;
+
+        public FlowsViewModel(IBaseDatawork baseDatawork, ISystemService systemService)
+        {
+            _baseDatawork = baseDatawork;
+            _systemService = systemService;
+
+            RefreshData();
+        }
 
         //TODO find a fix for includes
         public void RefreshData()
@@ -101,16 +111,6 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
 
-        private readonly IBaseDatawork _baseDatawork;
-        private readonly ISystemService _systemService;
-
-        public FlowsViewModel(IBaseDatawork baseDatawork, ISystemService systemService)
-        {
-            _baseDatawork = baseDatawork;
-            _systemService = systemService;
-
-            RefreshData();
-        }
 
 
         [RelayCommand]
@@ -120,7 +120,9 @@ namespace ModernAiClicker.ViewModels.Pages
             FlowStep newFlowStep = new FlowStep();
 
             newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
+            newFlowStep.IsSelected = false;
             flow.Name = "Flow";
+            flow.IsSelected = true;
             flow.FlowSteps.Add(newFlowStep);
             _baseDatawork.Flows.Add(flow);
             _baseDatawork.SaveChanges();

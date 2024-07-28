@@ -187,10 +187,6 @@
 
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <!--<Trigger Property="IsExpanded" Value="false">
-                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ItemsHost" Property="Width" Value="50" />
-                            </Trigger>-->
                             <Trigger Property="HasItems" Value="false">
                                 <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                             </Trigger>
@@ -204,17 +200,8 @@
                                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}" />
                             </MultiTrigger>
                             <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}">
-                                <Setter TargetName="FlowStepBorder" Property="HorizontalAlignment" Value="Center" />
-                                <Setter Property="Padding" Value="0,0,0,10" />
-                                <Setter Property="Focusable" Value="False" />
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}" />
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="true" />
-                                </MultiDataTrigger.Conditions>
                                 <Setter TargetName="FlowStepBorder" Property="Visibility" Value="Collapsed" />
-                            </MultiDataTrigger>
+                            </DataTrigger>
 
                             <DataTrigger Binding="{Binding IsExpanded}" Value="false">
                                 <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
@@ -231,97 +218,6 @@
             </Style.Resources>
         </Style>
 
-
-        <Style x:Key="TreeViewItemStyle2" TargetType="{x:Type TreeViewItem}">
-            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-            <Setter Property="Padding" Value="1,0,0,0" />
-            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-            <Setter Property="behavior:ScrollToSelectedItemBehavior.IsBroughtIntoViewWhenSelected" Value="True" />
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <ToggleButton
-                                x:Name="Expander"
-                                IsChecked="{Binding IsExpanded}"
-                                Style="{StaticResource ExpandCollapseToggleStyle}" />
-                            <Border
-                                x:Name="FlowStepBorder"
-                                Grid.Column="1"
-                                Padding="{TemplateBinding Padding}"
-                                Background="#25272a"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                SnapsToDevicePixels="true">
-                                <ContentPresenter
-                                    x:Name="PART_Header"
-                                    HorizontalAlignment="Stretch"
-                                    ContentSource="Header"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </Border>
-                            <ItemsPresenter
-                                x:Name="ItemsHost"
-                                Grid.Row="1"
-                                Grid.Column="1" />
-
-                        </Grid>
-                        <ControlTemplate.Triggers>
-
-                            <Trigger Property="IsExpanded" Value="false">
-                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
-                                <Setter TargetName="ItemsHost" Property="Width" Value="50" />
-                            </Trigger>
-
-                            <Trigger Property="HasItems" Value="false">
-                                <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="FlowStepBorder" Property="Background" Value="#303236" />
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="true" />
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}" />
-                            </MultiTrigger>
-                            <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}">
-                                <Setter TargetName="FlowStepBorder" Property="HorizontalAlignment" Value="Center" />
-                                <Setter Property="Padding" Value="0,0,0,10" />
-                                <Setter Property="Focusable" Value="False" />
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.IS_NEW}" />
-                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="true" />
-                                </MultiDataTrigger.Conditions>
-                                <Setter TargetName="FlowStepBorder" Property="Visibility" Value="Collapsed" />
-                            </MultiDataTrigger>
-
-                            <DataTrigger Binding="{Binding IsExpanded}" Value="false">
-                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
-                                <Setter TargetName="ItemsHost" Property="Width" Value="50" />
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="2" />
-                </Style>
-            </Style.Resources>
-        </Style>
 
     </Page.Resources>
 

@@ -59,7 +59,8 @@ namespace Business.Factories.Workers
 
             execution.IsSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
             execution.ResultLocation = new Point(x, y);
-            execution.ResultImage = result.ResultImage;
+            //execution.ResultImage = result.ResultImage;
+            execution.ResultImagePath = result.ResultImagePath;
             execution.ResultAccuracy = result.Confidence;
 
             await _baseDatawork.SaveChangesAsync();

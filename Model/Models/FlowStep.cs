@@ -58,6 +58,7 @@ namespace Model.Models
         [ObservableProperty]
         public decimal _accuracy = 0.00m;
 
+        //Rename also used by window move
         public Point ResultLocation { get; set; }
 
 
@@ -92,6 +93,14 @@ namespace Model.Models
 
         [ObservableProperty]
         public int? _sleepForMilliseconds;
+
+        // Window
+        [ObservableProperty]
+        public int _windowHeight;
+
+        [ObservableProperty]
+        public int _windowWidth;
+
 
         // TODO: rename prop since its also used by GoTo
         public int? ParentTemplateSearchFlowStepId { get; set; }
