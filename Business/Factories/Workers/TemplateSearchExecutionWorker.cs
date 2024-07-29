@@ -18,8 +18,8 @@ namespace Business.Factories.Workers
 
         public TemplateSearchExecutionWorker(
               IBaseDatawork baseDatawork
-            , ITemplateSearchService templateSearchService
             , ISystemService systemService
+            , ITemplateSearchService templateSearchService
             ) : base(baseDatawork, systemService)
         {
             _baseDatawork = baseDatawork;

@@ -62,9 +62,6 @@
     <Compile Update="Views\Pages\Executions\CursorMoveExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Executions\FrameExecutionFlowPage.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\Pages\Executions\GoToExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

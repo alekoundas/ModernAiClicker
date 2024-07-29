@@ -25,12 +25,16 @@ namespace Business.Factories
         {
             switch (flowStepType)
             {
+                case FlowStepTypesEnum.WINDOW_MOVE:
+                    return new WindowMoveExecutionWorker(_baseDatawork, _systemService);
+                case FlowStepTypesEnum.WINDOW_RESIZE:
+                    return new WindowResizeExecutionWorker(_baseDatawork, _systemService);
                 case FlowStepTypesEnum.MOUSE_MOVE_COORDINATES:
                     return new MouseMoveExecutionWorker(_baseDatawork, _systemService);
                 case FlowStepTypesEnum.MOUSE_CLICK:
                     return new MouseClickExecutionWorker(_baseDatawork, _systemService);
                 case FlowStepTypesEnum.TEMPLATE_SEARCH:
-                    return new TemplateSearchExecutionWorker(_baseDatawork, _templateSearchService, _systemService);
+                    return new TemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService);
                 case FlowStepTypesEnum.SLEEP:
                     return new SleepExecutionWorker(_baseDatawork, _systemService);
                 case FlowStepTypesEnum.GO_TO:

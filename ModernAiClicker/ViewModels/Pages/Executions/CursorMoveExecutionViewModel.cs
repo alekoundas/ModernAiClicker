@@ -31,21 +31,25 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             _execution = execution;
 
             Parents = GetParents();
-            Execution templateSearchExecution = GetTemplateSearchExecution();
-            X = templateSearchExecution.ResultLocation.X;
-            Y = templateSearchExecution.ResultLocation.Y;
+            //Execution execution = GetExecution();
+            X = Execution.ResultLocation.X;
+            Y = Execution.ResultLocation.Y;
         }
         [RelayCommand]
         private async Task OnButtonTestClick()
         {
-            Execution templateSearchExecution = GetTemplateSearchExecution();
+            //Execution templateSearchExecution = GetExecution();
 
-            _systemService.SetCursorPossition(templateSearchExecution.ResultLocation);
+            _systemService.SetCursorPossition(Execution.ResultLocation);
         }
 
-        private Execution GetTemplateSearchExecution()
+        private Execution GetExecution()
         {
             FlowStep templateSearchFlowStep = Execution.FlowStep.ParentTemplateSearchFlowStep;
+            if (templateSearchFlowStep == null)
+            {
+
+            }
 
             // Get recursively all parents of execution.
             List<Execution> parents = _baseDatawork.Executions

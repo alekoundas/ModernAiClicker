@@ -748,7 +748,7 @@
                                             Padding="10"
                                             VerticalAlignment="Center"
                                             Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
-                                            Text="{Binding Id}" />
+                                            Text="{Binding Name}" />
                                     </DataTemplate>
 
 

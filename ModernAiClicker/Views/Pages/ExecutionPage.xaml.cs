@@ -37,7 +37,7 @@ namespace ModernAiClicker.Views.Pages
             DataContext = this;
             InitializeComponent();
 
-            viewModel.FrameNavigateToFlow += FrameNavigateToFlow;
+            //viewModel.FrameNavigateToFlow += FrameNavigateToFlow;
             viewModel.NavigateToExecutionDetail += NavigateToExecutionDetailEvent;
 
             //        ExecutionsListBox.Items.SortDescriptions.Add(
@@ -47,28 +47,25 @@ namespace ModernAiClicker.Views.Pages
             //   System.ComponentModel.ListSortDirection.Ascending));
         }
 
+        //public void FrameNavigateToFlow(Flow flow, ObservableCollection<Execution> executions)
+        //{
+        //    FrameExecutionFlowViewModel frameViewModel = new FrameExecutionFlowViewModel(_baseDatawork, _executionFactory);
+        //    frameViewModel.Flow = flow;
+        //    frameViewModel.Executions = executions;
 
-        public void FrameNavigateToFlow(Flow flow, ObservableCollection<Execution> executions)
-        {
-            FrameExecutionFlowViewModel frameViewModel = new FrameExecutionFlowViewModel(_baseDatawork, _executionFactory);
-            frameViewModel.Flow = flow;
-            frameViewModel.Executions = executions;
+        //    UIFlowStepDetailFrame.Navigate(new FrameExecutionFlowPage(frameViewModel));
+        //}
 
-            UIFlowStepDetailFrame.Navigate(new FrameExecutionFlowPage(frameViewModel));
-        }
 
 
         public void NavigateToExecutionDetailEvent(FlowStepTypesEnum flowStepType, Execution? execution)
         {
+            //TODO reset frame to default
+            if (execution == null)
+                return;
 
             if (flowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
             {
-                if(execution == null)
-                    execution = new Execution()
-                    {
-                        
-                    };
-
                 TemplateSearchExecutionViewModel viewModel = new TemplateSearchExecutionViewModel(execution, _systemService, _templateMatchingService, _baseDatawork);
                 this.UIExecutionDetailFrame.Navigate(new TemplateSearchExecutionPage(viewModel));
             }
@@ -79,7 +76,7 @@ namespace ModernAiClicker.Views.Pages
             }
             else if (flowStepType == FlowStepTypesEnum.MOUSE_MOVE_COORDINATES)
             {
-                CursorMoveExecutionViewModel viewModel = new CursorMoveExecutionViewModel(execution,_systemService, _baseDatawork);
+                CursorMoveExecutionViewModel viewModel = new CursorMoveExecutionViewModel(execution, _systemService, _baseDatawork);
                 this.UIExecutionDetailFrame.Navigate(new CursorMoveExecutionPage(viewModel));
             }
             else if (flowStepType == FlowStepTypesEnum.SLEEP)
@@ -87,8 +84,21 @@ namespace ModernAiClicker.Views.Pages
                 SleepExecutionViewModel viewModel = new SleepExecutionViewModel(execution, _systemService, _baseDatawork);
                 this.UIExecutionDetailFrame.Navigate(new SleepExecutionPage(viewModel));
             }
-
+            else if (flowStepType == FlowStepTypesEnum.GO_TO)
+            {
+                GoToExecutionViewModel viewModel = new GoToExecutionViewModel(execution, _systemService, _baseDatawork);
+                this.UIExecutionDetailFrame.Navigate(new GoToExecutionPage(viewModel));
+            }
+            else if (flowStepType == FlowStepTypesEnum.WINDOW_RESIZE)
+            {
+                WindowResizeExecutionViewModel viewModel = new WindowResizeExecutionViewModel(execution, _systemService, _baseDatawork);
+                this.UIExecutionDetailFrame.Navigate(new WindowResizeExecutionPage(viewModel));
+            }
+            else if (flowStepType == FlowStepTypesEnum.WINDOW_MOVE)
+            {
+                WindowMoveExecutionViewModel viewModel = new WindowMoveExecutionViewModel(execution, _systemService, _baseDatawork);
+                this.UIExecutionDetailFrame.Navigate(new WindowMoveExecutionPage(viewModel));
+            }
         }
-
     }
 }

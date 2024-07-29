@@ -277,8 +277,7 @@
             </i:Interaction.Triggers>
         </ComboBox>
 
-        <!--  Frame  -->
-
+        <!--  Flow  -->
         <Border
             Grid.Row="1"
             Margin="0,0,20,0"
@@ -291,10 +290,81 @@
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
             <ScrollViewer>
-                <Frame
-                    x:Name="UIFlowStepDetailFrame"
-                    ScrollViewer.CanContentScroll="True"
-                    ScrollViewer.VerticalScrollBarVisibility="Visible" />
+
+                <Grid VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="0.6*" />
+                        <ColumnDefinition Width="0.6*" />
+                        <ColumnDefinition Width="0.1*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+
+
+                    <!--  Title  -->
+                    <!--<TextBlock
+                    Grid.Column="3"
+                    Grid.ColumnSpan="2"
+                    Text="{Binding ViewModel.Flow.Id}" />-->
+
+
+                    <!--  Status  -->
+                    <TextBlock Grid.Column="1" Text="Status:" />
+                    <TextBlock Grid.Column="2" Text="{Binding ViewModel.Status}" />
+
+                    <!--  Run for  -->
+                    <TextBlock Grid.Column="3" Text="Run for:" />
+                    <TextBlock Grid.Column="4" Text="{Binding ViewModel.RunFor}" />
+
+                    <!--  Current step  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Text="Current step:" />
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Text="{Binding ViewModel.CurrentStep}" />
+
+                    <!--  Play Button  -->
+                    <Button
+                        Grid.RowSpan="2"
+                        Grid.Column="5"
+                        Margin="0,0,0,0"
+                        Padding="10"
+                        HorizontalAlignment="Center"
+                        Content="start">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonStartClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+
+                    <!--  Stop Button  -->
+                    <Button
+                        Grid.RowSpan="2"
+                        Grid.Column="6"
+                        Margin="0,0,0,0"
+                        Padding="10"
+                        HorizontalAlignment="Center"
+                        Content="stop">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonStopClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+
+
+                </Grid>
             </ScrollViewer>
         </Border>
 
@@ -816,14 +886,28 @@
             Grid.Row="4"
             Margin="0,0,0,20"
             DisplayMemberPath="Id"
-            ItemsSource="{Binding ViewModel.ComboBoxExecutions}"
-            SelectedItem="{Binding ViewModel.ComboBoxSelectedExecution}">
+            ItemsSource="{Binding ViewModel.ComboBoxExecutionHistories}"
+            SelectedItem="{Binding ViewModel.ComboBoxSelectedExecutionHistory}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
                     <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedExecutionCommand}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </ComboBox>
+
+        <ui:Button
+            Grid.Row="4"
+            Grid.Column="1"
+            Margin="5"
+            >
+            <icons:BootstrapIcon Icon="Trash" />
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <i:InvokeCommandAction Command="{Binding ViewModel.ButtonDeleteClickCommand}"  />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ui:Button>
+
         <Border
             Grid.Row="5"
             Grid.ColumnSpan="2"
@@ -865,23 +949,6 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-
-                <!--<TreeView ItemsSource="{Binding ViewModel.TreeviewFlows}">
-                <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type models:Flow}" ItemsSource="{Binding ChildrenFlowSteps}">
-                <TextBlock Text="3333ssd" />
-                </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type models:FlowStep}" ItemsSource="{Binding ChildrenFlowSteps}">
-                <TextBlock Text="aaaaaa" />
-                </HierarchicalDataTemplate>
-                -->
-                <!--<HierarchicalDataTemplate DataType="{x:Type models:Execution}" ItemsSource="{Binding ChildExecution}">
-                <TextBlock Text="11111" />
-                </HierarchicalDataTemplate>-->
-                <!--
-                </TreeView.Resources>
-                </TreeView>-->
-
 
             </StackPanel>
 

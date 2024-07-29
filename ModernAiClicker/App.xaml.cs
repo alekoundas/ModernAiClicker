@@ -115,8 +115,8 @@ namespace ModernAiClicker
                 services.AddSingleton<WindowMoveFlowStepPage>();
 
                 //Flow execution step detail
-                services.AddSingleton<FrameExecutionFlowPage>();
-                services.AddSingleton<FrameExecutionFlowViewModel>();
+                //services.AddSingleton<FrameExecutionFlowPage>();
+                //services.AddSingleton<FrameExecutionFlowViewModel>();
 
                 services.AddSingleton<TemplateSearchExecutionPage>();
                 services.AddSingleton<TemplateSearchExecutionViewModel>();

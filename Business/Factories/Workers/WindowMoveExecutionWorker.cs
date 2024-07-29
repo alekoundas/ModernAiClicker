@@ -20,7 +20,8 @@ namespace Business.Factories.Workers
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
-        public WindowMoveExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork, systemService)
+        public WindowMoveExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService)
+            : base(baseDatawork, systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
