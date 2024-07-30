@@ -22,5 +22,8 @@ namespace Business.Interfaces
         ImageSizeResult GetImageSize(string imagePath);
 
         List<string> GetProcessWindowTitles();
+        void CreateFolderOnDisk(string folderName);
+        Task SaveImageToDisk(string filePath, byte[] image);
+
     }
 }

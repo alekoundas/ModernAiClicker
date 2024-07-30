@@ -24,8 +24,8 @@ namespace ModernAiClicker.Views.Pages.Executions
             //viewModel.ShowTemplateImg += ShowTemplateImg;
             viewModel.ShowResultImage += ShowResultImage;
 
-            //if (viewModel.Execution.TemplateImagePath.Length > 0)
-            //    ShowTemplateImg(viewModel.Execution.TemplateImagePath);
+            if (viewModel.Execution.ResultImagePath.Length > 0)
+                ShowResultImage(viewModel.Execution.ResultImagePath);
         }
 
 

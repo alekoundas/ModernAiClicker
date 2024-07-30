@@ -99,12 +99,11 @@ namespace ModernAiClicker.ViewModels.Pages
                 Execution flowExecution = await flowWorker.CreateExecutionModel(ComboBoxSelectedFlow.Id, null);
 
                 // Add Execution to listbox and select it
-                List<Execution> executions = ComboBoxExecutionHistories.ToList(); 
+                List<Execution> executions = ComboBoxExecutionHistories.ToList();
                 executions.Add(flowExecution);
                 ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
-                ComboBoxSelectedExecutionHistory = flowExecution; 
-
-                Application.Current.Dispatcher.Invoke((Action)delegate
+                ComboBoxSelectedExecutionHistory = flowExecution;
+                Application.Current.Dispatcher.Invoke(() =>
                 {
                     ListBoxExecutions.Add(flowExecution);
                 });
@@ -114,6 +113,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 flowWorker.ExpandAndSelectFlowStep(flowExecution);
                 AllowUIToUpdate();
                 await flowWorker.SetExecutionModelStateRunning(flowExecution);
+                flowWorker.SaveToDisk(flowExecution);
 
                 // Get next flow step and recursively execute every other step.
                 FlowStep? nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
@@ -144,6 +144,7 @@ namespace ModernAiClicker.ViewModels.Pages
             await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
             await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
             await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
+            factoryWorker.SaveToDisk(flowStepExecution);
             await factoryWorker.SaveToJson();
 
             FlowStep? nextFlowStep;
@@ -154,7 +155,7 @@ namespace ModernAiClicker.ViewModels.Pages
             // Else if no executable children are found, continue recursion for siblings.
             if (nextFlowStep != null)
                 await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
-                
+
             nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
 
             return await ExecuteStepRecursion(nextFlowStep, flowStepExecution);

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace ModernAiClicker.Behavior
 {
-    public class ScrollToSelectedItemBehavior
+    public class ScrollToSelectedTreeviewItemBehavior
     {
         public static bool GetIsBroughtIntoViewWhenSelected(TreeViewItem treeViewItem)
         {
@@ -24,7 +19,7 @@ namespace ModernAiClicker.Behavior
          DependencyProperty.RegisterAttached(
          "IsBroughtIntoViewWhenSelected",
          typeof(bool),
-         typeof(ScrollToSelectedItemBehavior),
+         typeof(ScrollToSelectedTreeviewItemBehavior),
          new UIPropertyMetadata(false, OnIsBroughtIntoViewWhenSelectedChanged));
 
         static void OnIsBroughtIntoViewWhenSelectedChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)

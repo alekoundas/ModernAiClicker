@@ -12,7 +12,6 @@
     xmlns:local="clr-namespace:ModernAiClicker.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Model.Models;assembly=Model"
-    xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:ModernAiClicker.ViewModels.Pages"
     Title="ExecutionPage"
@@ -147,7 +146,7 @@
             <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
             <Setter Property="Padding" Value="1,0,0,0" />
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-            <Setter Property="behavior:ScrollToSelectedItemBehavior.IsBroughtIntoViewWhenSelected" Value="True" />
+            <Setter Property="behavior:ScrollToSelectedTreeviewItemBehavior.IsBroughtIntoViewWhenSelected" Value="True" />
 
             <Setter Property="Template">
                 <Setter.Value>
@@ -234,6 +233,7 @@
 
             <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
             <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
+            <behavior:ScrollToSelectedListBoxItemBehavior x:Key="ListBoxOrdering" />
             <ObjectDataProvider
                 x:Key="FlowStepTypesEnum"
                 MethodName="GetValues"
@@ -250,12 +250,12 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.3*" />
-            <RowDefinition Height="0.5*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="0.2*" />
-            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="0.6*" />
+            <RowDefinition Height="0.1*" MinHeight="100" />
+            <RowDefinition Height="3*" />
             <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.35*" />
+            <RowDefinition Height="0.6*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -376,8 +376,9 @@
         <!--  TreeView  -->
         <Border
             Grid.Row="1"
-            Grid.RowSpan="2"
+            Grid.RowSpan="4"
             Grid.Column="1"
+            Margin="0,0,0,20"
             Background="#272727"
             BorderBrush="#C4C4C4"
             BorderThickness="2"
@@ -882,31 +883,43 @@
             Margin="0,20,0,0"
             Text="Execution history" />
 
-        <ComboBox
-            Grid.Row="4"
-            Margin="0,0,0,20"
-            DisplayMemberPath="Id"
-            ItemsSource="{Binding ViewModel.ComboBoxExecutionHistories}"
-            SelectedItem="{Binding ViewModel.ComboBoxSelectedExecutionHistory}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedExecutionCommand}" PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </ComboBox>
 
-        <ui:Button
-            Grid.Row="4"
-            Grid.Column="1"
-            Margin="5"
-            >
-            <icons:BootstrapIcon Icon="Trash" />
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <i:InvokeCommandAction Command="{Binding ViewModel.ButtonDeleteClickCommand}"  />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </ui:Button>
+        <StackPanel Grid.Row="4" Orientation="Horizontal">
+
+            <ComboBox
+                VerticalAlignment="Top"
+                ItemsSource="{Binding ViewModel.ComboBoxExecutionHistories}"
+                SelectedItem="{Binding ViewModel.ComboBoxSelectedExecutionHistory}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedExecutionCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Path=Id}" />
+                            <TextBlock Text=" - " />
+                            <TextBlock Text="{Binding Path=StartedOn}" />
+                        </StackPanel>
+                    </DataTemplate>
+
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <ui:Button
+                MaxHeight="37"
+                Margin="10,0,0,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top">
+                <icons:BootstrapIcon Icon="Trash" />
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonDeleteClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ui:Button>
+        </StackPanel>
 
         <Border
             Grid.Row="5"
@@ -928,6 +941,9 @@
                             <i:InvokeCommandAction Command="{Binding ViewModel.ListBoxSelectedItemChangedCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
+                    <i:Interaction.Behaviors>
+                        <behavior:ScrollToSelectedListBoxItemBehavior />
+                    </i:Interaction.Behaviors>
 
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>

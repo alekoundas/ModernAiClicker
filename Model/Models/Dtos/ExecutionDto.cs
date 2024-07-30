@@ -29,6 +29,7 @@ namespace Model.Models
         public bool IsSuccessful { get; set; }
         public Point ResultLocation { get; set; }
 
+        public string ExecutionFolderDirectory = "";
 
         public int? FlowId { get; set; }
         public int? FlowStepId { get; set; }

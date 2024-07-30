@@ -41,6 +41,8 @@ namespace Model.Models
         [ObservableProperty]
         public bool _isSuccessful;
 
+        public string ExecutionFolderDirectory="";
+
         public int? FlowId { get; set; }
         public virtual Flow? Flow { get; set; }
 

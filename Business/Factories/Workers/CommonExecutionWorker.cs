@@ -1,11 +1,12 @@
 ﻿using Business.Interfaces;
 using DataAccess.Repository.Interface;
+using Model.Models;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace Business.Factories.Workers
 {
-    public class CommonExecutionWorker
+    public class CommonExecutionWorker 
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
@@ -39,6 +40,11 @@ namespace Business.Factories.Workers
             Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Input, dispatcherOperationCallback, null);
             Dispatcher.PushFrame(frame);
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Input, new Action(delegate { }));
+        }
+
+        public async Task SaveToDisk(Execution execution)
+        {
+            await _baseDatawork.SaveChangesAsync();
         }
     }
 }

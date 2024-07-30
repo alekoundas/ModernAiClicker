@@ -6,6 +6,7 @@ using Model.Business;
 using Model.Enums;
 using Model.Models;
 using Model.Structs;
+using OpenCvSharp;
 using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
@@ -32,7 +33,7 @@ namespace Business.Factories.Workers
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
             execution.ParentExecutionId = parentExecution.Id;
-            
+
             _baseDatawork.Executions.Add(execution);
             parentExecution.ChildExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
@@ -55,11 +56,11 @@ namespace Business.Factories.Workers
             TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImagePath, searchRectangle);
 
             int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
-            int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height/ 2);
+            int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
             execution.IsSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
-            execution.ResultLocation = new Point(x, y);
-            //execution.ResultImage = result.ResultImage;
+            execution.ResultLocation = new Model.Structs.Point(x, y);
+            execution.ResultImage = result.ResultImage;
             execution.ResultImagePath = result.ResultImagePath;
             execution.ResultAccuracy = result.Confidence;
 
@@ -135,6 +136,9 @@ namespace Business.Factories.Workers
             execution.Status = ExecutionStatusEnum.RUNNING;
             execution.StartedOn = DateTime.Now;
 
+            if (execution.ParentExecution != null)
+                execution.ExecutionFolderDirectory = execution.ParentExecution.ExecutionFolderDirectory;
+
             await _baseDatawork.SaveChangesAsync();
         }
 
@@ -170,6 +174,31 @@ namespace Business.Factories.Workers
             execution.FlowStep.ChildrenFlowSteps.First().IsExpanded = true;
             execution.FlowStep.IsExpanded = true;
             execution.FlowStep.IsSelected = true;
+        }
+
+        public async Task SaveToDisk(Execution execution)
+        {
+            if (execution.ParentExecution == null || execution.ResultImage == null)
+                return;
+
+            byte[] resultImage = execution.ResultImage;
+            string folderDir = execution.ParentExecution.ExecutionFolderDirectory;
+            string imagePath = folderDir +"\\";
+            imagePath += execution.Id;
+            imagePath += " - ";
+            imagePath += execution.StartedOn.Value.ToString("yy-MM-dd hh.mm");
+            imagePath += ".png";
+
+
+            await _systemService.SaveImageToDisk(imagePath, resultImage);
+
+            // Remove image from execution in order to free up RAM.
+            // Also assign new image path.
+            execution.ResultImage = null;
+            execution.ResultImagePath = imagePath;
+
+
+            await _baseDatawork.SaveChangesAsync();
         }
     }
 }

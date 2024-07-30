@@ -14,6 +14,7 @@ using Model.Business;
 using System.Windows.Shapes;
 using Path = System.IO.Path;
 using System.Windows.Media.Media3D;
+using OpenCvSharp;
 
 namespace Business.Services
 {
@@ -103,9 +104,16 @@ namespace Business.Services
 
 
 
+        public async Task SaveImageToDisk(string filePath, byte[] image)
+        {
+            await File.WriteAllBytesAsync(filePath, image);
+        }
 
-
-
+        public void CreateFolderOnDisk(string folderName)
+        {
+            string folderUrl = PathHelper.GetAppDataPath() + "\\" + folderName;
+            Directory.CreateDirectory(folderUrl);
+        }
 
 
 

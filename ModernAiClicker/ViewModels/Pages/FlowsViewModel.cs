@@ -220,29 +220,33 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 if (isFlowStepIdParsable)
                 {
-                    List<FlowStep> simplingsAbove;
+                    List<FlowStep> simplingsAbove = new List<FlowStep>();
                     FlowStep simplingAbove;
                     FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
                     if (flowStep.OrderingNum == 0)
                         return;
 
                     if (flowStep.ParentFlowStepId != null)
-                    {
-
                         simplingsAbove = _baseDatawork.FlowSteps
                             .Where(x => x.Id == flowStep.ParentFlowStepId)
                             .SelectMany(x => x.ChildrenFlowSteps)
-                            .Where(x => x.OrderingNum < flowStep.OrderingNum )
+                            .Where(x => x.OrderingNum < flowStep.OrderingNum)
+                            .ToList();
+                    else
+                        simplingsAbove = _baseDatawork.Flows
+                            .Where(x => x.Id == flowStep.FlowId)
+                            .SelectMany(x => x.FlowSteps)
+                            .Where(x => x.OrderingNum < flowStep.OrderingNum)
                             .ToList();
 
-                        if (simplingsAbove.Any())
-                        {
-                            // Find max
-                            simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
 
-                            // Swap values
-                            (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
-                        }
+                    if (simplingsAbove.Any())
+                    {
+                        // Find max
+                        simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
+
+                        // Swap values
+                        (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
                     }
 
                     _baseDatawork.SaveChanges();
@@ -261,29 +265,32 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 if (isFlowStepIdParsable)
                 {
-                    List<FlowStep> simplingsAbove;
+                    List<FlowStep> simplingsAbove = new List<FlowStep>();
                     FlowStep simplingAbove;
                     FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
                     if (flowStep.OrderingNum == 0)
                         return;
 
                     if (flowStep.ParentFlowStepId != null)
-                    {
-
                         simplingsAbove = _baseDatawork.FlowSteps
                             .Where(x => x.Id == flowStep.ParentFlowStepId)
                             .SelectMany(x => x.ChildrenFlowSteps)
-                            .Where(x => x.OrderingNum > flowStep.OrderingNum )
+                            .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                            .ToList();
+                    else
+                        simplingsAbove = _baseDatawork.Flows
+                            .Where(x => x.Id == flowStep.FlowId)
+                            .SelectMany(x => x.FlowSteps)
+                            .Where(x => x.OrderingNum < flowStep.OrderingNum)
                             .ToList();
 
-                        if (simplingsAbove.Any())
-                        {
-                            // Find min
-                            simplingAbove = simplingsAbove.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
+                    if (simplingsAbove.Any())
+                    {
+                        // Find min
+                        simplingAbove = simplingsAbove.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
 
-                            // Swap values
-                            (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
-                        }
+                        // Swap values
+                        (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
                     }
 
                     _baseDatawork.SaveChanges();

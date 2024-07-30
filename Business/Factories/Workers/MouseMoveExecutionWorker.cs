@@ -105,6 +105,9 @@ namespace Business.Factories.Workers
             execution.Status = ExecutionStatusEnum.RUNNING;
             execution.StartedOn = DateTime.Now;
 
+            if (execution.ParentExecution != null)
+                execution.ExecutionFolderDirectory = execution.ParentExecution.ExecutionFolderDirectory;
+
             await _baseDatawork.SaveChangesAsync();
         }
 
