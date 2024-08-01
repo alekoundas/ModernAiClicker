@@ -9,7 +9,6 @@ using Business.Helpers;
 using Model.Business;
 using Model.Enums;
 using DataAccess.Repository.Interface;
-using Force.DeepCloner;
 using System.Windows.Navigation;
 using Wpf.Ui.Controls;
 using System.Windows.Forms;
