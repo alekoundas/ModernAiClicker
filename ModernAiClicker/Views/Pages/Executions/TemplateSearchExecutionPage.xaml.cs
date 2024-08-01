@@ -1,9 +1,5 @@
-﻿using ModernAiClicker.ViewModels.Pages;
-using ModernAiClicker.ViewModels.Pages.Executions;
-using System.Drawing;
-using System.IO;
+﻿using ModernAiClicker.ViewModels.Pages.Executions;
 using System.Net.Cache;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 
@@ -24,7 +20,7 @@ namespace ModernAiClicker.Views.Pages.Executions
             //viewModel.ShowTemplateImg += ShowTemplateImg;
             viewModel.ShowResultImage += ShowResultImage;
 
-            if (viewModel.Execution.ResultImagePath.Length > 0)
+            if (viewModel.Execution.ResultImagePath!= null)
                 ShowResultImage(viewModel.Execution.ResultImagePath);
         }
 
@@ -42,22 +38,5 @@ namespace ModernAiClicker.Views.Pages.Executions
             bitmap.EndInit();
             this.UIResultImage.Source = bitmap;
         }
-
-        //public void ShowResultImage(byte[] imageArray)
-        //{
-        //        BitmapImage bitmap = new BitmapImage();
-        //    using (var ms = new System.IO.MemoryStream(imageArray))
-        //    {
-        //        bitmap.BeginInit();
-        //        bitmap.CacheOption = BitmapCacheOption.None;
-        //        bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
-        //        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-        //        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-        //        bitmap.StreamSource = ms;
-        //        bitmap.EndInit();
-        //    }
-
-        //    this.UIResultImage.Source = bitmap;
-        //}
     }
 }

@@ -32,6 +32,7 @@ namespace Business.Factories.Workers
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
             execution.ParentExecutionId = parentExecution.Id;
+            execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
             _baseDatawork.Executions.Add(execution);
             parentExecution.ChildExecutionId = execution.Id;

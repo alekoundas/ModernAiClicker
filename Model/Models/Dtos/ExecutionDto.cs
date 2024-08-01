@@ -13,6 +13,9 @@ namespace Model.Models
 
         public ExecutionStatusEnum Status = ExecutionStatusEnum.DASH;
 
+        public ExecutionResultEnum ExecutionResultEnum = ExecutionResultEnum.FAIL;
+
+
         public string RunFor = "";
 
         public DateTime? StartedOn;
@@ -26,7 +29,6 @@ namespace Model.Models
 
 
         public double ResultAccuracy;
-        public bool IsSuccessful { get; set; }
         public Point ResultLocation { get; set; }
 
         public string ExecutionFolderDirectory = "";

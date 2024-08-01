@@ -79,7 +79,7 @@
                 Grid.Column="0"
                 MaxWidth="100"
                 MaxHeight="100"
-                Source="{Binding ViewModel.TemplateImgPath}">
+                Source="{Binding ViewModel.FlowStep.TemplateImage}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ImageFailed">
                         <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />

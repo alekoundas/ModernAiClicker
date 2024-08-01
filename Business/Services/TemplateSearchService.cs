@@ -19,9 +19,9 @@ namespace Business.Services
         }
 
 
-        public TemplateMatchingResult SearchForTemplate(string templatePath, Model.Structs.Rectangle windowRectangle)
+        public TemplateMatchingResult SearchForTemplate(Bitmap template, Model.Structs.Rectangle windowRectangle)
         {
-            Bitmap template = (Bitmap)Image.FromFile(templatePath);
+            //Bitmap template = (Bitmap)Image.FromFile(templatePath);
             Bitmap? screenshot = SystemService.TakeScreenShot(windowRectangle);
 
             if (screenshot == null)

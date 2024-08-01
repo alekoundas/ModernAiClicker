@@ -19,7 +19,7 @@ namespace Business.Interfaces
         List<Flow>? LoadFlowsJSON();
 
         List<double> GetScalingFactor2();
-        ImageSizeResult GetImageSize(string imagePath);
+        ImageSizeResult GetImageSize(byte[] imagePath);
 
         List<string> GetProcessWindowTitles();
         void CreateFolderOnDisk(string folderName);

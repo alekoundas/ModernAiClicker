@@ -19,6 +19,7 @@ using System.Security;
 using System.Management;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Drawing;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -80,15 +81,20 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private void OnButtonTestClick()
         {
-            Rectangle searchRectangle;
+            Model.Structs.Rectangle searchRectangle;
 
             if (FlowStep.ProcessName.Length > 0 && TemplateImgPath != null)
                 searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
             else
                 searchRectangle = _systemService.GetScreenSize();
 
+             Bitmap templateImage;
+            using (var ms = new MemoryStream(FlowStep.TemplateImage))
+            {
+                templateImage = new Bitmap(ms);
+            }
 
-            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(TemplateImgPath ?? "", searchRectangle);
+            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, searchRectangle);
 
 
             int x = searchRectangle.Left;

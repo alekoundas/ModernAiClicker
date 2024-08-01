@@ -7,7 +7,9 @@ using Model.Enums;
 using Model.Models;
 using Model.Structs;
 using OpenCvSharp;
+using System.Drawing;
 using System.Linq.Expressions;
+using System.Windows.Media.Converters;
 
 namespace Business.Factories.Workers
 {
@@ -33,6 +35,7 @@ namespace Business.Factories.Workers
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
             execution.ParentExecutionId = parentExecution.Id;
+            execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
             _baseDatawork.Executions.Add(execution);
             parentExecution.ChildExecutionId = execution.Id;
@@ -46,19 +49,27 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return;
 
-            Rectangle searchRectangle;
+            Model.Structs.Rectangle searchRectangle;
             if (execution.FlowStep.ProcessName.Length > 0)
                 searchRectangle = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
             else
                 searchRectangle = _systemService.GetScreenSize();
 
-            ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImagePath);
-            TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImagePath, searchRectangle);
+            ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
+            Bitmap templateImage;
+            using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
+            {
+                templateImage = new Bitmap(ms);
+            }
+
+            TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, searchRectangle);
 
             int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
             int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
-            execution.IsSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
+            bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
+            execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
+
             execution.ResultLocation = new Model.Structs.Point(x, y);
             execution.ResultImage = result.ResultImage;
             execution.ResultImagePath = result.ResultImagePath;
@@ -75,7 +86,7 @@ namespace Business.Factories.Workers
             FlowStep? nextFlowStep;
 
             // Get next executable child.
-            if (execution.IsSuccessful)
+            if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
                 nextFlowStep = _baseDatawork.FlowSteps
                     .Where(x => x.Id == execution.FlowStepId)
                     .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
@@ -144,7 +155,7 @@ namespace Business.Factories.Workers
 
         public async Task SetExecutionModelStateComplete(Execution execution)
         {
-            execution.Status = execution.IsSuccessful ? ExecutionStatusEnum.COMPLETED : ExecutionStatusEnum.ACCURACY_FAIL;
+            //execution.Status = execution.IsSuccessful ? ExecutionStatusEnum.COMPLETED : ExecutionStatusEnum.ACCURACY_FAIL;
             execution.EndedOn = DateTime.Now;
 
             await _baseDatawork.SaveChangesAsync();
@@ -156,7 +167,7 @@ namespace Business.Factories.Workers
                 return;
             FlowStep? nextFlowStep = null;
 
-            if (execution.IsSuccessful)
+            if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
                 nextFlowStep = _baseDatawork.FlowSteps
                     .Where(x => x.Id == execution.FlowStepId)
                     .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
@@ -178,11 +189,14 @@ namespace Business.Factories.Workers
 
         public async Task SaveToDisk(Execution execution)
         {
+            string folderDir = execution.ParentExecution.ExecutionFolderDirectory;
+
+            await _baseDatawork.SaveChangesAsync();
+
             if (execution.ParentExecution == null || execution.ResultImage == null)
                 return;
 
             byte[] resultImage = execution.ResultImage;
-            string folderDir = execution.ParentExecution.ExecutionFolderDirectory;
             string imagePath = folderDir +"\\";
             imagePath += execution.Id;
             imagePath += " - ";

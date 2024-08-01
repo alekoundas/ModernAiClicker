@@ -15,6 +15,9 @@ namespace Model.Models
         public ExecutionStatusEnum _status = ExecutionStatusEnum.DASH;
 
         [ObservableProperty]
+        public ExecutionResultEnum _executionResultEnum = ExecutionResultEnum.NO_RESULT;
+
+        [ObservableProperty]
         public string _runFor = "";
 
         [ObservableProperty]
@@ -37,9 +40,6 @@ namespace Model.Models
 
         [ObservableProperty]
         public decimal _resultAccuracy= 0.00m;
-
-        [ObservableProperty]
-        public bool _isSuccessful;
 
         public string ExecutionFolderDirectory="";
 

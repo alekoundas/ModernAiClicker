@@ -200,12 +200,13 @@ namespace Business.Services
             return windowRectangle;
         }
 
-        public ImageSizeResult GetImageSize(string imagePath)
+        public ImageSizeResult GetImageSize(byte[] imageArray)
         {
             ImageSizeResult imageSizeResult = new ImageSizeResult();
-
-            using (var image = new Bitmap(imagePath))
+            Bitmap image;
+            using (var ms = new MemoryStream(imageArray))
             {
+                image = new Bitmap(ms);
                 imageSizeResult.Height = image.Height;
                 imageSizeResult.Width = image.Width;
             }
