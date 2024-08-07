@@ -9,14 +9,12 @@ namespace ModernAiClicker.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            Button button = (Button)values[0];
             EventParammeters findCommandParameters = new EventParammeters();
 
-            findCommandParameters.ElementName = button.Name;
-            findCommandParameters.FlowId = values[1]?.ToString();
+            findCommandParameters.FlowId = values[1];
 
             if (values.Length >= 3)
-                findCommandParameters.FlowStepId = values[2].ToString();
+                findCommandParameters.FlowStepId = values[2];
 
             return findCommandParameters;
         }

@@ -27,6 +27,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
 
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Fill" Color="#FF595959" />
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Stroke" Color="#FF262626" />
@@ -116,7 +117,23 @@
                             <ToggleButton
                                 x:Name="Expander"
                                 IsChecked="{Binding IsExpanded}"
-                                Style="{StaticResource ExpandCollapseToggleStyle}" />
+                                Style="{StaticResource ExpandCollapseToggleStyle}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Checked">
+                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemExpandedCommand}">
+                                            <i:InvokeCommandAction.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                    <Binding ElementName="TreeViewItemFlowDeleteButsdfgton" />
+                                                    <Binding Path="" />
+                                                </MultiBinding>
+                                            </i:InvokeCommandAction.CommandParameter>
+                                        </i:InvokeCommandAction>
+                                    </i:EventTrigger>
+                                    <!--<i:EventTrigger EventName="Unchecked">
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemExpandedCommand}" />
+                                    </i:EventTrigger>-->
+                                </i:Interaction.Triggers>
+                            </ToggleButton>
                             <Border
                                 x:Name="FlowStepBorder"
                                 Grid.Column="1"
@@ -190,7 +207,6 @@
 
         <!--  Grid Definition  -->
         <Grid.Resources>
-            <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
             <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
             <ObjectDataProvider
                 x:Key="FlowStepTypesEnum"

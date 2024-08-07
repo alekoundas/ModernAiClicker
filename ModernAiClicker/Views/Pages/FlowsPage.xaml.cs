@@ -1,12 +1,8 @@
 ﻿using Business.Interfaces;
-using DataAccess;
 using DataAccess.Repository.Interface;
 using Model.Models;
 using ModernAiClicker.ViewModels.Pages;
 using ModernAiClicker.Views.Pages.FlowStepDetail;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Forms;
 using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages

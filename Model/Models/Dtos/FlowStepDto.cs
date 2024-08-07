@@ -13,7 +13,7 @@ namespace Model.Models
 
         public string ProcessName = string.Empty;
 
-        public bool IsExpanded = true;
+        public bool IsExpanded;
 
         public int OrderingNum;
 

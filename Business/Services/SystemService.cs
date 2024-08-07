@@ -81,25 +81,25 @@ namespace Business.Services
         }
 
 
-        public void GetDpi(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
-        {
-            var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
-            var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
-            GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
-        }
+        //public void GetDpi(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
+        //{
+        //    var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
+        //    var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
+        //    GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
+        //}
 
 
-        private List<string> kek(DpiType type)
-        {
-            var list = new List<string>();
-            foreach (var screen in System.Windows.Forms.Screen.AllScreens)
-            {
-                uint x, y;
-                GetDpi(screen, type, out x, out y);
-                list.Add(screen.DeviceName + " - dpiX=" + x + ", dpiY=" + y);
-            }
-            return list;
-        }
+        //private List<string> kek(DpiType type)
+        //{
+        //    var list = new List<string>();
+        //    foreach (var screen in System.Windows.Forms.Screen.AllScreens)
+        //    {
+        //        uint x, y;
+        //        GetDpi(screen, type, out x, out y);
+        //        list.Add(screen.DeviceName + " - dpiX=" + x + ", dpiY=" + y);
+        //    }
+        //    return list;
+        //}
 
 
 
@@ -282,58 +282,58 @@ namespace Business.Services
         }
 
 
-        public void GetScalingFactor()
-        {
-            List<double> physicalWidths = new List<double>();
+        //public void GetScalingFactor()
+        //{
+        //    List<double> physicalWidths = new List<double>();
 
-            //Get physical width for each monitor
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("\\root\\wmi", "SELECT * FROM WmiMonitorBasicDisplayParams");
+        //    //Get physical width for each monitor
+        //    ManagementObjectSearcher searcher = new ManagementObjectSearcher("\\root\\wmi", "SELECT * FROM WmiMonitorBasicDisplayParams");
 
-            foreach (ManagementObject monitor in searcher.Get())
-            {
-                //Get the physical width (inch)
-                double width = (byte)monitor["MaxHorizontalImageSize"] / 2.54;
-                physicalWidths.Add(width);
-            }
+        //    foreach (ManagementObject monitor in searcher.Get())
+        //    {
+        //        //Get the physical width (inch)
+        //        double width = (byte)monitor["MaxHorizontalImageSize"] / 2.54;
+        //        physicalWidths.Add(width);
+        //    }
 
-            //Get screen info for each monitor
-            Screen[] screenList = Screen.AllScreens;
-            int i = 0;
+        //    //Get screen info for each monitor
+        //    Screen[] screenList = Screen.AllScreens;
+        //    int i = 0;
 
-            foreach (Screen screen in screenList)
-            {
-                //Get the physical width (pixel)
-                double physicalWidth;
-                if (i < physicalWidths.Count)
-                {
-                    //Get the DPI
-                    uint x, y;
-                    GetDpi2(screen, DpiType.Effective, out x, out y);
+        //    foreach (Screen screen in screenList)
+        //    {
+        //        //Get the physical width (pixel)
+        //        double physicalWidth;
+        //        if (i < physicalWidths.Count)
+        //        {
+        //            //Get the DPI
+        //            uint x, y;
+        //            GetDpi2(screen, DpiType.Effective, out x, out y);
 
-                    //Convert inch to pixel
-                    physicalWidth = physicalWidths[i] * x;
-                }
-                else
-                {
-                    physicalWidth = SystemParameters.PrimaryScreenWidth;
-                }
-                i++;
+        //            //Convert inch to pixel
+        //            physicalWidth = physicalWidths[i] * x;
+        //        }
+        //        else
+        //        {
+        //            physicalWidth = SystemParameters.PrimaryScreenWidth;
+        //        }
+        //        i++;
 
-                //Calculate the scaling
-                double scaling = 100 * (physicalWidth / screen.Bounds.Width);
-                double scalingFactor = physicalWidth / screen.Bounds.Width;
+        //        //Calculate the scaling
+        //        double scaling = 100 * (physicalWidth / screen.Bounds.Width);
+        //        double scalingFactor = physicalWidth / screen.Bounds.Width;
 
-                //Output the result
-                Console.WriteLine(scalingFactor);
-            }
-        }
+        //        //Output the result
+        //        Console.WriteLine(scalingFactor);
+        //    }
+        //}
 
-        public void GetDpi2(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
-        {
-            var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
-            var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
-            GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
-        }
+        //public void GetDpi2(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
+        //{
+        //    var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
+        //    var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
+        //    GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
+        //}
 
         public List<double> GetScalingFactor2()
         {

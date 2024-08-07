@@ -17,7 +17,7 @@ namespace Model.Models
         public string _processName = string.Empty;
 
         [ObservableProperty]
-        public bool _isExpanded = true;
+        public bool _isExpanded;
 
         [ObservableProperty]
         public bool _isSelected = true;
@@ -106,6 +106,12 @@ namespace Model.Models
         public int? ParentTemplateSearchFlowStepId { get; set; }
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
         public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
+
+
+
+        public virtual void LoadChildren(int id,ObservableCollection<FlowStep> children)
+        {
+        }
 
     }
 }

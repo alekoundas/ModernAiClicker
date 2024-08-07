@@ -69,45 +69,36 @@ namespace ModernAiClicker.ViewModels.Pages
             List<Flow> flows = _baseDatawork.Query.Flows
                 .Include(x => x.FlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .Include(x => x.Executions)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-                .ThenInclude(x => x.ChildExecution)
-            .ToList();
+                .ToList();
+
+            foreach (Flow flow in flows)
+            {
+
+                foreach (FlowStep flowStep in flow.FlowSteps)
+                {
+                    LoadChildren(flowStep);
+                }
+            }
 
             FlowsList = new ObservableCollection<Flow>(flows);
         }
 
+        public void LoadChildren(FlowStep flowStep)
+        {
+            List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                        .Include(x => x.ChildrenFlowSteps)
+                        .First(x => x.Id == flowStep.Id)
+                        .ChildrenFlowSteps
+                        .ToList();
+
+            flowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
+
+            foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
+            {
+                if (childFlowStep.IsExpanded)
+                    LoadChildren(childFlowStep);
+            }
+        }
 
 
 
@@ -310,6 +301,52 @@ namespace ModernAiClicker.ViewModels.Pages
 
         }
 
+        [RelayCommand]
+        private void OnTreeViewItemExpanded(EventParammeters eventParameters)
+        {
+            if (eventParameters == null)
+                return;
+
+            if (eventParameters.FlowId is FlowStep)
+            {
+
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+
+                foreach (var childrenFlowStep in flowStep.ChildrenFlowSteps)
+                {
+                    if (childrenFlowStep.ChildrenFlowSteps.Count == 0)
+                    {
+                        List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                            .Include(x => x.ChildrenFlowSteps)
+                            .First(x => x.Id == childrenFlowStep.Id)
+                            .ChildrenFlowSteps
+                            .ToList();
+
+                        childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
+                    }
+                }
+            }
+
+            else if (eventParameters.FlowId is Flow)
+            {
+
+                Flow flow = (Flow)eventParameters.FlowId;
+
+                foreach (var childrenFlowStep in flow.FlowSteps)
+                {
+                    if (childrenFlowStep.ChildrenFlowSteps.Count == 0)
+                    {
+                        List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                            .Include(x => x.ChildrenFlowSteps)
+                            .First(x => x.Id == childrenFlowStep.Id)
+                            .ChildrenFlowSteps
+                            .ToList();
+
+                        childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
+                    }
+                }
+            }
+        }
 
 
         public void OnNavigatedTo() { }
