@@ -34,6 +34,8 @@ namespace Business.Factories.Workers
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
             _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+            
             parentExecution.ChildExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
@@ -49,12 +51,12 @@ namespace Business.Factories.Workers
             Point pointToMove;
 
             // Get point from result of parent template search.
-            if (execution.ParentExecution?.ResultLocation != null)
-                pointToMove = execution.ParentExecution.ResultLocation;
+            if (execution.ParentExecution?.ResultLocationX != null && execution.ParentExecution?.ResultLocationY != null)
+                pointToMove = new Point(execution.ParentExecution.ResultLocationX.Value, execution.ParentExecution.ResultLocationY.Value);
 
             // Else get point from flow step.
             else
-                pointToMove = execution.FlowStep.ResultLocation;
+                pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
 
             _systemService.SetCursorPossition(pointToMove);
 

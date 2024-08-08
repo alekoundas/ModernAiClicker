@@ -39,22 +39,9 @@ namespace ModernAiClicker.Views.Pages
 
             //viewModel.FrameNavigateToFlow += FrameNavigateToFlow;
             viewModel.NavigateToExecutionDetail += NavigateToExecutionDetailEvent;
-
-            //        ExecutionsListBox.Items.SortDescriptions.Add(
-
-            //new System.ComponentModel.SortDescription("Id",
-
-            //   System.ComponentModel.ListSortDirection.Ascending));
         }
 
-        //public void FrameNavigateToFlow(Flow flow, ObservableCollection<Execution> executions)
-        //{
-        //    FrameExecutionFlowViewModel frameViewModel = new FrameExecutionFlowViewModel(_baseDatawork, _executionFactory);
-        //    frameViewModel.Flow = flow;
-        //    frameViewModel.Executions = executions;
-
-        //    UIFlowStepDetailFrame.Navigate(new FrameExecutionFlowPage(frameViewModel));
-        //}
+        
 
 
 

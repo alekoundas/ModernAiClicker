@@ -39,7 +39,9 @@ namespace Model.Models
 
 
         public double Accuracy = 0.00d;
-        public Point ResultLocation { get; set; }
+
+        public int LocationX;
+        public int LocationY;
 
 
         // Mouse

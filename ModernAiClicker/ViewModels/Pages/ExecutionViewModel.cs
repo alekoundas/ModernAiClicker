@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
+using Model.ConverterModels;
 using Model.Enums;
 using Model.Models;
 using System.Collections.ObjectModel;
@@ -193,7 +194,13 @@ namespace ModernAiClicker.ViewModels.Pages
                 return;
 
             var flow = _baseDatawork.Query.Flows
+                .Include(x => x.FlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
                 .FirstOrDefault(x => x.Id == ComboBoxSelectedFlow.Id);
+
+            foreach (FlowStep flowStep in flow.FlowSteps)
+                LoadFlowStepChildren(flowStep);
+
 
             List<Execution> executions = await _baseDatawork.Executions.Query
                 .Where(x => x.FlowId == ComboBoxSelectedFlow.Id)
@@ -203,25 +210,88 @@ namespace ModernAiClicker.ViewModels.Pages
 
             TreeviewFlows.Clear();
             TreeviewFlows.Add(flow);
-            //FrameNavigateToFlow?.Invoke(flow, ListBoxExecutions);
         }
 
+        private void LoadFlowStepChildren(FlowStep flowStep)
+        {
+            List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                        .Include(x => x.ChildrenFlowSteps)
+                        .First(x => x.Id == flowStep.Id)
+                        .ChildrenFlowSteps
+                        .ToList();
 
-        //[RelayCommand]
-        //private void OnTreeViewSelectedItemChanged(RoutedPropertyChangedEventArgs<object> routedPropertyChangedEventArgs)
-        //{
-        //    object selectedItem = routedPropertyChangedEventArgs.NewValue;
-        //    if (selectedItem is not FlowStep)
-        //        return;
+            flowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
 
-        //    FlowStepTypesEnum flowStepType = ((FlowStep)selectedItem).FlowStepType;
+            foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
+            {
+                if (childFlowStep.IsExpanded)
+                    LoadFlowStepChildren(childFlowStep);
+            }
+        }
 
-        //    if (ListboxSelectedExecution != null)
-        //        NavigateToExecutionDetail?.Invoke(flowStepType, ListboxSelectedExecution);
+        private void LoadExecutionChild(Execution execution)
+        {
+            Execution? executionChild = _baseDatawork.Query.Executions
+                        .Include(x => x.ChildExecution)
+                        .First(x => x.Id == execution.Id)
+                        .ChildExecution;
 
-        //    NavigateToExecutionDetail?.Invoke(flowStepType, null);
-        //}
+            if (executionChild == null)
+                return;
 
+            execution.ChildExecution = executionChild;
+            LoadExecutionChild(execution.ChildExecution);
+        }
+
+        [RelayCommand]
+        private void OnTreeViewItemExpanded(EventParammeters eventParameters)
+        {
+            if (eventParameters == null)
+                return;
+
+            if (eventParameters.FlowId is FlowStep)
+            {
+
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+
+                if (flowStep.ChildrenFlowSteps == null)
+                    return;
+
+                foreach (var childrenFlowStep in flowStep.ChildrenFlowSteps)
+                {
+                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count ==0)
+                    {
+                        List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                            .Include(x => x.ChildrenFlowSteps)
+                            .First(x => x.Id == childrenFlowStep.Id)
+                            .ChildrenFlowSteps
+                            .ToList();
+
+                        childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
+                    }
+                }
+            }
+
+            else if (eventParameters.FlowId is Flow)
+            {
+
+                Flow flow = (Flow)eventParameters.FlowId;
+
+                foreach (var childrenFlowStep in flow.FlowSteps)
+                {
+                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
+                    {
+                        List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                            .Include(x => x.ChildrenFlowSteps)
+                            .First(x => x.Id == childrenFlowStep.Id)
+                            .ChildrenFlowSteps
+                            .ToList();
+
+                        childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
+                    }
+                }
+            }
+        }
 
         [RelayCommand]
         private async Task OnButtonDeleteClick()
@@ -273,30 +343,11 @@ namespace ModernAiClicker.ViewModels.Pages
                 return;
             }
 
-            // Get recursively all parents.
             Execution execution = await _baseDatawork.Executions.Query
-
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
-                .Include(x => x.ChildExecution)
                 .Include(x => x.ChildExecution)
                 .FirstAsync(x => x.Id == ComboBoxSelectedExecutionHistory.Id);
 
+            LoadExecutionChild(execution);
 
             List<Execution> executions = execution
                 .SelectRecursive(x => x.ChildExecution)

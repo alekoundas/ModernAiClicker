@@ -38,6 +38,8 @@ namespace Business.Factories.Workers
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
             _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+
             parentExecution.ChildExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
@@ -70,7 +72,8 @@ namespace Business.Factories.Workers
             bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
             execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
 
-            execution.ResultLocation = new Model.Structs.Point(x, y);
+            execution.ResultLocationX = x;
+            execution.ResultLocationY = y;
             execution.ResultImage = result.ResultImage;
             execution.ResultImagePath = result.ResultImagePath;
             execution.ResultAccuracy = result.Confidence;
@@ -191,7 +194,6 @@ namespace Business.Factories.Workers
         {
             string folderDir = execution.ParentExecution.ExecutionFolderDirectory;
 
-            await _baseDatawork.SaveChangesAsync();
 
             if (execution.ParentExecution == null || execution.ResultImage == null)
                 return;
@@ -212,7 +214,6 @@ namespace Business.Factories.Workers
             execution.ResultImagePath = imagePath;
 
 
-            await _baseDatawork.SaveChangesAsync();
         }
     }
 }

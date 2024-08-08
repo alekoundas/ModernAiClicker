@@ -28,11 +28,13 @@ namespace DataAccess.Configurations
                 .HasOne(x => x.ParentExecution)
                 .WithOne(x => x.ChildExecution)
                 .HasForeignKey<Execution>(x => x.ParentExecutionId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.ChildExecution)
                 .WithOne(x => x.ParentExecution)
                 .HasForeignKey<Execution>(x => x.ChildExecutionId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -1,0 +1,10 @@
+﻿
+
+
+
+
+dotnet ef migrations add sadda
+
+
+
+dotnet ef database update

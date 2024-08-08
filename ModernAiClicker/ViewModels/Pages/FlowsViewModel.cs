@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Business.Services;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -60,6 +61,9 @@ namespace ModernAiClicker.ViewModels.Pages
             _baseDatawork = baseDatawork;
             _systemService = systemService;
 
+
+
+
             RefreshData();
         }
 
@@ -73,7 +77,6 @@ namespace ModernAiClicker.ViewModels.Pages
 
             foreach (Flow flow in flows)
             {
-
                 foreach (FlowStep flowStep in flow.FlowSteps)
                 {
                     LoadChildren(flowStep);
@@ -83,7 +86,7 @@ namespace ModernAiClicker.ViewModels.Pages
             FlowsList = new ObservableCollection<Flow>(flows);
         }
 
-        public void LoadChildren(FlowStep flowStep)
+        private void LoadChildren(FlowStep flowStep)
         {
             List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
                         .Include(x => x.ChildrenFlowSteps)
@@ -311,10 +314,11 @@ namespace ModernAiClicker.ViewModels.Pages
             {
 
                 FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-
+                if (flowStep.ChildrenFlowSteps == null)
+                    return;
                 foreach (var childrenFlowStep in flowStep.ChildrenFlowSteps)
                 {
-                    if (childrenFlowStep.ChildrenFlowSteps.Count == 0)
+                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
                         List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
                             .Include(x => x.ChildrenFlowSteps)
@@ -334,7 +338,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 foreach (var childrenFlowStep in flow.FlowSteps)
                 {
-                    if (childrenFlowStep.ChildrenFlowSteps.Count == 0)
+                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
                         List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
                             .Include(x => x.ChildrenFlowSteps)

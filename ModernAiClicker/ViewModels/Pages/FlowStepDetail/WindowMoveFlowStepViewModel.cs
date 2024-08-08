@@ -39,8 +39,8 @@ namespace ModernAiClicker.ViewModels.Pages
             _systemService = systemService;
 
             _flowStep = flowStep;
-            X = FlowStep.ResultLocation.X;
-            Y = FlowStep.ResultLocation.Y;
+            X = FlowStep.LocationX;
+            Y = FlowStep.LocationY;
         }
 
 
@@ -56,7 +56,8 @@ namespace ModernAiClicker.ViewModels.Pages
 
             X = windowRect.Left;
             Y = windowRect.Top; 
-            FlowStep.ResultLocation = new Point(X,Y);
+            FlowStep.LocationX = X;
+            FlowStep.LocationY = Y;
         }
 
         [RelayCommand]
@@ -85,7 +86,8 @@ namespace ModernAiClicker.ViewModels.Pages
         private async Task OnButtonSaveClick()
         {
 
-            FlowStep.ResultLocation = new Point(X, Y);
+            FlowStep.LocationX = X;
+            FlowStep.LocationY = Y;
 
             // Edit mode
             if (FlowStep.Id > 0)

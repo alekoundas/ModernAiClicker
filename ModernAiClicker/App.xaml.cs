@@ -142,17 +142,18 @@ namespace ModernAiClicker
 
 
                 // DB context
-                services.AddDbContext<InMemoryDbContext>();
-                var dbContext = services.BuildServiceProvider().GetService<InMemoryDbContext>();
-                if (dbContext != null)
-                {
-                    var jsonFlows = GetFlowsFromJson();
-                    if (jsonFlows == null)
-                        return;
+                //services.AddTransient<InMemoryDbContext>();
+                services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Transient);
+                //var dbContext = services.BuildServiceProvider().GetService<InMemoryDbContext>();
+                //if (dbContext != null)
+                //{
+                //    var jsonFlows = GetFlowsFromJson();
+                //    if (jsonFlows == null)
+                //        return;
 
-                    dbContext.Flows.AddRange(jsonFlows);
-                    dbContext.SaveChanges();
-                }
+                //    dbContext.Flows.AddRange(jsonFlows);
+                //    dbContext.SaveChanges();
+                //}
 
 
 

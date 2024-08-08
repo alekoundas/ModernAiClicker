@@ -29,8 +29,10 @@ namespace Model.Models
         [ObservableProperty]
         public bool _isSelected = true;
 
-        [ObservableProperty]
-        public Point _resultLocation;
+        //public Point _resultLocation;
+
+        public int? ResultLocationX;
+        public int? ResultLocationY;
 
         [ObservableProperty]
         public byte[]? _resultImage;

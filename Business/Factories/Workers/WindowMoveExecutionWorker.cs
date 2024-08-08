@@ -35,6 +35,8 @@ namespace Business.Factories.Workers
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
             _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+            
             parentExecution.ChildExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
@@ -50,8 +52,8 @@ namespace Business.Factories.Workers
             Rectangle windowRect = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
             Rectangle newWindowRect = new Rectangle();
 
-            int x = execution.FlowStep.ResultLocation.X;
-            int y = execution.FlowStep.ResultLocation.Y;
+            int x = execution.FlowStep.LocationX;
+            int y = execution.FlowStep.LocationY;
             int height = Math.Abs(windowRect.Bottom - windowRect.Top);
             int width = Math.Abs(windowRect.Left - windowRect.Right);
 

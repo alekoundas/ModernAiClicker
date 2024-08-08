@@ -6,6 +6,7 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using Business.Extensions;
 using Model.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -19,7 +20,7 @@ namespace ModernAiClicker.ViewModels.Pages
         private FlowStep _flowStep;
 
         [ObservableProperty]
-        private ObservableCollection<FlowStep> _parents;
+        private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
 
         public CursorMoveFlowStepViewModel(FlowStep flowStep, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
@@ -29,8 +30,9 @@ namespace ModernAiClicker.ViewModels.Pages
             _templateMatchingService = templateMatchingService;
 
             FlowStep = flowStep;
-            Parents = GetParents();
+            Parents = _parents;
 
+            Task.Run(() => GetParentsRecursively(FlowStep.ParentFlowStepId.Value)).Wait();
         }
 
         [RelayCommand]
@@ -87,25 +89,17 @@ namespace ModernAiClicker.ViewModels.Pages
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
 
-        private ObservableCollection<FlowStep> GetParents()
+        private async Task GetParentsRecursively(int flowStepId)
         {
-            if (FlowStep.ParentFlowStepId == null)
-                return new ObservableCollection<FlowStep>();
+            FlowStep parent = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
 
-            // Get recursively all parents.
-            List<FlowStep> parents = _baseDatawork.FlowSteps
-                .GetAll()
-                .First(x => x.Id == FlowStep.ParentFlowStepId)
-                .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
-                .ToList();
+            if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
+                Parents.Add(parent);
 
-            parents = parents
-                .Where(x => x != null && x.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
-                .ToList();
+            if (!parent.ParentFlowStepId.HasValue)
+                return;
 
-            return new ObservableCollection<FlowStep>(parents);
-
+            await GetParentsRecursively(parent.ParentFlowStepId.Value);
         }
-
     }
 }

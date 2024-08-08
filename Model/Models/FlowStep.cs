@@ -37,8 +37,8 @@ namespace Model.Models
         public int? ParentFlowStepId { get; set; }
         public virtual FlowStep? ParentFlowStep { get; set; }
 
-        public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
-        public virtual ObservableCollection<Execution> Executions { get; set; } = new ObservableCollection<Execution>();
+        public virtual ObservableCollection<FlowStep>? ChildrenFlowSteps { get; set; }
+        public virtual ObservableCollection<Execution>? Executions { get; set; } 
 
 
 
@@ -58,8 +58,8 @@ namespace Model.Models
         [ObservableProperty]
         public decimal _accuracy = 0.00m;
 
-        //Rename also used by window move
-        public Point ResultLocation { get; set; }
+        public int LocationX;
+        public int LocationY;
 
 
         // Mouse

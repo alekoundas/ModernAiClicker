@@ -123,7 +123,7 @@
                                         <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemExpandedCommand}">
                                             <i:InvokeCommandAction.CommandParameter>
                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                    <Binding ElementName="TreeViewItemFlowDeleteButsdfgton" />
+                                                    <Binding ElementName="TreeViewItemChecked" />
                                                     <Binding Path="" />
                                                 </MultiBinding>
                                             </i:InvokeCommandAction.CommandParameter>

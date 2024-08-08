@@ -6,6 +6,7 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using Business.Extensions;
 using Model.Enums;
+using Model.Structs;
 
 namespace ModernAiClicker.ViewModels.Pages.Executions
 {
@@ -32,15 +33,15 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
 
             Parents = GetParents();
             //Execution execution = GetExecution();
-            X = Execution.ResultLocation.X;
-            Y = Execution.ResultLocation.Y;
+            X = Execution.ResultLocationX.Value;
+            Y = Execution.ResultLocationY.Value;
         }
         [RelayCommand]
         private async Task OnButtonTestClick()
         {
             //Execution templateSearchExecution = GetExecution();
 
-            _systemService.SetCursorPossition(Execution.ResultLocation);
+            _systemService.SetCursorPossition(new Point(Execution.ResultLocationX.Value, Execution.ResultLocationY.Value));
         }
 
         private Execution GetExecution()

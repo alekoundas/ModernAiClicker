@@ -24,10 +24,7 @@ namespace Business.Factories.Workers
         {
             Execution execution = new Execution();
             execution.FlowId = flowId;
-            Application.Current.Dispatcher.Invoke((Action)delegate
-            {
-                _baseDatawork.Executions.Add(execution);
-            });
+            _baseDatawork.Executions.Add(execution);
             await _baseDatawork.SaveChangesAsync();
 
             return execution;
@@ -99,7 +96,7 @@ namespace Business.Factories.Workers
             filename += " - ";
             filename += DateTime.Now.ToString("yy-MM-dd hh.mm");
 
-            execution.ExecutionFolderDirectory = PathHelper.GetAppDataPath() +"\\"+ filename;
+            execution.ExecutionFolderDirectory = PathHelper.GetAppDataPath() + "\\" + filename;
             await _baseDatawork.SaveChangesAsync();
 
             _systemService.CreateFolderOnDisk(filename);

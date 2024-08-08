@@ -26,6 +26,8 @@ namespace Business.Factories.Workers
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
             _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+            
             parentExecution.ChildExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
