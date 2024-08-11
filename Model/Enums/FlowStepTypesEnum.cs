@@ -14,5 +14,6 @@ namespace Model.Enums
         IS_FAILURE,
         WINDOW_RESIZE,
         WINDOW_MOVE,
+        MOUSE_SCROLL,
     }
 }

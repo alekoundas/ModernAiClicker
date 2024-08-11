@@ -4,10 +4,11 @@ using Model.Models;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Enums;
+using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class CursorClickFlowStepViewModel : ObservableObject
+    public partial class CursorScrollFlowStepViewModel : ObservableObject, INavigationAware
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
@@ -24,9 +25,8 @@ namespace ModernAiClicker.ViewModels.Pages
         private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
 
 
-        public CursorClickFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork) 
+        public CursorScrollFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork) 
         {
-
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowStep = flowStep;
@@ -35,6 +35,15 @@ namespace ModernAiClicker.ViewModels.Pages
             MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
         }
 
+        public void OnNavigatedFrom()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnNavigatedTo()
+        {
+            throw new NotImplementedException();
+        }
 
         [RelayCommand]
         private void OnButtonCancelClick()

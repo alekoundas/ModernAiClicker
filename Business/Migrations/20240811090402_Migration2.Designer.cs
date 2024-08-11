@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    [Migration("20240807221739_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240811090402_Migration2")]
+    partial class Migration2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -243,7 +243,7 @@ namespace Business.Migrations
                     b.HasOne("Model.Models.FlowStep", "ParentFlowStep")
                         .WithMany("ChildrenFlowSteps")
                         .HasForeignKey("ParentFlowStepId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Model.Models.FlowStep", "ParentTemplateSearchFlowStep")
                         .WithMany("ChildrenTemplateSearchFlowSteps")

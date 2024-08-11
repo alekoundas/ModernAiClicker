@@ -61,11 +61,20 @@
 
             <StackPanel Grid.Column="2">
                 <Label>X:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.LocationX, Mode=TwoWay}" />
 
                 <Label>Y:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
-
+                <TextBox Text="{Binding ViewModel.FlowStep.LocationY, Mode=TwoWay}" />
+                <!--  Test Button  -->
+                <StackPanel Margin="0,10,0,0" HorizontalAlignment="Right">
+                    <Button Content="Test">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTestClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                </StackPanel>
             </StackPanel>
         </Grid>
 

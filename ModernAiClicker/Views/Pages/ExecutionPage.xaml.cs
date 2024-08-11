@@ -41,7 +41,7 @@ namespace ModernAiClicker.Views.Pages
             viewModel.NavigateToExecutionDetail += NavigateToExecutionDetailEvent;
         }
 
-        
+
 
 
 
@@ -85,6 +85,11 @@ namespace ModernAiClicker.Views.Pages
             {
                 WindowMoveExecutionViewModel viewModel = new WindowMoveExecutionViewModel(execution, _systemService, _baseDatawork);
                 this.UIExecutionDetailFrame.Navigate(new WindowMoveExecutionPage(viewModel));
+            }
+            else if (flowStepType == FlowStepTypesEnum.MOUSE_SCROLL)
+            {
+                CursorScrollExecutionViewModel viewModel = new CursorScrollExecutionViewModel(execution, _systemService, _baseDatawork);
+                this.UIExecutionDetailFrame.Navigate(new CursorScrollExecutionPage(viewModel));
             }
         }
     }

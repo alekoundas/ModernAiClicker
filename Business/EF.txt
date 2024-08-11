@@ -3,8 +3,8 @@
 
 
 
-dotnet ef migrations add sadda
+dotnet ef migrations add Migration --project Business
 
 
 
-dotnet ef database update
+dotnet ef database update --project Business

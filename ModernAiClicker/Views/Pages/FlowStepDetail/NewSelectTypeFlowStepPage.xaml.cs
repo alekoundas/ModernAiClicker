@@ -45,12 +45,12 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_CLICK)
             {
-                CursorClickFlowStepViewModel viewModel = new CursorClickFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _baseDatawork);
+                CursorClickFlowStepViewModel viewModel = new CursorClickFlowStepViewModel(flowStep,  _systemService,  _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new CursorClickFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_MOVE_COORDINATES)
             {
-                CursorMoveFlowStepViewModel viewModel = new CursorMoveFlowStepViewModel(flowStep, _systemService, _templateMatchingService, _baseDatawork);
+                CursorMoveFlowStepViewModel viewModel = new CursorMoveFlowStepViewModel(flowStep, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new CursorMoveFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.SLEEP)
@@ -72,6 +72,11 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
             {
                 WindowMoveFlowStepViewModel viewModel = new WindowMoveFlowStepViewModel(flowStep, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new WindowMoveFlowStepPage(viewModel));
+            }
+            else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_SCROLL)
+            {
+                CursorScrollFlowStepViewModel viewModel = new CursorScrollFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new CursorScrollFlowStepPage(viewModel));
             }
         }
 

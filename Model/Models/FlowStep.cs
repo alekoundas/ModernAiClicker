@@ -58,8 +58,11 @@ namespace Model.Models
         [ObservableProperty]
         public decimal _accuracy = 0.00m;
 
-        public int LocationX;
-        public int LocationY;
+        [ObservableProperty]
+        public int _locationX;
+
+        [ObservableProperty]
+        public int _locationY;
 
 
         // Mouse

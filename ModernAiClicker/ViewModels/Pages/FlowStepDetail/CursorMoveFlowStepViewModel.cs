@@ -4,16 +4,14 @@ using Model.Models;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
-using Business.Extensions;
 using Model.Enums;
-using Microsoft.EntityFrameworkCore;
+using Model.Structs;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
     public partial class CursorMoveFlowStepViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
-        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
 
         [ObservableProperty]
@@ -22,12 +20,11 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
 
-        public CursorMoveFlowStepViewModel(FlowStep flowStep, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public CursorMoveFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _templateMatchingService = templateMatchingService;
 
             FlowStep = flowStep;
             Parents = _parents;
@@ -40,6 +37,14 @@ namespace ModernAiClicker.ViewModels.Pages
         {
             //TODO
         }
+
+        [RelayCommand]
+        private void OnButtonTestClick()
+        {
+            Point point = new Point(FlowStep.LocationX, FlowStep.LocationY);
+            _systemService.SetCursorPossition(point);
+        }
+
 
 
         [RelayCommand]

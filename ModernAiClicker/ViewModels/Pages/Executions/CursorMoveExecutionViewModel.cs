@@ -33,8 +33,13 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
 
             Parents = GetParents();
             //Execution execution = GetExecution();
-            X = Execution.ResultLocationX.Value;
-            Y = Execution.ResultLocationY.Value;
+
+            //TODO get result from parent flowstep execution
+            if (Execution.ResultLocationX.HasValue && Execution.ResultLocationY.HasValue)
+            {
+                X = Execution.ResultLocationX.Value;
+                Y = Execution.ResultLocationY.Value;
+            }
         }
         [RelayCommand]
         private async Task OnButtonTestClick()

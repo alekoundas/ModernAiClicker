@@ -1,11 +1,12 @@
 ﻿using ModernAiClicker.ViewModels.Pages.Executions;
+using System.IO;
 using System.Net.Cache;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.Executions
 {
-    public partial class TemplateSearchExecutionPage :  INavigableView<TemplateSearchExecutionViewModel>
+    public partial class TemplateSearchExecutionPage : INavigableView<TemplateSearchExecutionViewModel>
     {
         public TemplateSearchExecutionViewModel ViewModel { get; }
 
@@ -20,7 +21,7 @@ namespace ModernAiClicker.Views.Pages.Executions
             //viewModel.ShowTemplateImg += ShowTemplateImg;
             viewModel.ShowResultImage += ShowResultImage;
 
-            if (viewModel.Execution.ResultImagePath!= null)
+            if (viewModel.Execution.ResultImagePath != null)
                 ShowResultImage(viewModel.Execution.ResultImagePath);
         }
 
@@ -28,15 +29,19 @@ namespace ModernAiClicker.Views.Pages.Executions
         //public void ShowTemplateImg(string filename)
         public void ShowResultImage(string filePath)
         {
-            BitmapImage bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.CacheOption = BitmapCacheOption.None;
-            bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            bitmap.UriSource = new Uri(filePath);
-            bitmap.EndInit();
-            this.UIResultImage.Source = bitmap;
+            if (Directory.Exists(filePath))
+            {
+
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.None;
+                bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                bitmap.UriSource = new Uri(filePath);
+                bitmap.EndInit();
+                this.UIResultImage.Source = bitmap;
+            }
         }
     }
 }

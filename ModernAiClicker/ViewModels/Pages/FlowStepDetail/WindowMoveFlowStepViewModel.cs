@@ -15,9 +15,7 @@ namespace ModernAiClicker.ViewModels.Pages
     public partial class WindowMoveFlowStepViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
-        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
-        private FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
@@ -26,21 +24,12 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
-        [ObservableProperty]
-        private int _x = 0;
-
-        [ObservableProperty]
-        private int _y = 0;
-
         public WindowMoveFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork)
         {
-
             _baseDatawork = baseDatawork;
             _systemService = systemService;
 
             _flowStep = flowStep;
-            X = FlowStep.LocationX;
-            Y = FlowStep.LocationY;
         }
 
 
@@ -54,10 +43,8 @@ namespace ModernAiClicker.ViewModels.Pages
 
             Rectangle windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
 
-            X = windowRect.Left;
-            Y = windowRect.Top; 
-            FlowStep.LocationX = X;
-            FlowStep.LocationY = Y;
+            FlowStep.LocationX = windowRect.Left;
+            FlowStep.LocationY = windowRect.Top;
         }
 
         [RelayCommand]
@@ -72,10 +59,10 @@ namespace ModernAiClicker.ViewModels.Pages
             int height = Math.Abs(windowRect.Bottom - windowRect.Top);
             int width = Math.Abs(windowRect.Left - windowRect.Right);
 
-            newWindowRect.Left = X;
-            newWindowRect.Top = Y;
-            newWindowRect.Right = X + width;
-            newWindowRect.Bottom = Y + height;
+            newWindowRect.Left = FlowStep.LocationX;
+            newWindowRect.Top = FlowStep.LocationY;
+            newWindowRect.Right = FlowStep.LocationX + width;
+            newWindowRect.Bottom = FlowStep.LocationY + height;
 
             bool result = _systemService.MoveWindow(FlowStep.ProcessName, newWindowRect);
         }
@@ -85,10 +72,6 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
-
-            FlowStep.LocationX = X;
-            FlowStep.LocationY = Y;
-
             // Edit mode
             if (FlowStep.Id > 0)
             {

@@ -22,7 +22,7 @@ namespace DataAccess.Configurations
                 .WithMany(x => x.ChildrenFlowSteps)
                 .HasForeignKey(x => x.ParentFlowStepId)
                 .IsRequired(false)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.ParentTemplateSearchFlowStep)
                .WithMany(x => x.ChildrenTemplateSearchFlowSteps)

@@ -127,6 +127,9 @@ namespace ModernAiClicker
                 services.AddSingleton<CursorMoveExecutionPage>();
                 services.AddSingleton<CursorMoveExecutionViewModel>();
 
+                services.AddSingleton<CursorScrollExecutionPage>();
+                services.AddSingleton<CursorScrollExecutionViewModel>();
+
                 services.AddSingleton<SleepExecutionPage>();
                 services.AddSingleton<SleepExecutionViewModel>();
 
