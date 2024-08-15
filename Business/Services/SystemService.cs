@@ -105,18 +105,30 @@ namespace Business.Services
         //[DllImport("Shcore.dll")]
         //private static extern IntPtr GetDpiForMonitor([In] IntPtr hmonitor, [In] DpiType dpiType, [Out] out uint dpiX, [Out] out uint dpiY);
 
+        //public void CursorScroll()
+        //{
+        //    var input = new INPUT();
+        //    input.Type = (UInt32)InputType.Mouse;
+        //    input.Data.Mouse.Flags = MouseFlag.VerticalWheel;
+        //    input.Data.Mouse.MouseData = 20;
+
+
+        //    INPUT[] inputs = new INPUT[] { input };
+        //    uint asdasd = SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
+
+        //}
+
+        //public void CursorScroll()
+        //{
+        //    mouse_event(MouseFlag.VerticalWheel, 0, 0, -120, 0);
+        //}
+
         public void CursorScroll()
         {
-            var input = new INPUT();
-            input.Type = (UInt32)InputType.Mouse;
-            input.Data.Mouse.Flags = MouseFlag.HorizontalWheel;
-            input.Data.Mouse.MouseData = 20;
 
-
-            INPUT[] inputs = new INPUT[] { input };
-            uint asdasd = SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
-
+            mouse_event(0x0800, 0, 0, -120, 0);
         }
+
         [Flags]
         internal enum MouseFlag : uint // UInt32
         {
@@ -193,39 +205,20 @@ namespace Business.Services
 
             if (mouseButtonEnum == MouseButtonsEnum.RIGHT_BUTTON)
             {
-                mouse_event(0x08, x, y, 0, 0);
+                mouse_event(0x0008, x, y, 0, 0);
                 Thread.Sleep(100);
-                mouse_event(0x010, x, y, 0, 0);
+                mouse_event(0x0010, x, y, 0, 0);
             }
             else if (mouseButtonEnum == MouseButtonsEnum.LEFT_BUTTON)
             {
-                mouse_event(0x02, x, y, 0, 0);
+                mouse_event(0x0002, x, y, 0, 0);
                 Thread.Sleep(100);
-                mouse_event(0x04, x, y, 0, 0);
+                mouse_event(0x0004, x, y, 0, 0);
             }
 
         }
 
-        public void CursorScroll(MouseButtonsEnum mouseButtonEnum)
-        {
-            int x = System.Windows.Forms.Cursor.Position.X;
-            int y = System.Windows.Forms.Cursor.Position.Y;
-
-            if (mouseButtonEnum == MouseButtonsEnum.RIGHT_BUTTON)
-            {
-                mouse_event(0x08, x, y, 0, 0);
-                Thread.Sleep(100);
-                mouse_event(0x010, x, y, 0, 0);
-            }
-            else if (mouseButtonEnum == MouseButtonsEnum.LEFT_BUTTON)
-            {
-                mouse_event(0x02, x, y, 0, 0);
-                Thread.Sleep(100);
-                mouse_event(0x04, x, y, 0, 0);
-            }
-
-        }
-
+     
         public List<string> GetProcessWindowTitles()
         {
             return Process

@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using Business.Factories.Workers;
+﻿using Business.Factories.Workers;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Enums;
-using Model.Models;
 
 namespace Business.Factories
 {
@@ -33,6 +31,8 @@ namespace Business.Factories
                     return new MouseMoveExecutionWorker(_baseDatawork, _systemService);
                 case FlowStepTypesEnum.MOUSE_CLICK:
                     return new MouseClickExecutionWorker(_baseDatawork, _systemService);
+                case FlowStepTypesEnum.MOUSE_SCROLL:
+                    return new MouseScrollExecutionWorker(_baseDatawork, _systemService);
                 case FlowStepTypesEnum.TEMPLATE_SEARCH:
                     return new TemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService);
                 case FlowStepTypesEnum.SLEEP:

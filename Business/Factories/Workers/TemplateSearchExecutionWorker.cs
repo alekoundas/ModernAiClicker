@@ -90,18 +90,22 @@ namespace Business.Factories.Workers
             FlowStep? nextFlowStep;
 
             // Get next executable child.
+            nextFlowStep = await _baseDatawork.Query.FlowSteps
+                .Include(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .FirstOrDefaultAsync(x => x.Id == execution.FlowStepId);
+
+
             if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
-                nextFlowStep = _baseDatawork.FlowSteps
-                    .Where(x => x.Id == execution.FlowStepId)
-                    .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
-                    .Select(x => x?.ChildrenFlowSteps?.FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0))
-                    .FirstOrDefault();
+                nextFlowStep = nextFlowStep.ChildrenFlowSteps
+                    .First(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
+                    .ChildrenFlowSteps
+                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0);
             else
-                nextFlowStep = _baseDatawork.FlowSteps
-                    .Where(x => x.Id == execution.FlowStepId)
-                    .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
-                    .Select(x => x?.ChildrenFlowSteps?.FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0))
-                    .FirstOrDefault();
+                nextFlowStep = nextFlowStep.ChildrenFlowSteps
+                    .First(x => x.FlowStepType == FlowStepTypesEnum.IS_FAILURE)
+                    .ChildrenFlowSteps
+                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0);
 
 
             //TODO return error message 
@@ -172,19 +176,20 @@ namespace Business.Factories.Workers
             FlowStep? nextFlowStep = null;
 
             if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
-                nextFlowStep = _baseDatawork.FlowSteps
-                    .Where(x => x.Id == execution.FlowStepId)
-                    .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
-                    .FirstOrDefault();
+                nextFlowStep = await _baseDatawork.Query.FlowSteps
+                    .Include(x => x.ChildrenFlowSteps)
+                    .Where(x => x.Id == execution.FlowStepId.Value)
+                    .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
+                    .FirstOrDefaultAsync();
             else
-                nextFlowStep = _baseDatawork.FlowSteps
+                nextFlowStep = await _baseDatawork.Query.FlowSteps
+                    .Include(x => x.ChildrenFlowSteps)
                     .Where(x => x.Id == execution.FlowStepId)
-                    .Select(x => x?.ChildrenFlowSteps?.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
-                    .FirstOrDefault();
+                    .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
+                    .FirstOrDefaultAsync();
 
             if (nextFlowStep != null)
                 nextFlowStep.IsExpanded = true;
-
 
             if (execution.FlowStep.ChildrenFlowSteps.Any())
                 execution.FlowStep.ChildrenFlowSteps.First().IsExpanded = true;

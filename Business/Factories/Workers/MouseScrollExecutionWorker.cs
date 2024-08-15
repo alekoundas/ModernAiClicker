@@ -1,5 +1,6 @@
 ﻿using Business.DatabaseContext;
 using Business.Interfaces;
+using DataAccess;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Enums;
@@ -12,9 +13,8 @@ namespace Business.Factories.Workers
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
-        private readonly IDbContextFactory<InMemoryDbContext> _contextFactory;
 
-        public MouseScrollExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService):base(baseDatawork, systemService)
+        public MouseScrollExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork, systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
@@ -22,21 +22,22 @@ namespace Business.Factories.Workers
 
         public async Task<Execution> CreateExecutionModel(int flowStepId, Execution parentExecution)
         {
-            var context = _contextFactory.CreateDbContext();
-
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
             execution.ParentExecutionId = parentExecution.Id;
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
-            context.Executions.Add(execution);
-            await context.SaveChangesAsync();
+            _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
 
             parentExecution.ChildExecutionId = execution.Id;
-            await context.SaveChangesAsync();
+            await _baseDatawork.SaveChangesAsync();
 
             if (execution.FlowStep == null && execution.FlowStepId != null)
-            execution.FlowStep = context.FlowSteps.Include(x => x.ChildrenFlowSteps).ThenInclude(x => x.ChildrenFlowSteps).First(x => x.Id == flowStepId);
+                execution.FlowStep = await _baseDatawork.Query.FlowSteps
+                        .Include(x => x.ChildrenFlowSteps)
+                        .ThenInclude(x => x.ChildrenFlowSteps)
+                        .FirstOrDefaultAsync(x => x.Id == flowStepId);
 
             return execution;
         }
@@ -51,7 +52,7 @@ namespace Business.Factories.Workers
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)
         {
-            var context = _contextFactory.CreateDbContext();
+
 
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
@@ -70,7 +71,7 @@ namespace Business.Factories.Workers
                     && x.OrderingNum > execution.FlowStep.OrderingNum
                     && x.FlowId == execution.FlowStep.FlowId;
 
-            List<FlowStep>? nextFlowSteps = await context.FlowSteps
+            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps
                 .Where(nextStepFilter)
                 .ToListAsync();
 
@@ -93,32 +94,34 @@ namespace Business.Factories.Workers
 
         public async Task SetExecutionModelStateRunning(Execution execution)
         {
-            var context = _contextFactory.CreateDbContext();
+
             execution.Status = ExecutionStatusEnum.RUNNING;
             execution.StartedOn = DateTime.Now;
 
             if (execution.ParentExecution != null)
                 execution.ExecutionFolderDirectory = execution.ParentExecution.ExecutionFolderDirectory;
 
-            await context.SaveChangesAsync();
+            await _baseDatawork.SaveChangesAsync();
         }
 
         public async Task SetExecutionModelStateComplete(Execution execution)
         {
-            var context = _contextFactory.CreateDbContext();
+
             execution.Status = ExecutionStatusEnum.COMPLETED;
             execution.EndedOn = DateTime.Now;
 
-            await context.SaveChangesAsync();
+            await _baseDatawork.SaveChangesAsync();
         }
 
-        public async Task ExpandAndSelectFlowStep(Execution execution)
+        public Task ExpandAndSelectFlowStep(Execution execution)
         {
             if (execution.FlowStep == null)
-                return;
+                return Task.CompletedTask;
 
             execution.FlowStep.IsExpanded = true;
             execution.FlowStep.IsSelected = true;
+
+            return Task.CompletedTask;
         }
 
     }

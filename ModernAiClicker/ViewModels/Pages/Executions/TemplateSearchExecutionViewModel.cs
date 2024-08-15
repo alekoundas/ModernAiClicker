@@ -35,7 +35,10 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             {
 
                 ShowTemplateImg?.Invoke(execution.FlowStep.TemplateImagePath);
-                ShowResultImage?.Invoke(execution.ResultImagePath);
+                if (execution.ResultImagePath != null)
+                    ShowResultImage?.Invoke(execution.ResultImagePath);
+                if(_execution.ResultImage == null)
+                execution.ResultImage = new byte[0];
 
             }
 

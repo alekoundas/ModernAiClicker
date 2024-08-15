@@ -29,7 +29,8 @@ namespace ModernAiClicker.ViewModels.Pages
             FlowStep = flowStep;
             Parents = _parents;
 
-            Task.Run(() => GetParentsRecursively(FlowStep.ParentFlowStepId.Value)).Wait();
+            if (FlowStep.ParentFlowStepId.HasValue)
+                Task.Run(() => GetParentsRecursively(FlowStep.ParentFlowStepId.Value)).Wait();
         }
 
         [RelayCommand]
@@ -94,9 +95,12 @@ namespace ModernAiClicker.ViewModels.Pages
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
 
-        private async Task GetParentsRecursively(int flowStepId)
+        private async Task GetParentsRecursively(int? flowStepId)
         {
-            FlowStep parent = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (!flowStepId.HasValue)
+                return;
+
+            FlowStep parent = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId.Value);
 
             if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
                 Parents.Add(parent);

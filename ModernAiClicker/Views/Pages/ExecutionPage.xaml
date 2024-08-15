@@ -171,7 +171,7 @@
                                         <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemExpandedCommand}">
                                             <i:InvokeCommandAction.CommandParameter>
                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                    <Binding ElementName="TreeViewItemButtonDelete" />
+                                                    <Binding ElementName="Expander" />
                                                     <Binding Path="" />
                                                 </MultiBinding>
                                             </i:InvokeCommandAction.CommandParameter>
