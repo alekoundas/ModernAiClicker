@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess
 {
-    public class BaseDatawork : IBaseDatawork
+    public class BaseDatawork : IBaseDatawork, IDisposable
     {
         public InMemoryDbContext Query { get; }
         private InMemoryDbContext _dbContext { get; }

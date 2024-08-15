@@ -7,6 +7,7 @@ using Model.Enums;
 using Model.Models;
 using Model.Structs;
 using OpenCvSharp;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq.Expressions;
 using System.Windows.Media.Converters;
@@ -164,7 +165,7 @@ namespace Business.Factories.Workers
             await _baseDatawork.SaveChangesAsync();
         }
 
-        public void ExpandAndSelectFlowStep(Execution execution)
+        public async Task ExpandAndSelectFlowStep(Execution execution)
         {
             if (execution.FlowStep == null)
                 return;
@@ -185,7 +186,9 @@ namespace Business.Factories.Workers
                 nextFlowStep.IsExpanded = true;
 
 
-            execution.FlowStep.ChildrenFlowSteps.First().IsExpanded = true;
+            if (execution.FlowStep.ChildrenFlowSteps.Any())
+                execution.FlowStep.ChildrenFlowSteps.First().IsExpanded = true;
+
             execution.FlowStep.IsExpanded = true;
             execution.FlowStep.IsSelected = true;
         }
@@ -199,7 +202,7 @@ namespace Business.Factories.Workers
                 return;
 
             byte[] resultImage = execution.ResultImage;
-            string imagePath = folderDir +"\\";
+            string imagePath = folderDir + "\\";
             imagePath += execution.Id;
             imagePath += " - ";
             imagePath += execution.StartedOn.Value.ToString("yy-MM-dd hh.mm");

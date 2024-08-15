@@ -70,6 +70,9 @@ namespace Model.Models
         public MouseActionsEnum _mouseAction;
 
         [ObservableProperty]
+        public MouseScrollDirectionEnum _mouseScrollDirectionEnum;
+
+        [ObservableProperty]
         public MouseButtonsEnum _mouseButton;
 
         [ObservableProperty]

@@ -104,7 +104,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
             //_systemService.SetCursorPossition(x, y);
 
-
+            if(result.ResultImagePath.Length>1)
             ShowResultImage?.Invoke(result.ResultImagePath);
         }
 

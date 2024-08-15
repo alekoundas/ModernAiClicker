@@ -18,11 +18,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
         [ObservableProperty]
-        private IEnumerable<MouseButtonsEnum> _mouseButtonsEnum;
-
-
-        [ObservableProperty]
-        private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
+        private IEnumerable<MouseScrollDirectionEnum> _mouseScrollDirectionEnum;
 
 
         public CursorScrollFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork) 
@@ -31,8 +27,7 @@ namespace ModernAiClicker.ViewModels.Pages
             _systemService = systemService;
             _flowStep = flowStep;
 
-            MouseButtonsEnum = Enum.GetValues(typeof(MouseButtonsEnum)).Cast<MouseButtonsEnum>();
-            MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
+            MouseScrollDirectionEnum = Enum.GetValues(typeof(MouseScrollDirectionEnum)).Cast<MouseScrollDirectionEnum>();
         }
 
         public void OnNavigatedFrom()

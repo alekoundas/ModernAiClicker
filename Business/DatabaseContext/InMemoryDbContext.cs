@@ -15,7 +15,6 @@ namespace Business.DatabaseContext
         public DbSet<FlowStep> FlowSteps { get; set; }
         public DbSet<Execution> Executions { get; set; }
 
-        //static DbConnection TestDbConnection = new SqliteConnection("Data Source=AutoFlowClicker.db");
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var dataSource = Path.Combine(PathHelper.GetAppDataPath(), "AutoFlowClicker.db");
@@ -33,7 +32,7 @@ namespace Business.DatabaseContext
         {
             base.OnModelCreating(builder);
 
-            
+
             builder.ApplyConfiguration(new FlowConfiguration());
             builder.ApplyConfiguration(new FlowStepConfiguration());
             builder.ApplyConfiguration(new ExecutionConfiguration());

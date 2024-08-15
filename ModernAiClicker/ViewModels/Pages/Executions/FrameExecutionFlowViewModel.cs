@@ -43,15 +43,15 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
                 IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
                 Execution flowExecution = await flowWorker.CreateExecutionModel(Flow.Id, null);
 
-                Application.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    Executions.Add(flowExecution);
-                });
+                //Application.Current.Dispatcher.Invoke((Action)delegate
+                //{
+                //    Executions.Add(flowExecution);
+                //});
 
 
                 // Start execution.
                 flowWorker.ExpandAndSelectFlowStep(flowExecution);
-                AllowUIToUpdate();
+                //AllowUIToUpdate();
                 await flowWorker.SetExecutionModelStateRunning(flowExecution);
 
                 // Get next flow step and recursively execute every other step.
@@ -73,10 +73,10 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
 
             IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
             Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecution);
-            Application.Current.Dispatcher.Invoke((Action)delegate
-            {
-                Executions.Add(flowStepExecution);
-            });
+            //Application.Current.Dispatcher.Invoke((Action)delegate
+            //{
+            //    Executions.Add(flowStepExecution);
+            //});
 
             factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
             factoryWorker.RefreshUI();
@@ -104,15 +104,15 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
         {
             DispatcherFrame frame = new();
             // DispatcherPriority set to Input, the highest priority
-            Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Input, new DispatcherOperationCallback(delegate (object parameter)
-            {
-                frame.Continue = false;
-                Thread.Sleep(100); // Stop all processes to make sure the UI update is perform
-                return null;
-            }), null);
-            Dispatcher.PushFrame(frame);
-            // DispatcherPriority set to Input, the highest priority
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Input, new Action(delegate { }));
+            //Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Input, new DispatcherOperationCallback(delegate (object parameter)
+            //{
+            //    frame.Continue = false;
+            //    Thread.Sleep(100); // Stop all processes to make sure the UI update is perform
+            //    return null;
+            //}), null);
+            //Dispatcher.PushFrame(frame);
+            //// DispatcherPriority set to Input, the highest priority
+            //Application.Current.Dispatcher.Invoke(DispatcherPriority.Input, new Action(delegate { }));
         }
 
 

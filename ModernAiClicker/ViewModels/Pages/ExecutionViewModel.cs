@@ -65,7 +65,8 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         public int _currentStep = 0;
 
-        public bool IsLocked = true;
+        [ObservableProperty]
+        public bool _isLocked = true;
         public bool StopExecution { get; set; }
 
         public ExecutionViewModel(IBaseDatawork baseDatawork, ISystemService systemService, IExecutionFactory executionFactory)
@@ -80,10 +81,10 @@ namespace ModernAiClicker.ViewModels.Pages
 
         private ObservableCollection<Flow> GetFlows()
         {
-            List<Flow> flows = _baseDatawork.Flows.GetAll();
-
+            List<Flow> flows = _baseDatawork.Query.Flows.ToList();
             return new ObservableCollection<Flow>(flows);
         }
+
 
 
         [RelayCommand]
@@ -111,10 +112,10 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
                 // Start execution.
-                flowWorker.ExpandAndSelectFlowStep(flowExecution);
-                AllowUIToUpdate();
+                await flowWorker.ExpandAndSelectFlowStep(flowExecution);
+                //AllowUIToUpdate();
                 await flowWorker.SetExecutionModelStateRunning(flowExecution);
-                flowWorker.SaveToDisk(flowExecution);
+                await flowWorker.SaveToDisk(flowExecution);
 
                 // Get next flow step and recursively execute every other step.
                 FlowStep? nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
@@ -135,18 +136,24 @@ namespace ModernAiClicker.ViewModels.Pages
 
             IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
             Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecution);
-            Application.Current.Dispatcher.Invoke((Action)delegate
+            //ListBoxExecutions.Add(flowStepExecution);
+
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 ListBoxExecutions.Add(flowStepExecution);
             });
+            //Application.Current.Dispatcher.Invoke(
+            //    DispatcherPriority.Loaded,
+            //    new Action(() =>ListBoxExecutions.Add(flowStepExecution))
+            //);
 
-            factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
-            factoryWorker.RefreshUI();
+            await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
+            //factoryWorker.RefreshUI();
             await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
             await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
             await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
-            factoryWorker.SaveToDisk(flowStepExecution);
-            await factoryWorker.SaveToJson();
+            await factoryWorker.SaveToDisk(flowStepExecution);
+            //await factoryWorker.SaveToJson();
 
             FlowStep? nextFlowStep;
             nextFlowStep = await factoryWorker.GetNextChildFlowStep(flowStepExecution);
@@ -193,13 +200,12 @@ namespace ModernAiClicker.ViewModels.Pages
             if (ComboBoxSelectedFlow == null)
                 return;
 
-            var flow = _baseDatawork.Query.Flows
+            var flow = await _baseDatawork.Query.Flows
                 .Include(x => x.FlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .FirstOrDefault(x => x.Id == ComboBoxSelectedFlow.Id);
+                .FirstOrDefaultAsync(x => x.Id == ComboBoxSelectedFlow.Id);
 
             foreach (FlowStep flowStep in flow.FlowSteps)
-                LoadFlowStepChildren(flowStep);
+                await LoadFlowStepChildren(flowStep);
 
 
             List<Execution> executions = await _baseDatawork.Executions.Query
@@ -212,39 +218,41 @@ namespace ModernAiClicker.ViewModels.Pages
             TreeviewFlows.Add(flow);
         }
 
-        private void LoadFlowStepChildren(FlowStep flowStep)
+        private async Task LoadFlowStepChildren(FlowStep flowStep)
         {
-            List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+            List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
                         .Include(x => x.ChildrenFlowSteps)
-                        .First(x => x.Id == flowStep.Id)
-                        .ChildrenFlowSteps
-                        .ToList();
+                        .ThenInclude(x => x.ChildrenFlowSteps)
+                        .Where(x => x.Id == flowStep.Id)
+                        .SelectMany(x => x.ChildrenFlowSteps)
+                        .ToListAsync();
 
             flowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
 
             foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
             {
                 if (childFlowStep.IsExpanded)
-                    LoadFlowStepChildren(childFlowStep);
+                    await LoadFlowStepChildren(childFlowStep);
             }
         }
 
-        private void LoadExecutionChild(Execution execution)
+        private async Task LoadExecutionChild(Execution execution)
         {
-            Execution? executionChild = _baseDatawork.Query.Executions
+            Execution? executionChild = await _baseDatawork.Query.Executions
                         .Include(x => x.ChildExecution)
-                        .First(x => x.Id == execution.Id)
-                        .ChildExecution;
+                        .FirstOrDefaultAsync(x => x.Id == execution.Id);
+
+            executionChild = executionChild.ChildExecution;
 
             if (executionChild == null)
                 return;
 
             execution.ChildExecution = executionChild;
-            LoadExecutionChild(execution.ChildExecution);
+            await LoadExecutionChild(execution.ChildExecution);
         }
 
         [RelayCommand]
-        private void OnTreeViewItemExpanded(EventParammeters eventParameters)
+        private async Task OnTreeViewItemExpanded(EventParammeters eventParameters)
         {
             if (eventParameters == null)
                 return;
@@ -259,13 +267,13 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 foreach (var childrenFlowStep in flowStep.ChildrenFlowSteps)
                 {
-                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count ==0)
+                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
-                        List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                        List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
                             .Include(x => x.ChildrenFlowSteps)
-                            .First(x => x.Id == childrenFlowStep.Id)
-                            .ChildrenFlowSteps
-                            .ToList();
+                            .Where(x => x.Id == childrenFlowStep.Id)
+                            .SelectMany(x => x.ChildrenFlowSteps)
+                            .ToListAsync();
 
                         childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
                     }
@@ -281,11 +289,11 @@ namespace ModernAiClicker.ViewModels.Pages
                 {
                     if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
-                        List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                        List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
                             .Include(x => x.ChildrenFlowSteps)
-                            .First(x => x.Id == childrenFlowStep.Id)
-                            .ChildrenFlowSteps
-                            .ToList();
+                            .Where(x => x.Id == childrenFlowStep.Id)
+                            .SelectMany(x => x.ChildrenFlowSteps)
+                            .ToListAsync();
 
                         childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
                     }

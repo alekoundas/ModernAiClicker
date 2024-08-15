@@ -5,16 +5,19 @@
 
 using Business.DatabaseContext;
 using Business.Factories;
+using Business.Helpers;
 using Business.Interfaces;
 using Business.Repository.Entities;
 using Business.Repository.Interfaces;
 using Business.Services;
 using DataAccess;
+using DataAccess.Repository;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Model.Models;
 using ModernAiClicker.Services;
 using ModernAiClicker.ViewModels;
@@ -56,6 +59,7 @@ namespace ModernAiClicker
                 services.AddHostedService<ApplicationHostService>();
 
                 // Repository
+                //services.AddScoped<IDbContextFactory, DbContextFactory>();
                 services.AddScoped<IBaseDatawork, BaseDatawork>();
                 services.AddScoped<IFlowRepository, FlowRepository>();
                 services.AddScoped<IFlowStepRepository, FlowStepRepository>();
@@ -144,9 +148,14 @@ namespace ModernAiClicker
 
 
 
-                // DB context
-                //services.AddTransient<InMemoryDbContext>();
+                //// DB context
+                //var dataSource = Path.Combine(PathHelper.GetAppDataPath(), "AutoFlowClicker.db");
+                //services.AddDbContextFactory<InMemoryDbContext>(options => options.UseSqlite($"Data Source={dataSource};"));
+
                 services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Transient);
+
+
+                //services.AddTransient<InMemoryDbContext>();
                 //var dbContext = services.BuildServiceProvider().GetService<InMemoryDbContext>();
                 //if (dbContext != null)
                 //{
@@ -178,10 +187,15 @@ namespace ModernAiClicker
         /// </summary>
         private void OnStartup(object sender, StartupEventArgs e)
         {
+            //DispatcherUnhandledException += app_DispatcherUnhandledException;
             _host.Start();
             //v_host.Services.GetRequiredService<>()
         }
-
+        //static void app_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        //{
+        //    throw e.Exception;
+        //    // Log/inspect the inspection here
+        //}
         /// <summary>
         /// Occurs when the application is closing.
         /// </summary>

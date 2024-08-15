@@ -121,7 +121,7 @@ namespace Business.Factories.Workers
             await _baseDatawork.SaveChangesAsync();
         }
 
-        public void ExpandAndSelectFlowStep(Execution execution)
+        public async Task ExpandAndSelectFlowStep(Execution execution)
         {
             if (execution.FlowStep == null)
                 return;

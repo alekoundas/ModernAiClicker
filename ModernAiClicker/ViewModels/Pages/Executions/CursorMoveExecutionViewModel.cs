@@ -31,7 +31,9 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             _systemService = systemService;
             _execution = execution;
 
-            Parents = GetParents();
+            //TODO fix parent
+            Parents = new ObservableCollection<FlowStep>();
+            //Parents = GetParents();
             //Execution execution = GetExecution();
 
             //TODO get result from parent flowstep execution
@@ -69,17 +71,15 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             return templateSearchExecution;
         }
 
-        private ObservableCollection<FlowStep> GetParents()
+        private async Task<ObservableCollection<FlowStep>> GetParents()
         {
             if (Execution?.FlowStep?.ParentFlowStepId == null)
                 return new ObservableCollection<FlowStep>();
 
+            List<FlowStep> parents = new List<FlowStep>();
+
             // Get recursively all parents.
-            List<FlowStep> parents = _baseDatawork.FlowSteps
-                .GetAll()
-                .First(x => x.Id == Execution.FlowStep.ParentFlowStepId)
-                .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
-                .ToList();
+            await GetParentsRecursivelly(parents, Execution.FlowStep.ParentFlowStepId.Value);
 
             parents = parents
                 .Where(x => x != null && x.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
@@ -87,6 +87,17 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
 
             return new ObservableCollection<FlowStep>(parents);
 
+        }
+
+        private async Task GetParentsRecursivelly(List<FlowStep> parents, int flowStepId)
+        {
+            FlowStep flowStep = await _baseDatawork.FlowSteps
+                .FirstOrDefaultAsync(x => x.Id == flowStepId);
+
+            parents.Add(flowStep);
+
+            if (flowStep.ParentFlowStepId.HasValue)
+                await GetParentsRecursivelly(parents, flowStep.ParentFlowStepId.Value);
         }
     }
 }

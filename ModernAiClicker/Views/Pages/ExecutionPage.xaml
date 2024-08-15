@@ -171,14 +171,14 @@
                                         <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemExpandedCommand}">
                                             <i:InvokeCommandAction.CommandParameter>
                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                    <Binding ElementName="TreeViewItemChecked" />
+                                                    <Binding ElementName="TreeViewItemButtonDelete" />
                                                     <Binding Path="" />
                                                 </MultiBinding>
                                             </i:InvokeCommandAction.CommandParameter>
                                         </i:InvokeCommandAction>
                                     </i:EventTrigger>
                                     <!--<i:EventTrigger EventName="Unchecked">
-                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemExpandedCommand}" />
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemExpandedCommand}" />
                                     </i:EventTrigger>-->
                                 </i:Interaction.Triggers>
                             </ToggleButton>
@@ -491,18 +491,18 @@
                                         </Style>
                                     </ui:Button.Style>
                                     <icons:BootstrapIcon Icon="Trash" />
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Click">
-                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowButtonDeleteClickCommand}">
-                                                <i:InvokeCommandAction.CommandParameter>
-                                                    <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                        <Binding ElementName="TreeViewItemFlowDeleteButton" />
-                                                        <Binding Path="Id" />
-                                                    </MultiBinding>
-                                                </i:InvokeCommandAction.CommandParameter>
-                                            </i:InvokeCommandAction>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
+                                    <!--<i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowButtonDeleteClickCommand}">
+                                    <i:InvokeCommandAction.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                    <Binding ElementName="TreeViewItemFlowDeleteButton" />
+                                    <Binding Path="Id" />
+                                    </MultiBinding>
+                                    </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                    </i:EventTrigger>
+                                    </i:Interaction.Triggers>-->
                                 </ui:Button>
 
                             </Grid>
@@ -593,78 +593,84 @@
                                                 Text="{Binding FlowStepType}" />
 
                                             <!--  Arrows Up/Down  -->
-                                            <ui:Button
-                                                x:Name="TreeViewItemButtonUp"
-                                                Grid.Column="2"
-                                                Margin="5"
-                                                HorizontalAlignment="Right">
+                                            <!--<ui:Button
+                                            x:Name="TreeViewItemButtonUp"
+                                            Grid.Column="2"
+                                            Margin="5"
+                                            HorizontalAlignment="Right">
 
-                                                <icons:BootstrapIcon Width="20" Icon="ArrowUpShort" />
+                                            <icons:BootstrapIcon Width="20" Icon="ArrowUpShort" />
 
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
-                                                            <i:InvokeCommandAction.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
-                                                                </MultiBinding>
-                                                            </i:InvokeCommandAction.CommandParameter>
-                                                        </i:InvokeCommandAction>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
-                                            </ui:Button>
-                                            <ui:Button
-                                                x:Name="TreeViewItemButtonDown"
-                                                Grid.Row="1"
-                                                Grid.Column="2"
-                                                Margin="5"
-                                                HorizontalAlignment="Right">
+                                            -->
+                                            <!--<i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
+                                            <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                            <Binding Path="FlowId" />
+                                            <Binding Path="Id" />
+                                            </MultiBinding>
+                                            </i:InvokeCommandAction.CommandParameter>
+                                            </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                            </i:Interaction.Triggers>-->
+                                            <!--
+                                            </ui:Button>-->
+                                            <!--<ui:Button
+                                            x:Name="TreeViewItemButtonDown"
+                                            Grid.Row="1"
+                                            Grid.Column="2"
+                                            Margin="5"
+                                            HorizontalAlignment="Right">
 
-                                                <icons:BootstrapIcon Width="20" Icon="ArrowDownShort" />
+                                            <icons:BootstrapIcon Width="20" Icon="ArrowDownShort" />
 
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
-                                                            <i:InvokeCommandAction.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
-                                                                </MultiBinding>
-                                                            </i:InvokeCommandAction.CommandParameter>
-                                                        </i:InvokeCommandAction>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
-                                            </ui:Button>
+                                            -->
+                                            <!--<i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
+                                            <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                            <Binding Path="FlowId" />
+                                            <Binding Path="Id" />
+                                            </MultiBinding>
+                                            </i:InvokeCommandAction.CommandParameter>
+                                            </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                            </i:Interaction.Triggers>-->
+                                            <!--
+                                            </ui:Button>-->
 
                                             <!--  Delete  -->
-                                            <ui:Button
-                                                x:Name="TreeViewItemButtonDelete"
-                                                Grid.Row="0"
-                                                Grid.RowSpan="2"
-                                                Grid.Column="3"
-                                                Margin="5"
-                                                Padding="5"
-                                                HorizontalAlignment="Right">
+                                            <!--<ui:Button
+                                            x:Name="TreeViewItemButtonDelete"
+                                            Grid.Row="0"
+                                            Grid.RowSpan="2"
+                                            Grid.Column="3"
+                                            Margin="5"
+                                            Padding="5"
+                                            HorizontalAlignment="Right">
 
-                                                <icons:BootstrapIcon Icon="Trash" />
+                                            <icons:BootstrapIcon Icon="Trash" />
 
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
-                                                            <i:InvokeCommandAction.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
-                                                                </MultiBinding>
-                                                            </i:InvokeCommandAction.CommandParameter>
-                                                        </i:InvokeCommandAction>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
-                                            </ui:Button>
+                                            -->
+                                            <!--<i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
+                                            <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                            <Binding Path="FlowId" />
+                                            <Binding Path="Id" />
+                                            </MultiBinding>
+                                            </i:InvokeCommandAction.CommandParameter>
+                                            </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                            </i:Interaction.Triggers>-->
+                                            <!--
+                                            </ui:Button>-->
                                         </Grid>
                                     </DataTemplate>
                                     <!--  Child TreeViewItem Existing ContentPresenter (Existing Flow Step)  -->
@@ -679,7 +685,7 @@
                                                         <Style TargetType="{x:Type ColumnDefinition}">
                                                             <Setter Property="Width" Value="0" />
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.IsLocked}" Value="false">
+                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="false">
                                                                     <Setter Property="Width" Value="0.1*" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -692,7 +698,7 @@
                                                         <Style TargetType="{x:Type ColumnDefinition}">
                                                             <Setter Property="Width" Value="0" />
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.IsLocked}" Value="false">
+                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.IsLocked}" Value="false">
                                                                     <Setter Property="Width" Value="0.1*" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -742,72 +748,74 @@
                                                 Text="{Binding FlowStepType}" />
 
                                             <!--  Arrows Up/Down  -->
-                                            <ui:Button
-                                                x:Name="TreeViewItemButtonUp"
-                                                Grid.Column="2"
-                                                Margin="5"
-                                                HorizontalAlignment="Right">
-                                                <icons:BootstrapIcon Width="20" Icon="ArrowUpShort" />
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
-                                                            <i:InvokeCommandAction.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
-                                                                </MultiBinding>
-                                                            </i:InvokeCommandAction.CommandParameter>
-                                                        </i:InvokeCommandAction>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
+                                            <!--<ui:Button
+                                            x:Name="TreeViewItemButtonUp"
+                                            Grid.Column="2"
+                                            Margin="5"
+                                            HorizontalAlignment="Right">
+                                            <icons:BootstrapIcon Width="20" Icon="ArrowUpShort" />
+                                            <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonUpClickCommand}">
+                                            <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                            <Binding Path="FlowId" />
+                                            <Binding Path="Id" />
+                                            </MultiBinding>
+                                            </i:InvokeCommandAction.CommandParameter>
+                                            </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                            </i:Interaction.Triggers>
                                             </ui:Button>
                                             <ui:Button
-                                                x:Name="TreeViewItemButtonDown"
-                                                Grid.Row="1"
-                                                Grid.Column="2"
-                                                Margin="5"
-                                                HorizontalAlignment="Right">
-                                                <icons:BootstrapIcon Width="20" Icon="ArrowDownShort" />
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
-                                                            <i:InvokeCommandAction.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
-                                                                </MultiBinding>
-                                                            </i:InvokeCommandAction.CommandParameter>
-                                                        </i:InvokeCommandAction>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
+                                            x:Name="TreeViewItemButtonDown"
+                                            Grid.Row="1"
+                                            Grid.Column="2"
+                                            Margin="5"
+                                            HorizontalAlignment="Right">
+                                            <icons:BootstrapIcon Width="20" Icon="ArrowDownShort" />
+                                            <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDownClickCommand}">
+                                            <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                            <Binding Path="FlowId" />
+                                            <Binding Path="Id" />
+                                            </MultiBinding>
+                                            </i:InvokeCommandAction.CommandParameter>
+                                            </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                            </i:Interaction.Triggers>
                                             </ui:Button>
 
+                                            -->
                                             <!--  Delete  -->
+                                            <!--
                                             <ui:Button
-                                                x:Name="TreeViewItemButtonDelete"
-                                                Grid.Row="0"
-                                                Grid.RowSpan="2"
-                                                Grid.Column="3"
-                                                Margin="5"
-                                                Padding="5"
-                                                HorizontalAlignment="Right">
-                                                <icons:BootstrapIcon Icon="Trash" />
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="Click">
-                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
-                                                            <i:InvokeCommandAction.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                    <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
-                                                                </MultiBinding>
-                                                            </i:InvokeCommandAction.CommandParameter>
-                                                        </i:InvokeCommandAction>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
-                                            </ui:Button>
+                                            x:Name="TreeViewItemButtonDelete"
+                                            Grid.Row="0"
+                                            Grid.RowSpan="2"
+                                            Grid.Column="3"
+                                            Margin="5"
+                                            Padding="5"
+                                            HorizontalAlignment="Right">
+                                            <icons:BootstrapIcon Icon="Trash" />
+                                            <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemFlowStepButtonDeleteClickCommand}">
+                                            <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                            <Binding Path="FlowId" />
+                                            <Binding Path="Id" />
+                                            </MultiBinding>
+                                            </i:InvokeCommandAction.CommandParameter>
+                                            </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                            </ui:Button>-->
                                         </Grid>
                                     </DataTemplate>
 
@@ -819,19 +827,19 @@
                                             Padding="10"
                                             HorizontalAlignment="Center"
                                             Content="Add">
-                                            <i:Interaction.Triggers>
-                                                <i:EventTrigger EventName="Click">
-                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemButtonNewClickCommand}" PassEventArgsToCommand="True">
-                                                        <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonNew" />
-                                                                <Binding Path="FlowId" />
-                                                                <Binding Path="Id" />
-                                                            </MultiBinding>
-                                                        </i:InvokeCommandAction.CommandParameter>
-                                                    </i:InvokeCommandAction>
-                                                </i:EventTrigger>
-                                            </i:Interaction.Triggers>
+                                            <!--<i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.TreeViewItemButtonNewClickCommand}" PassEventArgsToCommand="True">
+                                            <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                            <Binding ElementName="TreeViewItemButtonNew" />
+                                            <Binding Path="FlowId" />
+                                            <Binding Path="Id" />
+                                            </MultiBinding>
+                                            </i:InvokeCommandAction.CommandParameter>
+                                            </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                            </i:Interaction.Triggers>-->
                                         </ui:Button>
                                     </DataTemplate>
 

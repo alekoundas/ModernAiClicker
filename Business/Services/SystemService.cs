@@ -71,12 +71,11 @@ namespace Business.Services
         {
             public int X;
             public int Y;
-            public uint MouseData;
-            public uint Flags;
+            public int MouseData;
+            public MouseFlag Flags;
             public uint Time;
             public IntPtr ExtraInfo;
         }
-
 
         [DllImport("user32.dll")]
         private static extern bool GetCursorPos(out Model.Structs.Point point);
@@ -108,12 +107,14 @@ namespace Business.Services
 
         public void CursorScroll()
         {
-            var scroll = new INPUT { Type = (UInt32)InputType.Mouse };
-            scroll.Data.Mouse.Flags = (UInt32)MouseFlag.HorizontalWheel;
-            scroll.Data.Mouse.MouseData = (UInt32)20;
+            var input = new INPUT();
+            input.Type = (UInt32)InputType.Mouse;
+            input.Data.Mouse.Flags = MouseFlag.HorizontalWheel;
+            input.Data.Mouse.MouseData = 20;
 
-            INPUT[] inputs = new INPUT[] { scroll };
-            SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
+
+            INPUT[] inputs = new INPUT[] { input };
+            uint asdasd = SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
 
         }
         [Flags]
@@ -373,7 +374,7 @@ namespace Business.Services
             SetCursorPos(point.X, point.Y);
         }
 
-        public async Task UpdateFlowsJSON(List<Flow> flows)
+        public Task UpdateFlowsJSON(List<Flow> flows)
         {
             var mapper = new MapperConfiguration(x =>
             {
@@ -396,6 +397,8 @@ namespace Business.Services
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), "Flows.json");
             //await File.WriteAllTextAsync(filePath, json);
             //return Task.CompletedTask;
+
+            return Task.CompletedTask;
         }
 
         //public static object DeserializeFromStream(Stream stream)

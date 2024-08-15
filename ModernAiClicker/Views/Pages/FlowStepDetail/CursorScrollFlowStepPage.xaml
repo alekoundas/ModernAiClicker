@@ -25,11 +25,11 @@
             <Grid.Resources>
 
                 <ObjectDataProvider
-                    x:Key="MouseActionsEnum"
+                    x:Key="MouseScrollDirectionEnum"
                     MethodName="GetValues"
                     ObjectType="{x:Type System:Enum}">
                     <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:MouseActionsEnum" />
+                        <x:Type TypeName="enum:MouseScrollDirectionEnum" />
                     </ObjectDataProvider.MethodParameters>
                 </ObjectDataProvider>
                 <ObjectDataProvider
@@ -74,11 +74,11 @@
 
             <StackPanel>
 
-                <Label>Click button</Label>
-                <ComboBox ItemsSource="{Binding ViewModel.MouseButtonsEnum}" SelectedItem="{Binding ViewModel.FlowStep.MouseButton}" />
+                <Label>Scroll direction:</Label>
+                <ComboBox ItemsSource="{Binding ViewModel.MouseScrollDirectionEnum}" SelectedItem="{Binding ViewModel.FlowStep.MouseScrollDirectionEnum}" />
 
-                <Label>Click action</Label>
-                <ComboBox ItemsSource="{Binding ViewModel.MouseActionsEnum}" SelectedItem="{Binding ViewModel.FlowStep.MouseAction}" />
+                <Label>Scroll steps:</Label>
+                <TextBlock Text="{Binding ViewModel.ViewModel.FlowStep.MouseLoopTimes}" />
 
             </StackPanel>
 
