@@ -26,7 +26,7 @@ namespace Business.Interfaces
         Task SaveImageToDisk(string filePath, byte[] image);
 
 
-        void CursorScroll();
+        void CursorScroll(MouseScrollDirectionEnum scrollDirection, int steps);
 
     }
 }

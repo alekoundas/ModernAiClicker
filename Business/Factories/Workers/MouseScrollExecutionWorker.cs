@@ -45,7 +45,11 @@ namespace Business.Factories.Workers
 
         public Task ExecuteFlowStepAction(Execution execution)
         {
-            _systemService.CursorScroll();
+            if (execution.FlowStep == null || !execution.FlowStep.MouseLoopTimes.HasValue)
+                return Task.CompletedTask;
+
+
+            _systemService.CursorScroll(execution.FlowStep.MouseScrollDirectionEnum, execution.FlowStep.MouseLoopTimes.Value);
 
             return Task.CompletedTask;
         }

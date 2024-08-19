@@ -18,6 +18,8 @@ using OpenCvSharp;
 using System.Windows.Input;
 using System.Windows.Automation;
 using static Business.Services.SystemService;
+using System;
+using Newtonsoft.Json.Linq;
 
 namespace Business.Services
 {
@@ -123,10 +125,35 @@ namespace Business.Services
         //    mouse_event(MouseFlag.VerticalWheel, 0, 0, -120, 0);
         //}
 
-        public void CursorScroll()
+        public void CursorScroll(MouseScrollDirectionEnum scrollDirection, int steps)
         {
+            int wheelOrientation = 0;
+            int direction = 120;
+            switch (scrollDirection)
+            {
+                case MouseScrollDirectionEnum.UP:
+                    wheelOrientation = 0x0800;
+                    break;
+                case MouseScrollDirectionEnum.DOWN:
+                    wheelOrientation = 0x0800;
+                    direction *= -1;
+                    break;
+                case MouseScrollDirectionEnum.LEFT:
+                    wheelOrientation = 0x01000;
+                    break;
+                case MouseScrollDirectionEnum.RIGT:
+                    wheelOrientation = 0x01000;
+                    direction *= -1;
+                    break;
+                default:
+                    break;
+            }
 
-            mouse_event(0x0800, 0, 0, -120, 0);
+            for (int i = 0; i < steps; i++)
+            {
+                Thread.Sleep(100);
+                mouse_event(wheelOrientation, 0, 0, direction, 0);
+            }
         }
 
         [Flags]
@@ -203,22 +230,23 @@ namespace Business.Services
             int x = System.Windows.Forms.Cursor.Position.X;
             int y = System.Windows.Forms.Cursor.Position.Y;
 
+            Thread.Sleep(100);
             if (mouseButtonEnum == MouseButtonsEnum.RIGHT_BUTTON)
             {
                 mouse_event(0x0008, x, y, 0, 0);
-                Thread.Sleep(100);
+                Thread.Sleep(50);
                 mouse_event(0x0010, x, y, 0, 0);
             }
             else if (mouseButtonEnum == MouseButtonsEnum.LEFT_BUTTON)
             {
                 mouse_event(0x0002, x, y, 0, 0);
-                Thread.Sleep(100);
+                Thread.Sleep(50);
                 mouse_event(0x0004, x, y, 0, 0);
             }
 
         }
 
-     
+
         public List<string> GetProcessWindowTitles()
         {
             return Process

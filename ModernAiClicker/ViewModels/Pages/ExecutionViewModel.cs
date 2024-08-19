@@ -105,10 +105,10 @@ namespace ModernAiClicker.ViewModels.Pages
                 executions.Add(flowExecution);
                 ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
                 ComboBoxSelectedExecutionHistory = flowExecution;
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ListBoxExecutions.Add(flowExecution);
-                });
+                //Application.Current.Dispatcher.Invoke(() =>
+                //{
+                //    ListBoxExecutions.Add(flowExecution);
+                //});
 
 
                 // Start execution.
@@ -165,6 +165,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
 
             nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
+            flowStepExecution.FlowStep.Executions = null;
 
             return await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
         }

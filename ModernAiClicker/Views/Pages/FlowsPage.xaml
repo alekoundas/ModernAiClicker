@@ -504,8 +504,7 @@
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
+                                                                    <Binding Path="" />
                                                                 </MultiBinding>
                                                             </i:InvokeCommandAction.CommandParameter>
                                                         </i:InvokeCommandAction>
@@ -525,8 +524,7 @@
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
+                                                                    <Binding Path="" />
                                                                 </MultiBinding>
                                                             </i:InvokeCommandAction.CommandParameter>
                                                         </i:InvokeCommandAction>
@@ -550,8 +548,7 @@
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
+                                                                    <Binding Path="" />
                                                                 </MultiBinding>
                                                             </i:InvokeCommandAction.CommandParameter>
                                                         </i:InvokeCommandAction>
@@ -649,8 +646,7 @@
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
+                                                                    <Binding Path="" />
                                                                 </MultiBinding>
                                                             </i:InvokeCommandAction.CommandParameter>
                                                         </i:InvokeCommandAction>
@@ -670,8 +666,7 @@
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
+                                                                    <Binding Path="" />
                                                                 </MultiBinding>
                                                             </i:InvokeCommandAction.CommandParameter>
                                                         </i:InvokeCommandAction>
@@ -695,8 +690,7 @@
                                                             <i:InvokeCommandAction.CommandParameter>
                                                                 <MultiBinding Converter="{StaticResource EventParammeterConverter}">
                                                                     <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                    <Binding Path="FlowId" />
-                                                                    <Binding Path="Id" />
+                                                                    <Binding Path="" />
                                                                 </MultiBinding>
                                                             </i:InvokeCommandAction.CommandParameter>
                                                         </i:InvokeCommandAction>

@@ -49,20 +49,7 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-
-                <RowDefinition Name="rowToHide">
-                    <RowDefinition.Style>
-                        <Style TargetType="{x:Type RowDefinition}">
-                            <Setter Property="Height" Value="0" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ViewModel.FlowStep.MouseAction}" Value="{x:Static enum:MouseActionsEnum.LOOP_CLICK}">
-                                    <Setter Property="Height" Value="Auto" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RowDefinition.Style>
-                </RowDefinition>
-
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
 
@@ -78,24 +65,10 @@
                 <ComboBox ItemsSource="{Binding ViewModel.MouseScrollDirectionEnum}" SelectedItem="{Binding ViewModel.FlowStep.MouseScrollDirectionEnum}" />
 
                 <Label>Scroll steps:</Label>
-                <TextBlock Text="{Binding ViewModel.ViewModel.FlowStep.MouseLoopTimes}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.MouseLoopTimes}" />
 
             </StackPanel>
 
-            <StackPanel Grid.Row="1">
-
-                <Label>Debounce time (miliseconds)</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.MouseLoopDebounceTime, Mode=TwoWay}" />
-
-
-                <Label>Loop times</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.MouseLoopTimes, Mode=TwoWay}" />
-
-
-                <Label>Infinite loop</Label>
-                <CheckBox IsChecked="{Binding ViewModel.FlowStep.MouseLoopInfinite}" />
-
-            </StackPanel>
 
         </Grid>
 

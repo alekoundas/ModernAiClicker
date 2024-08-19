@@ -45,8 +45,7 @@ namespace Business.Factories.Workers
 
         public Task ExecuteFlowStepAction(Execution execution)
         {
-            if (execution.FlowStep == null)
-                return Task.CompletedTask;
+           
 
             switch (execution.FlowStep.MouseAction)
             {

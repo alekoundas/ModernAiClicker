@@ -168,19 +168,12 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private async Task OnTreeViewItemFlowStepButtonDeleteClick(EventParammeters eventParameters)
         {
-            if (eventParameters.FlowStepId == null)
-                return;
-
-            bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
-            if (isFlowStepIdParsable)
+            if (eventParameters.FlowId is FlowStep)
             {
-                FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
                 _baseDatawork.FlowSteps.Remove(flowStep);
-                _baseDatawork.SaveChanges();
 
-
-                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
-
+                await _baseDatawork.SaveChangesAsync();
                 RefreshData();
             }
         }
@@ -188,19 +181,12 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private async Task OnTreeViewItemFlowButtonDeleteClick(EventParammeters eventParameters)
         {
-            if (eventParameters.FlowId == null)
-                return;
-
-            bool isFlowIdParsable = Int32.TryParse(eventParameters.FlowId.ToString(), out int flowId);
-            if (isFlowIdParsable)
+            if (eventParameters.FlowId is Flow)
             {
-                Flow flow = await _baseDatawork.Flows.FirstOrDefaultAsync(x => x.Id == flowId);
+                Flow flow = (Flow)eventParameters.FlowId;
                 _baseDatawork.Flows.Remove(flow);
-                _baseDatawork.SaveChanges();
 
-
-                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
-
+                await _baseDatawork.SaveChangesAsync();
                 RefreshData();
             }
         }
@@ -208,43 +194,39 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private async Task OnTreeViewItemFlowStepButtonUpClick(EventParammeters eventParameters)
         {
-            if (eventParameters.FlowStepId != null)
+            if (eventParameters.FlowId is FlowStep)
             {
-                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+                List<FlowStep> simplingsAbove = new List<FlowStep>();
 
-                if (isFlowStepIdParsable)
+                // Get siblings based on flowstep beeing bellow flow or flowstep
+                if (flowStep.ParentFlowStepId.HasValue)
+                    simplingsAbove = await _baseDatawork.Query.FlowSteps
+                        .Include(x => x.ChildrenFlowSteps)
+                        .Where(x => x.Id == flowStep.ParentFlowStepId.Value)
+                        .SelectMany(x => x.ChildrenFlowSteps)
+                        .Where(x => x.OrderingNum < flowStep.OrderingNum)
+                        .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                        .ToListAsync();
+                else if (flowStep.FlowId.HasValue)
+                    simplingsAbove = await _baseDatawork.Query.Flows
+                        .Include(x => x.FlowSteps)
+                        .Where(x => x.Id == flowStep.FlowId.Value)
+                        .SelectMany(x => x.FlowSteps)
+                        .Where(x => x.OrderingNum < flowStep.OrderingNum)
+                        .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                        .ToListAsync();
+
+
+                if (simplingsAbove.Any())
                 {
-                    List<FlowStep> simplingsAbove = new List<FlowStep>();
-                    FlowStep simplingAbove;
-                    FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
-                    if (flowStep.OrderingNum == 0)
-                        return;
+                    // Find max
+                    FlowStep simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
 
-                    if (flowStep.ParentFlowStepId != null)
-                        simplingsAbove = _baseDatawork.FlowSteps
-                            .Where(x => x.Id == flowStep.ParentFlowStepId)
-                            .SelectMany(x => x.ChildrenFlowSteps)
-                            .Where(x => x.OrderingNum < flowStep.OrderingNum)
-                            .ToList();
-                    else
-                        simplingsAbove = _baseDatawork.Flows
-                            .Where(x => x.Id == flowStep.FlowId)
-                            .SelectMany(x => x.FlowSteps)
-                            .Where(x => x.OrderingNum < flowStep.OrderingNum)
-                            .ToList();
+                    // Swap values
+                    (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
 
-
-                    if (simplingsAbove.Any())
-                    {
-                        // Find max
-                        simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
-
-                        // Swap values
-                        (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
-                    }
-
-                    _baseDatawork.SaveChanges();
-                    await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                    await _baseDatawork.SaveChangesAsync();
                     RefreshData();
                 }
             }
@@ -253,42 +235,37 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private async Task OnTreeViewItemFlowStepButtonDownClick(EventParammeters eventParameters)
         {
-            if (eventParameters.FlowStepId != null)
+            if (eventParameters.FlowId is FlowStep)
             {
-                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+                List<FlowStep> simplingsBellow = new List<FlowStep>();
 
-                if (isFlowStepIdParsable)
+                // Get siblings based on flowstep beeing bellow flow or flowstep
+                if (flowStep.ParentFlowStepId.HasValue)
+                    simplingsBellow = await _baseDatawork.Query.FlowSteps
+                        .Include(x => x.ChildrenFlowSteps)
+                        .Where(x => x.Id == flowStep.ParentFlowStepId.Value)
+                        .SelectMany(x => x.ChildrenFlowSteps)
+                        .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                        .ToListAsync();
+                else if (flowStep.FlowId.HasValue)
+                    simplingsBellow = await _baseDatawork.Query.Flows
+                        .Include(x => x.FlowSteps)
+                        .Where(x => x.Id == flowStep.FlowId.Value)
+                        .SelectMany(x => x.FlowSteps)
+                        .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                        .ToListAsync();
+
+
+                if (simplingsBellow.Any())
                 {
-                    List<FlowStep> simplingsAbove = new List<FlowStep>();
-                    FlowStep simplingAbove;
-                    FlowStep flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
-                    if (flowStep.OrderingNum == 0)
-                        return;
+                    // Find min
+                    FlowStep simplingBellow = simplingsBellow.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
 
-                    if (flowStep.ParentFlowStepId != null)
-                        simplingsAbove = _baseDatawork.FlowSteps
-                            .Where(x => x.Id == flowStep.ParentFlowStepId)
-                            .SelectMany(x => x.ChildrenFlowSteps)
-                            .Where(x => x.OrderingNum > flowStep.OrderingNum)
-                            .ToList();
-                    else
-                        simplingsAbove = _baseDatawork.Flows
-                            .Where(x => x.Id == flowStep.FlowId)
-                            .SelectMany(x => x.FlowSteps)
-                            .Where(x => x.OrderingNum < flowStep.OrderingNum)
-                            .ToList();
+                    // Swap values
+                    (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
 
-                    if (simplingsAbove.Any())
-                    {
-                        // Find min
-                        simplingAbove = simplingsAbove.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
-
-                        // Swap values
-                        (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
-                    }
-
-                    _baseDatawork.SaveChanges();
-                    await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                    await _baseDatawork.SaveChangesAsync();
                     RefreshData();
                 }
             }
