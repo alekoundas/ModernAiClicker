@@ -1,7 +1,21 @@
-﻿namespace Business.Extensions
+﻿using Model.Models;
+
+namespace Business.Extensions
 {
     public static class LinqExtensions
     {
+
+        public static IEnumerable<FlowStep> Descendants(this Flow root)
+        {
+            var nodes = new Stack<FlowStep>(root.FlowSteps.ToArray());
+            while (nodes.Any())
+            {
+                FlowStep node = nodes.Pop();
+                yield return node;
+                if (node.ChildrenFlowSteps != null)
+                    foreach (var n in node.ChildrenFlowSteps) nodes.Push(n);
+            }
+        }
 
         public static IEnumerable<T> SelectRecursive<T>(this T source, Func<T, T> selector)
         {
@@ -22,13 +36,13 @@
             if (source == null)
                 return parents;
 
-            
+
             var resultParent = selectorParents(source);
             var resultSiblings = selectorSiblings(source);
             //parents.Add(resultSiblings);
             parents.Add(resultParent);
 
-            return parents.Concat(resultParent.SelectRecursivePreviousSteps(selectorParents,selectorSiblings));
+            return parents.Concat(resultParent.SelectRecursivePreviousSteps(selectorParents, selectorSiblings));
         }
     }
 }

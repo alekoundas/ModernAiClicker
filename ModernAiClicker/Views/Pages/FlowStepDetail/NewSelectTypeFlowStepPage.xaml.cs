@@ -45,59 +45,40 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_CLICK)
             {
-                CursorClickFlowStepViewModel viewModel = new CursorClickFlowStepViewModel(flowStep,  _systemService,  _baseDatawork);
+                CursorClickFlowStepViewModel viewModel = new CursorClickFlowStepViewModel(flowStep, _flowsViewModel,  _systemService,  _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new CursorClickFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_MOVE_COORDINATES)
             {
-                CursorMoveFlowStepViewModel viewModel = new CursorMoveFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                CursorMoveFlowStepViewModel viewModel = new CursorMoveFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new CursorMoveFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.SLEEP)
             {
-                SleepFlowStepViewModel viewModel = new SleepFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                SleepFlowStepViewModel viewModel = new SleepFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new SleepFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.GO_TO)
             {
-                GoToFlowStepViewModel viewModel = new GoToFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                GoToFlowStepViewModel viewModel = new GoToFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new GoToFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.WINDOW_RESIZE)
             {
-                WindowResizeFlowStepViewModel viewModel = new WindowResizeFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                WindowResizeFlowStepViewModel viewModel = new WindowResizeFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new WindowResizeFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.WINDOW_MOVE)
             {
-                WindowMoveFlowStepViewModel viewModel = new WindowMoveFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                WindowMoveFlowStepViewModel viewModel = new WindowMoveFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new WindowMoveFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_SCROLL)
             {
-                CursorScrollFlowStepViewModel viewModel = new CursorScrollFlowStepViewModel(flowStep, _systemService, _baseDatawork);
+                CursorScrollFlowStepViewModel viewModel = new CursorScrollFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new CursorScrollFlowStepPage(viewModel));
             }
         }
 
-        public static readonly RoutedEvent MyCustomEvent = EventManager.RegisterRoutedEvent(
-           "MyCustom", // Event name
-           RoutingStrategy.Bubble, // Bubble means the event will bubble up through the tree
-           typeof(RoutedEventHandler), // The event type
-           typeof(ChildFrameEvents)); // Belongs to ChildControlBase
-
-        // Allows add and remove of event handlers to handle the custom event
-        public event RoutedEventHandler MyCustom
-        {
-            add { AddHandler(MyCustomEvent, value); }
-            remove { RemoveHandler(MyCustomEvent, value); }
-        }
-
-        private void HandleButtonClick(object sender, RoutedEventArgs e)
-        {
-            // This actually raises the custom event
-            var newEventArgs = new RoutedEventArgs(MyCustomEvent);
-            RaiseEvent(newEventArgs);
-        }
     }
 }

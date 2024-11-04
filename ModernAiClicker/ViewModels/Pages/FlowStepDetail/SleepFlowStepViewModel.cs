@@ -9,6 +9,7 @@ using DataAccess.Repository.Interface;
 using System.Windows.Forms;
 using Model.Enums;
 using System.Collections.ObjectModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -16,17 +17,18 @@ namespace ModernAiClicker.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
+        private FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
 
 
-        public SleepFlowStepViewModel(FlowStep flowStep, ISystemService systemService,  IBaseDatawork baseDatawork) 
+        public SleepFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService,  IBaseDatawork baseDatawork) 
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-
+            _flowsViewModel = flowsViewModel;
             _flowStep = flowStep;
         }
 
@@ -51,18 +53,22 @@ namespace ModernAiClicker.ViewModels.Pages
             {
                 if (FlowStep.ParentFlowStepId != null)
                 {
-                    FlowStep isNewSimpling = _baseDatawork.FlowSteps
+                    FlowStep isNewSimpling = _baseDatawork.Query.FlowSteps
+                        .Include(x=>x.ChildrenFlowSteps)
                         .Where(x => x.Id == FlowStep.ParentFlowStepId)
-                        .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
+                        .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW))
+                        .First();
 
                     FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                     isNewSimpling.OrderingNum++;
                 }
                 else
                 {
-                    FlowStep isNewSimpling = _baseDatawork.Flows
+                    FlowStep isNewSimpling = _baseDatawork.Query.Flows
+                        .Include(x=>x.FlowSteps)
                         .Where(x => x.Id == FlowStep.FlowId)
-                        .Select(x => x.FlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
+                        .Select(x => x.FlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW))
+                        .First();
 
                     FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                     isNewSimpling.OrderingNum++;
@@ -76,6 +82,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
+                await _flowsViewModel.RefreshData();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
     }

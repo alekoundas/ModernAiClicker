@@ -16,6 +16,7 @@ namespace ModernAiClicker.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
+        private FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
@@ -24,11 +25,11 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
-        public WindowMoveFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork)
+        public WindowMoveFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-
+            _flowsViewModel = flowsViewModel;   
             _flowStep = flowStep;
         }
 
@@ -107,6 +108,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
+            await _flowsViewModel.RefreshData();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
     }

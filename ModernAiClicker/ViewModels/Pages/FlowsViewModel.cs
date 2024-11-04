@@ -8,98 +8,66 @@ using Wpf.Ui.Controls;
 using Model.Enums;
 using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Business.Services;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
     public partial class FlowsViewModel : ObservableObject, INavigationAware, INotifyPropertyChanged
     {
+        private readonly IBaseDatawork _baseDatawork;
+        private readonly ISystemService _systemService;
+
         public event NavigateToFlowStepTypeSelectionPageEvent? NavigateToFlowStepTypeSelectionPage;
         public delegate void NavigateToFlowStepTypeSelectionPageEvent(FlowStep flowStep);
 
-
-        public new event PropertyChangedEventHandler? PropertyChanged;
-
-
+        [ObservableProperty]
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
-        public ObservableCollection<Flow> FlowsList
-        {
-            get { return _flowsList; }
-            set
-            {
-                _flowsList = value;
-                NotifyPropertyChanged(nameof(FlowsList));
-            }
-        }
 
+        [ObservableProperty]
         private bool _isLocked;
-        public bool IsLocked
-        {
-            get { return _isLocked; }
-            set
-            {
-                _isLocked = value;
-                NotifyPropertyChanged(nameof(IsLocked));
-            }
-        }
 
-
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private readonly IBaseDatawork _baseDatawork;
-        private readonly ISystemService _systemService;
 
         public FlowsViewModel(IBaseDatawork baseDatawork, ISystemService systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
 
+            Task.Run(async () => await RefreshData());
 
-
-
-            RefreshData();
         }
 
         //TODO find a fix for includes
-        public void RefreshData()
+        public async Task RefreshData()
         {
-            List<Flow> flows = _baseDatawork.Query.Flows
+            List<Flow> flows = await _baseDatawork.Query.Flows
                 .Include(x => x.FlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
-                .ToList();
+                .ToListAsync();
 
             foreach (Flow flow in flows)
-            {
                 foreach (FlowStep flowStep in flow.FlowSteps)
-                {
-                    LoadChildren(flowStep);
-                }
-            }
+                    await LoadFlowStepChildren(flowStep);
 
+            FlowsList = null;
             FlowsList = new ObservableCollection<Flow>(flows);
         }
 
-        private void LoadChildren(FlowStep flowStep)
+        private async Task LoadFlowStepChildren(FlowStep flowStep)
         {
-            List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+            List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
                         .Include(x => x.ChildrenFlowSteps)
-                        .First(x => x.Id == flowStep.Id)
-                        .ChildrenFlowSteps
-                        .ToList();
+                        .ThenInclude(x => x.ChildrenFlowSteps)
+                        .Where(x => x.Id == flowStep.Id)
+                        .SelectMany(x => x.ChildrenFlowSteps)
+                        .ToListAsync();
 
             flowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
 
             foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
             {
                 if (childFlowStep.IsExpanded)
-                    LoadChildren(childFlowStep);
+                    await LoadFlowStepChildren(childFlowStep);
             }
         }
 
@@ -123,7 +91,7 @@ namespace ModernAiClicker.ViewModels.Pages
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
             FlowsList.Add(flow);
-            //RefreshData();
+            await RefreshData();
         }
 
 
@@ -174,7 +142,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 _baseDatawork.FlowSteps.Remove(flowStep);
 
                 await _baseDatawork.SaveChangesAsync();
-                RefreshData();
+                await RefreshData();
             }
         }
 
@@ -187,7 +155,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 _baseDatawork.Flows.Remove(flow);
 
                 await _baseDatawork.SaveChangesAsync();
-                RefreshData();
+                await RefreshData();
             }
         }
 
@@ -266,7 +234,7 @@ namespace ModernAiClicker.ViewModels.Pages
                     (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
 
                     await _baseDatawork.SaveChangesAsync();
-                    RefreshData();
+                    await RefreshData();
                 }
             }
         }
@@ -282,7 +250,7 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
-        private void OnTreeViewItemExpanded(EventParammeters eventParameters)
+        private async Task OnTreeViewItemExpanded(EventParammeters eventParameters)
         {
             if (eventParameters == null)
                 return;
@@ -291,17 +259,19 @@ namespace ModernAiClicker.ViewModels.Pages
             {
 
                 FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+
                 if (flowStep.ChildrenFlowSteps == null)
                     return;
+
                 foreach (var childrenFlowStep in flowStep.ChildrenFlowSteps)
                 {
                     if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
-                        List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                        List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
                             .Include(x => x.ChildrenFlowSteps)
-                            .First(x => x.Id == childrenFlowStep.Id)
-                            .ChildrenFlowSteps
-                            .ToList();
+                            .Where(x => x.Id == childrenFlowStep.Id)
+                            .SelectMany(x => x.ChildrenFlowSteps)
+                            .ToListAsync();
 
                         childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
                     }
@@ -317,11 +287,11 @@ namespace ModernAiClicker.ViewModels.Pages
                 {
                     if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
-                        List<FlowStep> flowSteps = _baseDatawork.Query.FlowSteps
+                        List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
                             .Include(x => x.ChildrenFlowSteps)
-                            .First(x => x.Id == childrenFlowStep.Id)
-                            .ChildrenFlowSteps
-                            .ToList();
+                            .Where(x => x.Id == childrenFlowStep.Id)
+                            .SelectMany(x => x.ChildrenFlowSteps)
+                            .ToListAsync();
 
                         childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
                     }

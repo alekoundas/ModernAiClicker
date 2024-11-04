@@ -29,6 +29,7 @@ namespace ModernAiClicker.ViewModels.Pages
         // Treeview
         [ObservableProperty]
         private ObservableCollection<Flow> _treeviewFlows = new ObservableCollection<Flow>();
+        private ObservableCollection<FlowStep> _treeviewFlowSteps = new ObservableCollection<FlowStep>();
 
 
         // Combobox Flows
@@ -105,10 +106,6 @@ namespace ModernAiClicker.ViewModels.Pages
                 executions.Add(flowExecution);
                 ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
                 ComboBoxSelectedExecutionHistory = flowExecution;
-                //Application.Current.Dispatcher.Invoke(() =>
-                //{
-                //    ListBoxExecutions.Add(flowExecution);
-                //});
 
 
                 // Start execution.
@@ -136,24 +133,23 @@ namespace ModernAiClicker.ViewModels.Pages
 
             IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
             Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecution);
-            //ListBoxExecutions.Add(flowStepExecution);
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ListBoxExecutions.Add(flowStepExecution);
-            });
-            //Application.Current.Dispatcher.Invoke(
-            //    DispatcherPriority.Loaded,
-            //    new Action(() =>ListBoxExecutions.Add(flowStepExecution))
-            //);
+            //Application.Current.Dispatcher.Invoke(() =>
+            //{
+            //    ListBoxExecutions.Add(flowStepExecution);
+            //});
 
             await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
+            FlowStep flowStepkekekekeke = TreeviewFlows.First().Descendants().FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
+            flowStepkekekekeke.IsExpanded = true;
+            flowStepkekekekeke.IsSelected = true;
+
+
             //factoryWorker.RefreshUI();
             await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
             await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
             await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
             await factoryWorker.SaveToDisk(flowStepExecution);
-            //await factoryWorker.SaveToJson();
 
             FlowStep? nextFlowStep;
             nextFlowStep = await factoryWorker.GetNextChildFlowStep(flowStepExecution);
@@ -216,6 +212,7 @@ namespace ModernAiClicker.ViewModels.Pages
             ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
 
             TreeviewFlows.Clear();
+            //_treeviewFlowSteps = flow.FlowSteps.;
             TreeviewFlows.Add(flow);
         }
 

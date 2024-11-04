@@ -13,6 +13,7 @@ namespace ModernAiClicker.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
+        private FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
@@ -20,22 +21,16 @@ namespace ModernAiClicker.ViewModels.Pages
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _previousSteps;
-        public GoToFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork)
+        public GoToFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-
+            _flowsViewModel = flowsViewModel;   
             _flowStep = flowStep;
             PreviousSteps = GetParents();
         }
         private ObservableCollection<FlowStep> GetParents()
         {
-
-
-
-
-
-
             if (FlowStep?.FlowId != null)
             {
                 List<FlowStep> siblings = _baseDatawork.Query.Flows
@@ -121,6 +116,7 @@ namespace ModernAiClicker.ViewModels.Pages
             }
 
             _baseDatawork.SaveChanges();
+                await _flowsViewModel.RefreshData();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
     }

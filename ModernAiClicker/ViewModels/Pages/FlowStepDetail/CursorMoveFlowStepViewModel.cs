@@ -13,6 +13,7 @@ namespace ModernAiClicker.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
+        private FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
@@ -20,24 +21,18 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
 
-        public CursorMoveFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork)
+        public CursorMoveFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-
+            _flowsViewModel = flowsViewModel;
             FlowStep = flowStep;
-            Parents = _parents;
 
             if (FlowStep.ParentFlowStepId.HasValue)
-                Task.Run(() => GetParentsRecursively(FlowStep.ParentFlowStepId.Value)).Wait();
+                Task.Run(async () =>await  GetParentsRecursively(FlowStep.ParentFlowStepId.Value));
         }
 
-        [RelayCommand]
-        private void OnComboBoxSelectionChanged()
-        {
-            //TODO
-        }
 
         [RelayCommand]
         private void OnButtonTestClick()
@@ -92,6 +87,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
+                await _flowsViewModel.RefreshData();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
 

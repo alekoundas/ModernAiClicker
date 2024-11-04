@@ -31,7 +31,10 @@
             </Grid.RowDefinitions>
 
             <Label>Parents successful locations:</Label>
-            <ComboBox ItemsSource="{Binding ViewModel.Parents}" SelectedItem="{Binding ViewModel.FlowStep.ParentTemplateSearchFlowStep, Mode=TwoWay}">
+            <ComboBox
+                IsSynchronizedWithCurrentItem="True"
+                ItemsSource="{Binding ViewModel.Parents}"
+                SelectedItem="{Binding ViewModel.FlowStep.ParentTemplateSearchFlowStep, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -40,16 +43,7 @@
                             <TextBlock Text="{Binding Path=Name}" />
                         </StackPanel>
                     </DataTemplate>
-
                 </ComboBox.ItemTemplate>
-                <!--<i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
-                <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="Loaded">
-                <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" />
-                </i:EventTrigger>
-                </i:Interaction.Triggers>-->
             </ComboBox>
 
             <StackPanel

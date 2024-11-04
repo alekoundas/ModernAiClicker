@@ -60,7 +60,7 @@ namespace ModernAiClicker
 
                 // Repository
                 //services.AddScoped<IDbContextFactory, DbContextFactory>();
-                services.AddScoped<IBaseDatawork, BaseDatawork>();
+                services.AddTransient<IBaseDatawork, BaseDatawork>();
                 services.AddScoped<IFlowRepository, FlowRepository>();
                 services.AddScoped<IFlowStepRepository, FlowStepRepository>();
                 services.AddScoped<IExecutionRepository, ExecutionRepository>();

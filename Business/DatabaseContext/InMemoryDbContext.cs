@@ -1,11 +1,7 @@
 ﻿using Business.Helpers;
 using DataAccess.Configurations;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Model.Models;
-using OpenCvSharp;
-using System.Data.Common;
-using System.Runtime.CompilerServices;
 
 namespace Business.DatabaseContext
 {
@@ -18,10 +14,8 @@ namespace Business.DatabaseContext
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var dataSource = Path.Combine(PathHelper.GetAppDataPath(), "AutoFlowClicker.db");
-            optionsBuilder
-                .UseSqlite($"Data Source={dataSource};");
+            optionsBuilder.UseSqlite($"Data Source={dataSource};");
 
-            //optionsBuilder.UseSqlite("Data Source=AutoFlowClicker.db");
 
             //optionsBuilder.UseInMemoryDatabase(databaseName: "FlowAutoClicker");
             optionsBuilder.EnableSensitiveDataLogging();

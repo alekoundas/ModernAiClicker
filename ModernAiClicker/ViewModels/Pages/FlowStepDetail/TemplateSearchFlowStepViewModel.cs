@@ -1,24 +1,19 @@
-﻿using Business.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Win32;
 using Model.Models;
 using Business.Interfaces;
-using Model.Structs;
 using Business.Helpers;
 using Model.Business;
 using Model.Enums;
 using DataAccess.Repository.Interface;
-using System.Windows.Navigation;
 using Wpf.Ui.Controls;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Windows;
 using System.Security;
-using System.Management;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -102,7 +97,6 @@ namespace ModernAiClicker.ViewModels.Pages
             x = x + result.ResultRectangle.Top;
             y = y + result.ResultRectangle.Left;
 
-            //_systemService.SetCursorPossition(x, y);
 
             if(result.ResultImagePath.Length>1)
             ShowResultImage?.Invoke(result.ResultImagePath);
@@ -124,7 +118,11 @@ namespace ModernAiClicker.ViewModels.Pages
                 // Edit mode
                 if (FlowStep.Id > 0)
                 {
-
+                    FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
+                    updateFlowStep.Accuracy = FlowStep.Accuracy;
+                    updateFlowStep.Name= FlowStep.Name;
+                    updateFlowStep.ProcessName= FlowStep.ProcessName;
+                    updateFlowStep.TemplateImagePath = FlowStep.TemplateImagePath;
                 }
 
                 /// Add mode
@@ -133,7 +131,8 @@ namespace ModernAiClicker.ViewModels.Pages
 
                     if (FlowStep.ParentFlowStepId != null)
                     {
-                        FlowStep isNewSimpling = _baseDatawork.FlowSteps
+                        FlowStep isNewSimpling = _baseDatawork.Query.FlowSteps
+                            .Include(x=>x.ChildrenFlowSteps)
                             .Where(x => x.Id == FlowStep.ParentFlowStepId)
                             .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
 
@@ -143,13 +142,16 @@ namespace ModernAiClicker.ViewModels.Pages
                     }
                     else
                     {
-                        FlowStep isNewSimpling = _baseDatawork.Flows
+                        FlowStep isNewSimpling = _baseDatawork.Query.Flows
+                            .Include(x=>x.FlowSteps)
                             .Where(x => x.Id == FlowStep.FlowId)
                             .Select(x => x.FlowSteps.First(y => y.FlowStepType== FlowStepTypesEnum.IS_NEW)).First();
 
                         FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                         isNewSimpling.OrderingNum++;
                     }
+                    await _baseDatawork.SaveChangesAsync();
+
 
                     // "Add" Flow steps
                     FlowStep newFlowStep = new FlowStep();
@@ -186,17 +188,19 @@ namespace ModernAiClicker.ViewModels.Pages
                     if (FlowStep.Name.Length == 0)
                         FlowStep.Name = "Template search";
 
+                    FlowStep.IsExpanded = true;
+
                     _baseDatawork.FlowSteps.Add(FlowStep);
                 }
 
 
 
-                _baseDatawork.SaveChanges();
-                await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
-                _flowsViewModel.RefreshData();
+                await _baseDatawork.SaveChangesAsync();
+                //await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+                await _flowsViewModel.RefreshData();
             }
 
-            await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+            //await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
 
             //refreshtest?.Invoke();
 

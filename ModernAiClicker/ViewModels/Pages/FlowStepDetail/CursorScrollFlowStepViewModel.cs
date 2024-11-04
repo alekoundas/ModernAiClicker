@@ -12,6 +12,7 @@ namespace ModernAiClicker.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
+        private FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
@@ -21,11 +22,13 @@ namespace ModernAiClicker.ViewModels.Pages
         private IEnumerable<MouseScrollDirectionEnum> _mouseScrollDirectionEnum;
 
 
-        public CursorScrollFlowStepViewModel(FlowStep flowStep, ISystemService systemService, IBaseDatawork baseDatawork) 
+        public CursorScrollFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) 
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowStep = flowStep;
+            _flowsViewModel = flowsViewModel;
+
 
             MouseScrollDirectionEnum = Enum.GetValues(typeof(MouseScrollDirectionEnum)).Cast<MouseScrollDirectionEnum>();
         }
@@ -84,6 +87,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
+                await _flowsViewModel.RefreshData();
             await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
     }
