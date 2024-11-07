@@ -20,8 +20,11 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution parentExecution)
+        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
         {
+            if (parentExecution == null)
+                throw new ArgumentNullException(nameof(parentExecution));
+
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
             execution.ParentExecutionId = parentExecution.Id;

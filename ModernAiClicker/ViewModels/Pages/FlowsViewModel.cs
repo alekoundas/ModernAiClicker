@@ -195,7 +195,7 @@ namespace ModernAiClicker.ViewModels.Pages
                     (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
 
                     await _baseDatawork.SaveChangesAsync();
-                    RefreshData();
+                    await RefreshData();
                 }
             }
         }

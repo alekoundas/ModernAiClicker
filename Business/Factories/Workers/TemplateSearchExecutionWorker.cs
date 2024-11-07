@@ -31,8 +31,12 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution parentExecution)
+        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
         {
+
+            if (parentExecution == null)
+                throw new ArgumentNullException(nameof(parentExecution));
+
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
             execution.ParentExecutionId = parentExecution.Id;
@@ -178,7 +182,7 @@ namespace Business.Factories.Workers
             if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
                 nextFlowStep = await _baseDatawork.Query.FlowSteps
                     .Include(x => x.ChildrenFlowSteps)
-                    .Where(x => x.Id == execution.FlowStepId.Value)
+                    .Where(x => x.Id == execution.FlowStepId.Value && x.ChildrenFlowSteps != null)
                     .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
                     .FirstOrDefaultAsync();
             else
@@ -191,14 +195,14 @@ namespace Business.Factories.Workers
             if (nextFlowStep != null)
                 nextFlowStep.IsExpanded = true;
 
-            if (execution.FlowStep.ChildrenFlowSteps.Any())
+            if (execution.FlowStep.ChildrenFlowSteps != null && execution.FlowStep.ChildrenFlowSteps.Any())
                 execution.FlowStep.ChildrenFlowSteps.First().IsExpanded = true;
 
             execution.FlowStep.IsExpanded = true;
             execution.FlowStep.IsSelected = true;
         }
 
-        public async Task SaveToDisk(Execution execution)
+        public new async Task SaveToDisk(Execution execution)
         {
             string folderDir = execution.ParentExecution.ExecutionFolderDirectory;
 

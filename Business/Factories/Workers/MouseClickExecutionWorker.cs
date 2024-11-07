@@ -20,14 +20,17 @@ namespace Business.Factories.Workers
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
-        public MouseClickExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService):base(baseDatawork, systemService)
+        public MouseClickExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork, systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution parentExecution)
+        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
         {
+            if (parentExecution == null)
+                throw new ArgumentNullException(nameof(parentExecution));
+
             Execution execution = new Execution();
             execution.FlowStepId = flowStepId;
             execution.ParentExecutionId = parentExecution.Id;
@@ -45,9 +48,7 @@ namespace Business.Factories.Workers
 
         public Task ExecuteFlowStepAction(Execution execution)
         {
-           
-
-            switch (execution.FlowStep.MouseAction)
+            switch (execution.FlowStep?.MouseAction)
             {
                 case MouseActionsEnum.SINGLE_CLICK:
                     _systemService.CursorClick(execution.FlowStep.MouseButton);
@@ -128,13 +129,15 @@ namespace Business.Factories.Workers
             await _baseDatawork.SaveChangesAsync();
         }
 
-        public async Task ExpandAndSelectFlowStep(Execution execution)
+        public Task ExpandAndSelectFlowStep(Execution execution)
         {
             if (execution.FlowStep == null)
-                return;
+                return Task.CompletedTask;
 
             execution.FlowStep.IsExpanded = true;
             execution.FlowStep.IsSelected = true;
+            return Task.CompletedTask;
+
         }
 
     }

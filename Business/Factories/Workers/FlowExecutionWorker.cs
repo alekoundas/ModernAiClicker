@@ -20,7 +20,7 @@ namespace Business.Factories.Workers
         }
 
 
-        public async Task<Execution> CreateExecutionModel(int flowId, Execution _)
+        public async Task<Execution> CreateExecutionModel(int flowId, Execution? _)
         {
             Execution execution = new Execution();
             execution.FlowId = flowId;
@@ -78,16 +78,18 @@ namespace Business.Factories.Workers
             await _baseDatawork.SaveChangesAsync();
         }
 
-        public async Task ExpandAndSelectFlowStep(Execution execution)
+        public Task ExpandAndSelectFlowStep(Execution execution)
         {
             if (execution.Flow == null)
-                return;
+                return Task.CompletedTask;
 
             execution.Flow.IsExpanded = true;
             execution.Flow.IsSelected = true;
+            
+            return Task.CompletedTask;
         }
 
-        public async Task SaveToDisk(Execution execution)
+        public new async Task SaveToDisk(Execution execution)
         {
             DateTime dateTime = DateTime.Now;
             string filename = "";

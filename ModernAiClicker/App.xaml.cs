@@ -5,6 +5,7 @@
 
 using Business.DatabaseContext;
 using Business.Factories;
+using Business.Factories.Workers;
 using Business.Helpers;
 using Business.Interfaces;
 using Business.Repository.Entities;
@@ -72,9 +73,18 @@ namespace ModernAiClicker
                 services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<ISnackbarService, SnackbarService>();
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
-                services.AddSingleton<ISystemService, SystemService>();
-                services.AddSingleton<ITemplateSearchService, TemplateSearchService>();
-                services.AddSingleton<IExecutionFactory, ExecutionFactory>();
+                services.AddScoped<ISystemService, SystemService>();
+                services.AddScoped<ITemplateSearchService, TemplateSearchService>();
+
+                services.AddScoped<IExecutionFactory, ExecutionFactory>();
+                services.AddScoped<WindowMoveExecutionWorker>();
+                services.AddScoped<WindowResizeExecutionWorker>();
+                services.AddScoped<MouseMoveExecutionWorker>();
+                services.AddScoped<MouseClickExecutionWorker>();
+                services.AddScoped<MouseScrollExecutionWorker>();
+                services.AddScoped<TemplateSearchExecutionWorker>();
+                services.AddScoped<SleepExecutionWorker>();
+                services.AddScoped<GoToExecutionWorker>();
 
                 // Pages
                 //Tabs

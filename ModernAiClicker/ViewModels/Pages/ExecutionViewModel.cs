@@ -134,13 +134,13 @@ namespace ModernAiClicker.ViewModels.Pages
             IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
             Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecution);
 
-            //Application.Current.Dispatcher.Invoke(() =>
-            //{
-            //    ListBoxExecutions.Add(flowStepExecution);
-            //});
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ListBoxExecutions.Add(flowStepExecution);
+            });
 
             await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
-            FlowStep flowStepkekekekeke = TreeviewFlows.First().Descendants().FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
+            FlowStep? flowStepkekekekeke = TreeviewFlows.First().Descendants().FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
             flowStepkekekekeke.IsExpanded = true;
             flowStepkekekekeke.IsSelected = true;
 
@@ -270,7 +270,7 @@ namespace ModernAiClicker.ViewModels.Pages
                         List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
                             .Include(x => x.ChildrenFlowSteps)
                             .Where(x => x.Id == childrenFlowStep.Id)
-                            .SelectMany(x => x.ChildrenFlowSteps)
+                            .SelectMany(x => x.ChildrenFlowSteps ?? Enumerable.Empty<FlowStep>())
                             .ToListAsync();
 
                         childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
@@ -353,7 +353,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 .Include(x => x.ChildExecution)
                 .FirstAsync(x => x.Id == ComboBoxSelectedExecutionHistory.Id);
 
-            LoadExecutionChild(execution);
+            await LoadExecutionChild(execution);
 
             List<Execution> executions = execution
                 .SelectRecursive(x => x.ChildExecution)
