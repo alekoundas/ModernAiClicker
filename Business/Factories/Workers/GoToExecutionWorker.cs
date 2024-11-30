@@ -18,24 +18,24 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
-        {
-            if(parentExecution == null)
-                throw new ArgumentNullException(nameof(parentExecution));
+        //public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
+        //{
+        //    if(parentExecution == null)
+        //        throw new ArgumentNullException(nameof(parentExecution));
 
-            Execution execution = new Execution();
-            execution.FlowStepId = flowStepId;
-            execution.ParentExecutionId = parentExecution.Id;
-            execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
+        //    Execution execution = new Execution();
+        //    execution.FlowStepId = flowStepId;
+        //    execution.ParentExecutionId = parentExecution.Id;
+        //    execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
-            
-            parentExecution.ChildExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+        //    _baseDatawork.Executions.Add(execution);
+        //    await _baseDatawork.SaveChangesAsync();
 
-            return execution;
-        }
+        //    parentExecution.ChildExecutionId = execution.Id;
+        //    await _baseDatawork.SaveChangesAsync();
+
+        //    return execution;
+        //}
 
 
         public Task ExecuteFlowStepAction(Execution execution)
@@ -52,8 +52,10 @@ namespace Business.Factories.Workers
         {
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
+            if (!execution.FlowStep.ParentTemplateSearchFlowStepId.HasValue)
+                return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep = execution.FlowStep.ParentTemplateSearchFlowStep;
+            FlowStep? nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking().FirstOrDefaultAsync(x => x.Id == execution.FlowStep.ParentTemplateSearchFlowStepId.Value);
 
             //TODO return error message 
             if (nextFlowStep == null)

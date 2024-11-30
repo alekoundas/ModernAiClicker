@@ -8,8 +8,8 @@ namespace DataAccess
 {
     public class BaseDatawork : IBaseDatawork, IDisposable
     {
-        public InMemoryDbContext Query { get; }
-        private InMemoryDbContext _dbContext { get; }
+        private InMemoryDbContext _dbContext { get; set; }
+        public InMemoryDbContext Query { get; set; } 
 
         public IFlowRepository Flows { get; set; }
         public IFlowStepRepository FlowSteps { get; set; }

@@ -1,5 +1,7 @@
 ﻿using Business.Factories;
+using Business.Factories.Workers;
 using Business.Interfaces;
+using Business.Services;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using Model.Models;
@@ -19,6 +21,7 @@ namespace ModernAiClicker.Views.Pages
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly IExecutionFactory _executionFactory;
+        private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionWorker>> _workerCache;
 
 
         public ExecutionPage(
@@ -39,6 +42,19 @@ namespace ModernAiClicker.Views.Pages
 
             //viewModel.FrameNavigateToFlow += FrameNavigateToFlow;
             viewModel.NavigateToExecutionDetail += NavigateToExecutionDetailEvent;
+
+
+            _workerCache = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionWorker>>()
+            {
+                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionWorker>(() => new WindowMoveExecutionWorker(baseDatawork, systemService)) },
+                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionWorker>(() => new WindowResizeExecutionWorker(baseDatawork, systemService)) },
+                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionWorker>(() => new MouseMoveExecutionWorker(baseDatawork, systemService)) },
+                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionWorker>(() => new MouseClickExecutionWorker(baseDatawork, systemService)) },
+                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionWorker>(() => new MouseScrollExecutionWorker(baseDatawork, systemService)) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new TemplateSearchExecutionWorker(baseDatawork, systemService, templateMatchingService)) },
+                { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionWorker>(() => new SleepExecutionWorker(baseDatawork, systemService)) },
+                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionWorker>(() => new GoToExecutionWorker(baseDatawork, systemService)) }
+            };
         }
 
 

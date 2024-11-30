@@ -31,8 +31,9 @@ namespace Model.Models
 
         //public Point _resultLocation;
 
-        public int? ResultLocationX;
-        public int? ResultLocationY;
+
+        public int? ResultLocationX { get; set; }
+        public int? ResultLocationY { get; set; }
 
         [ObservableProperty]
         public byte[]? _resultImage;

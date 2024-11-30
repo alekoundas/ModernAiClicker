@@ -20,15 +20,15 @@ namespace Business.Factories.Workers
         }
 
 
-        public async Task<Execution> CreateExecutionModel(int flowId, Execution? _)
-        {
-            Execution execution = new Execution();
-            execution.FlowId = flowId;
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+        //public async Task<Execution> CreateExecutionModel(int flowId, Execution? _)
+        //{
+        //    Execution execution = new Execution();
+        //    execution.FlowId = flowId;
+        //    _baseDatawork.Executions.Add(execution);
+        //    await _baseDatawork.SaveChangesAsync();
 
-            return execution;
-        }
+        //    return execution;
+        //}
 
 
         public Task ExecuteFlowStepAction(Execution execution)

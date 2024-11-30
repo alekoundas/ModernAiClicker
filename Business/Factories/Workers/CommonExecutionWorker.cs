@@ -17,6 +17,37 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
+        public async Task<Execution> CreateExecutionModelFlow(int flowId, Execution? _)
+        {
+            Execution execution = new Execution();
+            execution.FlowId = flowId;
+            _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+
+            return execution;
+        }
+
+        public async Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution? parentExecution)
+        {
+            if (parentExecution == null)
+                throw new ArgumentNullException(nameof(parentExecution));
+
+            Execution execution = new Execution();
+            execution.FlowStepId = flowStep.Id;
+            execution.ParentExecutionId = parentExecution.Id;
+            execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
+
+            _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+
+            parentExecution.ChildExecutionId = execution.Id;
+            await _baseDatawork.SaveChangesAsync();
+
+            execution.FlowStep = flowStep;
+            return execution;
+        }
+
+
         public async Task SaveToJson()
         {
             await _systemService.UpdateFlowsJSON(await _baseDatawork.Flows.GetAllAsync());
@@ -45,6 +76,11 @@ namespace Business.Factories.Workers
         public async Task SaveToDisk(Execution execution)
         {
             await _baseDatawork.SaveChangesAsync();
+        }
+
+        public void ClearEntityFrameworkChangeTracker()
+        {
+            _baseDatawork.Query.ChangeTracker.Clear();
         }
     }
 }

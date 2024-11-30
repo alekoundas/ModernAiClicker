@@ -26,24 +26,24 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
-        {
-            if (parentExecution == null)
-                throw new ArgumentNullException(nameof(parentExecution));
+        //public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
+        //{
+        //    if (parentExecution == null)
+        //        throw new ArgumentNullException(nameof(parentExecution));
 
-            Execution execution = new Execution();
-            execution.FlowStepId = flowStepId;
-            execution.ParentExecutionId = parentExecution.Id;
-            execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
+        //    Execution execution = new Execution();
+        //    execution.FlowStepId = flowStepId;
+        //    execution.ParentExecutionId = parentExecution.Id;
+        //    execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
-            
-            parentExecution.ChildExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+        //    _baseDatawork.Executions.Add(execution);
+        //    await _baseDatawork.SaveChangesAsync();
 
-            return execution;
-        }
+        //    parentExecution.ChildExecutionId = execution.Id;
+        //    await _baseDatawork.SaveChangesAsync();
+
+        //    return execution;
+        //}
 
 
         public Task ExecuteFlowStepAction(Execution execution)
@@ -54,14 +54,18 @@ namespace Business.Factories.Workers
             Point pointToMove;
 
             // Get point from result of parent template search.
-            if (execution.ParentExecution?.ResultLocationX != null && execution.ParentExecution?.ResultLocationY != null)
-                pointToMove = new Point(execution.ParentExecution.ResultLocationX.Value, execution.ParentExecution.ResultLocationY.Value);
+            if (execution.ParentExecutionId != null)
+            {
+                Execution? parentExecution = _baseDatawork.Query.Executions.AsNoTracking().FirstOrDefault(x => x.Id == execution.ParentExecutionId.Value);
+                if (parentExecution?.ResultLocationX != null && parentExecution?.ResultLocationY != null)
+                    pointToMove = new Point(parentExecution.ResultLocationX.Value, parentExecution.ResultLocationY.Value);
 
-            // Else get point from flow step.
-            else
-                pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
+                // Else get point from flow step.
+                else
+                    pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
 
-            _systemService.SetCursorPossition(pointToMove);
+                _systemService.SetCursorPossition(pointToMove);
+            }
 
             return Task.CompletedTask;
         }
@@ -85,7 +89,7 @@ namespace Business.Factories.Workers
                     && x.OrderingNum > execution.FlowStep.OrderingNum
                     && x.FlowId == execution.FlowStep.FlowId;
 
-            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps
+            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps.AsNoTracking()
                 .Where(nextStepFilter)
                 .ToListAsync();
 

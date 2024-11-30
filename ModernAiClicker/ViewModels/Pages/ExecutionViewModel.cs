@@ -99,7 +99,7 @@ namespace ModernAiClicker.ViewModels.Pages
             await Task.Run(async () =>
             {
                 IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
-                Execution flowExecution = await flowWorker.CreateExecutionModel(ComboBoxSelectedFlow.Id, null);
+                Execution flowExecution = await flowWorker.CreateExecutionModelFlow(ComboBoxSelectedFlow.Id, null);
 
                 // Add Execution to listbox and select it
                 List<Execution> executions = ComboBoxExecutionHistories.ToList();
@@ -116,7 +116,8 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 // Get next flow step and recursively execute every other step.
                 FlowStep? nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
-                await ExecuteStepRecursion(nextFlowStep, flowExecution);
+                //await ExecuteStepRecursion(nextFlowStep, flowExecution);
+                await ExecuteStepLoop(nextFlowStep, flowExecution);
 
                 // Complete execution.
                 await flowWorker.SetExecutionModelStateComplete(flowExecution);
@@ -127,17 +128,39 @@ namespace ModernAiClicker.ViewModels.Pages
 
         private async Task<Execution?> ExecuteStepRecursion(FlowStep? flowStep, Execution parentExecution)
         {
+
             // Recursion ends here.
             if (flowStep == null || StopExecution == true)
                 return await Task.FromResult<Execution?>(null);
 
             IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
-            Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep.Id, parentExecution);
+            factoryWorker.ClearEntityFrameworkChangeTracker();
+            Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution);
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ListBoxExecutions.Add(flowStepExecution);
-            });
+            parentExecution.ResultImage = null;
+            //Application.Current.Dispatcher.Invoke(() =>
+            //{
+            //    Execution flowStepExecutionasdasd = new Execution()
+            //    {
+            //        Id = flowStepExecution.Id,
+            //        FlowStepId = flowStepExecution.FlowStepId,
+            //        FlowId = flowStepExecution.FlowId,
+            //        //FlowStep = new FlowStep() { FlowStepType = flowStepExecution.FlowStep.FlowStepType }
+            //    };
+            //    ListBoxExecutions.Add(flowStepExecutionasdasd);
+            //});
+            //await Task.Run(() =>
+            //{
+            //    Execution flowStepExecutionasdasd = new Execution()
+            //    {
+            //        Id = flowStepExecution.Id,
+            //        FlowStepId = flowStepExecution.FlowStepId,
+            //        FlowId = flowStepExecution.FlowId,
+            //        FlowStep = new FlowStep() { FlowStepType = flowStepExecution.FlowStep.FlowStepType }
+            //    };
+            //    // Use the main UI thread to update the collection
+            //    Application.Current.Dispatcher.Invoke(() => ListBoxExecutions.Add(flowStepExecutionasdasd));
+            //});
 
             await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
             FlowStep? flowStepkekekekeke = TreeviewFlows.First().Descendants().FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
@@ -161,9 +184,62 @@ namespace ModernAiClicker.ViewModels.Pages
                 await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
 
             nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
-            flowStepExecution.FlowStep.Executions = null;
+            //flowStepExecution.FlowStep.Executions = null;
+            //factoryWorker.ClearEntityFrameworkChangeTracker();
+            //factoryWorker.
+
 
             return await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
+        }
+
+        private async Task ExecuteStepLoop(FlowStep? initialFlowStep, Execution initialParentExecution)
+        {
+            var stack = new Stack<(FlowStep? flowStep, Execution parentExecution)>();
+            stack.Push((initialFlowStep, initialParentExecution));
+
+            while (stack.Count > 0)
+            {
+                var (flowStep, parentExecution) = stack.Pop();
+
+                if (flowStep == null || StopExecution == true)
+                    return;
+
+
+                IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
+                factoryWorker.ClearEntityFrameworkChangeTracker();
+                Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution);
+
+                parentExecution.ResultImage = null;
+
+
+                FlowStep? uiFlowStep = TreeviewFlows.First()
+                    .Descendants()
+                    .FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
+
+                if (uiFlowStep != null)
+                {
+                    uiFlowStep.IsExpanded = true;
+                    uiFlowStep.IsSelected = true;
+                }
+
+
+                //factoryWorker.RefreshUI();
+                await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
+                await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
+                await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
+                await factoryWorker.SaveToDisk(flowStepExecution);
+
+                // If step contains siblings, push them in stack.
+                FlowStep? nextFlowStep;
+                nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
+                if (nextFlowStep != null)
+                    stack.Push((nextFlowStep, flowStepExecution));
+
+                // If children are found, push them to stack last so they can be execuuted firtst.
+                nextFlowStep = await factoryWorker.GetNextChildFlowStep(flowStepExecution);
+                if (nextFlowStep != null)
+                    stack.Push((nextFlowStep, flowStepExecution));
+            }
         }
 
         // Refresh UI.
@@ -335,7 +411,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 {
                     selectedExecution.FlowStep.IsSelected = true;
 
-                    NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
+                    //NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
                 }
             }
         }

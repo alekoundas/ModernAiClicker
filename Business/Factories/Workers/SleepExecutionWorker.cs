@@ -19,25 +19,25 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
-        {
-            if (parentExecution == null)
-                throw new ArgumentNullException(nameof(parentExecution));
+        //public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
+        //{
+        //    if (parentExecution == null)
+        //        throw new ArgumentNullException(nameof(parentExecution));
 
 
-            Execution execution = new Execution();
-            execution.FlowStepId = flowStepId;
-            execution.ParentExecutionId = parentExecution.Id;
-            execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
+        //    Execution execution = new Execution();
+        //    execution.FlowStepId = flowStepId;
+        //    execution.ParentExecutionId = parentExecution.Id;
+        //    execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+        //    _baseDatawork.Executions.Add(execution);
+        //    await _baseDatawork.SaveChangesAsync();
 
-            parentExecution.ChildExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+        //    parentExecution.ChildExecutionId = execution.Id;
+        //    await _baseDatawork.SaveChangesAsync();
 
-            return execution;
-        }
+        //    return execution;
+        //}
 
 
         public Task ExecuteFlowStepAction(Execution execution)
@@ -85,7 +85,7 @@ namespace Business.Factories.Workers
                     && x.OrderingNum > execution.FlowStep.OrderingNum
                     && x.FlowId == execution.FlowStep.FlowId;
 
-            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps
+            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps.AsNoTracking()
                 .Where(nextStepFilter)
                 .ToListAsync();
 

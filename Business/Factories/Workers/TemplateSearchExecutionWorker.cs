@@ -31,25 +31,25 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
-        {
+        //public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
+        //{
 
-            if (parentExecution == null)
-                throw new ArgumentNullException(nameof(parentExecution));
+        //    if (parentExecution == null)
+        //        throw new ArgumentNullException(nameof(parentExecution));
 
-            Execution execution = new Execution();
-            execution.FlowStepId = flowStepId;
-            execution.ParentExecutionId = parentExecution.Id;
-            execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
+        //    Execution execution = new Execution();
+        //    execution.FlowStepId = flowStepId;
+        //    execution.ParentExecutionId = parentExecution.Id;
+        //    execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+        //    _baseDatawork.Executions.Add(execution);
+        //    await _baseDatawork.SaveChangesAsync();
 
-            parentExecution.ChildExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+        //    parentExecution.ChildExecutionId = execution.Id;
+        //    await _baseDatawork.SaveChangesAsync();
 
-            return execution;
-        }
+        //    return execution;
+        //}
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
@@ -94,7 +94,7 @@ namespace Business.Factories.Workers
             FlowStep? nextFlowStep;
 
             // Get next executable child.
-            nextFlowStep = await _baseDatawork.Query.FlowSteps
+            nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
                 .Include(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .FirstOrDefaultAsync(x => x.Id == execution.FlowStepId);
@@ -138,7 +138,7 @@ namespace Business.Factories.Workers
                     && x.OrderingNum > execution.FlowStep.OrderingNum
                     && x.FlowId == execution.FlowStep.FlowId;
 
-            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps
+            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps.AsNoTracking()
                 .Where(nextStepFilter)
                 .ToListAsync();
 
@@ -180,13 +180,13 @@ namespace Business.Factories.Workers
             FlowStep? nextFlowStep = null;
 
             if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
-                nextFlowStep = await _baseDatawork.Query.FlowSteps
+                nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
                     .Include(x => x.ChildrenFlowSteps)
                     .Where(x => x.Id == execution.FlowStepId.Value && x.ChildrenFlowSteps != null)
                     .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
                     .FirstOrDefaultAsync();
             else
-                nextFlowStep = await _baseDatawork.Query.FlowSteps
+                nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
                     .Include(x => x.ChildrenFlowSteps)
                     .Where(x => x.Id == execution.FlowStepId)
                     .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
@@ -204,26 +204,28 @@ namespace Business.Factories.Workers
 
         public new async Task SaveToDisk(Execution execution)
         {
-            string folderDir = execution.ParentExecution.ExecutionFolderDirectory;
+            //if (!execution.ParentExecutionId.HasValue)
+            //    return;
+
+            //string folderDir = (await _baseDatawork.Executions.FindAsync(execution.ParentExecutionId.Value)).ExecutionFolderDirectory;
+
+            //if (execution.ParentExecution == null || execution.ResultImage == null)
+            //    return;
+
+            //byte[] resultImage = execution.ResultImage;
+            //string imagePath = folderDir + "\\";
+            //imagePath += execution.Id;
+            //imagePath += " - ";
+            //imagePath += execution.StartedOn.Value.ToString("yy-MM-dd hh.mm");
+            //imagePath += ".png";
 
 
-            if (execution.ParentExecution == null || execution.ResultImage == null)
-                return;
+            //await _systemService.SaveImageToDisk(imagePath, resultImage);
 
-            byte[] resultImage = execution.ResultImage;
-            string imagePath = folderDir + "\\";
-            imagePath += execution.Id;
-            imagePath += " - ";
-            imagePath += execution.StartedOn.Value.ToString("yy-MM-dd hh.mm");
-            imagePath += ".png";
-
-
-            await _systemService.SaveImageToDisk(imagePath, resultImage);
-
-            // Remove image from execution in order to free up RAM.
-            // Also assign new image path.
-            execution.ResultImage = null;
-            execution.ResultImagePath = imagePath;
+            //// Remove image from execution in order to free up RAM.
+            //// Also assign new image path.
+            //execution.ResultImage = null;
+            //execution.ResultImagePath = imagePath;
 
 
         }
