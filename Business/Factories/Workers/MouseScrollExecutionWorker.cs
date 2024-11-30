@@ -1,6 +1,4 @@
-﻿using Business.DatabaseContext;
-using Business.Interfaces;
-using DataAccess;
+﻿using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Enums;
@@ -19,32 +17,6 @@ namespace Business.Factories.Workers
             _baseDatawork = baseDatawork;
             _systemService = systemService;
         }
-
-        //public async Task<Execution> CreateExecutionModel(int flowStepId, Execution? parentExecution)
-        //{
-        //    if (parentExecution == null)
-        //        throw new ArgumentNullException(nameof(parentExecution));
-
-        //    Execution execution = new Execution();
-        //    execution.FlowStepId = flowStepId;
-        //    execution.ParentExecutionId = parentExecution.Id;
-        //    execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
-
-        //    _baseDatawork.Executions.Add(execution);
-        //    await _baseDatawork.SaveChangesAsync();
-
-        //    parentExecution.ChildExecutionId = execution.Id;
-        //    await _baseDatawork.SaveChangesAsync();
-
-        //    if (execution.FlowStep == null && execution.FlowStepId != null)
-        //        execution.FlowStep = await _baseDatawork.Query.FlowSteps
-        //                .Include(x => x.ChildrenFlowSteps)
-        //                .ThenInclude(x => x.ChildrenFlowSteps)
-        //                .FirstOrDefaultAsync(x => x.Id == flowStepId);
-
-        //    return execution;
-        //}
-
 
         public Task ExecuteFlowStepAction(Execution execution)
         {
@@ -92,44 +64,5 @@ namespace Business.Factories.Workers
 
             return nextFlowStep;
         }
-
-        public async Task<FlowStep?> GetNextChildFlowStep(Execution execution)
-        {
-            // Cursor move doesnt contain any children.
-            return await Task.FromResult<FlowStep?>(null);
-        }
-
-        public async Task SetExecutionModelStateRunning(Execution execution)
-        {
-
-            execution.Status = ExecutionStatusEnum.RUNNING;
-            execution.StartedOn = DateTime.Now;
-
-            if (execution.ParentExecution != null)
-                execution.ExecutionFolderDirectory = execution.ParentExecution.ExecutionFolderDirectory;
-
-            await _baseDatawork.SaveChangesAsync();
-        }
-
-        public async Task SetExecutionModelStateComplete(Execution execution)
-        {
-
-            execution.Status = ExecutionStatusEnum.COMPLETED;
-            execution.EndedOn = DateTime.Now;
-
-            await _baseDatawork.SaveChangesAsync();
-        }
-
-        public Task ExpandAndSelectFlowStep(Execution execution)
-        {
-            if (execution.FlowStep == null)
-                return Task.CompletedTask;
-
-            execution.FlowStep.IsExpanded = true;
-            execution.FlowStep.IsSelected = true;
-
-            return Task.CompletedTask;
-        }
-
     }
 }

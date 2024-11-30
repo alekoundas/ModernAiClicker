@@ -35,31 +35,6 @@ namespace Business.Factories
             };
         }
 
-        //public IExecutionWorker GetWorker(FlowStepTypesEnum? flowStepType)
-        //{
-        //    switch (flowStepType)
-        //    {
-        //        case FlowStepTypesEnum.WINDOW_MOVE:
-        //            return new WindowMoveExecutionWorker(_baseDatawork, _systemService);
-        //        case FlowStepTypesEnum.WINDOW_RESIZE:
-        //            return new WindowResizeExecutionWorker(_baseDatawork, _systemService);
-        //        case FlowStepTypesEnum.MOUSE_MOVE_COORDINATES:
-        //            return new MouseMoveExecutionWorker(_baseDatawork, _systemService);
-        //        case FlowStepTypesEnum.MOUSE_CLICK:
-        //            return new MouseClickExecutionWorker(_baseDatawork, _systemService);
-        //        case FlowStepTypesEnum.MOUSE_SCROLL:
-        //            return new MouseScrollExecutionWorker(_baseDatawork, _systemService);
-        //        case FlowStepTypesEnum.TEMPLATE_SEARCH:
-        //            return new TemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService);
-        //        case FlowStepTypesEnum.SLEEP:
-        //            return new SleepExecutionWorker(_baseDatawork, _systemService);
-        //        case FlowStepTypesEnum.GO_TO:
-        //            return new GoToExecutionWorker(_baseDatawork, _systemService);
-        //        default:
-        //            return new FlowExecutionWorker(_baseDatawork, _systemService);
-        //    }
-        //}
-
         public IExecutionWorker GetWorker(FlowStepTypesEnum? flowStepType)
         {
             // Lazy initialization (only created on the first access).

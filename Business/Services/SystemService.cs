@@ -395,7 +395,7 @@ namespace Business.Services
             SetCursorPos(point.X, point.Y);
         }
 
-        public Task UpdateFlowsJSON(List<Flow> flows)
+        public async Task UpdateFlowsJSON(List<Flow> flows)
         {
             var mapper = new MapperConfiguration(x =>
             {
@@ -415,11 +415,10 @@ namespace Business.Services
                 Formatting = Formatting.Indented
             });
 
-            string filePath = Path.Combine(PathHelper.GetAppDataPath(), "Flows.json");
-            //await File.WriteAllTextAsync(filePath, json);
-            //return Task.CompletedTask;
+            string filePath = Path.Combine(PathHelper.GetAppDataPath(), "FlowsExport.json");
+            await File.WriteAllTextAsync(filePath, json);
 
-            return Task.CompletedTask;
+            return;
         }
 
         //public static object DeserializeFromStream(Stream stream)
@@ -447,7 +446,7 @@ namespace Business.Services
 
         public List<Flow>? LoadFlowsJSON()
         {
-            string filePath = Path.Combine(PathHelper.GetAppDataPath(), "Flows.json");
+            string filePath = Path.Combine(PathHelper.GetAppDataPath(), "FlowsExport.json");
             string flowsJSON = File.ReadAllText(filePath);
             if (flowsJSON != null)
             {

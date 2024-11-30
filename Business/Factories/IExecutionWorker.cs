@@ -12,9 +12,9 @@ namespace Business.Factories
         Task<FlowStep?> GetNextSiblingFlowStep(Execution execution);
         Task SetExecutionModelStateRunning(Execution execution);
         Task SetExecutionModelStateComplete(Execution execution);
-        Task ExpandAndSelectFlowStep(Execution execution);
+        //Task ExpandAndSelectFlowStep(Execution execution);
         Task SaveToJson();
-        void RefreshUI();
+        //void RefreshUI();
         Task SaveToDisk(Execution execution);
         void ClearEntityFrameworkChangeTracker();
 
