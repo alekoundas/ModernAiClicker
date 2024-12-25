@@ -446,7 +446,7 @@ namespace Business.Services
 
         public List<Flow>? LoadFlowsJSON()
         {
-            string filePath = Path.Combine(PathHelper.GetAppDataPath(), "FlowsExport.json");
+            string filePath = Path.Combine(PathHelper.GetAppDataPath(), "FlowExport.json");
             string flowsJSON = File.ReadAllText(filePath);
             if (flowsJSON != null)
             {

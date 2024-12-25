@@ -219,17 +219,18 @@ namespace ModernAiClicker.ViewModels.Pages
                 });
 
 
-                FlowStep? uiFlowStep = TreeviewFlows.First()
-                    .Descendants()
-                    .FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
+                //FlowStep? uiFlowStep = TreeviewFlows.First()
+                //    .Descendants()
+                //    .FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
 
-                if (uiFlowStep != null)
-                {
-                    uiFlowStep.IsExpanded = true;
-                    uiFlowStep.IsSelected = true;
-                }
+                //if (uiFlowStep != null)
+                //{
+                //    uiFlowStep.IsExpanded = true;
+                //    uiFlowStep.IsSelected = true;
+                //}
 
 
+                await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, TreeviewFlows);
                 await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
                 await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
                 await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
@@ -351,7 +352,7 @@ namespace ModernAiClicker.ViewModels.Pages
                         List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
                             .Include(x => x.ChildrenFlowSteps)
                             .Where(x => x.Id == childrenFlowStep.Id)
-                            .SelectMany(x => x.ChildrenFlowSteps ?? Enumerable.Empty<FlowStep>())
+                            .SelectMany(x => x.ChildrenFlowSteps)
                             .ToListAsync();
 
                         childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
@@ -398,17 +399,25 @@ namespace ModernAiClicker.ViewModels.Pages
             //await _baseDatawork.SaveChangesAsync();
 
 
-            if (ComboBoxSelectedExecutionHistory == null)
-                return;
-            _baseDatawork.Query.ChangeTracker.Clear();
-            _baseDatawork.Executions.Remove(ComboBoxSelectedExecutionHistory);
+            //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("CREATE TABLE TempExecutions AS SELECT * FROM Executions WHERE 1=0;");
+            //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("DROP TABLE Executions;");
+            //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("ALTER TABLE TempExecutions RENAME TO Executions;");
+
+            //if (ComboBoxSelectedExecutionHistory == null)
+            //    return;
+            //_baseDatawork.Query.ChangeTracker.Clear();
+
+            //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("DELETE FROM Executions;");
+
+            var aa = _baseDatawork.Executions.GetAll();
+            _baseDatawork.Executions.RemoveRange(aa);
             _baseDatawork.SaveChanges();
 
-            ComboBoxExecutionHistories.Remove(ComboBoxSelectedExecutionHistory);
-            ComboBoxSelectedExecutionHistory = null;
-            ListBoxExecutions.Clear();
+            //ComboBoxExecutionHistories.Remove(ComboBoxSelectedExecutionHistory);
+            //ComboBoxSelectedExecutionHistory = null;
+            //ListBoxExecutions.Clear();
 
-            // Reclaim free space in database file.
+            //// Reclaim free space in database file.
             await _baseDatawork.Query.Database.ExecuteSqlRawAsync("VACUUM;");
         }
 

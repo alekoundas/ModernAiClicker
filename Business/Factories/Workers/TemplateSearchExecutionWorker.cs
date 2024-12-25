@@ -1,9 +1,11 @@
-﻿using Business.Interfaces;
+﻿using Business.Extensions;
+using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Business;
 using Model.Enums;
 using Model.Models;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq.Expressions;
 
@@ -55,7 +57,7 @@ namespace Business.Factories.Workers
 
             execution.ResultLocationX = x;
             execution.ResultLocationY = y;
-            execution.ResultImage = result.ResultImage;
+            //execution.ResultImage = result.ResultImage;
             execution.ResultImagePath = result.ResultImagePath;
             execution.ResultAccuracy = result.Confidence;
 
@@ -130,59 +132,95 @@ namespace Business.Factories.Workers
             return nextFlowStep;
         }
 
-        //public async override Task ExpandAndSelectFlowStep(Execution execution)
-        //{
-        //    if (execution.FlowStep == null)
-        //        return;
-        //    FlowStep? nextFlowStep = null;
+        public async override Task ExpandAndSelectFlowStep(Execution execution, ObservableCollection<Flow> treeviewFlows)
+        {
+            if (execution.FlowStep == null)
+                return;
+            FlowStep? nextFlowStep = null;
 
-        //    if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
-        //        nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
-        //            .Include(x => x.ChildrenFlowSteps)
-        //            .Where(x => x.Id == execution.FlowStepId.Value && x.ChildrenFlowSteps != null)
-        //            .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
-        //            .FirstOrDefaultAsync();
-        //    else
-        //        nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
-        //            .Include(x => x.ChildrenFlowSteps)
-        //            .Where(x => x.Id == execution.FlowStepId)
-        //            .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
-        //            .FirstOrDefaultAsync();
+            FlowStep? uiFlowStep = treeviewFlows.First()
+              .Descendants()
+              .FirstOrDefault(x => x.Id == execution.FlowStepId);
 
-        //    if (nextFlowStep != null)
-        //        nextFlowStep.IsExpanded = true;
+            if (uiFlowStep != null)
+            {
+                uiFlowStep.IsExpanded = true;
+                uiFlowStep.IsSelected = true;
+            }
 
-        //    if (execution.FlowStep.ChildrenFlowSteps != null && execution.FlowStep.ChildrenFlowSteps.Any())
-        //        execution.FlowStep.ChildrenFlowSteps.First().IsExpanded = true;
+            uiFlowStep.ChildrenFlowSteps[0].IsExpanded = true;
 
-        //    execution.FlowStep.IsExpanded = true;
-        //    execution.FlowStep.IsSelected = true;
-        //}
+            //foreach (var item in uiFlowStep.ChildrenFlowSteps)
+            //    item.IsExpanded = true;
+
+            //if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
+            //    nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
+            //        .Include(x => x.ChildrenFlowSteps)
+            //        .Where(x => x.Id == execution.FlowStepId.Value && x.ChildrenFlowSteps != null)
+            //        .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_SUCCESS))
+            //        .FirstOrDefaultAsync();
+            //else
+            //    nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
+            //        .Include(x => x.ChildrenFlowSteps)
+            //        .Where(x => x.Id == execution.FlowStepId)
+            //        .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_FAILURE))
+            //        .FirstOrDefaultAsync();
+
+            //if (nextFlowStep != null)
+            //{
+            //    FlowStep? uiFlowStep = treeviewFlows
+            //        .First()
+            //        .Descendants()
+            //        .FirstOrDefault(x => x.Id == execution.FlowStepId);
+
+            //    if (uiFlowStep != null)
+            //    {
+            //        uiFlowStep.IsExpanded = true;
+            //        uiFlowStep.IsSelected = true;
+            //    }
+            //}
+
+            //if (execution.FlowStep.ChildrenFlowSteps != null && execution.FlowStep.ChildrenFlowSteps.Any())
+            //{
+            //    List<FlowStep>? uiFlowSteps = treeviewFlows
+            //        .First()
+            //        .Descendants()
+            //        .Where(x => execution.FlowStep.ChildrenFlowSteps.Any(y => y.Id == x.Id))
+            //        .ToList();
+
+            //    if (uiFlowSteps != null)
+            //    {
+            //        uiFlowSteps[0].IsExpanded = true;
+            //        uiFlowSteps[1].IsExpanded = true;
+            //    }
+            //}
+
+        }
 
         public async override Task SaveToDisk(Execution execution)
         {
-            //if (!execution.ParentExecutionId.HasValue)
-            //    return;
+            if (!execution.ParentExecutionId.HasValue)
+                return;
 
-            //string folderDir = (await _baseDatawork.Executions.FindAsync(execution.ParentExecutionId.Value)).ExecutionFolderDirectory;
+            string folderDir = (await _baseDatawork.Executions.FindAsync(execution.ParentExecutionId.Value)).ExecutionFolderDirectory;
 
-            //if (execution.ParentExecution == null || execution.ResultImage == null)
-            //    return;
+            if (execution.ParentExecution == null || execution.ResultImage == null)
+                return;
 
-            //byte[] resultImage = execution.ResultImage;
-            //string imagePath = folderDir + "\\";
-            //imagePath += execution.Id;
-            //imagePath += " - ";
-            //imagePath += execution.StartedOn.Value.ToString("yy-MM-dd hh.mm");
-            //imagePath += ".png";
+            byte[] resultImage = execution.ResultImage;
+            string imagePath = folderDir + "\\";
+            imagePath += execution.Id;
+            imagePath += " - ";
+            imagePath += execution.StartedOn.Value.ToString("yy-MM-dd hh.mm");
+            imagePath += ".png";
 
 
-            //await _systemService.SaveImageToDisk(imagePath, resultImage);
+            await _systemService.SaveImageToDisk(imagePath, resultImage);
 
-            //// Remove image from execution in order to free up RAM.
-            //// Also assign new image path.
-            //execution.ResultImage = null;
-            //execution.ResultImagePath = imagePath;
+            // Remove image from execution in order to free up RAM.
+            // Also assign new image path.
+            execution.ResultImage = null;
+            execution.ResultImagePath = imagePath;
         }
     }
 }
