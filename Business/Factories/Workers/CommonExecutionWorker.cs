@@ -98,26 +98,6 @@ namespace Business.Factories.Workers
             await _systemService.UpdateFlowsJSON(await _baseDatawork.Flows.GetAllAsync());
         }
 
-        /// <summary>
-        /// Refreshes UI manualy because flow execution occurs in a new thread.
-        /// </summary>
-        //public void RefreshUI()
-        //{
-        //    // DispatcherPriority set to Input, the highest priority
-        //    DispatcherFrame frame = new();
-        //    DispatcherOperationCallback dispatcherOperationCallback = new DispatcherOperationCallback(delegate (object parameter)
-        //    {
-        //        frame.Continue = false;
-        //        // Stop all processes to make sure the UI update is perform
-        //        Thread.Sleep(100); 
-        //        return null;
-        //    });
-
-        //    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Input, dispatcherOperationCallback, null);
-        //    Dispatcher.PushFrame(frame);
-        //    Application.Current.Dispatcher.Invoke(DispatcherPriority.Input, new Action(delegate { }));
-        //}
-
         public async virtual Task SaveToDisk(Execution execution)
         {
             await _baseDatawork.SaveChangesAsync();

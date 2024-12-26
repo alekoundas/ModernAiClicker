@@ -199,28 +199,14 @@ namespace Business.Factories.Workers
 
         public async override Task SaveToDisk(Execution execution)
         {
-            if (!execution.ParentExecutionId.HasValue)
+            if (!execution.ParentExecutionId.HasValue || execution.ResultImagePath == null || execution.ExecutionFolderDirectory.Length == 0)
                 return;
 
-            string folderDir = (await _baseDatawork.Executions.FindAsync(execution.ParentExecutionId.Value)).ExecutionFolderDirectory;
-
-            if (execution.ParentExecution == null || execution.ResultImage == null)
-                return;
-
-            byte[] resultImage = execution.ResultImage;
-            string imagePath = folderDir + "\\";
-            imagePath += execution.Id;
-            imagePath += " - ";
-            imagePath += execution.StartedOn.Value.ToString("yy-MM-dd hh.mm");
-            imagePath += ".png";
-
-
-            await _systemService.SaveImageToDisk(imagePath, resultImage);
-
-            // Remove image from execution in order to free up RAM.
-            // Also assign new image path.
-            execution.ResultImage = null;
-            execution.ResultImagePath = imagePath;
+            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss");
+            string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
+            
+            _systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);
+            execution.ResultImagePath = newFilePath;
         }
     }
 }

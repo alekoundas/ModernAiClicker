@@ -5,33 +5,17 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using Model.Models;
 using Newtonsoft.Json;
-using System.Windows;
 using System.Windows.Forms;
-using System.Management;
 using AutoMapper;
 using Model.Enums;
 using Model.Business;
-using System.Windows.Shapes;
 using Path = System.IO.Path;
-using System.Windows.Media.Media3D;
-using OpenCvSharp;
-using System.Windows.Input;
-using System.Windows.Automation;
-using static Business.Services.SystemService;
-using System;
-using Newtonsoft.Json.Linq;
 
 namespace Business.Services
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class SystemService : ISystemService
     {
-        //public enum DpiType
-        //{
-        //    Effective = 0,
-        //    Angular = 1,
-        //    Raw = 2,
-        //}
         [StructLayout(LayoutKind.Sequential)]
         internal struct INPUT
         {
@@ -99,31 +83,6 @@ namespace Business.Services
         private static extern uint SendInput(uint numberOfInputs, INPUT[] inputs, int sizeOfInputStructure);
 
 
-        //https://msdn.microsoft.com/en-us/library/windows/desktop/dd145062(v=vs.85).aspx
-        //[DllImport("User32.dll")]
-        //private static extern IntPtr MonitorFromPoint([In] System.Drawing.Point pt, [In] uint dwFlags);
-
-        //https://msdn.microsoft.com/en-us/library/windows/desktop/dn280510(v=vs.85).aspx
-        //[DllImport("Shcore.dll")]
-        //private static extern IntPtr GetDpiForMonitor([In] IntPtr hmonitor, [In] DpiType dpiType, [Out] out uint dpiX, [Out] out uint dpiY);
-
-        //public void CursorScroll()
-        //{
-        //    var input = new INPUT();
-        //    input.Type = (UInt32)InputType.Mouse;
-        //    input.Data.Mouse.Flags = MouseFlag.VerticalWheel;
-        //    input.Data.Mouse.MouseData = 20;
-
-
-        //    INPUT[] inputs = new INPUT[] { input };
-        //    uint asdasd = SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
-
-        //}
-
-        //public void CursorScroll()
-        //{
-        //    mouse_event(MouseFlag.VerticalWheel, 0, 0, -120, 0);
-        //}
 
         public void CursorScroll(MouseScrollDirectionEnum scrollDirection, int steps)
         {
@@ -246,7 +205,6 @@ namespace Business.Services
 
         }
 
-
         public List<string> GetProcessWindowTitles()
         {
             return Process
@@ -256,33 +214,27 @@ namespace Business.Services
                 .ToList();
         }
 
-
-        //public void GetDpi(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
-        //{
-        //    var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
-        //    var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
-        //    GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
-        //}
-
-
-        //private List<string> kek(DpiType type)
-        //{
-        //    var list = new List<string>();
-        //    foreach (var screen in System.Windows.Forms.Screen.AllScreens)
-        //    {
-        //        uint x, y;
-        //        GetDpi(screen, type, out x, out y);
-        //        list.Add(screen.DeviceName + " - dpiX=" + x + ", dpiY=" + y);
-        //    }
-        //    return list;
-        //}
-
-
-
-
         public async Task SaveImageToDisk(string filePath, byte[] image)
         {
             await File.WriteAllBytesAsync(filePath, image);
+        }
+
+        public void CopyImageToDisk(string sourceFilePath, string destinationFilePath)
+        {
+            try
+            {
+                // Ensure the destination directory exists
+                string? destinationDirectory = Path.GetDirectoryName(destinationFilePath);
+                if (!Directory.Exists(destinationDirectory))
+                    Directory.CreateDirectory(destinationDirectory);
+
+                // Copy the file to the new location with the new name
+                File.Copy(sourceFilePath, destinationFilePath, overwrite: true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
 
         public void CreateFolderOnDisk(string folderName)
@@ -290,9 +242,6 @@ namespace Business.Services
             string folderUrl = PathHelper.GetAppDataPath() + "\\" + folderName;
             Directory.CreateDirectory(folderUrl);
         }
-
-
-
 
         public Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot")
         {
@@ -421,29 +370,6 @@ namespace Business.Services
             return;
         }
 
-        //public static object DeserializeFromStream(Stream stream)
-        //{
-        //    var serializer = new JsonSerializer();
-
-        //    using (var sr = new StringWriter(stream))
-        //    using (var jsonTextReader = new JsonTextWriter(sr))
-        //    {
-        //        return serializer.Serialize(jsonTextReader);
-        //    }
-        //}
-
-        //public async Task UpdateFlowsJSON(List<Flow> flows)
-        //{
-
-        //    string json = JsonConvert.SerializeObject(flows, Formatting.Indented, new JsonSerializerSettings
-        //    {
-        //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-        //    });
-
-        //    string filePath = Path.Combine(PathHelper.GetAppDataPath(), "Flows.json");
-        //    await File.WriteAllTextAsync(filePath, json);
-        //}
-
         public List<Flow>? LoadFlowsJSON()
         {
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), "FlowExport.json");
@@ -457,116 +383,6 @@ namespace Business.Services
 
             return null;
         }
-
-
-        //public void GetScalingFactor()
-        //{
-        //    List<double> physicalWidths = new List<double>();
-
-        //    //Get physical width for each monitor
-        //    ManagementObjectSearcher searcher = new ManagementObjectSearcher("\\root\\wmi", "SELECT * FROM WmiMonitorBasicDisplayParams");
-
-        //    foreach (ManagementObject monitor in searcher.Get())
-        //    {
-        //        //Get the physical width (inch)
-        //        double width = (byte)monitor["MaxHorizontalImageSize"] / 2.54;
-        //        physicalWidths.Add(width);
-        //    }
-
-        //    //Get screen info for each monitor
-        //    Screen[] screenList = Screen.AllScreens;
-        //    int i = 0;
-
-        //    foreach (Screen screen in screenList)
-        //    {
-        //        //Get the physical width (pixel)
-        //        double physicalWidth;
-        //        if (i < physicalWidths.Count)
-        //        {
-        //            //Get the DPI
-        //            uint x, y;
-        //            GetDpi2(screen, DpiType.Effective, out x, out y);
-
-        //            //Convert inch to pixel
-        //            physicalWidth = physicalWidths[i] * x;
-        //        }
-        //        else
-        //        {
-        //            physicalWidth = SystemParameters.PrimaryScreenWidth;
-        //        }
-        //        i++;
-
-        //        //Calculate the scaling
-        //        double scaling = 100 * (physicalWidth / screen.Bounds.Width);
-        //        double scalingFactor = physicalWidth / screen.Bounds.Width;
-
-        //        //Output the result
-        //        Console.WriteLine(scalingFactor);
-        //    }
-        //}
-
-        //public void GetDpi2(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
-        //{
-        //    var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
-        //    var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
-        //    GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
-        //}
-
-        //public List<double> GetScalingFactor2()
-        //{
-        //    List<double> physicalWidths = new List<double>();
-        //    List<double> monitorsfactor = new List<double>();
-
-        //    //Get physical width for each monitor
-        //    ManagementObjectSearcher searcher = new ManagementObjectSearcher("\\root\\wmi", "SELECT * FROM WmiMonitorBasicDisplayParams");
-
-        //    foreach (ManagementObject monitor in searcher.Get())
-        //    {
-        //        //Get the physical width (inch)
-        //        double width = (byte)monitor["MaxHorizontalImageSize"] / 2.54;
-        //        physicalWidths.Add(width);
-        //    }
-
-        //    //Get screen info for each monitor
-        //    Screen[] screenList = Screen.AllScreens;
-        //    int i = 0;
-
-        //    foreach (Screen screen in screenList)
-        //    {
-        //        //Get the physical width (pixel)
-        //        double physicalWidth;
-        //        if (i < physicalWidths.Count)
-        //        {
-        //            //Get the DPI
-        //            uint x, y;
-        //            GetDpi3(screen, DpiType.Effective, out x, out y);
-
-        //            //Convert inch to pixel
-        //            physicalWidth = physicalWidths[i] * x;
-        //        }
-        //        else
-        //        {
-        //            physicalWidth = SystemParameters.PrimaryScreenWidth;
-        //        }
-        //        i++;
-
-        //        //Calculate the scaling
-        //        double scaling = 100 * (physicalWidth / screen.Bounds.Width);
-        //        double scalingFactor = physicalWidth / screen.Bounds.Width;
-
-        //        //Output the result
-        //        Console.WriteLine(scalingFactor);
-        //        monitorsfactor.Add(scalingFactor);
-        //    }
-        //    return monitorsfactor;
-        //}
-
-        //public void GetDpi3(Screen screen, DpiType dpiType, out uint dpiX, out uint dpiY)
-        //{
-        //    var pnt = new System.Drawing.Point(screen.Bounds.Left + 1, screen.Bounds.Top + 1);
-        //    var mon = MonitorFromPoint(pnt, 2/*MONITOR_DEFAULTTONEAREST*/);
-        //    GetDpiForMonitor(mon, dpiType, out dpiX, out dpiY);
-        //}
 
     }
 }

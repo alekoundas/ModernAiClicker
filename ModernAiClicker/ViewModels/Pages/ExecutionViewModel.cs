@@ -3,14 +3,12 @@ using Business.Factories;
 using Business.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DataAccess;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.ConverterModels;
 using Model.Enums;
 using Model.Models;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Eventing.Reader;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -30,8 +28,6 @@ namespace ModernAiClicker.ViewModels.Pages
         // Treeview
         [ObservableProperty]
         private ObservableCollection<Flow> _treeviewFlows = new ObservableCollection<Flow>();
-        private ObservableCollection<FlowStep> _treeviewFlowSteps = new ObservableCollection<FlowStep>();
-
 
         // Combobox Flows
         [ObservableProperty]
@@ -109,100 +105,19 @@ namespace ModernAiClicker.ViewModels.Pages
                 ComboBoxSelectedExecutionHistory = flowExecution;
 
 
-                // Start execution.
                 //await flowWorker.ExpandAndSelectFlowStep(flowExecution);
-                //AllowUIToUpdate();
                 await flowWorker.SetExecutionModelStateRunning(flowExecution);
                 await flowWorker.SaveToDisk(flowExecution);
 
-                // Get next flow step and recursively execute every other step.
                 FlowStep? nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
                 await ExecuteStepLoop(nextFlowStep, flowExecution);
-                //await ExecuteStepRecursion(nextFlowStep, flowExecution);
-                //try
-                //{
-                //}
-                //catch (Exception exception)
-                //{
-                //    string errorMessage = exception.Message;
-                //    string caption = exception.InnerException.Message;
-                //    System.Windows.MessageBoxButton button = System.Windows.MessageBoxButton.OK;
-                //    MessageBoxImage icon = MessageBoxImage.Error;
-                //    System.Windows.MessageBox.Show(errorMessage, caption, button, icon);
-                //}
-
-                // Complete execution.
                 await flowWorker.SetExecutionModelStateComplete(flowExecution);
             });
 
             StopExecution = false;
         }
 
-        //private async Task<Execution?> ExecuteStepRecursion(FlowStep? flowStep, Execution parentExecution)
-        //{
 
-        //    // Recursion ends here.
-        //    if (flowStep == null || StopExecution == true)
-        //        return await Task.FromResult<Execution?>(null);
-
-        //    IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
-        //    factoryWorker.ClearEntityFrameworkChangeTracker();
-        //    Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution);
-
-        //    parentExecution.ResultImage = null;
-        //    //Application.Current.Dispatcher.Invoke(() =>
-        //    //{
-        //    //    Execution flowStepExecutionasdasd = new Execution()
-        //    //    {
-        //    //        Id = flowStepExecution.Id,
-        //    //        FlowStepId = flowStepExecution.FlowStepId,
-        //    //        FlowId = flowStepExecution.FlowId,
-        //    //        //FlowStep = new FlowStep() { FlowStepType = flowStepExecution.FlowStep.FlowStepType }
-        //    //    };
-        //    //    ListBoxExecutions.Add(flowStepExecutionasdasd);
-        //    //});
-        //    //await Task.Run(() =>
-        //    //{
-        //    //    Execution flowStepExecutionasdasd = new Execution()
-        //    //    {
-        //    //        Id = flowStepExecution.Id,
-        //    //        FlowStepId = flowStepExecution.FlowStepId,
-        //    //        FlowId = flowStepExecution.FlowId,
-        //    //        FlowStep = new FlowStep() { FlowStepType = flowStepExecution.FlowStep.FlowStepType }
-        //    //    };
-        //    //    // Use the main UI thread to update the collection
-        //    //    Application.Current.Dispatcher.Invoke(() => ListBoxExecutions.Add(flowStepExecutionasdasd));
-        //    //});
-
-        //    //await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution);
-        //    FlowStep? flowStepkekekekeke = TreeviewFlows.First().Descendants().FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
-        //    flowStepkekekekeke.IsExpanded = true;
-        //    flowStepkekekekeke.IsSelected = true;
-
-
-        //    //factoryWorker.RefreshUI();
-        //    await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
-        //    await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
-        //    await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
-        //    await factoryWorker.SaveToDisk(flowStepExecution);
-
-        //    FlowStep? nextFlowStep;
-        //    nextFlowStep = await factoryWorker.GetNextChildFlowStep(flowStepExecution);
-
-
-        //    // If step contains children, execute recursion for children first.
-        //    // Else if no executable children are found, continue recursion for siblings.
-        //    if (nextFlowStep != null)
-        //        await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
-
-        //    nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
-        //    //flowStepExecution.FlowStep.Executions = null;
-        //    //factoryWorker.ClearEntityFrameworkChangeTracker();
-        //    //factoryWorker.
-
-
-        //    return await ExecuteStepRecursion(nextFlowStep, flowStepExecution);
-        //}
 
         private async Task ExecuteStepLoop(FlowStep? initialFlowStep, Execution initialParentExecution)
         {
@@ -216,7 +131,6 @@ namespace ModernAiClicker.ViewModels.Pages
                 if (flowStep == null || StopExecution == true)
                     return;
 
-
                 IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
                 factoryWorker.ClearEntityFrameworkChangeTracker();
                 Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution);
@@ -224,22 +138,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
                 // Add execution to history listbox.
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ListBoxExecutions.Add(flowStepExecution);
-                });
-
-
-                //FlowStep? uiFlowStep = TreeviewFlows.First()
-                //    .Descendants()
-                //    .FirstOrDefault(x => x.Id == flowStepExecution.FlowStepId);
-
-                //if (uiFlowStep != null)
-                //{
-                //    uiFlowStep.IsExpanded = true;
-                //    uiFlowStep.IsSelected = true;
-                //}
-
+                Application.Current.Dispatcher.Invoke(() => ListBoxExecutions.Add(flowStepExecution));
 
                 await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, TreeviewFlows);
                 await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
@@ -247,20 +146,19 @@ namespace ModernAiClicker.ViewModels.Pages
                 await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
                 await factoryWorker.SaveToDisk(flowStepExecution);
 
-                // If step contains siblings, push them in stack.
+                // If step has a sibling, push it first in stack.
                 FlowStep? nextFlowStep;
                 nextFlowStep = await factoryWorker.GetNextSiblingFlowStep(flowStepExecution);
                 if (nextFlowStep != null)
                     stack.Push((nextFlowStep, flowStepExecution));
 
-                // If children are found, push them to stack last so they can be execuuted firtst.
+                // If child is found, push it to stack last so it can be executed firtst.
                 nextFlowStep = await factoryWorker.GetNextChildFlowStep(flowStepExecution);
                 if (nextFlowStep != null)
                     stack.Push((nextFlowStep, flowStepExecution));
             }
         }
 
-        // Refresh UI.
         private static void AllowUIToUpdate()
         {
             DispatcherFrame frame = new();

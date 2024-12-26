@@ -17,15 +17,11 @@ namespace Business.Interfaces
         void CursorClick(MouseButtonsEnum mouseButtonEnum);
         Task UpdateFlowsJSON(List<Flow> flows);
         List<Flow>? LoadFlowsJSON();
-
-        //List<double> GetScalingFactor2();
         ImageSizeResult GetImageSize(byte[] imagePath);
-
         List<string> GetProcessWindowTitles();
         void CreateFolderOnDisk(string folderName);
         Task SaveImageToDisk(string filePath, byte[] image);
-
-
+        void CopyImageToDisk(string sourceFilePath, string destinationFilePath);
         void CursorScroll(MouseScrollDirectionEnum scrollDirection, int steps);
 
     }

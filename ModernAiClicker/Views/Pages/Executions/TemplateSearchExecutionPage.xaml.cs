@@ -8,7 +8,7 @@ using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.Executions
 {
-    public partial class TemplateSearchExecutionPage :Page, IExecutionPage
+    public partial class TemplateSearchExecutionPage : Page, IExecutionPage
     {
         public TemplateSearchExecutionViewModel ViewModel { get; set; }
 
@@ -25,16 +25,13 @@ namespace ModernAiClicker.Views.Pages.Executions
             DataContext = ViewModel;
 
             //Image display in ui
-            //ViewModel.ShowTemplateImg += ShowTemplateImg;
             ViewModel.ShowResultImage += ShowResultImage;
-
         }
 
         public void ShowResultImage(string filePath)
         {
-            if (Directory.Exists(filePath))
+            try
             {
-
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.CacheOption = BitmapCacheOption.None;
@@ -45,6 +42,11 @@ namespace ModernAiClicker.Views.Pages.Executions
                 bitmap.EndInit();
                 this.UIResultImage.Source = bitmap;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
         }
     }
 }

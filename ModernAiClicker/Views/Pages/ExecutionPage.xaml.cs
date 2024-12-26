@@ -70,7 +70,24 @@ namespace ModernAiClicker.Views.Pages
             };
         }
 
-        public IExecutionViewModel? GetViewModel(FlowStepTypesEnum? flowStepType)
+        public void NavigateToExecutionDetailEvent(FlowStepTypesEnum flowStepType, Execution? execution)
+        {
+            //TODO reset frame to default
+            if (execution == null)
+                return;
+
+            var viewModel = GetViewModel(flowStepType);
+            var page = GetPage(flowStepType);
+
+            if (viewModel == null || page == null)
+                return;
+
+            viewModel.SetExecution(execution);
+            page.SetViewModel(viewModel);
+            this.UIExecutionDetailFrame.Navigate(page);
+        }
+
+        private IExecutionViewModel? GetViewModel(FlowStepTypesEnum? flowStepType)
         {
             // Lazy initialization (only created on the first access).
             if (flowStepType.HasValue && _executionViewModelCache.TryGetValue(flowStepType.Value, out var lazyWorker))
@@ -80,7 +97,7 @@ namespace ModernAiClicker.Views.Pages
         }
 
 
-        public IExecutionPage? GetPage(FlowStepTypesEnum? flowStepType)
+        private IExecutionPage? GetPage(FlowStepTypesEnum? flowStepType)
         {
             // Lazy initialization (only created on the first access).
             if (flowStepType.HasValue && _executionPageCache.TryGetValue(flowStepType.Value, out var lazyWorker))
@@ -89,27 +106,5 @@ namespace ModernAiClicker.Views.Pages
             return null;
         }
 
-
-
-        public void NavigateToExecutionDetailEvent(FlowStepTypesEnum flowStepType, Execution? execution)
-        {
-            //TODO reset frame to default
-            if (execution == null)
-                return;
-
-
-            var viewModel = GetViewModel(flowStepType);
-            if (viewModel != null)
-            {
-                viewModel.SetExecution(execution);
-
-                var page = GetPage(flowStepType);
-                if (page != null)
-                {
-                    page.SetViewModel(viewModel);
-                    this.UIExecutionDetailFrame.Navigate(page);
-                }
-            }
-        }
     }
 }
