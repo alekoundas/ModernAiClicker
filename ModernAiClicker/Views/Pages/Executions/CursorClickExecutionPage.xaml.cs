@@ -1,20 +1,24 @@
-﻿using ModernAiClicker.ViewModels.Pages;
+﻿using Business.Interfaces;
 using ModernAiClicker.ViewModels.Pages.Executions;
-using System.Net.Cache;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.Executions
 {
-    public partial class CursorClickExecutionPage : Page
+    public partial class CursorClickExecutionPage : Page, IExecutionPage
     {
-        public CursorClickExecutionViewModel ViewModel { get; }
-        public CursorClickExecutionPage(CursorClickExecutionViewModel viewModel)
+        public CursorClickExecutionViewModel ViewModel { get; set; }
+        public CursorClickExecutionPage()
         {
-            ViewModel = viewModel;
+            ViewModel = new CursorClickExecutionViewModel();
             DataContext = this;
+            InitializeComponent();
         }
 
+        public void SetViewModel(IExecutionViewModel executionViewModel)
+        {
+            ViewModel = (CursorClickExecutionViewModel)executionViewModel;
+            DataContext = ViewModel;
+        }
     }
 }

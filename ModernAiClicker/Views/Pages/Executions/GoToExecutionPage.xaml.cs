@@ -1,18 +1,24 @@
-﻿using ModernAiClicker.ViewModels.Pages;
+﻿using Business.Interfaces;
+using DataAccess.Repository.Interface;
 using ModernAiClicker.ViewModels.Pages.Executions;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.Executions
 {
-    public partial class GoToExecutionPage : Page
+    public partial class GoToExecutionPage : Page, IExecutionPage
     {
-        public GoToExecutionViewModel ViewModel { get; }
-        public GoToExecutionPage(GoToExecutionViewModel viewModel)
+        public GoToExecutionViewModel ViewModel { get; set; }
+        public GoToExecutionPage(IBaseDatawork baseDatawork)
         {
-            ViewModel = viewModel;
-            InitializeComponent();
+            ViewModel = new GoToExecutionViewModel(baseDatawork);
             DataContext = this;
+            InitializeComponent();
+        }
+
+        public void SetViewModel(IExecutionViewModel executionViewModel)
+        {
+            ViewModel = (GoToExecutionViewModel)executionViewModel;
+            DataContext = ViewModel;
         }
     }
 }

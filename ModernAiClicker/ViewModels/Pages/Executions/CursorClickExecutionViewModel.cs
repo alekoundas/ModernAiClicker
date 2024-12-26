@@ -1,22 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using Business.Interfaces;
-using Model.Structs;
-using Business.Helpers;
-using Model.Business;
-using DataAccess.Repository.Interface;
-using System.Windows.Forms;
 using Model.Enums;
-using System.Collections.ObjectModel;
+using Business.Interfaces;
 
 namespace ModernAiClicker.ViewModels.Pages.Executions
 {
-    public partial class CursorClickExecutionViewModel : ObservableObject
+    public partial class CursorClickExecutionViewModel : ObservableObject, IExecutionViewModel
     {
-        private readonly ISystemService _systemService;
-        private readonly IBaseDatawork _baseDatawork;
-
         [ObservableProperty]
         private Execution _execution;
 
@@ -26,15 +16,16 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
 
         [ObservableProperty]
         private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
-        public CursorClickExecutionViewModel(Execution execution,ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork) 
+        public CursorClickExecutionViewModel() 
         {
-
-            _baseDatawork = baseDatawork;
-            _systemService = systemService;
-
-            _execution= execution;
+            _execution= new Execution();
             MouseButtonsEnum = Enum.GetValues(typeof(MouseButtonsEnum)).Cast<MouseButtonsEnum>();
             MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
+        }
+
+        public void SetExecution(Execution execution)
+        {
+            Execution = execution;
         }
     }
 }

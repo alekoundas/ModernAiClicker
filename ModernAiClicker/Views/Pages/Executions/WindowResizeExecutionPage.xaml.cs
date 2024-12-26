@@ -1,20 +1,24 @@
-﻿using ModernAiClicker.ViewModels.Pages;
+﻿using Business.Interfaces;
 using ModernAiClicker.ViewModels.Pages.Executions;
-using System.Net.Cache;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.Executions
 {
-    public partial class WindowResizeExecutionPage : Page
+    public partial class WindowResizeExecutionPage : Page, IExecutionPage
     {
-        public WindowResizeExecutionViewModel ViewModel { get; }
-        public WindowResizeExecutionPage(WindowResizeExecutionViewModel viewModel)
+        public WindowResizeExecutionViewModel ViewModel { get; set; }
+        public WindowResizeExecutionPage()
         {
-            ViewModel = viewModel;
+            ViewModel = new WindowResizeExecutionViewModel();
             DataContext = this;
+            InitializeComponent();
         }
 
+        public void SetViewModel(IExecutionViewModel executionViewModel)
+        {
+            ViewModel = (WindowResizeExecutionViewModel)executionViewModel;
+            DataContext = ViewModel;
+
+        }
     }
 }

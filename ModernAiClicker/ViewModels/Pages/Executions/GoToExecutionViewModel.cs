@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
@@ -9,9 +8,8 @@ using Business.Extensions;
 
 namespace ModernAiClicker.ViewModels.Pages.Executions
 {
-    public partial class GoToExecutionViewModel : ObservableObject
+    public partial class GoToExecutionViewModel : ObservableObject, IExecutionViewModel
     {
-        private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
 
         [ObservableProperty]
@@ -20,14 +18,17 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
         [ObservableProperty]
         private ObservableCollection<FlowStep> _previousSteps;
 
-        public GoToExecutionViewModel(Execution execution, ISystemService systemService, IBaseDatawork baseDatawork)
+        public GoToExecutionViewModel(IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
-            _systemService = systemService;
 
-            _execution = execution;
+            _execution = new Execution();
             PreviousSteps = GetParents();
+        }
 
+        public void SetExecution(Execution execution)
+        {
+            Execution = execution;
         }
 
         private ObservableCollection<FlowStep> GetParents()

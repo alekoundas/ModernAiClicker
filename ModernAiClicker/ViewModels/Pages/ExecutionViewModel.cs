@@ -117,8 +117,19 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 // Get next flow step and recursively execute every other step.
                 FlowStep? nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
-                //await ExecuteStepRecursion(nextFlowStep, flowExecution);
                 await ExecuteStepLoop(nextFlowStep, flowExecution);
+                //await ExecuteStepRecursion(nextFlowStep, flowExecution);
+                //try
+                //{
+                //}
+                //catch (Exception exception)
+                //{
+                //    string errorMessage = exception.Message;
+                //    string caption = exception.InnerException.Message;
+                //    System.Windows.MessageBoxButton button = System.Windows.MessageBoxButton.OK;
+                //    MessageBoxImage icon = MessageBoxImage.Error;
+                //    System.Windows.MessageBox.Show(errorMessage, caption, button, icon);
+                //}
 
                 // Complete execution.
                 await flowWorker.SetExecutionModelStateComplete(flowExecution);
@@ -459,7 +470,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 {
                     selectedExecution.FlowStep.IsSelected = true;
 
-                    //NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
+                    NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
                 }
             }
         }

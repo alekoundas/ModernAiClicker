@@ -1,18 +1,11 @@
-﻿using Business.Services;
+﻿using Business.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Models;
-using Business.Interfaces;
-using DataAccess.Repository.Interface;
-using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.ViewModels.Pages.Executions
 {
-    public partial class TemplateSearchExecutionViewModel : ObservableObject, INavigationAware
+    public partial class TemplateSearchExecutionViewModel : ObservableObject, IExecutionViewModel
     {
-        private readonly ISystemService _systemService;
-        private readonly ITemplateSearchService _templateMatchingService;
-        private readonly IBaseDatawork _baseDatawork;
-
         [ObservableProperty]
         private Execution _execution;
 
@@ -22,36 +15,21 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
-        public TemplateSearchExecutionViewModel(Execution execution, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public TemplateSearchExecutionViewModel()
         {
+            _execution = new Execution();
+        }
 
-            _baseDatawork = baseDatawork;
-            _systemService = systemService;
-            _templateMatchingService = templateMatchingService;
-
-            _execution = execution;
+        public void SetExecution(Execution execution)
+        {
+            Execution = execution;
 
             if (execution.FlowStep != null)
             {
-
                 ShowTemplateImg?.Invoke(execution.FlowStep.TemplateImagePath);
                 if (execution.ResultImagePath != null)
                     ShowResultImage?.Invoke(execution.ResultImagePath);
-                if(_execution.ResultImage == null)
-                execution.ResultImage = new byte[0];
-
             }
-
-        }
-
-        public void OnNavigatedTo()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnNavigatedFrom()
-        {
-            throw new NotImplementedException();
         }
     }
 }

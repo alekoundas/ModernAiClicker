@@ -1,32 +1,35 @@
-﻿using ModernAiClicker.ViewModels.Pages.Executions;
+﻿using Business.Interfaces;
+using ModernAiClicker.ViewModels.Pages.Executions;
 using System.IO;
 using System.Net.Cache;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.Executions
 {
-    public partial class TemplateSearchExecutionPage : INavigableView<TemplateSearchExecutionViewModel>
+    public partial class TemplateSearchExecutionPage :Page, IExecutionPage
     {
-        public TemplateSearchExecutionViewModel ViewModel { get; }
+        public TemplateSearchExecutionViewModel ViewModel { get; set; }
 
-        public TemplateSearchExecutionPage(TemplateSearchExecutionViewModel viewModel)
+        public TemplateSearchExecutionPage()
         {
-            ViewModel = viewModel;
-            DataContext = this;
+            ViewModel = new TemplateSearchExecutionViewModel();
+            DataContext = ViewModel;
             InitializeComponent();
-
-
-            //Image display in ui
-            //viewModel.ShowTemplateImg += ShowTemplateImg;
-            viewModel.ShowResultImage += ShowResultImage;
-
-            if (viewModel.Execution.ResultImagePath != null)
-                ShowResultImage(viewModel.Execution.ResultImagePath);
         }
 
+        public void SetViewModel(IExecutionViewModel executionViewModel)
+        {
+            ViewModel = (TemplateSearchExecutionViewModel)executionViewModel;
+            DataContext = ViewModel;
 
-        //public void ShowTemplateImg(string filename)
+            //Image display in ui
+            //ViewModel.ShowTemplateImg += ShowTemplateImg;
+            ViewModel.ShowResultImage += ShowResultImage;
+
+        }
+
         public void ShowResultImage(string filePath)
         {
             if (Directory.Exists(filePath))

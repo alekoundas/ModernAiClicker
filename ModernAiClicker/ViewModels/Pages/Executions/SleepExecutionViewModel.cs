@@ -1,44 +1,23 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
-using Model.Structs;
-using Business.Helpers;
-using Model.Business;
-using DataAccess.Repository.Interface;
-using System.Windows.Forms;
-using Model.Enums;
-using System.Collections.ObjectModel;
-using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.ViewModels.Pages.Executions
 {
-    public partial class SleepExecutionViewModel : ObservableObject,INavigationAware
+    public partial class SleepExecutionViewModel : ObservableObject, IExecutionViewModel
     {
-        private readonly ISystemService _systemService;
-        private readonly IBaseDatawork _baseDatawork;
-
         [ObservableProperty]
         private Execution _execution;
 
 
-        public SleepExecutionViewModel(Execution execution, ISystemService systemService, IBaseDatawork baseDatawork)
+        public SleepExecutionViewModel()
         {
-
-            _baseDatawork = baseDatawork;
-            _systemService = systemService;
-
-            _execution = execution;
+            _execution = new Execution();
         }
 
-        public void OnNavigatedFrom()
+        public void SetExecution(Execution execution)
         {
-            throw new NotImplementedException();
-        }
-
-        public void OnNavigatedTo()
-        {
-            throw new NotImplementedException();
+            Execution = execution;
         }
     }
 }

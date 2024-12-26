@@ -6,13 +6,11 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using Business.Extensions;
 using Model.Enums;
-using Model.Structs;
 
 namespace ModernAiClicker.ViewModels.Pages.Executions
 {
-    public partial class CursorMoveExecutionViewModel : ObservableObject
+    public partial class CursorMoveExecutionViewModel : ObservableObject, IExecutionViewModel
     {
-        private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
 
         [ObservableProperty]
@@ -20,16 +18,18 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents;
+        
         [ObservableProperty]
         private int _x;
+        
         [ObservableProperty]
         private int _y;
-        public CursorMoveExecutionViewModel(Execution execution, ISystemService systemService, IBaseDatawork baseDatawork)
+        
+        public CursorMoveExecutionViewModel( IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
-            _systemService = systemService;
-            _execution = execution;
+            _execution = new Execution();
 
             //TODO fix parent
             Parents = new ObservableCollection<FlowStep>();
@@ -43,12 +43,17 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
                 Y = Execution.ResultLocationY.Value;
             }
         }
+        public void SetExecution(Execution execution)
+        {
+            Execution = execution;
+        }
+
         [RelayCommand]
         private async Task OnButtonTestClick()
         {
             //Execution templateSearchExecution = GetExecution();
 
-            _systemService.SetCursorPossition(new Point(Execution.ResultLocationX.Value, Execution.ResultLocationY.Value));
+            //_systemService.SetCursorPossition(new Point(Execution.ResultLocationX.Value, Execution.ResultLocationY.Value));
         }
 
         private Execution GetExecution()

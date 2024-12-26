@@ -58,13 +58,13 @@
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding ViewModel.Execution.FlowStep.Name, Mode=TwoWay}" />
+                Text="{Binding Execution.FlowStep.Name, Mode=TwoWay}" />
 
             <Label>Process</Label>
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding ViewModel.Execution.FlowStep.ProcessName}" />
+                Text="{Binding Execution.FlowStep.ProcessName}" />
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <StackPanel>
@@ -72,14 +72,14 @@
                     <TextBox
                         Margin="0,0,0,20"
                         IsReadOnly="True"
-                        Text="{Binding ViewModel.Execution.FlowStep.Accuracy}" />
+                        Text="{Binding Execution.FlowStep.Accuracy}" />
                 </StackPanel>
                 <StackPanel>
                     <Label>Result accuracy</Label>
                     <TextBox
                         Margin="0,0,0,20"
                         IsReadOnly="True"
-                        Text="{Binding ViewModel.Execution.ResultAccuracy}" />
+                        Text="{Binding Execution.ResultAccuracy}" />
                 </StackPanel>
             </StackPanel>
 
@@ -87,9 +87,10 @@
             <Label>Result image.</Label>
             <Image
                 Grid.Column="0"
+                MaxWidth="100"
+                MaxHeight="100"
                 Margin="0,0,0,20"
-                Source="{Binding ViewModel.Execution.ResultImage}" />
-
+                Source="{Binding Execution.FlowStep.TemplateImage}" />
 
 
 

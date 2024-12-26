@@ -55,7 +55,7 @@
                         <Style TargetType="{x:Type RowDefinition}">
                             <Setter Property="Height" Value="0" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ViewModel.Execution.FlowStep.MouseAction}" Value="{x:Static enum:MouseActionsEnum.LOOP_CLICK}">
+                                <DataTrigger Binding="{Binding Execution.FlowStep.MouseAction}" Value="{x:Static enum:MouseActionsEnum.LOOP_CLICK}">
                                     <Setter Property="Height" Value="Auto" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -75,25 +75,25 @@
             <StackPanel>
 
                 <Label>Click button</Label>
-                <ComboBox ItemsSource="{Binding ViewModel.MouseButtonsEnum}" SelectedItem="{Binding ViewModel.Execution.FlowStep.MouseButton}" />
+                <ComboBox ItemsSource="{Binding MouseButtonsEnum}" SelectedItem="{Binding Execution.FlowStep.MouseButton}" />
 
                 <Label>Click action</Label>
-                <ComboBox ItemsSource="{Binding ViewModel.MouseActionsEnum}" SelectedItem="{Binding ViewModel.Execution.FlowStep.MouseAction}" />
+                <ComboBox ItemsSource="{Binding MouseActionsEnum}" SelectedItem="{Binding Execution.FlowStep.MouseAction}" />
 
             </StackPanel>
 
             <StackPanel Grid.Row="1">
 
                 <Label>Debounce time (miliseconds)</Label>
-                <TextBox Text="{Binding ViewModel.Execution.FlowStep.MouseLoopDebounceTime, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.MouseLoopDebounceTime, Mode=TwoWay}" />
 
 
                 <Label>Loop times</Label>
-                <TextBox Text="{Binding ViewModel.Execution.FlowStep.MouseLoopTimes, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.MouseLoopTimes, Mode=TwoWay}" />
 
 
                 <Label>Infinite loop</Label>
-                <CheckBox IsChecked="{Binding ViewModel.Execution.FlowStep.MouseLoopInfinite}" />
+                <CheckBox IsChecked="{Binding Execution.FlowStep.MouseLoopInfinite}" />
 
             </StackPanel>
 
@@ -115,7 +115,7 @@
                 <Button Content="Cancel">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
+                            <i:InvokeCommandAction Command="{Binding ButtonCancelClickCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
@@ -125,7 +125,7 @@
                 <Button Content="Save">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
+                            <i:InvokeCommandAction Command="{Binding ButtonSaveClickCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>

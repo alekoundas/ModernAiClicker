@@ -21,7 +21,8 @@ namespace ModernAiClicker.Views.Pages
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly IExecutionFactory _executionFactory;
-        private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionWorker>> _workerCache;
+        private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionViewModel>> _executionViewModelCache;
+        private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>> _executionPageCache;
 
 
         public ExecutionPage(
@@ -44,20 +45,49 @@ namespace ModernAiClicker.Views.Pages
             viewModel.NavigateToExecutionDetail += NavigateToExecutionDetailEvent;
 
 
-            _workerCache = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionWorker>>()
+            _executionViewModelCache = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionViewModel>>()
             {
-                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionWorker>(() => new WindowMoveExecutionWorker(baseDatawork, systemService)) },
-                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionWorker>(() => new WindowResizeExecutionWorker(baseDatawork, systemService)) },
-                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionWorker>(() => new MouseMoveExecutionWorker(baseDatawork, systemService)) },
-                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionWorker>(() => new MouseClickExecutionWorker(baseDatawork, systemService)) },
-                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionWorker>(() => new MouseScrollExecutionWorker(baseDatawork, systemService)) },
-                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new TemplateSearchExecutionWorker(baseDatawork, systemService, templateMatchingService)) },
-                { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionWorker>(() => new SleepExecutionWorker(baseDatawork, systemService)) },
-                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionWorker>(() => new GoToExecutionWorker(baseDatawork, systemService)) }
+                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionViewModel>(() => new WindowMoveExecutionViewModel()) },
+                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionViewModel>(() => new WindowResizeExecutionViewModel   ()) },
+                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionViewModel>(() => new CursorMoveExecutionViewModel(baseDatawork)) },
+                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionViewModel>(() => new CursorClickExecutionViewModel  ()) },
+                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionViewModel>(() => new CursorScrollExecutionViewModel()) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionViewModel>(() => new TemplateSearchExecutionViewModel()) },
+                { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionViewModel>(() => new SleepExecutionViewModel  ()) },
+                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionViewModel>(() => new GoToExecutionViewModel(baseDatawork)) }
+            };
+
+            _executionPageCache = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>>()
+            {
+                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionPage>(() => new WindowMoveExecutionPage()) },
+                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionPage>(() => new WindowResizeExecutionPage()) },
+                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionPage>(() => new CursorMoveExecutionPage(baseDatawork)) },
+                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionPage>(() => new CursorClickExecutionPage()) },
+                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionPage>(() => new CursorScrollExecutionPage()) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => new TemplateSearchExecutionPage()) },
+                { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionPage>(() => new SleepExecutionPage()) },
+                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionPage>(() => new GoToExecutionPage(baseDatawork)) }
             };
         }
 
+        public IExecutionViewModel? GetViewModel(FlowStepTypesEnum? flowStepType)
+        {
+            // Lazy initialization (only created on the first access).
+            if (flowStepType.HasValue && _executionViewModelCache.TryGetValue(flowStepType.Value, out var lazyWorker))
+                return lazyWorker.Value;
 
+            return null;
+        }
+
+
+        public IExecutionPage? GetPage(FlowStepTypesEnum? flowStepType)
+        {
+            // Lazy initialization (only created on the first access).
+            if (flowStepType.HasValue && _executionPageCache.TryGetValue(flowStepType.Value, out var lazyWorker))
+                return lazyWorker.Value;
+
+            return null;
+        }
 
 
 
@@ -67,45 +97,18 @@ namespace ModernAiClicker.Views.Pages
             if (execution == null)
                 return;
 
-            if (flowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
+
+            var viewModel = GetViewModel(flowStepType);
+            if (viewModel != null)
             {
-                TemplateSearchExecutionViewModel viewModel = new TemplateSearchExecutionViewModel(execution, _systemService, _templateMatchingService, _baseDatawork);
-                this.UIExecutionDetailFrame.Navigate(new TemplateSearchExecutionPage(viewModel));
-            }
-            else if (flowStepType == FlowStepTypesEnum.MOUSE_CLICK)
-            {
-                CursorClickExecutionViewModel viewModel = new CursorClickExecutionViewModel(execution, _systemService, _templateMatchingService, _baseDatawork);
-                this.UIExecutionDetailFrame.Navigate(new CursorClickExecutionPage(viewModel));
-            }
-            else if (flowStepType == FlowStepTypesEnum.MOUSE_MOVE_COORDINATES)
-            {
-                CursorMoveExecutionViewModel viewModel = new CursorMoveExecutionViewModel(execution, _systemService, _baseDatawork);
-                this.UIExecutionDetailFrame.Navigate(new CursorMoveExecutionPage(viewModel));
-            }
-            else if (flowStepType == FlowStepTypesEnum.SLEEP)
-            {
-                SleepExecutionViewModel viewModel = new SleepExecutionViewModel(execution, _systemService, _baseDatawork);
-                this.UIExecutionDetailFrame.Navigate(new SleepExecutionPage(viewModel));
-            }
-            else if (flowStepType == FlowStepTypesEnum.GO_TO)
-            {
-                GoToExecutionViewModel viewModel = new GoToExecutionViewModel(execution, _systemService, _baseDatawork);
-                this.UIExecutionDetailFrame.Navigate(new GoToExecutionPage(viewModel));
-            }
-            else if (flowStepType == FlowStepTypesEnum.WINDOW_RESIZE)
-            {
-                WindowResizeExecutionViewModel viewModel = new WindowResizeExecutionViewModel(execution, _systemService, _baseDatawork);
-                this.UIExecutionDetailFrame.Navigate(new WindowResizeExecutionPage(viewModel));
-            }
-            else if (flowStepType == FlowStepTypesEnum.WINDOW_MOVE)
-            {
-                WindowMoveExecutionViewModel viewModel = new WindowMoveExecutionViewModel(execution, _systemService, _baseDatawork);
-                this.UIExecutionDetailFrame.Navigate(new WindowMoveExecutionPage(viewModel));
-            }
-            else if (flowStepType == FlowStepTypesEnum.MOUSE_SCROLL)
-            {
-                CursorScrollExecutionViewModel viewModel = new CursorScrollExecutionViewModel(execution, _systemService, _baseDatawork);
-                this.UIExecutionDetailFrame.Navigate(new CursorScrollExecutionPage(viewModel));
+                viewModel.SetExecution(execution);
+
+                var page = GetPage(flowStepType);
+                if (page != null)
+                {
+                    page.SetViewModel(viewModel);
+                    this.UIExecutionDetailFrame.Navigate(page);
+                }
             }
         }
     }

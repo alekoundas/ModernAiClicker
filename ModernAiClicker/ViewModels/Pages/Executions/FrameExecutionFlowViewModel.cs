@@ -1,13 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using Business.Interfaces;
 using System.Collections.ObjectModel;
 using DataAccess.Repository.Interface;
 using Business.Factories;
-using System.Windows.Threading;
-using System.Windows;
-using System.Text.RegularExpressions;
 
 namespace ModernAiClicker.ViewModels.Pages.Executions
 {
@@ -28,7 +23,6 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             _baseDatawork = baseDatawork;
             _executionFactory = executionFactory;
         }
-
 
         //[RelayCommand]
         //private async Task OnButtonStartClick()
