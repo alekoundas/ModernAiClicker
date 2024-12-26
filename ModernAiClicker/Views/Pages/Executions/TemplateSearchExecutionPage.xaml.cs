@@ -15,17 +15,19 @@ namespace ModernAiClicker.Views.Pages.Executions
         public TemplateSearchExecutionPage()
         {
             ViewModel = new TemplateSearchExecutionViewModel();
+            ViewModel.ShowResultImage += ShowResultImage;
             DataContext = ViewModel;
             InitializeComponent();
         }
 
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
+            ViewModel.ShowResultImage -= ShowResultImage;
             ViewModel = (TemplateSearchExecutionViewModel)executionViewModel;
+            ViewModel.ShowResultImage += ShowResultImage;
             DataContext = ViewModel;
 
             //Image display in ui
-            ViewModel.ShowResultImage += ShowResultImage;
         }
 
         public void ShowResultImage(string filePath)
