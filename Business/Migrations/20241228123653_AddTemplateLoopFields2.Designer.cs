@@ -3,6 +3,7 @@ using System;
 using Business.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    partial class InMemoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241228123653_AddTemplateLoopFields2")]
+    partial class AddTemplateLoopFields2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
@@ -24,9 +27,6 @@ namespace Business.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ChildExecutionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("CurrentLoopCount")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("EndedOn")
@@ -125,6 +125,9 @@ namespace Business.Migrations
 
                     b.Property<decimal>("Accuracy")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("CurrentLoopCount")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Disabled")
                         .HasColumnType("INTEGER");

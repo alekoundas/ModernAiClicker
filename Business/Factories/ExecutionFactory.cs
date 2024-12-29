@@ -1,7 +1,5 @@
 ﻿using Business.Factories.Workers;
 using Business.Interfaces;
-using Business.Services;
-using DataAccess;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 
@@ -9,18 +7,14 @@ namespace Business.Factories
 {
     public class ExecutionFactory : IExecutionFactory
     {
-
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
-        private readonly ITemplateSearchService _templateSearchService;
         private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionWorker>> _workerCache;
 
         public ExecutionFactory(IBaseDatawork baseDatawork, ISystemService systemService, ITemplateSearchService templateSearchService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _templateSearchService = templateSearchService;
-
 
             _workerCache = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionWorker>>()
             {
@@ -30,6 +24,7 @@ namespace Business.Factories
                 { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionWorker>(() => new MouseClickExecutionWorker(baseDatawork, systemService)) },
                 { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionWorker>(() => new MouseScrollExecutionWorker(baseDatawork, systemService)) },
                 { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new TemplateSearchExecutionWorker(baseDatawork, systemService, templateSearchService)) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionWorker>(() => new TemplateSearchLoopExecutionWorker(baseDatawork, systemService, templateSearchService)) },
                 { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionWorker>(() => new SleepExecutionWorker(baseDatawork, systemService)) },
                 { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionWorker>(() => new GoToExecutionWorker(baseDatawork, systemService)) }
             };

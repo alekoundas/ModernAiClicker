@@ -58,6 +58,9 @@
     <Compile Update="Views\Pages\Executions\CursorScrollExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\Executions\TemplateSearchLoopExecutionPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\Executions\WindowMoveExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -80,6 +83,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\CursorScrollFlowStepPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\FlowStepDetail\TemplateSearchLoopFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\WindowMoveFlowStepPage.xaml.cs">

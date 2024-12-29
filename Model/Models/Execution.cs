@@ -29,6 +29,9 @@ namespace Model.Models
         [ObservableProperty]
         public bool _isSelected = true;
 
+        [ObservableProperty]
+        public int? _currentLoopCount;
+
         //public Point _resultLocation;
 
 

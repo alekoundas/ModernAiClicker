@@ -248,14 +248,12 @@ namespace Business.Services
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), filename + ".png");
 
             if (File.Exists(filePath))
-            {
                 File.Delete(filePath);
-            }
 
             int width = rectangle.Right - rectangle.Left;
             int height = rectangle.Bottom - rectangle.Top;
 
-            if (width <= 0 && height <= 0)
+            if (width <= 0 || height <= 0)
                 return null;
 
             //Take screenshot

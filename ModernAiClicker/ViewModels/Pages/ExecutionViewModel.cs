@@ -134,7 +134,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
                 factoryWorker.ClearEntityFrameworkChangeTracker();
                 Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution);
-                parentExecution.ResultImage = null;
+                parentExecution.ResultImage = null;// TODO test if needed.
 
 
                 // Add execution to history listbox.
@@ -321,13 +321,13 @@ namespace ModernAiClicker.ViewModels.Pages
             var aa = _baseDatawork.Executions.GetAll();
             _baseDatawork.Executions.RemoveRange(aa);
             _baseDatawork.SaveChanges();
+            //// Reclaim free space in database file.
+            await _baseDatawork.Query.Database.ExecuteSqlRawAsync("VACUUM;");
 
             //ComboBoxExecutionHistories.Remove(ComboBoxSelectedExecutionHistory);
             //ComboBoxSelectedExecutionHistory = null;
             //ListBoxExecutions.Clear();
 
-            //// Reclaim free space in database file.
-            await _baseDatawork.Query.Database.ExecuteSqlRawAsync("VACUUM;");
         }
 
         private async Task LoadFlowStepChildrenExport(FlowStep flowStep)

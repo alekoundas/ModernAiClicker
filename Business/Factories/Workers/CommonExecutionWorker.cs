@@ -1,6 +1,7 @@
 ﻿using Business.Extensions;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 using Model.Enums;
 using Model.Models;
 using System.Collections.ObjectModel;
@@ -9,7 +10,7 @@ using System.Windows.Threading;
 
 namespace Business.Factories.Workers
 {
-    public class CommonExecutionWorker 
+    public class CommonExecutionWorker
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
@@ -30,7 +31,7 @@ namespace Business.Factories.Workers
             return execution;
         }
 
-        public async Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution? parentExecution)
+        public async virtual Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution? parentExecution)
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));
@@ -54,6 +55,7 @@ namespace Business.Factories.Workers
         {
             execution.Status = ExecutionStatusEnum.RUNNING;
             execution.StartedOn = DateTime.Now;
+            execution.CurrentLoopCount += 1;
 
             if (execution.ParentExecution != null)
                 execution.ExecutionFolderDirectory = execution.ParentExecution.ExecutionFolderDirectory;
@@ -69,10 +71,10 @@ namespace Business.Factories.Workers
             await _baseDatawork.SaveChangesAsync();
         }
 
-        public virtual Task ExpandAndSelectFlowStep(Execution execution,ObservableCollection<Flow> treeviewFlows)
+        public async virtual Task ExpandAndSelectFlowStep(Execution execution, ObservableCollection<Flow> treeviewFlows)
         {
             if (execution.FlowStep == null)
-                return Task.CompletedTask;
+                return;
 
             FlowStep? uiFlowStep = treeviewFlows.First()
                 .Descendants()
@@ -84,7 +86,12 @@ namespace Business.Factories.Workers
                 uiFlowStep.IsSelected = true;
             }
 
-            return Task.CompletedTask;
+            if (uiFlowStep?.ParentFlowStep != null)
+                uiFlowStep.ParentFlowStep.IsExpanded = true;
+            if (uiFlowStep?.Flow != null)
+                uiFlowStep.Flow.IsExpanded = true;
+
+            return;
         }
 
         public async virtual Task<FlowStep?> GetNextChildFlowStep(Execution execution)

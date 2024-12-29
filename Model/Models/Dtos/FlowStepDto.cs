@@ -42,6 +42,8 @@ namespace Model.Models
 
         public int LocationX;
         public int LocationY;
+        public int MaxLoopCount;
+        public bool RemoveTemplateFromResult;
 
 
         // Mouse

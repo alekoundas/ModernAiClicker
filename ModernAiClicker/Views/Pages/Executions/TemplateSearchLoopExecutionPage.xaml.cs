@@ -8,13 +8,13 @@ using Wpf.Ui.Controls;
 
 namespace ModernAiClicker.Views.Pages.Executions
 {
-    public partial class TemplateSearchExecutionPage : Page, IExecutionPage
+    public partial class TemplateSearchLoopExecutionPage : Page, IExecutionPage
     {
-        public TemplateSearchExecutionViewModel ViewModel { get; set; }
+        public TemplateSearchLoopExecutionViewModel ViewModel { get; set; }
 
-        public TemplateSearchExecutionPage()
+        public TemplateSearchLoopExecutionPage()
         {
-            ViewModel = new TemplateSearchExecutionViewModel();
+            ViewModel = new TemplateSearchLoopExecutionViewModel();
             DataContext = ViewModel;
             InitializeComponent();
         }
@@ -22,10 +22,11 @@ namespace ModernAiClicker.Views.Pages.Executions
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
             ViewModel.ShowResultImage -= ShowResultImage;
-            ViewModel = (TemplateSearchExecutionViewModel)executionViewModel;
+            ViewModel = (TemplateSearchLoopExecutionViewModel)executionViewModel;
             ViewModel.ShowResultImage += ShowResultImage;
             DataContext = ViewModel;
 
+            //Image display in ui
         }
 
         public void ShowResultImage(string filePath)

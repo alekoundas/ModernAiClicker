@@ -43,6 +43,11 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
                 TemplateSearchFlowStepViewModel viewModel = new TemplateSearchFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new TemplateSearchFlowStepPage(viewModel));
             }
+            else if (flowStep.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP)
+            {
+                TemplateSearchLoopFlowStepViewModel viewModel = new TemplateSearchLoopFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new TemplateSearchLoopFlowStepPage(viewModel));
+            }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_CLICK)
             {
                 CursorClickFlowStepViewModel viewModel = new CursorClickFlowStepViewModel(flowStep, _flowsViewModel,  _systemService,  _baseDatawork);

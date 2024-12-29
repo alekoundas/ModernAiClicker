@@ -110,6 +110,9 @@ namespace ModernAiClicker
                 services.AddSingleton<TemplateSearchFlowStepPage>();
                 services.AddSingleton<TemplateSearchFlowStepViewModel>();
 
+                services.AddSingleton<TemplateSearchLoopFlowStepPage>();
+                services.AddSingleton<TemplateSearchLoopFlowStepViewModel>();
+
                 services.AddSingleton<CursorClickFlowStepPage>();
                 services.AddSingleton<CursorClickFlowStepViewModel>();
 
@@ -135,6 +138,9 @@ namespace ModernAiClicker
                 services.AddSingleton<TemplateSearchExecutionPage>();
                 services.AddSingleton<TemplateSearchExecutionViewModel>();
 
+                services.AddSingleton<TemplateSearchLoopExecutionPage>();
+                services.AddSingleton<TemplateSearchLoopExecutionViewModel>();
+
                 services.AddSingleton<CursorClickExecutionPage>();
                 services.AddSingleton<CursorClickExecutionViewModel>();
 
@@ -158,27 +164,8 @@ namespace ModernAiClicker
 
 
 
-                //// DB context
-                //var dataSource = Path.Combine(PathHelper.GetAppDataPath(), "AutoFlowClicker.db");
-                //services.AddDbContextFactory<InMemoryDbContext>(options => options.UseSqlite($"Data Source={dataSource};"));
-
+                // DB context
                 services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Transient);
-
-
-                //services.AddTransient<InMemoryDbContext>();
-                //var dbContext = services.BuildServiceProvider().GetService<InMemoryDbContext>();
-                //if (dbContext != null)
-                //{
-                //    var jsonFlows = GetFlowsFromJson();
-                //    if (jsonFlows == null)
-                //        return;
-
-                //    dbContext.Flows.AddRange(jsonFlows);
-                //    dbContext.SaveChanges();
-                //}
-
-
-
             }).Build();
 
         /// <summary>

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Rectangle = Model.Structs.Rectangle;
 
 namespace Business.Services
 {
@@ -19,27 +20,23 @@ namespace Business.Services
         }
 
 
-        public TemplateMatchingResult SearchForTemplate(Bitmap template, Model.Structs.Rectangle windowRectangle)
+        public TemplateMatchingResult SearchForTemplate(Bitmap template, Bitmap screenshot, bool removeTemplateFromResult)
         {
             //Bitmap template = (Bitmap)Image.FromFile(templatePath);
-            Bitmap? screenshot = SystemService.TakeScreenShot(windowRectangle);
-
-            if (screenshot == null)
-                return new TemplateMatchingResult().Failure();
+            //Bitmap? screenshot = SystemService.TakeScreenShot(windowRectangle);
 
             Mat matTemplate = OpenCvSharp.WpfExtensions.BitmapSourceConverter.ToMat(Convert(template));
             Mat matScreenshot = OpenCvSharp.WpfExtensions.BitmapSourceConverter.ToMat(Convert(screenshot));
             Mat result = matScreenshot.MatchTemplate(matTemplate, OpenCvSharp.TemplateMatchModes.CCoeffNormed);
 
-
+            // Execute search.
             result.MinMaxLoc(out double minConfidence,
                              out double maxConfidence,
                              out OpenCvSharp.Point minLoc,
                              out OpenCvSharp.Point maxLoc);
 
-
-            //Get center possition of needle image
-            Model.Structs.Rectangle resultRectangle = new Model.Structs.Rectangle()
+            // Get center possition of template image.
+            Rectangle resultRectangle = new Rectangle()
             {
                 Top = maxLoc.Y,
                 Left = maxLoc.X,
@@ -47,13 +44,12 @@ namespace Business.Services
                 Bottom = maxLoc.Y + matTemplate.Height,
             };
 
-            //Draws rectangle in result image
-             DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle);
+            // Draws rectangle in result image.
+            DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle, removeTemplateFromResult);
 
-            //Save result image
+            //Save result image to drive
             string resultFilePath = Path.Combine(PathHelper.GetAppDataPath(), "Result.png");
             matScreenshot.SaveImage(resultFilePath);
-
 
             return new TemplateMatchingResult()
             {
@@ -86,12 +82,15 @@ namespace Business.Services
             return bitmapSource;
         }
 
-        private static void DrawResultRectangle(double confidence, Mat matScreenshot, Model.Structs.Rectangle resultRectangle)
+        private static void DrawResultRectangle(double confidence, Mat matScreenshot, Rectangle resultRectangle, bool removeTemplateFromResult)
         {
             OpenCvSharp.Point point1 = new OpenCvSharp.Point(resultRectangle.Left, resultRectangle.Top);
             OpenCvSharp.Point point2 = new OpenCvSharp.Point(resultRectangle.Right, resultRectangle.Bottom);
 
-            matScreenshot.Rectangle(point1, point2, new Scalar(0, 0, 255), 2);
+            if (removeTemplateFromResult)
+                matScreenshot.Rectangle(point1, point2, new Scalar(0, 0, 255), -1);
+            else
+                matScreenshot.Rectangle(point1, point2, new Scalar(0, 0, 255), 2);
 
             //string text = $"Confidence: {Math.Round((float)(maxVal), 2)}";
             string text = Math.Round((float)(confidence), 2).ToString();
@@ -102,6 +101,5 @@ namespace Business.Services
 
             matScreenshot.PutText(text, point1, font, fontScale, textColor, thickness);
         }
-
     }
 }

@@ -64,6 +64,11 @@ namespace Model.Models
         [ObservableProperty]
         public int _locationY;
 
+        [ObservableProperty]
+        public int _maxLoopCount;
+
+        [ObservableProperty]
+        public bool _removeTemplateFromResult;
 
         // Mouse
         [ObservableProperty]

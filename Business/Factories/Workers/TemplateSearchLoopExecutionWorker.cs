@@ -11,13 +11,14 @@ using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
 {
-    public class TemplateSearchExecutionWorker : CommonExecutionWorker, IExecutionWorker
+    public class TemplateSearchLoopExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
+        private string _previousResultImagePath = "";
 
-        public TemplateSearchExecutionWorker(
+        public TemplateSearchLoopExecutionWorker(
               IBaseDatawork baseDatawork
             , ISystemService systemService
             , ITemplateSearchService templateSearchService
@@ -28,6 +29,28 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
+        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution? parentExecution)
+        {
+            if (parentExecution == null)
+                throw new ArgumentNullException(nameof(parentExecution));
+
+            Execution execution = new Execution();
+            execution.FlowStepId = flowStep.Id;
+            execution.ParentExecutionId = parentExecution.Id;
+            execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
+            execution.CurrentLoopCount = parentExecution?.CurrentLoopCount == null ? 0 : parentExecution.CurrentLoopCount + 1;
+            _previousResultImagePath = parentExecution?.ResultImagePath ?? "";
+
+
+            _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+
+            parentExecution.ChildExecutionId = execution.Id;
+            await _baseDatawork.SaveChangesAsync();
+
+            execution.FlowStep = flowStep;
+            return execution;
+        }
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
@@ -42,7 +65,14 @@ namespace Business.Factories.Workers
                 searchRectangle = _systemService.GetScreenSize();
 
             // Get screenshot.
-            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle);
+            // New if not previous exists.
+            // Get previous one if exists.
+            Bitmap? screenshot = null;
+            if (_previousResultImagePath.Length > 0)
+                screenshot = (Bitmap)Image.FromFile(_previousResultImagePath);
+            else
+                screenshot = _systemService.TakeScreenShot(searchRectangle);
+
             if (screenshot == null)
                 return;
 
@@ -50,17 +80,17 @@ namespace Business.Factories.Workers
             using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, false);
+                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
 
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
                 int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
                 bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
                 execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
+                _previousResultImagePath = isSuccessful ? _previousResultImagePath : "";// TODO Find a better way.
 
                 execution.ResultLocationX = x;
                 execution.ResultLocationY = y;
-                //execution.ResultImage = result.ResultImage;
                 execution.ResultImagePath = result.ResultImagePath;
                 execution.ResultAccuracy = result.Confidence;
 
@@ -101,7 +131,16 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            // Get next sibling flow step. 
+            // If execution was successfull and (MaxLoopCount is 0 or CurrentLoopCount < MaxLoopCount), return te same flow step.
+            if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
+            {
+                if (execution.FlowStep.MaxLoopCount == 0)
+                    return execution.FlowStep;
+                else if (execution.CurrentLoopCount < execution.FlowStep.MaxLoopCount)
+                    return execution.FlowStep;
+            }
+
+            // If not, get next sibling flow step. 
             Expression<Func<FlowStep, bool>> nextStepFilter;
 
             if (execution.FlowStep.ParentFlowStepId != null)
@@ -125,7 +164,6 @@ namespace Business.Factories.Workers
 
             return nextFlowStep;
         }
-
 
         public async override Task SaveToDisk(Execution execution)
         {

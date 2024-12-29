@@ -20,6 +20,7 @@ namespace Model.Models
 
         public DateTime? StartedOn;
         public DateTime? EndedOn;
+        public int CurrentLoopCount;
 
 
         public bool IsSelected;

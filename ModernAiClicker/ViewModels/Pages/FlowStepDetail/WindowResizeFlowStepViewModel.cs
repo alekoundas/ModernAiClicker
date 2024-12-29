@@ -67,7 +67,12 @@ namespace ModernAiClicker.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
-
+                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
+                updateFlowStep.Name = FlowStep.Name;
+                updateFlowStep.WindowHeight = FlowStep.WindowHeight;
+                updateFlowStep.WindowWidth = FlowStep.WindowWidth;
+                updateFlowStep.ProcessName = FlowStep.ProcessName;
+                updateFlowStep.FlowStepType = FlowStep.FlowStepType;
             }
 
             /// Add mode
@@ -100,7 +105,6 @@ namespace ModernAiClicker.ViewModels.Pages
 
             _baseDatawork.SaveChanges();
                 await _flowsViewModel.RefreshData();
-            await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
         }
     }
 }
