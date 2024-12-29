@@ -1,12 +1,8 @@
 ﻿using Business.Interfaces;
-using Business.Services;
-using DataAccess;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using Model.Models;
-using ModernAiClicker.CustomEvents;
 using ModernAiClicker.ViewModels.Pages;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace ModernAiClicker.Views.Pages.FlowStepDetail
@@ -19,7 +15,13 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
         private FlowsViewModel _flowsViewModel;
         public NewSelectTypeFlowStepViewModel ViewModel { get; }
 
-        public NewSelectTypeFlowStepPage(NewSelectTypeFlowStepViewModel viewModel, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public NewSelectTypeFlowStepPage(
+            NewSelectTypeFlowStepViewModel viewModel,
+            FlowsViewModel flowsViewModel,
+            ISystemService systemService,
+            ITemplateSearchService templateMatchingService,
+            IBaseDatawork baseDatawork
+            )
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
@@ -48,9 +50,14 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
                 TemplateSearchLoopFlowStepViewModel viewModel = new TemplateSearchLoopFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new TemplateSearchLoopFlowStepPage(viewModel));
             }
+            else if (flowStep.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
+            {
+                MultipleTemplateSearchLoopFlowStepViewModel viewModel = new MultipleTemplateSearchLoopFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new MultipleTemplateSearchLoopFlowStepPage(viewModel));
+            }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_CLICK)
             {
-                CursorClickFlowStepViewModel viewModel = new CursorClickFlowStepViewModel(flowStep, _flowsViewModel,  _systemService,  _baseDatawork);
+                CursorClickFlowStepViewModel viewModel = new CursorClickFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new CursorClickFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.MOUSE_MOVE_COORDINATES)
@@ -84,6 +91,5 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
                 this.UIFlowStepDetailFrame.Navigate(new CursorScrollFlowStepPage(viewModel));
             }
         }
-
     }
 }

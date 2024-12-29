@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    [Migration("20240811090402_Migration2")]
-    partial class Migration2
+    [Migration("20241229200339_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,9 @@ namespace Business.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ChildExecutionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CurrentLoopCount")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("EndedOn")
@@ -58,6 +61,12 @@ namespace Business.Migrations
 
                     b.Property<string>("ResultImagePath")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("ResultLocationX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ResultLocationY")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("RunFor")
                         .IsRequired()
@@ -135,6 +144,15 @@ namespace Business.Migrations
                     b.Property<bool>("IsSelected")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("LocationX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LocationY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MaxLoopCount")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("MouseAction")
                         .HasColumnType("INTEGER");
 
@@ -153,6 +171,9 @@ namespace Business.Migrations
                     b.Property<int?>("MouseLoopTimes")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("MouseScrollDirectionEnum")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -169,6 +190,9 @@ namespace Business.Migrations
                     b.Property<string>("ProcessName")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("RemoveTemplateFromResult")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("SleepForHours")
                         .HasColumnType("INTEGER");
@@ -214,7 +238,7 @@ namespace Business.Migrations
                     b.HasOne("Model.Models.Execution", "ChildExecution")
                         .WithOne("ParentExecution")
                         .HasForeignKey("Model.Models.Execution", "ChildExecutionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Model.Models.Flow", "Flow")
                         .WithMany("Executions")

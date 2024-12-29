@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Business.Migrations
 {
     /// <inheritdoc />
-    public partial class sadda : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,7 +46,12 @@ namespace Business.Migrations
                     TemplateImagePath = table.Column<string>(type: "TEXT", nullable: false),
                     TemplateImage = table.Column<byte[]>(type: "BLOB", nullable: true),
                     Accuracy = table.Column<decimal>(type: "TEXT", nullable: false),
+                    LocationX = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationY = table.Column<int>(type: "INTEGER", nullable: false),
+                    MaxLoopCount = table.Column<int>(type: "INTEGER", nullable: false),
+                    RemoveTemplateFromResult = table.Column<bool>(type: "INTEGER", nullable: false),
                     MouseAction = table.Column<int>(type: "INTEGER", nullable: false),
+                    MouseScrollDirectionEnum = table.Column<int>(type: "INTEGER", nullable: false),
                     MouseButton = table.Column<int>(type: "INTEGER", nullable: false),
                     MouseLoopInfinite = table.Column<bool>(type: "INTEGER", nullable: false),
                     MouseLoopTimes = table.Column<int>(type: "INTEGER", nullable: true),
@@ -67,7 +72,7 @@ namespace Business.Migrations
                         column: x => x.ParentFlowStepId,
                         principalTable: "FlowSteps",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_FlowSteps_FlowSteps_ParentTemplateSearchFlowStepId",
                         column: x => x.ParentTemplateSearchFlowStepId,
@@ -88,6 +93,8 @@ namespace Business.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    ResultLocationX = table.Column<int>(type: "INTEGER", nullable: true),
+                    ResultLocationY = table.Column<int>(type: "INTEGER", nullable: true),
                     FlowId = table.Column<int>(type: "INTEGER", nullable: true),
                     FlowStepId = table.Column<int>(type: "INTEGER", nullable: true),
                     ParentExecutionId = table.Column<int>(type: "INTEGER", nullable: true),
@@ -99,6 +106,7 @@ namespace Business.Migrations
                     StartedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     EndedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     IsSelected = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CurrentLoopCount = table.Column<int>(type: "INTEGER", nullable: true),
                     ResultImage = table.Column<byte[]>(type: "BLOB", nullable: true),
                     ResultImagePath = table.Column<string>(type: "TEXT", nullable: true),
                     ResultAccuracy = table.Column<decimal>(type: "TEXT", nullable: false)
@@ -111,13 +119,7 @@ namespace Business.Migrations
                         column: x => x.ChildExecutionId,
                         principalTable: "Executions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                       name: "FK_Executions_Executions_ParentExecutionId",
-                       column: x => x.ParentExecutionId,
-                       principalTable: "Executions",
-                       principalColumn: "Id",
-                       onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Executions_FlowSteps_FlowStepId",
                         column: x => x.FlowStepId,

@@ -16,5 +16,6 @@ namespace Model.Enums
         WINDOW_MOVE,
         MOUSE_SCROLL,
         TEMPLATE_SEARCH_LOOP,
+        MULTIPLE_TEMPLATE_SEARCH_LOOP,
     }
 }

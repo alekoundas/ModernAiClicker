@@ -184,6 +184,10 @@ namespace Business.Migrations
                     b.Property<int?>("ParentTemplateSearchFlowStepId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("PreviousLoopResultImagePath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ProcessName")
                         .IsRequired()
                         .HasColumnType("TEXT");

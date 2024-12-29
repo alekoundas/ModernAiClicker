@@ -105,29 +105,6 @@
             <Image x:Name="UIResultImage" Grid.Column="0" />
 
 
-
-            <!--<Label>5. Actions</Label>
-            <Grid>
-            <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-            <Label>No succesfull find</Label>
-            <ComboBox ItemsSource="{Binding Source={StaticResource FlowStepActionsNotFoundEnum}}" SelectedItem="{Binding ViewModel.FlowStep.FlowStepActionsNotFound, Mode=TwoWay}" />
-
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-            <Label>Sucessfull find</Label>
-            <ComboBox ItemsSource="{Binding Source={StaticResource FlowStepActionsFoundEnum}}" SelectedItem="{Binding ViewModel.FlowStep.FlowStepActionsFound, Mode=TwoWay}" />
-
-            </StackPanel>
-
-
-            </Grid>-->
-
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />

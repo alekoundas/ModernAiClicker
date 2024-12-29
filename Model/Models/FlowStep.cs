@@ -70,6 +70,9 @@ namespace Model.Models
         [ObservableProperty]
         public bool _removeTemplateFromResult;
 
+        [ObservableProperty]
+        public string _previousLoopResultImagePath = "";
+
         // Mouse
         [ObservableProperty]
         public MouseActionsEnum _mouseAction;
@@ -113,16 +116,9 @@ namespace Model.Models
         public int _windowWidth;
 
 
-        // TODO: rename prop since its also used by GoTo
+        // TODO: rename prop since its also used by GoTo and also by "MultipleTemplateSearch"
         public int? ParentTemplateSearchFlowStepId { get; set; }
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
         public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
-
-
-
-        public virtual void LoadChildren(int id,ObservableCollection<FlowStep> children)
-        {
-        }
-
     }
 }

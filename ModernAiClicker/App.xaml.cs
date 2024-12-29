@@ -83,6 +83,8 @@ namespace ModernAiClicker
                 services.AddScoped<MouseClickExecutionWorker>();
                 services.AddScoped<MouseScrollExecutionWorker>();
                 services.AddScoped<TemplateSearchExecutionWorker>();
+                services.AddScoped<TemplateSearchLoopExecutionWorker>();
+                services.AddScoped<MultipleTemplateSearchLoopExecutionWorker>();
                 services.AddScoped<SleepExecutionWorker>();
                 services.AddScoped<GoToExecutionWorker>();
 
@@ -113,6 +115,9 @@ namespace ModernAiClicker
                 services.AddSingleton<TemplateSearchLoopFlowStepPage>();
                 services.AddSingleton<TemplateSearchLoopFlowStepViewModel>();
 
+                services.AddSingleton<MultipleTemplateSearchLoopFlowStepPage>();
+                services.AddSingleton<MultipleTemplateSearchLoopFlowStepViewModel>();
+
                 services.AddSingleton<CursorClickFlowStepPage>();
                 services.AddSingleton<CursorClickFlowStepViewModel>();
 
@@ -140,6 +145,9 @@ namespace ModernAiClicker
 
                 services.AddSingleton<TemplateSearchLoopExecutionPage>();
                 services.AddSingleton<TemplateSearchLoopExecutionViewModel>();
+
+                services.AddSingleton<MultipleTemplateSearchLoopExecutionPage>();
+                services.AddSingleton<MultipleTemplateSearchLoopExecutionViewModel>();
 
                 services.AddSingleton<CursorClickExecutionPage>();
                 services.AddSingleton<CursorClickExecutionViewModel>();

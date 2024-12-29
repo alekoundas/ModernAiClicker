@@ -11,14 +11,14 @@ using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
 {
-    public class TemplateSearchLoopExecutionWorker : CommonExecutionWorker, IExecutionWorker
+    public class MultipleTemplateSearchLoopExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
         private string _previousResultImagePath = "";
 
-        public TemplateSearchLoopExecutionWorker(
+        public MultipleTemplateSearchLoopExecutionWorker(
               IBaseDatawork baseDatawork
             , ISystemService systemService
             , ITemplateSearchService templateSearchService

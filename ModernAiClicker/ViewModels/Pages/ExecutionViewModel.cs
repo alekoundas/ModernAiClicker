@@ -303,9 +303,9 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
             //Import
-            //var aaaaa = _systemService.LoadFlowsJSON();
-            //_baseDatawork.Flows.Add(aaaaa[0]);
-            //await _baseDatawork.SaveChangesAsync();
+            var aaaaa = _systemService.LoadFlowsJSON();
+            _baseDatawork.Flows.Add(aaaaa[0]);
+            await _baseDatawork.SaveChangesAsync();
 
 
             //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("CREATE TABLE TempExecutions AS SELECT * FROM Executions WHERE 1=0;");

@@ -241,11 +241,15 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
         [RelayCommand]
-        private void OnTreeViewItemSelected(RoutedPropertyChangedEventArgs<object> routedPropertyChangedEventArgs)
+        private async Task OnTreeViewItemSelected(RoutedPropertyChangedEventArgs<object> routedPropertyChangedEventArgs)
         {
             object selectedItem = routedPropertyChangedEventArgs.NewValue;
             if (selectedItem is FlowStep)
-                NavigateToFlowStepTypeSelectionPage?.Invoke((FlowStep)selectedItem);
+            {
+                FlowStep flowStep = (FlowStep)selectedItem;
+                flowStep  = await _baseDatawork.Query.FlowSteps.Include(x => x.ChildrenTemplateSearchFlowSteps).Where(x => x.Id == flowStep.Id).FirstOrDefaultAsync();
+                NavigateToFlowStepTypeSelectionPage?.Invoke(flowStep);
+            }
 
         }
 

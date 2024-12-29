@@ -5,24 +5,24 @@
 namespace Business.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTemplateLoopFields2 : Migration
+    public partial class MultipleTemplateSearchLoopMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "RemoveTemplateFromResult",
+            migrationBuilder.AddColumn<string>(
+                name: "PreviousLoopResultImagePath",
                 table: "FlowSteps",
-                type: "INTEGER",
+                type: "TEXT",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "RemoveTemplateFromResult",
+                name: "PreviousLoopResultImagePath",
                 table: "FlowSteps");
         }
     }
