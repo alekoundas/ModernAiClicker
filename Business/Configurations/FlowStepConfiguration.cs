@@ -28,7 +28,7 @@ namespace DataAccess.Configurations
                .WithMany(x => x.ChildrenTemplateSearchFlowSteps)
                .HasForeignKey(x => x.ParentTemplateSearchFlowStepId)
                .IsRequired(false)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.Cascade); // TODO make set null
 
         }
     }

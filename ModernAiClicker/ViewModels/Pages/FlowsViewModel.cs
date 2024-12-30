@@ -37,7 +37,6 @@ namespace ModernAiClicker.ViewModels.Pages
 
         }
 
-        //TODO find a fix for includes
         public async Task RefreshData()
         {
             List<Flow> flows = await _baseDatawork.Query.Flows
@@ -71,9 +70,32 @@ namespace ModernAiClicker.ViewModels.Pages
             }
         }
 
+        //public async Task RefreshData()
+        //{
+        //    List<Flow> flows = await _baseDatawork.Query.Flows
+        //        .Include(x => x.FlowSteps)
+        //        .ThenInclude(x => x.ChildrenFlowSteps)
+        //        .ThenInclude(x => x.ChildrenFlowSteps)
+        //    .ThenInclude(x => x.ChildrenFlowSteps)
+        //    .ThenInclude(x => x.ChildrenFlowSteps)
+        //    .ThenInclude(x => x.ChildrenFlowSteps)
+        //    .ThenInclude(x => x.ChildrenFlowSteps)
+        //    .ThenInclude(x => x.ChildrenFlowSteps)
+        //    .ThenInclude(x => x.ChildrenFlowSteps)
+        //    .ThenInclude(x => x.ChildrenFlowSteps)
+        //    //.ThenInclude(x => x.ChildrenFlowSteps)
+        //    //.ThenInclude(x => x.ChildrenFlowSteps)
+        //    //.ThenInclude(x => x.ChildrenFlowSteps)
+        //    //.ThenInclude(x => x.ChildrenFlowSteps)
+        //    //.ThenInclude(x => x.ChildrenFlowSteps)
+        //    //.ThenInclude(x => x.ChildrenFlowSteps)
+        //    //.ThenInclude(x => x.ChildrenFlowSteps)
+        //    //.ThenInclude(x => x.ChildrenFlowSteps)
+        //    .ToListAsync();
 
-
-
+        //    FlowsList = null;
+        //    FlowsList = new ObservableCollection<Flow>(flows);
+        //}
 
         [RelayCommand]
         private async Task OnButtonAddFlowClick()
@@ -99,6 +121,12 @@ namespace ModernAiClicker.ViewModels.Pages
         private void OnButtonLockClick()
         {
             IsLocked = !IsLocked;
+        }
+
+        [RelayCommand]
+        private async Task OnButtonSyncClick()
+        {
+            await RefreshData();
         }
 
         [RelayCommand]
@@ -247,7 +275,7 @@ namespace ModernAiClicker.ViewModels.Pages
             if (selectedItem is FlowStep)
             {
                 FlowStep flowStep = (FlowStep)selectedItem;
-                flowStep  = await _baseDatawork.Query.FlowSteps.Include(x => x.ChildrenTemplateSearchFlowSteps).Where(x => x.Id == flowStep.Id).FirstOrDefaultAsync();
+                flowStep = await _baseDatawork.Query.FlowSteps.Include(x => x.ChildrenTemplateSearchFlowSteps).Where(x => x.Id == flowStep.Id).FirstOrDefaultAsync();
                 NavigateToFlowStepTypeSelectionPage?.Invoke(flowStep);
             }
 
@@ -272,7 +300,6 @@ namespace ModernAiClicker.ViewModels.Pages
                     if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
                         List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                            .Include(x => x.ChildrenFlowSteps)
                             .Where(x => x.Id == childrenFlowStep.Id)
                             .SelectMany(x => x.ChildrenFlowSteps)
                             .ToListAsync();
@@ -292,7 +319,6 @@ namespace ModernAiClicker.ViewModels.Pages
                     if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
                         List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                            .Include(x => x.ChildrenFlowSteps)
                             .Where(x => x.Id == childrenFlowStep.Id)
                             .SelectMany(x => x.ChildrenFlowSteps)
                             .ToListAsync();

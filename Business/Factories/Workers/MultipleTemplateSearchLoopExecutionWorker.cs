@@ -75,23 +75,24 @@ namespace Business.Factories.Workers
                 .ToList();
 
             // Get first child template search flow step that isnt completed.
-
-            var askata = await _baseDatawork.Query.FlowSteps
+            // TODO 
+            var children = await _baseDatawork.Query.FlowSteps
+             .AsNoTracking()
              .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
+             .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.id))
              .ToListAsync();
+            //var children = await _baseDatawork.Query.FlowSteps
+            //             .AsNoTracking()
+            //             .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
+            //             .ToListAsync();
 
-             FlowStep? childTemplateSearchFlowStep = askata.Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id))
-             .OrderBy(x => x.Id)
-             .FirstOrDefault();
+            //children = children
+            //    .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id)).ToList();
 
+            FlowStep? childTemplateSearchFlowStep = children
+            .OrderBy(x => x.Id)
+            .FirstOrDefault();
 
-
-            //FlowStep? childTemplateSearchFlowStep = _baseDatawork.Query.FlowSteps
-            //   .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
-            //   .ToList()
-            //   .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id))
-            //   .OrderBy(x => x.Id)
-            //   .FirstOrDefault();
 
             // If all children are completed, set execution as complete.
             // Else execute step.

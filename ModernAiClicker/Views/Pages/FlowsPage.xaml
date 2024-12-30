@@ -255,6 +255,23 @@
                 <icons:BootstrapIcon
                     Width="32"
                     Height="32"
+                    Icon="ArrowRepeat" />
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSyncClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+            </ui:Button>
+            <ui:Button
+                Margin="10"
+                HorizontalAlignment="Right"
+                IsEnabled="true">
+
+                <icons:BootstrapIcon
+                    Width="32"
+                    Height="32"
                     Icon="LockFill" />
 
                 <i:Interaction.Triggers>
@@ -782,6 +799,9 @@
                                                 <Setter Property="ContentTemplate" Value="{StaticResource FlowStepSuccessFail}" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.TEMPLATE_SEARCH}">
+                                                <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExistingTemplateSearch}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP}">
                                                 <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExistingTemplateSearch}" />
                                             </DataTrigger>
                                         </Style.Triggers>

@@ -259,7 +259,6 @@ namespace ModernAiClicker.ViewModels.Pages
                     if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
                         List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                            .Include(x => x.ChildrenFlowSteps)
                             .Where(x => x.Id == childrenFlowStep.Id)
                             .SelectMany(x => x.ChildrenFlowSteps)
                             .ToListAsync();
@@ -279,7 +278,6 @@ namespace ModernAiClicker.ViewModels.Pages
                     if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
                     {
                         List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                            .Include(x => x.ChildrenFlowSteps)
                             .Where(x => x.Id == childrenFlowStep.Id)
                             .SelectMany(x => x.ChildrenFlowSteps)
                             .ToListAsync();

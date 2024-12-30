@@ -571,7 +571,7 @@
                                                 Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
                                                 Text="{Binding FlowStepType}" />
 
-                                         
+
                                         </Grid>
                                     </DataTemplate>
                                     <!--  Child TreeViewItem Existing ContentPresenter (Existing Flow Step)  -->
@@ -658,8 +658,7 @@
                                             x:Name="TreeViewItemButtonNew"
                                             Padding="10"
                                             HorizontalAlignment="Center"
-                                            Content="Add">
-                                        </ui:Button>
+                                            Content="Add" />
                                     </DataTemplate>
 
 
@@ -817,6 +816,10 @@
                                     <TextBlock Text="{Binding Id}" />
                                     <TextBlock Text="{Binding FlowStepId}" />
                                     <TextBlock Text="{Binding FlowId}" />
+                                    <Image
+                                        MaxWidth="50"
+                                        MaxHeight="50"
+                                        Source="{Binding FlowStep.TemplateImage}" />
                                     <TextBlock Text="{Binding FlowStep.FlowStepType}" />
 
                                 </StackPanel>
