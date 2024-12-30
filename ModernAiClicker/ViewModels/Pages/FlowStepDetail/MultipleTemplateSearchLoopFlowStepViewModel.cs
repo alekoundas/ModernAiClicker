@@ -84,7 +84,7 @@ namespace ModernAiClicker.ViewModels.Pages
             if (eventParameters.FlowId is FlowStep)
             {
                 FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
-                templateFlowStep.PreviousLoopResultImagePath = "";
+                templateFlowStep.LoopResultImagePath = "";
             }
             ShowResultImage?.Invoke("");
         }
@@ -109,8 +109,8 @@ namespace ModernAiClicker.ViewModels.Pages
                 // New if not previous exists.
                 // Get previous one if exists.
                 Bitmap? screenshot = null;
-                if (templateFlowStep.PreviousLoopResultImagePath.Length > 0)
-                    screenshot = (Bitmap)Image.FromFile(templateFlowStep.PreviousLoopResultImagePath);
+                if (templateFlowStep.LoopResultImagePath.Length > 0)
+                    screenshot = (Bitmap)Image.FromFile(templateFlowStep.LoopResultImagePath);
                 else
                     screenshot = _systemService.TakeScreenShot(searchRectangle);
 
@@ -127,7 +127,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
                     if (result.ResultImagePath.Length > 0)
                     {
-                        templateFlowStep.PreviousLoopResultImagePath = result.ResultImagePath;
+                        templateFlowStep.LoopResultImagePath = result.ResultImagePath;
                         ShowResultImage?.Invoke(result.ResultImagePath);
                     }
 

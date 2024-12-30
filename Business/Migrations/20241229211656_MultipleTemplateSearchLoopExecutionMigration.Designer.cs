@@ -3,6 +3,7 @@ using System;
 using Business.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    partial class InMemoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241229211656_MultipleTemplateSearchLoopExecutionMigration")]
+    partial class MultipleTemplateSearchLoopExecutionMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
@@ -55,6 +58,10 @@ namespace Business.Migrations
 
                     b.Property<int?>("ParentLoopExecutionId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("PreviousLoopResultImagePath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("ResultAccuracy")
                         .HasColumnType("TEXT");
@@ -156,10 +163,6 @@ namespace Business.Migrations
                     b.Property<int>("LocationY")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("LoopResultImagePath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("MaxLoopCount")
                         .HasColumnType("INTEGER");
 
@@ -196,6 +199,10 @@ namespace Business.Migrations
 
                     b.Property<int?>("ParentTemplateSearchFlowStepId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("PreviousLoopResultImagePath")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProcessName")
                         .IsRequired()

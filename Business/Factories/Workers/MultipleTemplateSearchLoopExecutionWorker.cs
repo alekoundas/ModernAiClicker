@@ -16,7 +16,6 @@ namespace Business.Factories.Workers
         private readonly IBaseDatawork _baseDatawork;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
-        private string _previousResultImagePath = "";
 
         public MultipleTemplateSearchLoopExecutionWorker(
               IBaseDatawork baseDatawork
@@ -36,16 +35,17 @@ namespace Business.Factories.Workers
 
             Execution execution = new Execution();
             execution.FlowStepId = flowStep.Id;
-            execution.ParentExecutionId = parentExecution.Id;
+            execution.ParentExecutionId = parentExecution.Id;// TODO This is wrong!
+            execution.ParentLoopExecutionId = parentExecution.Id;
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
-            execution.CurrentLoopCount = parentExecution?.CurrentLoopCount == null ? 0 : parentExecution.CurrentLoopCount + 1;
-            _previousResultImagePath = parentExecution?.ResultImagePath ?? "";
+            execution.LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1;
 
 
             _baseDatawork.Executions.Add(execution);
             await _baseDatawork.SaveChangesAsync();
 
-            parentExecution.ChildExecutionId = execution.Id;
+            parentExecution.ChildExecutionId = execution.Id;// TODO propably also this is wrong
+            parentExecution.ChildLoopExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
             execution.FlowStep = flowStep;
@@ -56,6 +56,57 @@ namespace Business.Factories.Workers
         {
             if (execution.FlowStep == null)
                 return;
+
+            List<Execution> executions = _baseDatawork.Executions.GetAll();
+
+
+            // Get recursively all parents of loop execution.
+            List<Execution?> parentLoopExecutions = executions
+                .First(x => x.Id == execution.ParentLoopExecutionId)
+                .SelectRecursive<Execution?>(x => x.ParentLoopExecution)
+                .Where(x => x != null)
+                .ToList();
+
+            // Get all completed children template flow steps.
+            List<int> completedChildrenTemplateFlowStepIds = executions
+                .Where(x => parentLoopExecutions.Any(y => y.Id == x.Id))
+                .Where(x => x.ExecutionResultEnum == ExecutionResultEnum.FAIL || (x.FlowStep.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.MaxLoopCount))
+                .Select(x => x.FlowStepId ?? 0)
+                .ToList();
+
+            // Get first child template search flow step that isnt completed.
+
+            var askata = await _baseDatawork.Query.FlowSteps
+             .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
+             .ToListAsync();
+
+             FlowStep? childTemplateSearchFlowStep = askata.Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id))
+             .OrderBy(x => x.Id)
+             .FirstOrDefault();
+
+
+
+            //FlowStep? childTemplateSearchFlowStep = _baseDatawork.Query.FlowSteps
+            //   .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
+            //   .ToList()
+            //   .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id))
+            //   .OrderBy(x => x.Id)
+            //   .FirstOrDefault();
+
+            // If all children are completed, set execution as complete.
+            // Else execute step.
+            if (childTemplateSearchFlowStep == null)
+            {
+                execution.ExecutionResultEnum = ExecutionResultEnum.NO_RESULT; // TODO Propably need to be changed to complete. Check!
+                return;
+            }
+
+            if (childTemplateSearchFlowStep.TemplateImage == null)
+            {
+                execution.ExecutionResultEnum = ExecutionResultEnum.FAIL;
+                return;
+            }
+
 
             // Find search area.
             Model.Structs.Rectangle searchRectangle;
@@ -68,27 +119,26 @@ namespace Business.Factories.Workers
             // New if not previous exists.
             // Get previous one if exists.
             Bitmap? screenshot = null;
-            if (_previousResultImagePath.Length > 0)
-                screenshot = (Bitmap)Image.FromFile(_previousResultImagePath);
+            Execution? parentLoopExecution = await _baseDatawork.Executions.FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
+            if (parentLoopExecution.ResultImagePath?.Length > 0)
+                screenshot = (Bitmap)Image.FromFile(parentLoopExecution.ResultImagePath);
             else
                 screenshot = _systemService.TakeScreenShot(searchRectangle);
 
             if (screenshot == null)
                 return;
 
-            ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
-            using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
+            using (var ms = new MemoryStream(childTemplateSearchFlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
                 TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
+                ImageSizeResult imageSizeResult = _systemService.GetImageSize(childTemplateSearchFlowStep.TemplateImage);
 
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
                 int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
                 bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
                 execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
-                _previousResultImagePath = isSuccessful ? result.ResultImagePath : "";// TODO Find a better way.
-
                 execution.ResultLocationX = x;
                 execution.ResultLocationY = y;
                 execution.ResultImagePath = result.ResultImagePath;
@@ -136,7 +186,7 @@ namespace Business.Factories.Workers
             {
                 if (execution.FlowStep.MaxLoopCount == 0)
                     return execution.FlowStep;
-                else if (execution.CurrentLoopCount < execution.FlowStep.MaxLoopCount)
+                else if (execution.LoopCount < execution.FlowStep.MaxLoopCount)
                     return execution.FlowStep;
             }
 

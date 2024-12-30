@@ -348,7 +348,7 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
-        private void OnListBoxSelectedItemChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
+        private async void OnListBoxSelectedItemChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
         {
             if (routedPropertyChangedEventArgs?.AddedItems.Count > 0)
             {
@@ -367,7 +367,6 @@ namespace ModernAiClicker.ViewModels.Pages
                 if (selectedExecution.FlowStep != null)
                 {
                     selectedExecution.FlowStep.IsSelected = true;
-
                     NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
                 }
             }

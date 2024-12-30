@@ -55,7 +55,7 @@ namespace Business.Factories.Workers
         {
             execution.Status = ExecutionStatusEnum.RUNNING;
             execution.StartedOn = DateTime.Now;
-            execution.CurrentLoopCount += 1;
+            execution.LoopCount += 1;
 
             if (execution.ParentExecution != null)
                 execution.ExecutionFolderDirectory = execution.ParentExecution.ExecutionFolderDirectory;
@@ -76,20 +76,24 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return;
 
-            FlowStep? uiFlowStep = treeviewFlows.First()
-                .Descendants()
-                .FirstOrDefault(x => x.Id == execution.FlowStepId);
+            //Application.Current.Dispatcher.Invoke(() =>
+            //{
+                // Code to update ObservableCollection
+                FlowStep? uiFlowStep = treeviewFlows.First()
+                    .Descendants()
+                    .FirstOrDefault(x => x.Id == execution.FlowStepId);
 
-            if (uiFlowStep != null)
-            {
-                uiFlowStep.IsExpanded = true;
-                uiFlowStep.IsSelected = true;
-            }
+                if (uiFlowStep != null)
+                {
+                    uiFlowStep.IsExpanded = true;
+                    uiFlowStep.IsSelected = true;
+                }
 
-            if (uiFlowStep?.ParentFlowStep != null)
-                uiFlowStep.ParentFlowStep.IsExpanded = true;
-            if (uiFlowStep?.Flow != null)
-                uiFlowStep.Flow.IsExpanded = true;
+                if (uiFlowStep?.ParentFlowStep != null)
+                    uiFlowStep.ParentFlowStep.IsExpanded = true;
+                if (uiFlowStep?.Flow != null)
+                    uiFlowStep.Flow.IsExpanded = true;
+            //});
 
             return;
         }

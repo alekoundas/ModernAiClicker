@@ -6,6 +6,7 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using Model.Enums;
 using Model.Structs;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -63,7 +64,8 @@ namespace ModernAiClicker.ViewModels.Pages
             {
                 if (FlowStep.ParentFlowStepId != null)
                 {
-                    FlowStep isNewSimpling = _baseDatawork.FlowSteps
+                    FlowStep isNewSimpling = _baseDatawork.Query.FlowSteps
+                        .Include(x => x.ChildrenFlowSteps)
                         .Where(x => x.Id == FlowStep.ParentFlowStepId)
                         .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
 
@@ -99,6 +101,12 @@ namespace ModernAiClicker.ViewModels.Pages
             FlowStep parent = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId.Value);
 
             if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
+                Parents.Add(parent);
+
+            if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP)
+                Parents.Add(parent);
+
+            if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
                 Parents.Add(parent);
 
             if (!parent.ParentFlowStepId.HasValue)

@@ -16,7 +16,6 @@ namespace Business.Factories.Workers
         private readonly IBaseDatawork _baseDatawork;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
-        private string _previousResultImagePath = "";
 
         public TemplateSearchLoopExecutionWorker(
               IBaseDatawork baseDatawork
@@ -36,10 +35,11 @@ namespace Business.Factories.Workers
 
             Execution execution = new Execution();
             execution.FlowStepId = flowStep.Id;
-            execution.ParentExecutionId = parentExecution.Id;
+            execution.ParentExecutionId = parentExecution.Id;// TODO This is wrong!
+            execution.ParentLoopExecutionId = parentExecution.Id;
+
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
-            execution.CurrentLoopCount = parentExecution?.CurrentLoopCount == null ? 0 : parentExecution.CurrentLoopCount + 1;
-            _previousResultImagePath = parentExecution?.ResultImagePath ?? "";
+            execution.LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1;
 
 
             _baseDatawork.Executions.Add(execution);
@@ -68,8 +68,9 @@ namespace Business.Factories.Workers
             // New if not previous exists.
             // Get previous one if exists.
             Bitmap? screenshot = null;
-            if (_previousResultImagePath.Length > 0)
-                screenshot = (Bitmap)Image.FromFile(_previousResultImagePath);
+            Execution? parentLoopExecution = await _baseDatawork.Executions.FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
+            if (parentLoopExecution?.ResultImagePath?.Length > 0)
+                screenshot = (Bitmap)Image.FromFile(parentLoopExecution.ResultImagePath);
             else
                 screenshot = _systemService.TakeScreenShot(searchRectangle);
 
@@ -87,8 +88,6 @@ namespace Business.Factories.Workers
 
                 bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
                 execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
-                _previousResultImagePath = isSuccessful ? result.ResultImagePath : "";// TODO Find a better way.
-
                 execution.ResultLocationX = x;
                 execution.ResultLocationY = y;
                 execution.ResultImagePath = result.ResultImagePath;
@@ -136,7 +135,7 @@ namespace Business.Factories.Workers
             {
                 if (execution.FlowStep.MaxLoopCount == 0)
                     return execution.FlowStep;
-                else if (execution.CurrentLoopCount < execution.FlowStep.MaxLoopCount)
+                else if (execution.LoopCount < execution.FlowStep.MaxLoopCount)
                     return execution.FlowStep;
             }
 

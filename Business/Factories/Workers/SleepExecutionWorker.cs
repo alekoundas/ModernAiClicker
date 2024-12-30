@@ -32,10 +32,10 @@ namespace Business.Factories.Workers
                 miliseconds += execution.FlowStep.SleepForSeconds.Value * 1000;
 
             if (execution.FlowStep.SleepForMinutes.HasValue)
-                miliseconds += execution.FlowStep.SleepForMinutes.Value * 60 * 100;
+                miliseconds += execution.FlowStep.SleepForMinutes.Value * 60 * 1000;
 
             if (execution.FlowStep.SleepForHours.HasValue)
-                miliseconds += execution.FlowStep.SleepForHours.Value * 60 * 60 * 100;
+                miliseconds += execution.FlowStep.SleepForHours.Value * 60 * 60 * 1000;
 
 
             Thread.Sleep(miliseconds);

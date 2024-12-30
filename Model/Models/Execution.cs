@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Enums;
 using Model.Structs;
+using System.Collections.ObjectModel;
 
 namespace Model.Models
 {
@@ -30,11 +31,11 @@ namespace Model.Models
         public bool _isSelected = true;
 
         [ObservableProperty]
-        public int? _currentLoopCount;
+        public int? _loopCount;
+
+
 
         //public Point _resultLocation;
-
-
         public int? ResultLocationX { get; set; }
         public int? ResultLocationY { get; set; }
 
@@ -54,6 +55,14 @@ namespace Model.Models
 
         public int? FlowStepId { get; set; }
         public virtual FlowStep? FlowStep { get; set; }
+
+
+        public int? ParentLoopExecutionId { get; set; }
+        public virtual Execution? ParentLoopExecution { get; set; }
+
+        public int? ChildLoopExecutionId { get; set; }
+        public virtual Execution? ChildLoopExecution { get; set; }
+
 
         public int? ParentExecutionId { get; set; }
         public virtual Execution? ParentExecution { get; set; }
