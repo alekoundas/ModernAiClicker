@@ -248,43 +248,21 @@ namespace ModernAiClicker.ViewModels.Pages
 
             if (eventParameters.FlowId is FlowStep)
             {
-
                 FlowStep flowStep = (FlowStep)eventParameters.FlowId;
 
                 if (flowStep.ChildrenFlowSteps == null)
                     return;
 
                 foreach (var childrenFlowStep in flowStep.ChildrenFlowSteps)
-                {
-                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
-                    {
-                        List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                            .Where(x => x.Id == childrenFlowStep.Id)
-                            .SelectMany(x => x.ChildrenFlowSteps)
-                            .ToListAsync();
-
-                        childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
-                    }
-                }
+                    await LoadFlowStepChildren(childrenFlowStep);
             }
 
             else if (eventParameters.FlowId is Flow)
             {
-
                 Flow flow = (Flow)eventParameters.FlowId;
 
-                foreach (var childrenFlowStep in flow.FlowSteps)
-                {
-                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
-                    {
-                        List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                            .Where(x => x.Id == childrenFlowStep.Id)
-                            .SelectMany(x => x.ChildrenFlowSteps)
-                            .ToListAsync();
-
-                        childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
-                    }
-                }
+                foreach (var childFlowStep in flow.FlowSteps)
+                    await LoadFlowStepChildren(childFlowStep);
             }
         }
 
@@ -306,16 +284,7 @@ namespace ModernAiClicker.ViewModels.Pages
             await _baseDatawork.SaveChangesAsync();
 
 
-            //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("CREATE TABLE TempExecutions AS SELECT * FROM Executions WHERE 1=0;");
-            //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("DROP TABLE Executions;");
-            //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("ALTER TABLE TempExecutions RENAME TO Executions;");
-
-            //if (ComboBoxSelectedExecutionHistory == null)
-            //    return;
-            //_baseDatawork.Query.ChangeTracker.Clear();
-
-            //await _baseDatawork.Query.Database.ExecuteSqlRawAsync("DELETE FROM Executions;");
-
+            //Delete all.
             var aa = _baseDatawork.Executions.GetAll();
             _baseDatawork.Executions.RemoveRange(aa);
             _baseDatawork.SaveChanges();

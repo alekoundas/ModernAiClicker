@@ -70,32 +70,6 @@ namespace ModernAiClicker.ViewModels.Pages
             }
         }
 
-        //public async Task RefreshData()
-        //{
-        //    List<Flow> flows = await _baseDatawork.Query.Flows
-        //        .Include(x => x.FlowSteps)
-        //        .ThenInclude(x => x.ChildrenFlowSteps)
-        //        .ThenInclude(x => x.ChildrenFlowSteps)
-        //    .ThenInclude(x => x.ChildrenFlowSteps)
-        //    .ThenInclude(x => x.ChildrenFlowSteps)
-        //    .ThenInclude(x => x.ChildrenFlowSteps)
-        //    .ThenInclude(x => x.ChildrenFlowSteps)
-        //    .ThenInclude(x => x.ChildrenFlowSteps)
-        //    .ThenInclude(x => x.ChildrenFlowSteps)
-        //    .ThenInclude(x => x.ChildrenFlowSteps)
-        //    //.ThenInclude(x => x.ChildrenFlowSteps)
-        //    //.ThenInclude(x => x.ChildrenFlowSteps)
-        //    //.ThenInclude(x => x.ChildrenFlowSteps)
-        //    //.ThenInclude(x => x.ChildrenFlowSteps)
-        //    //.ThenInclude(x => x.ChildrenFlowSteps)
-        //    //.ThenInclude(x => x.ChildrenFlowSteps)
-        //    //.ThenInclude(x => x.ChildrenFlowSteps)
-        //    //.ThenInclude(x => x.ChildrenFlowSteps)
-        //    .ToListAsync();
-
-        //    FlowsList = null;
-        //    FlowsList = new ObservableCollection<Flow>(flows);
-        //}
 
         [RelayCommand]
         private async Task OnButtonAddFlowClick()
@@ -289,43 +263,22 @@ namespace ModernAiClicker.ViewModels.Pages
 
             if (eventParameters.FlowId is FlowStep)
             {
-
                 FlowStep flowStep = (FlowStep)eventParameters.FlowId;
 
                 if (flowStep.ChildrenFlowSteps == null)
                     return;
 
-                foreach (var childrenFlowStep in flowStep.ChildrenFlowSteps)
-                {
-                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
-                    {
-                        List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                            .Where(x => x.Id == childrenFlowStep.Id)
-                            .SelectMany(x => x.ChildrenFlowSteps)
-                            .ToListAsync();
-
-                        childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
-                    }
-                }
+                foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
+                    await LoadFlowStepChildren(childFlowStep);
             }
 
             else if (eventParameters.FlowId is Flow)
             {
-
                 Flow flow = (Flow)eventParameters.FlowId;
 
-                foreach (var childrenFlowStep in flow.FlowSteps)
-                {
-                    if (childrenFlowStep.ChildrenFlowSteps == null || childrenFlowStep.ChildrenFlowSteps.Count == 0)
-                    {
-                        List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                            .Where(x => x.Id == childrenFlowStep.Id)
-                            .SelectMany(x => x.ChildrenFlowSteps)
-                            .ToListAsync();
+                foreach (var childFlowStep in flow.FlowSteps)
+                    await LoadFlowStepChildren(childFlowStep);
 
-                        childrenFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
-                    }
-                }
             }
         }
 
