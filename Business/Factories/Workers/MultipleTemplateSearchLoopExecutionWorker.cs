@@ -78,9 +78,9 @@ namespace Business.Factories.Workers
             // TODO 
             var children = await _baseDatawork.Query.FlowSteps
              .AsNoTracking()
-             .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
-             .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.id))
+            .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
              .ToListAsync();
+            children = children.Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.id)).ToList();
             //var children = await _baseDatawork.Query.FlowSteps
             //             .AsNoTracking()
             //             .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
@@ -121,7 +121,7 @@ namespace Business.Factories.Workers
             // Get previous one if exists.
             Bitmap? screenshot = null;
             Execution? parentLoopExecution = await _baseDatawork.Executions.FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
-            if (parentLoopExecution.ResultImagePath?.Length > 0)
+            if (parentLoopExecution.ResultImagePath?.Length > 0 && childTemplateSearchFlowStep.RemoveTemplateFromResult)
                 screenshot = (Bitmap)Image.FromFile(parentLoopExecution.ResultImagePath);
             else
                 screenshot = _systemService.TakeScreenShot(searchRectangle);

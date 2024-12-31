@@ -5,5 +5,6 @@ namespace Business.Repository.Interfaces
 {
     public interface IFlowStepRepository : IBaseRepository<FlowStep>
     {
+        Task<FlowStep> GetIsNewSibling(int id);
     }
 }

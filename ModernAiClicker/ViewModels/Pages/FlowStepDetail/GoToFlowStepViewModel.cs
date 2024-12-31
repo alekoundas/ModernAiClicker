@@ -25,7 +25,7 @@ namespace ModernAiClicker.ViewModels.Pages
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _flowsViewModel = flowsViewModel;   
+            _flowsViewModel = flowsViewModel;
             _flowStep = flowStep;
             PreviousSteps = GetParents();
         }
@@ -34,7 +34,7 @@ namespace ModernAiClicker.ViewModels.Pages
             if (FlowStep?.FlowId != null)
             {
                 List<FlowStep> siblings = _baseDatawork.Query.Flows
-                    .First(x=>x.Id == FlowStep.FlowId)
+                    .First(x => x.Id == FlowStep.FlowId)
                     .FlowSteps
                     .Where(x => x.Id != FlowStep.Id)
                     .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_SUCCESS)
@@ -90,24 +90,16 @@ namespace ModernAiClicker.ViewModels.Pages
             /// Add mode
             else
             {
+                FlowStep isNewSimpling;
+
                 if (FlowStep.ParentFlowStepId != null)
-                {
-                    FlowStep isNewSimpling = _baseDatawork.FlowSteps
-                        .Where(x => x.Id == FlowStep.ParentFlowStepId)
-                        .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
-
-                    FlowStep.OrderingNum = isNewSimpling.OrderingNum;
-                    isNewSimpling.OrderingNum++;
-                }
+                    isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
                 else
-                {
-                    FlowStep isNewSimpling = _baseDatawork.Flows
-                        .Where(x => x.Id == FlowStep.FlowId)
-                        .Select(x => x.FlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
+                    isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
 
-                    FlowStep.OrderingNum = isNewSimpling.OrderingNum;
-                    isNewSimpling.OrderingNum++;
-                }
+                FlowStep.OrderingNum = isNewSimpling.OrderingNum;
+                isNewSimpling.OrderingNum++;
+                await _baseDatawork.SaveChangesAsync();
 
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Run again an earlier step.";
@@ -116,8 +108,7 @@ namespace ModernAiClicker.ViewModels.Pages
             }
 
             _baseDatawork.SaveChanges();
-                await _flowsViewModel.RefreshData();
-            await _systemService.UpdateFlowsJSON(_baseDatawork.Flows.GetAll());
+            await _flowsViewModel.RefreshData();
         }
     }
 }

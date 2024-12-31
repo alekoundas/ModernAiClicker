@@ -69,7 +69,7 @@ namespace Business.Factories.Workers
             // Get previous one if exists.
             Bitmap? screenshot = null;
             Execution? parentLoopExecution = await _baseDatawork.Executions.FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
-            if (parentLoopExecution?.ResultImagePath?.Length > 0)
+            if (parentLoopExecution?.ResultImagePath?.Length > 0 && execution.FlowStep.RemoveTemplateFromResult)
                 screenshot = (Bitmap)Image.FromFile(parentLoopExecution.ResultImagePath);
             else
                 screenshot = _systemService.TakeScreenShot(searchRectangle);

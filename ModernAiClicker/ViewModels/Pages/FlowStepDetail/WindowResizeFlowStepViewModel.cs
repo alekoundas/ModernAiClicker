@@ -39,8 +39,8 @@ namespace ModernAiClicker.ViewModels.Pages
 
             Rectangle windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
 
-            FlowStep.WindowHeight= Math.Abs(windowRect.Bottom - windowRect.Top);
-            FlowStep.WindowWidth= Math.Abs(windowRect.Left - windowRect.Right);
+            FlowStep.WindowHeight = Math.Abs(windowRect.Bottom - windowRect.Top);
+            FlowStep.WindowWidth = Math.Abs(windowRect.Left - windowRect.Right);
         }
 
         [RelayCommand]
@@ -78,24 +78,18 @@ namespace ModernAiClicker.ViewModels.Pages
             /// Add mode
             else
             {
+                FlowStep isNewSimpling;
+
                 if (FlowStep.ParentFlowStepId != null)
-                {
-                    FlowStep isNewSimpling = _baseDatawork.FlowSteps
-                        .Where(x => x.Id == FlowStep.ParentFlowStepId)
-                        .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
-
-                    FlowStep.OrderingNum = isNewSimpling.OrderingNum;
-                    isNewSimpling.OrderingNum++;
-                }
+                    isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
                 else
-                {
-                    FlowStep isNewSimpling = _baseDatawork.Flows
-                        .Where(x => x.Id == FlowStep.FlowId)
-                        .Select(x => x.FlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
+                    isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
 
-                    FlowStep.OrderingNum = isNewSimpling.OrderingNum;
-                    isNewSimpling.OrderingNum++;
-                }
+                FlowStep.OrderingNum = isNewSimpling.OrderingNum;
+                isNewSimpling.OrderingNum++;
+                await _baseDatawork.SaveChangesAsync();
+
+
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Set window size.";
 
@@ -104,7 +98,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
-                await _flowsViewModel.RefreshData();
+            await _flowsViewModel.RefreshData();
         }
     }
 }

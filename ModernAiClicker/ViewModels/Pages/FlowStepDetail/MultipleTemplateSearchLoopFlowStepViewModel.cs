@@ -168,15 +168,9 @@ namespace ModernAiClicker.ViewModels.Pages
                 FlowStep isNewSimpling;
 
                 if (FlowStep.ParentFlowStepId != null)
-                    isNewSimpling = _baseDatawork.Query.FlowSteps
-                        .Include(x => x.ChildrenFlowSteps)
-                        .Where(x => x.Id == FlowStep.ParentFlowStepId)
-                        .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
+                    isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
                 else
-                    isNewSimpling = _baseDatawork.Query.Flows
-                        .Include(x => x.FlowSteps)
-                        .Where(x => x.Id == FlowStep.FlowId)
-                        .Select(x => x.FlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW)).First();
+                    isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
