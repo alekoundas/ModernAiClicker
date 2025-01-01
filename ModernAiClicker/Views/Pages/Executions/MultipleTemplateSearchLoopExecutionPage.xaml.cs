@@ -1,4 +1,5 @@
 ﻿using Business.Interfaces;
+using DataAccess.Repository.Interface;
 using ModernAiClicker.ViewModels.Pages.Executions;
 using System.Net.Cache;
 using System.Windows.Controls;
@@ -10,9 +11,9 @@ namespace ModernAiClicker.Views.Pages.Executions
     {
         public MultipleTemplateSearchLoopExecutionViewModel ViewModel { get; set; }
 
-        public MultipleTemplateSearchLoopExecutionPage()
+        public MultipleTemplateSearchLoopExecutionPage(IBaseDatawork baseDatawork)
         {
-            ViewModel = new MultipleTemplateSearchLoopExecutionViewModel();
+            ViewModel = new MultipleTemplateSearchLoopExecutionViewModel(baseDatawork);
             DataContext = ViewModel;
             InitializeComponent();
         }

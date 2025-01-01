@@ -117,7 +117,7 @@ namespace Model.Models
         public int _windowWidth;
 
 
-        // TODO: rename prop since its also used by GoTo and also by "MultipleTemplateSearch"
+        // Used by GoTo and also by "MultipleTemplateSearch"
         public int? ParentTemplateSearchFlowStepId { get; set; }
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
         public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
