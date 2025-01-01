@@ -110,7 +110,7 @@ namespace Business.Services
 
             for (int i = 0; i < steps; i++)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(50);
                 mouse_event(wheelOrientation, 0, 0, direction, 0);
             }
         }
@@ -248,7 +248,15 @@ namespace Business.Services
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), filename + ".png");
 
             if (File.Exists(filePath))
-                File.Delete(filePath);
+                try
+                {
+                    File.Delete(filePath);
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
 
             int width = rectangle.Right - rectangle.Left;
             int height = rectangle.Bottom - rectangle.Top;

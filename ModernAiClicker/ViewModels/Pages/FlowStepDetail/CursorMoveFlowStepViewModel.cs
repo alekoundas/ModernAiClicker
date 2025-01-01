@@ -98,6 +98,9 @@ namespace ModernAiClicker.ViewModels.Pages
             if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP)
                 Parents.Add(parent);
 
+            if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH)
+                Parents.Add(parent);
+
             if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
                 Parents.Add(parent);
 

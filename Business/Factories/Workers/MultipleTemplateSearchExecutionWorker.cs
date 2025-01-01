@@ -5,19 +5,18 @@ using Microsoft.EntityFrameworkCore;
 using Model.Business;
 using Model.Enums;
 using Model.Models;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
 {
-    public class MultipleTemplateSearchLoopExecutionWorker : CommonExecutionWorker, IExecutionWorker
+    public class MultipleTemplateSearchExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
-        public MultipleTemplateSearchLoopExecutionWorker(
+        public MultipleTemplateSearchExecutionWorker(
               IBaseDatawork baseDatawork
             , ISystemService systemService
             , ITemplateSearchService templateSearchService
@@ -57,6 +56,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return;
 
+
             List<Execution> executions = _baseDatawork.Executions.GetAll();
 
             // Get recursively all parents of loop execution.
@@ -68,7 +68,6 @@ namespace Business.Factories.Workers
 
             // Get all completed children template flow steps.
             List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
-                .Where(x => x.ExecutionResultEnum == ExecutionResultEnum.FAIL || (x.FlowStep.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.MaxLoopCount))
                 .Select(x => x.CurrentMultipleTemplateSearchFlowStepId ?? 0)
                 .Where(x => x != 0)
                 .ToList();
@@ -79,9 +78,6 @@ namespace Business.Factories.Workers
                 .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
                 .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
                 .ToListAsync();
-
-            //children = children
-            //    .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id)).ToList();
 
             // Get first child template search flow step that isnt completed.
             FlowStep? childTemplateSearchFlowStep = children
@@ -135,7 +131,7 @@ namespace Business.Factories.Workers
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
                 int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
-                bool isSuccessful = childTemplateSearchFlowStep.Accuracy <= result.Confidence;
+                bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
                 execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
                 execution.ResultLocationX = x;
                 execution.ResultLocationY = y;
@@ -179,7 +175,7 @@ namespace Business.Factories.Workers
         {
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
-            
+
             List<Execution> executions = _baseDatawork.Executions.GetAll();
 
             // Get recursively all parents of loop executions.
@@ -193,7 +189,6 @@ namespace Business.Factories.Workers
 
             // Get all completed children template flow steps.
             List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
-                .Where(x => x.ExecutionResultEnum == ExecutionResultEnum.FAIL || (x.FlowStep.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.MaxLoopCount))
                 .Select(x => x.CurrentMultipleTemplateSearchFlowStepId ?? 0)
                 .Where(x => x != 0)
                 .ToList();
@@ -211,10 +206,6 @@ namespace Business.Factories.Workers
 
             if (children.Count > 0)
                 return execution.FlowStep;
-
-
-
-
 
 
 

@@ -26,6 +26,22 @@ namespace DataAccess.Configurations
 
 
             builder
+                .HasOne(x => x.ParentExecution)
+                .WithOne(x => x.ChildExecution)
+                .HasForeignKey<Execution>(x => x.ParentExecutionId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(x => x.ChildExecution)
+                .WithOne(x => x.ParentExecution)
+                .HasForeignKey<Execution>(x => x.ChildExecutionId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+
+
+
+
+            builder
              .HasOne(x => x.ParentLoopExecution)
              .WithOne(x => x.ChildLoopExecution)
              .HasForeignKey<Execution>(x => x.ParentLoopExecutionId)
@@ -39,20 +55,11 @@ namespace DataAccess.Configurations
              .IsRequired(false)
              .OnDelete(DeleteBehavior.SetNull);
 
-
-
-            builder
-                .HasOne(x => x.ParentExecution)
-                .WithOne(x => x.ChildExecution)
-                .HasForeignKey<Execution>(x => x.ParentExecutionId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            builder.HasOne(x => x.ChildExecution)
-                .WithOne(x => x.ParentExecution)
-                .HasForeignKey<Execution>(x => x.ChildExecutionId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
+            builder.HasOne(x => x.CurrentMultipleTemplateSearchFlowStep)
+              .WithMany(x => x.CurrentMultipleTemplateSearchFlowStepExecutions)
+              .HasForeignKey(x => x.CurrentMultipleTemplateSearchFlowStepId)
+              .IsRequired(false)
+              .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

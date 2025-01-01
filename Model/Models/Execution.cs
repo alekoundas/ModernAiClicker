@@ -30,14 +30,17 @@ namespace Model.Models
         [ObservableProperty]
         public bool _isSelected = true;
 
+        public string ExecutionFolderDirectory = "";
+
+        // Template properties.
         [ObservableProperty]
         public int? _loopCount;
 
+        [ObservableProperty]
+        public int? _resultLocationX;
 
-
-        //public Point _resultLocation;
-        public int? ResultLocationX { get; set; }
-        public int? ResultLocationY { get; set; }
+        [ObservableProperty]
+        public int? _resultLocationY;
 
         [ObservableProperty]
         public byte[]? _resultImage;
@@ -46,28 +49,29 @@ namespace Model.Models
         public string? _resultImagePath;
 
         [ObservableProperty]
-        public decimal _resultAccuracy= 0.00m;
+        public decimal _resultAccuracy = 0.00m;
 
-        public string ExecutionFolderDirectory="";
-
+        // Navigation properties.    
         public int? FlowId { get; set; }
         public virtual Flow? Flow { get; set; }
 
         public int? FlowStepId { get; set; }
         public virtual FlowStep? FlowStep { get; set; }
 
+        public int? ParentExecutionId { get; set; }
+        public virtual Execution? ParentExecution { get; set; }
 
+        public int? ChildExecutionId { get; set; }
+        public virtual Execution? ChildExecution { get; set; }
+
+        // Loop and Multiple flow step fields
         public int? ParentLoopExecutionId { get; set; }
         public virtual Execution? ParentLoopExecution { get; set; }
 
         public int? ChildLoopExecutionId { get; set; }
         public virtual Execution? ChildLoopExecution { get; set; }
 
-
-        public int? ParentExecutionId { get; set; }
-        public virtual Execution? ParentExecution { get; set; }
-
-        public int? ChildExecutionId { get; set; }
-        public virtual Execution? ChildExecution { get; set; }
+        public int? CurrentMultipleTemplateSearchFlowStepId { get; set; }
+        public virtual FlowStep? CurrentMultipleTemplateSearchFlowStep { get; set; }
     }
 }
