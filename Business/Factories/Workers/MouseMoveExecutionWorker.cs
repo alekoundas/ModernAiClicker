@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using Business.Extensions;
+using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Enums;
@@ -19,17 +20,34 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public Task ExecuteFlowStepAction(Execution execution)
+        public async Task ExecuteFlowStepAction(Execution execution)
         {
             if (execution.FlowStep == null)
-                return Task.CompletedTask;
+                return ;
 
             Point pointToMove;
 
             // Get point from result of parent template search.
             if (execution.ParentExecutionId != null)
             {
-                Execution? parentExecution = _baseDatawork.Query.Executions.AsNoTracking().FirstOrDefault(x => x.Id == execution.ParentExecutionId.Value);
+                List<Execution> parentExecutions = new List<Execution>();
+                Execution? currentExecution = execution;
+                while (currentExecution.ParentExecutionId != null)
+                {
+                    parentExecutions.Add(currentExecution);
+                    
+                    currentExecution = await _baseDatawork.Executions.Query
+                        .Include(x=>x.FlowStep)
+                        .FirstAsync(x=>x.Id==currentExecution.ParentExecutionId.Value);
+                }
+
+                Execution? parentExecution = parentExecutions
+                    .Where(x => x.FlowStepId == execution.FlowStep.ParentTemplateSearchFlowStepId)
+                    .OrderByDescending(x => x.Id)
+                    .FirstOrDefault();
+
+
+
                 if (parentExecution?.ResultLocationX != null && parentExecution?.ResultLocationY != null)
                     pointToMove = new Point(parentExecution.ResultLocationX.Value, parentExecution.ResultLocationY.Value);
 
@@ -40,7 +58,7 @@ namespace Business.Factories.Workers
                 _systemService.SetCursorPossition(pointToMove);
             }
 
-            return Task.CompletedTask;
+            return ;
         }
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)

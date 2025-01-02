@@ -31,7 +31,7 @@ namespace ModernAiClicker.ViewModels.Pages
             FlowStep = flowStep;
 
             if (FlowStep.ParentFlowStepId.HasValue)
-                Task.Run(async () =>await  GetParentsRecursively(FlowStep.ParentFlowStepId.Value));
+                Task.Run(async () => await GetParentsRecursively(FlowStep.ParentFlowStepId.Value));
         }
 
 
@@ -56,7 +56,11 @@ namespace ModernAiClicker.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
-
+                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
+                updateFlowStep.Name = FlowStep.Name;
+             
+                if (FlowStep.ParentTemplateSearchFlowStep != null)
+                    updateFlowStep.ParentTemplateSearchFlowStepId = FlowStep.ParentTemplateSearchFlowStep.Id;
             }
 
             /// Add mode
@@ -82,7 +86,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
-                await _flowsViewModel.RefreshData();
+            await _flowsViewModel.RefreshData();
         }
 
         private async Task GetParentsRecursively(int? flowStepId)

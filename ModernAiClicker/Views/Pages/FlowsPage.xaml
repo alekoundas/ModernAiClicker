@@ -233,9 +233,38 @@
             Grid.ColumnSpan="5"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
+
+            <ui:Button Margin="10" IsEnabled="true">
+
+                <icons:BootstrapIcon
+                    Width="20"
+                    Height="20"
+                    Icon="ArrowsExpand" />
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonExpandAllClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+            </ui:Button>
+            <ui:Button Margin="10" IsEnabled="true">
+
+                <icons:BootstrapIcon
+                    Width="20"
+                    Height="20"
+                    Icon="ArrowsCollapse" />
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCollapseAllClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+            </ui:Button>
+
             <ui:Button
                 Margin="10"
-                HorizontalAlignment="Right"
                 Content="Add flow"
                 IsEnabled="true">
                 <Button.Effect>
@@ -247,14 +276,11 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ui:Button>
-            <ui:Button
-                Margin="10"
-                HorizontalAlignment="Right"
-                IsEnabled="true">
+            <ui:Button Margin="10" IsEnabled="true">
 
                 <icons:BootstrapIcon
-                    Width="32"
-                    Height="32"
+                    Width="20"
+                    Height="20"
                     Icon="ArrowRepeat" />
 
                 <i:Interaction.Triggers>
@@ -264,14 +290,11 @@
                 </i:Interaction.Triggers>
 
             </ui:Button>
-            <ui:Button
-                Margin="10"
-                HorizontalAlignment="Right"
-                IsEnabled="true">
+            <ui:Button Margin="10" IsEnabled="true">
 
                 <icons:BootstrapIcon
-                    Width="32"
-                    Height="32"
+                    Width="20"
+                    Height="20"
                     Icon="LockFill" />
 
                 <i:Interaction.Triggers>

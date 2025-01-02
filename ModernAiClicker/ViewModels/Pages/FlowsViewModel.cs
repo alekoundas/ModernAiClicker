@@ -104,6 +104,30 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
+        private async Task OnButtonExpandAllClick()
+        {
+            List<Flow> flows = await _baseDatawork.Flows.GetAllAsync();
+            List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.GetAllAsync();
+
+            flows.ForEach(x => x.IsExpanded = true);
+            flowSteps.ForEach(x => x.IsExpanded = true);
+
+            await _baseDatawork.SaveChangesAsync();
+        }
+
+        [RelayCommand]
+        private async Task OnButtonCollapseAllClick()
+        {
+            List<Flow> flows = await _baseDatawork.Flows.GetAllAsync();
+            List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.GetAllAsync();
+
+            flows.ForEach(x => x.IsExpanded = false);
+            flowSteps.ForEach(x => x.IsExpanded = false);
+
+            await _baseDatawork.SaveChangesAsync();
+        }
+
+        [RelayCommand]
         private void OnTreeViewItemButtonNewClick(EventParammeters eventParameters)
         {
             FlowStep flowStep = new FlowStep();

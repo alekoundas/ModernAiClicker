@@ -56,15 +56,18 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return;
 
+            // Get all parents of loop execution.
+            List<Execution> parentLoopExecutions = new List<Execution>();
+            Execution? currentExecution = execution;
+            while (currentExecution.ParentLoopExecutionId != null)
+            {
+                parentLoopExecutions.Add(currentExecution);
 
-            List<Execution> executions = _baseDatawork.Executions.GetAll();
+                currentExecution = await _baseDatawork.Executions.Query
+                    .Include(x => x.FlowStep)
+                    .FirstAsync(x => x.Id == currentExecution.ParentLoopExecutionId.Value);
+            }
 
-            // Get recursively all parents of loop execution.
-            List<Execution?> parentLoopExecutions = executions
-                .First(x => x.Id == execution.ParentLoopExecutionId)
-                .SelectRecursive<Execution?>(x => x.ParentLoopExecution)
-                .Where(x => x != null)
-                .ToList();
 
             // Get all completed children template flow steps.
             List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
@@ -125,13 +128,13 @@ namespace Business.Factories.Workers
             using (var ms = new MemoryStream(childTemplateSearchFlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
+                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, childTemplateSearchFlowStep.RemoveTemplateFromResult);
                 ImageSizeResult imageSizeResult = _systemService.GetImageSize(childTemplateSearchFlowStep.TemplateImage);
 
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
                 int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
-                bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
+                bool isSuccessful = childTemplateSearchFlowStep.Accuracy <= result.Confidence;
                 execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
                 execution.ResultLocationX = x;
                 execution.ResultLocationY = y;

@@ -59,12 +59,17 @@ namespace Business.Factories.Workers
 
             List<Execution> executions = _baseDatawork.Executions.GetAll();
 
-            // Get recursively all parents of loop execution.
-            List<Execution?> parentLoopExecutions = executions
-                .First(x => x.Id == execution.ParentLoopExecutionId)
-                .SelectRecursive<Execution?>(x => x.ParentLoopExecution)
-                .Where(x => x != null)
-                .ToList();
+            // Get all parents of loop execution.
+            List<Execution> parentLoopExecutions = new List<Execution>();
+            Execution? currentExecution = execution;
+            while (currentExecution.ParentLoopExecutionId != null)
+            {
+                parentLoopExecutions.Add(currentExecution);
+
+                currentExecution = await _baseDatawork.Executions.Query
+                    .Include(x => x.FlowStep)
+                    .FirstAsync(x => x.Id == currentExecution.ParentLoopExecutionId.Value);
+            }
 
             // Get all completed children template flow steps.
             List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
@@ -79,9 +84,6 @@ namespace Business.Factories.Workers
                 .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
                 .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
                 .ToListAsync();
-
-            //children = children
-            //    .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id)).ToList();
 
             // Get first child template search flow step that isnt completed.
             FlowStep? childTemplateSearchFlowStep = children
@@ -129,7 +131,7 @@ namespace Business.Factories.Workers
             using (var ms = new MemoryStream(childTemplateSearchFlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
+                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, childTemplateSearchFlowStep.RemoveTemplateFromResult);
                 ImageSizeResult imageSizeResult = _systemService.GetImageSize(childTemplateSearchFlowStep.TemplateImage);
 
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
