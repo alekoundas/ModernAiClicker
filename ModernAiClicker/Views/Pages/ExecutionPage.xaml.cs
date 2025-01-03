@@ -58,7 +58,8 @@ namespace ModernAiClicker.Views.Pages
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionViewModel>(() => new MultipleTemplateSearchExecutionViewModel(baseDatawork)) },
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionViewModel>(() => new MultipleTemplateSearchLoopExecutionViewModel(baseDatawork)) },
                 { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionViewModel>(() => new SleepExecutionViewModel  ()) },
-                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionViewModel>(() => new GoToExecutionViewModel(baseDatawork)) }
+                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionViewModel>(() => new GoToExecutionViewModel(baseDatawork)) },
+                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionViewModel>(() => new LoopExecutionViewModel()) }
             };
 
             _executionPageCache = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>>()
@@ -74,7 +75,8 @@ namespace ModernAiClicker.Views.Pages
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => new MultipleTemplateSearchExecutionPage(baseDatawork)) },
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => new MultipleTemplateSearchLoopExecutionPage(baseDatawork)) },
                 { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionPage>(() => new SleepExecutionPage()) },
-                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionPage>(() => new GoToExecutionPage(baseDatawork)) }
+                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionPage>(() => new GoToExecutionPage(baseDatawork)) },
+                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionPage>(() => new LoopExecutionPage()) }
             };
         }
 

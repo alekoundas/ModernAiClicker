@@ -19,5 +19,6 @@ namespace Model.Enums
         MULTIPLE_TEMPLATE_SEARCH_LOOP,
         MULTIPLE_TEMPLATE_SEARCH,
         WAIT_FOR_TEMPLATE,
+        LOOP
     }
 }

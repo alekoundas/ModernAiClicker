@@ -13,10 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using Rectangle = Model.Structs.Rectangle;
 namespace ModernAiClicker.ViewModels.Pages
 {
-    public partial class TemplateSearchLoopFlowStepViewModel : ObservableObject
+    public partial class LoopFlowStepViewModel : ObservableObject
     {
         private readonly ISystemService _systemService;
-        private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private FlowsViewModel _flowsViewModel;
         private string _previousTestResultImagePath = "";
@@ -36,86 +35,15 @@ namespace ModernAiClicker.ViewModels.Pages
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
-        public TemplateSearchLoopFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public LoopFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _templateMatchingService = templateMatchingService;
 
             _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
 
-            TemplateImgPath = flowStep.TemplateImagePath;
-            ShowTemplateImg?.Invoke(TemplateImgPath);
-
-        }
-
-        [RelayCommand]
-        private void OnButtonOpenFileClick()
-        {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.InitialDirectory = PathHelper.GetAppDataPath();
-            openFileDialog.Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*";
-            openFileDialog.RestoreDirectory = true;
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                TemplateImgPath = openFileDialog.FileName;
-                FlowStep.TemplateImage = File.ReadAllBytes(TemplateImgPath);
-                ShowTemplateImg?.Invoke(openFileDialog.FileName);
-            }
-
-        }
-
-
-        [RelayCommand]
-        private void OnButtonClearTestClick()
-        {
-            _previousTestResultImagePath = "";
-            ShowResultImage?.Invoke(_previousTestResultImagePath);
-        }
-
-        [RelayCommand]
-        private void OnButtonTestClick()
-        {
-            if (FlowStep.TemplateImage == null)
-                return;
-
-            // Find search area.
-            Rectangle searchRectangle;
-            if (FlowStep.ProcessName.Length > 0 && TemplateImgPath != null)
-                searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
-            else
-                searchRectangle = _systemService.GetScreenSize();
-
-            // Get screenshot.
-            // New if not previous exists.
-            // Get previous one if exists.
-            Bitmap? screenshot = null;
-            if (_previousTestResultImagePath.Length > 0)
-                screenshot = (Bitmap)Image.FromFile(_previousTestResultImagePath);
-            else
-                screenshot = _systemService.TakeScreenShot(searchRectangle);
-
-            if (screenshot == null)
-                return;
-
-            using (var ms = new MemoryStream(FlowStep.TemplateImage))
-            {
-                Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, FlowStep.RemoveTemplateFromResult);
-
-                int x = searchRectangle.Left + result.ResultRectangle.Top;
-                int y = searchRectangle.Top + result.ResultRectangle.Left;
-
-                if (result.ResultImagePath.Length > 0)
-                {
-                    _previousTestResultImagePath = result.ResultImagePath;
-                    ShowResultImage?.Invoke(result.ResultImagePath);
-                }
-
-            }
         }
 
         [RelayCommand]
@@ -128,14 +56,10 @@ namespace ModernAiClicker.ViewModels.Pages
         private async Task OnButtonSaveClick()
         {
             // Edit mode
-            // Edit mode
             if (FlowStep.Id > 0)
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
-                updateFlowStep.Accuracy = FlowStep.Accuracy;
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.TemplateImagePath = FlowStep.TemplateImagePath;
                 updateFlowStep.MaxLoopCount= FlowStep.MaxLoopCount;
             }
 
@@ -187,7 +111,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 };
 
                 if (FlowStep.Name.Length == 0)
-                    FlowStep.Name = "Template search loop.";
+                    FlowStep.Name = "Loop.";
 
                 FlowStep.IsExpanded = true;
 

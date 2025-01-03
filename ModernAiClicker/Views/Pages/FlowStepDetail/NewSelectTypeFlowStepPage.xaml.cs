@@ -100,6 +100,11 @@ namespace ModernAiClicker.Views.Pages.FlowStepDetail
                 CursorScrollFlowStepViewModel viewModel = new CursorScrollFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
                 this.UIFlowStepDetailFrame.Navigate(new CursorScrollFlowStepPage(viewModel));
             }
+            else if (flowStep.FlowStepType == FlowStepTypesEnum.LOOP)
+            {
+                LoopFlowStepViewModel viewModel = new LoopFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _baseDatawork);
+                this.UIFlowStepDetailFrame.Navigate(new LoopFlowStepPage(viewModel));
+            }
         }
     }
 }
