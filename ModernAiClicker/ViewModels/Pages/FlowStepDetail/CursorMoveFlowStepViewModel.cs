@@ -6,7 +6,6 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using Model.Enums;
 using Model.Structs;
-using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -106,6 +105,9 @@ namespace ModernAiClicker.ViewModels.Pages
                 Parents.Add(parent);
 
             if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
+                Parents.Add(parent);
+
+            if (parent.FlowStepType == FlowStepTypesEnum.WAIT_FOR_TEMPLATE)
                 Parents.Add(parent);
 
             if (!parent.ParentFlowStepId.HasValue)

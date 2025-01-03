@@ -23,6 +23,7 @@ namespace Business.Factories
                 { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionWorker>(() => new MouseMoveExecutionWorker(baseDatawork, systemService)) },
                 { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionWorker>(() => new MouseClickExecutionWorker(baseDatawork, systemService)) },
                 { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionWorker>(() => new MouseScrollExecutionWorker(baseDatawork, systemService)) },
+                { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionWorker>(() => new WaitForTemplateExecutionWorker(baseDatawork, systemService, templateSearchService)) },
                 { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new TemplateSearchExecutionWorker(baseDatawork, systemService, templateSearchService)) },
                 { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionWorker>(() => new TemplateSearchLoopExecutionWorker(baseDatawork, systemService, templateSearchService)) },
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new MultipleTemplateSearchExecutionWorker(baseDatawork, systemService, templateSearchService)) },

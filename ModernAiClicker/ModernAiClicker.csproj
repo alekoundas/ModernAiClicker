@@ -64,6 +64,9 @@
     <Compile Update="Views\Pages\Executions\MultipleTemplateSearchLoopExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\Executions\WaitForTemplateExecutionPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\Executions\WindowMoveExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -92,6 +95,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\MultipleTemplateSearchLoopFlowStepPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Pages\FlowStepDetail\WaitForTemplateFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\TemplateSearchLoopFlowStepPage.xaml.cs">
