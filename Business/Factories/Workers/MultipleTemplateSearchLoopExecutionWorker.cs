@@ -167,12 +167,14 @@ namespace Business.Factories.Workers
                 nextFlowStep = nextFlowStep.ChildrenFlowSteps
                     .First(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
                     .ChildrenFlowSteps
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0);
+                    .OrderBy(x => x.OrderingNum)
+                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
             else
                 nextFlowStep = nextFlowStep.ChildrenFlowSteps
                     .First(x => x.FlowStepType == FlowStepTypesEnum.IS_FAILURE)
                     .ChildrenFlowSteps
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0);
+                    .OrderBy(x => x.OrderingNum)
+                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
 
             return nextFlowStep;
         }

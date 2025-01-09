@@ -228,12 +228,12 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!--  Buttons Add/Edit  -->
+        <!--  Buttons Expand/Collapse/Add/Refresh  -->
         <StackPanel
             Grid.ColumnSpan="5"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
-
+            <TextBox IsReadOnly="True" Text="{Binding ViewModel.CoppiedFlowStepId}" />
             <ui:Button Margin="10" IsEnabled="true">
 
                 <icons:BootstrapIcon
@@ -737,6 +737,29 @@
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </ui:Button>
+                                            <!--  Delete  -->
+                                            <ui:Button
+                                                x:Name="TreeViewItemButtonCopy"
+                                                Grid.Row="0"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="4"
+                                                Margin="5"
+                                                Padding="5"
+                                                HorizontalAlignment="Right">
+                                                <icons:BootstrapIcon Icon="Copy" />
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="Click">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonCopyClickCommand}">
+                                                            <i:InvokeCommandAction.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                                    <Binding ElementName="TreeViewItemButtonCopy" />
+                                                                    <Binding Path="" />
+                                                                </MultiBinding>
+                                                            </i:InvokeCommandAction.CommandParameter>
+                                                        </i:InvokeCommandAction>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </ui:Button>
                                         </Grid>
                                     </DataTemplate>
 
@@ -768,25 +791,47 @@
 
                                     <!--  Child TreeViewItem New ContentPresenter  (New Flow Step)  -->
                                     <DataTemplate x:Key="FlowStepNew">
-                                        <ui:Button
-                                            x:Name="TreeViewItemButtonNew"
-                                            Padding="10"
-                                            HorizontalAlignment="Center"
-                                            Content="Add">
-                                            <i:Interaction.Triggers>
-                                                <i:EventTrigger EventName="Click">
-                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemButtonNewClickCommand}" PassEventArgsToCommand="True">
-                                                        <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonNew" />
-                                                                <Binding Path="FlowId" />
-                                                                <Binding Path="Id" />
-                                                            </MultiBinding>
-                                                        </i:InvokeCommandAction.CommandParameter>
-                                                    </i:InvokeCommandAction>
-                                                </i:EventTrigger>
-                                            </i:Interaction.Triggers>
-                                        </ui:Button>
+                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+
+                                            <ui:Button
+                                                x:Name="TreeViewItemButtonNew"
+                                                Padding="10"
+                                                HorizontalAlignment="Center"
+                                                Content="Add">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="Click">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemButtonNewClickCommand}" PassEventArgsToCommand="True">
+                                                            <i:InvokeCommandAction.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                                    <Binding ElementName="TreeViewItemButtonNew" />
+                                                                    <Binding Path="FlowId" />
+                                                                    <Binding Path="Id" />
+                                                                </MultiBinding>
+                                                            </i:InvokeCommandAction.CommandParameter>
+                                                        </i:InvokeCommandAction>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </ui:Button>
+
+                                            <ui:Button
+                                                x:Name="TreeViewItemButtonPaste"
+                                                Padding="10"
+                                                HorizontalAlignment="Center"
+                                                Content="Paste">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="Click">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemButtonPasteClickCommand}" PassEventArgsToCommand="True">
+                                                            <i:InvokeCommandAction.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                                    <Binding ElementName="TreeViewItemButtonPaste" />
+                                                                    <Binding Path="" />
+                                                                </MultiBinding>
+                                                            </i:InvokeCommandAction.CommandParameter>
+                                                        </i:InvokeCommandAction>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </ui:Button>
+                                        </StackPanel>
                                     </DataTemplate>
 
 

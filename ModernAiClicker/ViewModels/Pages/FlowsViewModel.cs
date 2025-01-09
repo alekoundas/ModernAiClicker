@@ -27,6 +27,9 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private bool _isLocked;
 
+        [ObservableProperty]
+        private int? _coppiedFlowStepId;
+
 
         public FlowsViewModel(IBaseDatawork baseDatawork, ISystemService systemService)
         {
@@ -160,6 +163,69 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
+        private async Task OnTreeViewItemButtonPasteClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+
+                FlowStep coppyFlowStep = await _baseDatawork.FlowSteps.Query
+                    .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                    .Include(x => x.ChildrenFlowSteps)
+                    .ThenInclude(x => x.ChildrenFlowSteps)
+                    .AsNoTracking()
+                    .FirstAsync(x => x.Id == CoppiedFlowStepId);
+
+                List<FlowStep> flowSteps = new List<FlowStep>();
+                flowSteps.Add(coppyFlowStep);
+
+                // Load all children of coppied flow step.
+                while (flowSteps.Count > 0)
+                {
+                    foreach (var loadFlowStep in flowSteps)
+                    {
+                        foreach (var child in loadFlowStep.ChildrenFlowSteps)
+                        {
+                            child.ChildrenFlowSteps = new ObservableCollection<FlowStep>(
+                                await _baseDatawork.FlowSteps.Query
+                                    .AsNoTracking()
+                                    .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                                    .Include(x => x.ChildrenFlowSteps)
+                                    .ThenInclude(x => x.ChildrenFlowSteps)
+                                    .Where(x => x.Id == child.Id)
+                                    .SelectMany(x => x.ChildrenFlowSteps)
+                                    .ToListAsync());
+                            child.Id = 0;
+                            child.ParentTemplateSearchFlowStepId = 0;
+                            child.ParentFlowStepId = 0;
+                        }
+                        loadFlowStep.Id = 0;
+                        loadFlowStep.ParentTemplateSearchFlowStepId = 0;
+                        loadFlowStep.ParentFlowStepId = 0;
+                    }
+
+                    flowSteps = flowSteps.SelectMany(x => x.ChildrenFlowSteps).SelectMany(x => x.ChildrenFlowSteps).ToList();
+                }
+
+
+                coppyFlowStep.Id = 0;
+
+
+
+
+
+
+
+                coppyFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
+                coppyFlowStep.OrderingNum = flowStep.OrderingNum;
+                flowStep.OrderingNum++;
+
+                _baseDatawork.FlowSteps.Add(coppyFlowStep);
+                await _baseDatawork.SaveChangesAsync();
+            }
+        }
+
+        [RelayCommand]
         private async Task OnTreeViewItemFlowStepButtonDeleteClick(EventParammeters eventParameters)
         {
             if (eventParameters.FlowId is FlowStep)
@@ -182,6 +248,16 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 await _baseDatawork.SaveChangesAsync();
                 await RefreshData();
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnTreeViewItemFlowStepButtonCopyClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+                CoppiedFlowStepId = flowStep.Id;
             }
         }
 

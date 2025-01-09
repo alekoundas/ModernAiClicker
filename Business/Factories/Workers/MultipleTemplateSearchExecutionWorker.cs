@@ -164,12 +164,14 @@ namespace Business.Factories.Workers
                 nextFlowStep = nextFlowStep.ChildrenFlowSteps
                     .First(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
                     .ChildrenFlowSteps
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0);
+                    .OrderBy(x => x.OrderingNum)
+                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
             else
                 nextFlowStep = nextFlowStep.ChildrenFlowSteps
                     .First(x => x.FlowStepType == FlowStepTypesEnum.IS_FAILURE)
                     .ChildrenFlowSteps
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0);
+                    .OrderBy(x => x.OrderingNum)
+                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
 
             return nextFlowStep;
         }
@@ -181,12 +183,18 @@ namespace Business.Factories.Workers
 
             List<Execution> executions = _baseDatawork.Executions.GetAll();
 
-            // Get recursively all parents of loop executions.
-            List<Execution?> parentLoopExecutions = executions
-                .First(x => x.Id == execution.ParentLoopExecutionId)
-                .SelectRecursive<Execution?>(x => x.ParentLoopExecution)
-                .Where(x => x != null)
-                .ToList();
+            // Get all parents of loop execution.
+            List<Execution> parentLoopExecutions = new List<Execution>();
+            Execution? currentExecution = execution;
+            while (currentExecution.ParentLoopExecutionId != null)
+            {
+                parentLoopExecutions.Add(currentExecution);
+
+                currentExecution = await _baseDatawork.Executions.Query
+                    .Include(x => x.FlowStep)
+                    .FirstAsync(x => x.Id == currentExecution.ParentLoopExecutionId.Value);
+            }
+
 
             parentLoopExecutions.Add(execution);
 
