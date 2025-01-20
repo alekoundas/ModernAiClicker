@@ -186,13 +186,17 @@ namespace ModernAiClicker.ViewModels.Pages
                         if (targetParent == null)
                             return;
 
+
+
+                        FlowStep isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(targetParent.id);
+
                         clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
+                        clonedFlowStep.OrderingNum = isNewSimpling.OrderingNum;
+                        isNewSimpling.OrderingNum++;
 
                         // Attach the cloned root to the target parent.
                         targetParent.ChildrenFlowSteps.Add(clonedFlowStep);
 
-                        // Save changes.
-                        await _baseDatawork.SaveChangesAsync();
                     }
                     else if (flowStep.FlowId.HasValue)
                     {
@@ -205,14 +209,17 @@ namespace ModernAiClicker.ViewModels.Pages
                         if (targetParent == null)
                             return;
 
+                        FlowStep isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(targetParent.Id);
                         clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
+                        clonedFlowStep.OrderingNum = isNewSimpling.OrderingNum;
+                        isNewSimpling.OrderingNum++;
 
                         // Attach the cloned root to the target parent.
                         targetParent.FlowSteps.Add(clonedFlowStep);
 
-                        // Save changes.
-                        await _baseDatawork.SaveChangesAsync();
                     }
+                    // Save changes.
+                    await _baseDatawork.SaveChangesAsync();
                 }
             }
         }
@@ -616,6 +623,7 @@ namespace ModernAiClicker.ViewModels.Pages
                         .Where(x => x.Id == flowStep.ParentFlowStepId.Value)
                         .SelectMany(x => x.ChildrenFlowSteps)
                         .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                        .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
                         .ToListAsync();
                 else if (flowStep.FlowId.HasValue)
                     simplingsBellow = await _baseDatawork.Query.Flows
@@ -623,6 +631,7 @@ namespace ModernAiClicker.ViewModels.Pages
                         .Where(x => x.Id == flowStep.FlowId.Value)
                         .SelectMany(x => x.FlowSteps)
                         .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                        .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
                         .ToListAsync();
 
 
