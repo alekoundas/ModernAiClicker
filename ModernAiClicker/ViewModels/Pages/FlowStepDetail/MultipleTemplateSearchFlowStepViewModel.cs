@@ -9,7 +9,6 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
-using Microsoft.EntityFrameworkCore;
 using Rectangle = Model.Structs.Rectangle;
 using Model.ConverterModels;
 
@@ -31,6 +30,9 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private FlowStep _flowStep;
 
+        [ObservableProperty]
+        private ObservableCollection<FlowStep> _flowSteps;
+
         public event ShowTemplateImgEvent? ShowTemplateImg;
         public delegate void ShowTemplateImgEvent(string filePath);
 
@@ -48,6 +50,7 @@ namespace ModernAiClicker.ViewModels.Pages
             _flowsViewModel = flowsViewModel;
 
             TemplateImgPath = flowStep.TemplateImagePath;
+            FlowSteps = flowStep.ChildrenTemplateSearchFlowSteps;
             //ShowTemplateImg?.Invoke(TemplateImgPath);
 
         }
@@ -72,10 +75,64 @@ namespace ModernAiClicker.ViewModels.Pages
             }
         }
 
+
+        [RelayCommand]
+        private async Task OnButtonUpClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+                List<FlowStep> simplingsAbove = FlowStep.ChildrenTemplateSearchFlowSteps
+                        .Where(x => x.OrderingNum < flowStep.OrderingNum)
+                        .ToList();
+
+                //if (simplingsAbove.Any())
+                //{
+                //    // Find max
+                //    FlowStep simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
+
+                //    // Swap values
+                //    (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
+
+                //}
+                //else
+                    flowStep.OrderingNum++;
+
+                FlowSteps = new ObservableCollection<FlowStep>(FlowSteps.OrderBy(x => x.OrderingNum).ToList());
+
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnButtonDownClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+                List<FlowStep> simplingsBellow = FlowStep.ChildrenTemplateSearchFlowSteps
+                        .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                        .ToList();
+
+                //if (simplingsBellow.Any())
+                //{
+                //    // Find min
+                //    FlowStep simplingBellow = simplingsBellow.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
+
+                //    // Swap values
+                //    (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
+
+                //}
+
+                flowStep.OrderingNum--;
+
+                FlowStep.ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(FlowStep.ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
+            }
+        }
+
         [RelayCommand]
         public void OnButtonAddClick()
         {
-            FlowStep.ChildrenTemplateSearchFlowSteps.Add(new FlowStep());
+            FlowSteps.Add(new FlowStep());
         }
 
         [RelayCommand]
@@ -87,6 +144,16 @@ namespace ModernAiClicker.ViewModels.Pages
                 templateFlowStep.LoopResultImagePath = "";
             }
             ShowResultImage?.Invoke("");
+        }
+
+        [RelayCommand]
+        private void OnButtonDeleteClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
+                FlowSteps.Remove(templateFlowStep);
+            }
         }
 
         [RelayCommand]
@@ -144,15 +211,18 @@ namespace ModernAiClicker.ViewModels.Pages
 
             foreach (var templateFlowStep in templateFlowSteps)
                 FlowStep.ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
-                
+
 
             // Edit mode
             if (FlowStep.Id > 0)
             {
+                //_baseDatawork.Query.ChangeTracker.Clear();
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.ChildrenTemplateSearchFlowSteps = FlowStep.ChildrenTemplateSearchFlowSteps;
+                updateFlowStep.ChildrenTemplateSearchFlowSteps = FlowSteps;
+
+                //_baseDatawork.Update(updateFlowStep);
             }
 
             /// Add mode

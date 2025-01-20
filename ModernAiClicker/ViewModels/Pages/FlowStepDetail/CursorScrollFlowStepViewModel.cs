@@ -55,6 +55,10 @@ namespace ModernAiClicker.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
+                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
+                updateFlowStep.Name = FlowStep.Name;
+                updateFlowStep.MouseScrollDirectionEnum = FlowStep.MouseScrollDirectionEnum;
+                updateFlowStep.MouseLoopTimes = FlowStep.MouseLoopTimes;
 
             }
 

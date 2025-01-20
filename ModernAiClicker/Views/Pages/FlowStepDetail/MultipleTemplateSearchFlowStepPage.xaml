@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:icons="https://github.com/helluvamatt/BootstrapIcons.Wpf/"
     xmlns:local="clr-namespace:ModernAiClicker.Views.Pages.FlowStepDetail"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MultipleTemplateSearchFlowStepPage"
@@ -77,7 +78,7 @@
                 Content="Add" />
 
 
-            <ItemsControl ItemsSource="{Binding ViewModel.FlowStep.ChildrenTemplateSearchFlowSteps}">
+            <ItemsControl ItemsSource="{Binding ViewModel.FlowSteps}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!--  Use a WrapPanel for a horizontal layout  -->
@@ -92,6 +93,73 @@
                             BorderBrush="Gray"
                             BorderThickness="1">
                             <StackPanel>
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+
+                                    <!--  Arrows Up/Down  -->
+                                    <Button
+                                        x:Name="TreeViewItemButtonUp"
+                                        Grid.Column="2"
+                                        Margin="5"
+                                        HorizontalAlignment="Right">
+                                        <icons:BootstrapIcon Width="20" Icon="ArrowUpShort" />
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonUpClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                                            <Binding Path="" />
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+
+                                    <Button
+                                        x:Name="TreeViewItemButtonDown"
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        Margin="5"
+                                        HorizontalAlignment="Right">
+                                        <icons:BootstrapIcon Width="20" Icon="ArrowDownShort" />
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonDownClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                                            <Binding Path="" />
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+
+                                    <Button
+                                        x:Name="TreeViewItemButtonDelete"
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        Margin="5"
+                                        HorizontalAlignment="Right">
+                                        <icons:BootstrapIcon Width="20" Icon="Trash" />
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonDeleteClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                                            <Binding Path="" />
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                                <Label>Ordering:</Label>
+                                <Label Content="{Binding OrderingNum}" />
 
                                 <Label>Select template image to search:</Label>
                                 <StackPanel Margin="0,0,0,15" Orientation="Horizontal">

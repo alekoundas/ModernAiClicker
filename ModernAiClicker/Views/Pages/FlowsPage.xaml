@@ -595,6 +595,29 @@
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </ui:Button>
+                                            <!--  Copy  -->
+                                            <ui:Button
+                                                x:Name="TreeViewItemButtonCopy"
+                                                Grid.Row="0"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="4"
+                                                Margin="5"
+                                                Padding="5"
+                                                HorizontalAlignment="Right">
+                                                <icons:BootstrapIcon Icon="Copy" />
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="Click">
+                                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:FlowsPage}}, Path=ViewModel.TreeViewItemFlowStepButtonCopyClickCommand}">
+                                                            <i:InvokeCommandAction.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                                    <Binding ElementName="TreeViewItemButtonCopy" />
+                                                                    <Binding Path="" />
+                                                                </MultiBinding>
+                                                            </i:InvokeCommandAction.CommandParameter>
+                                                        </i:InvokeCommandAction>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </ui:Button>
                                         </Grid>
                                     </DataTemplate>
 
@@ -737,7 +760,7 @@
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </ui:Button>
-                                            <!--  Delete  -->
+                                            <!--  Copy  -->
                                             <ui:Button
                                                 x:Name="TreeViewItemButtonCopy"
                                                 Grid.Row="0"
