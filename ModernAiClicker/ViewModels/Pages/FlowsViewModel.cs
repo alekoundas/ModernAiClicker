@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using AutoMapper;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -168,62 +169,360 @@ namespace ModernAiClicker.ViewModels.Pages
             if (eventParameters.FlowId is FlowStep)
             {
                 FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-
-                FlowStep coppyFlowStep = await _baseDatawork.FlowSteps.Query
-                    .Include(x => x.ChildrenTemplateSearchFlowSteps)
-                    .Include(x => x.ChildrenFlowSteps)
-                    .ThenInclude(x => x.ChildrenFlowSteps)
-                    .AsNoTracking()
-                    .FirstAsync(x => x.Id == CoppiedFlowStepId);
-
-                List<FlowStep> flowSteps = new List<FlowStep>();
-                flowSteps.Add(coppyFlowStep);
-
-                // Load all children of coppied flow step.
-                while (flowSteps.Count > 0)
+                int? parentId = flowStep.ParentFlowStepId ?? flowStep.FlowId ?? null;
+                if (CoppiedFlowStepId.HasValue)
                 {
-                    foreach (var loadFlowStep in flowSteps)
+
+                    FlowStep clonedFlowStep = await GetClonedFlowStepAsync(CoppiedFlowStepId.Value);
+
+                    if (flowStep.ParentFlowStepId.HasValue)
                     {
-                        foreach (var child in loadFlowStep.ChildrenFlowSteps)
-                        {
-                            child.ChildrenFlowSteps = new ObservableCollection<FlowStep>(
-                                await _baseDatawork.FlowSteps.Query
-                                    .AsNoTracking()
-                                    .Include(x => x.ChildrenTemplateSearchFlowSteps)
-                                    .Include(x => x.ChildrenFlowSteps)
-                                    .ThenInclude(x => x.ChildrenFlowSteps)
-                                    .Where(x => x.Id == child.Id)
-                                    .SelectMany(x => x.ChildrenFlowSteps)
-                                    .ToListAsync());
-                            child.Id = 0;
-                            child.ParentTemplateSearchFlowStepId = 0;
-                            child.ParentFlowStepId = 0;
-                        }
-                        loadFlowStep.Id = 0;
-                        loadFlowStep.ParentTemplateSearchFlowStepId = 0;
-                        loadFlowStep.ParentFlowStepId = 0;
+
+                        //  Load the target parent.
+                        FlowStep? targetParent = await _baseDatawork.FlowSteps.Query
+                        .Include(fs => fs.ChildrenFlowSteps)
+                        .FirstOrDefaultAsync(fs => fs.Id == flowStep.ParentFlowStepId.Value);
+
+                        if (targetParent == null)
+                            return;
+
+                        clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
+
+                        // Attach the cloned root to the target parent.
+                        targetParent.ChildrenFlowSteps.Add(clonedFlowStep);
+
+                        // Save changes.
+                        await _baseDatawork.SaveChangesAsync();
                     }
+                    else if (flowStep.FlowId.HasValue)
+                    {
 
-                    flowSteps = flowSteps.SelectMany(x => x.ChildrenFlowSteps).SelectMany(x => x.ChildrenFlowSteps).ToList();
+                        //  Load the target parent.
+                        Flow? targetParent = await _baseDatawork.Flows.Query
+                        .Include(fs => fs.FlowSteps)
+                        .FirstOrDefaultAsync(fs => fs.Id == flowStep.FlowId.Value);
+
+                        if (targetParent == null)
+                            return;
+
+                        clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
+
+                        // Attach the cloned root to the target parent.
+                        targetParent.FlowSteps.Add(clonedFlowStep);
+
+                        // Save changes.
+                        await _baseDatawork.SaveChangesAsync();
+                    }
                 }
-
-
-                coppyFlowStep.Id = 0;
-
-
-
-
-
-
-
-                coppyFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
-                coppyFlowStep.OrderingNum = flowStep.OrderingNum;
-                flowStep.OrderingNum++;
-
-                _baseDatawork.FlowSteps.Add(coppyFlowStep);
-                await _baseDatawork.SaveChangesAsync();
             }
         }
+
+
+        public async Task<FlowStep> GetClonedFlowStepAsync(int sourceBranchId)
+        {
+            //var mapper = new MapperConfiguration(x =>
+            //{
+            //    x.CreateMap<FlowStep, FlowStep>()
+            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => 0)) // Set Id to 0 for new entities
+            //    .ForMember(dest => dest.ParentFlowStep, opt => opt.Ignore()) // Set manually
+            //    .ForMember(dest => dest.ParentFlowStepId, opt => opt.Ignore()) // Set manually
+            //    .ForMember(dest => dest.ChildrenFlowSteps, opt => opt.Ignore()) // Handle manually for iterative approach
+            //    .ForMember(dest => dest.ChildrenTemplateSearchFlowSteps, opt => opt.MapFrom(src => src.ChildrenTemplateSearchFlowSteps)); // Retain references to existing entities
+            //}
+            //        ).CreateMapper();
+
+            // Step 1: Load the source branch (including its children and template search relationships)
+            var sourceBranch = await _baseDatawork.FlowSteps.Query
+                .Include(fs => fs.ChildrenFlowSteps)
+                .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
+                .FirstOrDefaultAsync(fs => fs.Id == sourceBranchId);
+
+            if (sourceBranch == null)
+                throw new ArgumentException($"Source branch with ID {sourceBranchId} not found.");
+
+
+            // Step 2: Use a queue to clone the tree iteratively
+            var cloneRoot = new FlowStep
+            {
+                //ParentFlowStep = targetParent,
+                //ParentFlowStepId = targetParent.Id,
+                ParentTemplateSearchFlowStep = sourceBranch.ParentTemplateSearchFlowStep,
+                ParentTemplateSearchFlowStepId = sourceBranch.ParentTemplateSearchFlowStepId,
+                Name = sourceBranch.Name,
+                ProcessName = sourceBranch.ProcessName,
+                IsExpanded = sourceBranch.IsExpanded,
+                Disabled = sourceBranch.Disabled,
+                IsSelected = false,
+                OrderingNum = sourceBranch.OrderingNum,
+                FlowStepType = sourceBranch.FlowStepType,
+                TemplateImagePath = sourceBranch.TemplateImagePath,
+                TemplateImage = sourceBranch.TemplateImage,
+                Accuracy = sourceBranch.Accuracy,
+                LocationX = sourceBranch.LocationX,
+                LocationY = sourceBranch.LocationY,
+                MaxLoopCount = sourceBranch.MaxLoopCount,
+                RemoveTemplateFromResult = sourceBranch.RemoveTemplateFromResult,
+                LoopResultImagePath = sourceBranch.LoopResultImagePath,
+                MouseAction = sourceBranch.MouseAction,
+                MouseButton = sourceBranch.MouseButton,
+                MouseScrollDirectionEnum = sourceBranch.MouseScrollDirectionEnum,
+                MouseLoopInfinite = sourceBranch.MouseLoopInfinite,
+                MouseLoopTimes = sourceBranch.MouseLoopTimes,
+                MouseLoopDebounceTime = sourceBranch.MouseLoopDebounceTime,
+                MouseLoopTime = sourceBranch.MouseLoopTime,
+                SleepForHours = sourceBranch.SleepForHours,
+                SleepForMinutes = sourceBranch.SleepForMinutes,
+                SleepForSeconds = sourceBranch.SleepForSeconds,
+                SleepForMilliseconds = sourceBranch.SleepForMilliseconds,
+                WindowHeight = sourceBranch.WindowHeight,
+                WindowWidth = sourceBranch.WindowWidth,
+
+            };
+
+            var queue = new Queue<(FlowStep sourceNode, FlowStep clonedNode)>();
+            queue.Enqueue((sourceBranch, cloneRoot));
+
+            while (queue.Count > 0)
+            {
+                var (currentSource, currentClone) = queue.Dequeue();
+
+                var currentSourceChildrenFlowSteps = await _baseDatawork.FlowSteps.Query
+                .Include(fs => fs.ChildrenFlowSteps)
+                .Where(fs => fs.Id == currentSource.Id)
+                .SelectMany(x => x.ChildrenFlowSteps)
+                .ToListAsync();
+
+                var currentSourceChildrenTemplateSearchFlowSteps = await _baseDatawork.FlowSteps.Query
+                .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
+                .Where(fs => fs.Id == currentSource.Id)
+                .SelectMany(x => x.ChildrenTemplateSearchFlowSteps)
+                .ToListAsync();
+
+                // Clone children (these are new entities)
+                foreach (var child in currentSourceChildrenFlowSteps)
+                {
+                    var clonedChild = new FlowStep
+                    {
+                        ParentFlowStep = currentClone,
+                        ParentFlowStepId = currentClone.Id,
+                        ParentTemplateSearchFlowStep = child.ParentTemplateSearchFlowStep, // Preserve template references
+                        ParentTemplateSearchFlowStepId = child.ParentTemplateSearchFlowStepId, // Preserve template IDs
+                        Name = child.Name,
+                        ProcessName = child.ProcessName,
+                        IsExpanded = child.IsExpanded,
+                        Disabled = child.Disabled,
+                        IsSelected = false,
+                        OrderingNum = child.OrderingNum,
+                        FlowStepType = child.FlowStepType,
+                        TemplateImagePath = child.TemplateImagePath,
+                        TemplateImage = child.TemplateImage,
+                        Accuracy = child.Accuracy,
+                        LocationX = child.LocationX,
+                        LocationY = child.LocationY,
+                        MaxLoopCount = child.MaxLoopCount,
+                        RemoveTemplateFromResult = child.RemoveTemplateFromResult,
+                        LoopResultImagePath = child.LoopResultImagePath,
+                        MouseAction = child.MouseAction,
+                        MouseButton = child.MouseButton,
+                        MouseScrollDirectionEnum = child.MouseScrollDirectionEnum,
+                        MouseLoopInfinite = child.MouseLoopInfinite,
+                        MouseLoopTimes = child.MouseLoopTimes,
+                        MouseLoopDebounceTime = child.MouseLoopDebounceTime,
+                        MouseLoopTime = child.MouseLoopTime,
+                        SleepForHours = child.SleepForHours,
+                        SleepForMinutes = child.SleepForMinutes,
+                        SleepForSeconds = child.SleepForSeconds,
+                        SleepForMilliseconds = child.SleepForMilliseconds,
+                        WindowHeight = child.WindowHeight,
+                        WindowWidth = child.WindowWidth,
+                    };
+
+                    // IMPORTANT: Ensure the ID is null for the cloned entity
+                    clonedChild.Id = 0;
+
+                    // Add to the parent's children
+                    currentClone.ChildrenFlowSteps.Add(clonedChild);
+
+                    // Enqueue for further processing
+                    queue.Enqueue((child, clonedChild));
+                }
+
+                // Maintain existing template search relationships
+                foreach (var templateChild in currentSourceChildrenTemplateSearchFlowSteps)
+                {
+                    currentClone.ChildrenTemplateSearchFlowSteps.Add(templateChild);
+                }
+            }
+
+            return cloneRoot;
+
+        }
+
+
+
+
+        //public async Task GetClonedFlowStepAsync(int sourceBranchId, int? targetParentId)
+        //{
+        //    //var mapper = new MapperConfiguration(x =>
+        //    //{
+        //    //    x.CreateMap<FlowStep, FlowStep>()
+        //    //    .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => 0)) // Set Id to 0 for new entities
+        //    //    .ForMember(dest => dest.ParentFlowStep, opt => opt.Ignore()) // Set manually
+        //    //    .ForMember(dest => dest.ParentFlowStepId, opt => opt.Ignore()) // Set manually
+        //    //    .ForMember(dest => dest.ChildrenFlowSteps, opt => opt.Ignore()) // Handle manually for iterative approach
+        //    //    .ForMember(dest => dest.ChildrenTemplateSearchFlowSteps, opt => opt.MapFrom(src => src.ChildrenTemplateSearchFlowSteps)); // Retain references to existing entities
+        //    //}
+        //    //        ).CreateMapper();
+
+        //    // Step 1: Load the source branch (including its children and template search relationships)
+        //    var sourceBranch = await _baseDatawork.FlowSteps.Query
+        //        .Include(fs => fs.ChildrenFlowSteps)
+        //        .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
+        //        .FirstOrDefaultAsync(fs => fs.Id == sourceBranchId);
+
+        //    if (sourceBranch == null)
+        //        throw new ArgumentException($"Source branch with ID {sourceBranchId} not found.");
+
+        //    // Step 2: Load the target parent
+        //    var targetParent = await _baseDatawork.FlowSteps.Query
+        //        .Include(fs => fs.ChildrenFlowSteps)
+        //        .FirstOrDefaultAsync(fs => fs.Id == targetParentId);
+
+        //    if (targetParent == null)
+        //        throw new ArgumentException($"Target parent with ID {targetParentId} not found.");
+
+        //    // Step 3: Use a queue to clone the tree iteratively
+        //    var clonedRoot = new FlowStep
+        //    {
+        //        ParentFlowStep = targetParent,
+        //        ParentFlowStepId = targetParent.Id,
+        //        ParentTemplateSearchFlowStep = sourceBranch.ParentTemplateSearchFlowStep,
+        //        ParentTemplateSearchFlowStepId = sourceBranch.ParentTemplateSearchFlowStepId,
+        //        Name = sourceBranch.Name,
+        //        ProcessName = sourceBranch.ProcessName,
+        //        IsExpanded = sourceBranch.IsExpanded,
+        //        Disabled = sourceBranch.Disabled,
+        //        IsSelected = false,
+        //        OrderingNum = sourceBranch.OrderingNum,
+        //        FlowStepType = sourceBranch.FlowStepType,
+        //        TemplateImagePath = sourceBranch.TemplateImagePath,
+        //        TemplateImage = sourceBranch.TemplateImage,
+        //        Accuracy = sourceBranch.Accuracy,
+        //        LocationX = sourceBranch.LocationX,
+        //        LocationY = sourceBranch.LocationY,
+        //        MaxLoopCount = sourceBranch.MaxLoopCount,
+        //        RemoveTemplateFromResult = sourceBranch.RemoveTemplateFromResult,
+        //        LoopResultImagePath = sourceBranch.LoopResultImagePath,
+        //        MouseAction = sourceBranch.MouseAction,
+        //        MouseButton = sourceBranch.MouseButton,
+        //        MouseScrollDirectionEnum = sourceBranch.MouseScrollDirectionEnum,
+        //        MouseLoopInfinite = sourceBranch.MouseLoopInfinite,
+        //        MouseLoopTimes = sourceBranch.MouseLoopTimes,
+        //        MouseLoopDebounceTime = sourceBranch.MouseLoopDebounceTime,
+        //        MouseLoopTime = sourceBranch.MouseLoopTime,
+        //        SleepForHours = sourceBranch.SleepForHours,
+        //        SleepForMinutes = sourceBranch.SleepForMinutes,
+        //        SleepForSeconds = sourceBranch.SleepForSeconds,
+        //        SleepForMilliseconds = sourceBranch.SleepForMilliseconds,
+        //        WindowHeight = sourceBranch.WindowHeight,
+        //        WindowWidth = sourceBranch.WindowWidth,
+
+        //    };
+
+        //    var queue = new Queue<(FlowStep sourceNode, FlowStep clonedNode)>();
+        //    queue.Enqueue((sourceBranch, clonedRoot));
+
+        //    while (queue.Count > 0)
+        //    {
+        //        var (currentSource, currentClone) = queue.Dequeue();
+
+        //        var currentSourceChildrenFlowSteps = await _baseDatawork.FlowSteps.Query
+        //        .Include(fs => fs.ChildrenFlowSteps)
+        //        .Where(fs => fs.Id == currentSource.Id)
+        //        .SelectMany(x => x.ChildrenFlowSteps)
+        //        .ToListAsync();
+
+        //        var currentSourceChildrenTemplateSearchFlowSteps = await _baseDatawork.FlowSteps.Query
+        //        .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
+        //        .Where(fs => fs.Id == currentSource.Id)
+        //        .SelectMany(x => x.ChildrenTemplateSearchFlowSteps)
+        //        .ToListAsync();
+
+        //        // Clone children (these are new entities)
+        //        foreach (var child in currentSourceChildrenFlowSteps)
+        //        {
+        //            var clonedChild = new FlowStep
+        //            {
+        //                ParentFlowStep = currentClone,
+        //                ParentFlowStepId = currentClone.Id,
+        //                ParentTemplateSearchFlowStep = child.ParentTemplateSearchFlowStep, // Preserve template references
+        //                ParentTemplateSearchFlowStepId = child.ParentTemplateSearchFlowStepId, // Preserve template IDs
+        //                Name = child.Name,
+        //                ProcessName = child.ProcessName,
+        //                IsExpanded = child.IsExpanded,
+        //                Disabled = child.Disabled,
+        //                IsSelected = false,
+        //                OrderingNum = child.OrderingNum,
+        //                FlowStepType = child.FlowStepType,
+        //                TemplateImagePath = child.TemplateImagePath,
+        //                TemplateImage = child.TemplateImage,
+        //                Accuracy = child.Accuracy,
+        //                LocationX = child.LocationX,
+        //                LocationY = child.LocationY,
+        //                MaxLoopCount = child.MaxLoopCount,
+        //                RemoveTemplateFromResult = child.RemoveTemplateFromResult,
+        //                LoopResultImagePath = child.LoopResultImagePath,
+        //                MouseAction = child.MouseAction,
+        //                MouseButton = child.MouseButton,
+        //                MouseScrollDirectionEnum = child.MouseScrollDirectionEnum,
+        //                MouseLoopInfinite = child.MouseLoopInfinite,
+        //                MouseLoopTimes = child.MouseLoopTimes,
+        //                MouseLoopDebounceTime = child.MouseLoopDebounceTime,
+        //                MouseLoopTime = child.MouseLoopTime,
+        //                SleepForHours = child.SleepForHours,
+        //                SleepForMinutes = child.SleepForMinutes,
+        //                SleepForSeconds = child.SleepForSeconds,
+        //                SleepForMilliseconds = child.SleepForMilliseconds,
+        //                WindowHeight = child.WindowHeight,
+        //                WindowWidth = child.WindowWidth,
+        //            };
+
+        //            // IMPORTANT: Ensure the ID is null for the cloned entity
+        //            clonedChild.Id = 0;
+
+        //            // Add to the parent's children
+        //            currentClone.ChildrenFlowSteps.Add(clonedChild);
+
+        //            // Enqueue for further processing
+        //            queue.Enqueue((child, clonedChild));
+        //        }
+
+        //        // Maintain existing template search relationships
+        //        foreach (var templateChild in currentSourceChildrenTemplateSearchFlowSteps)
+        //        {
+        //            currentClone.ChildrenTemplateSearchFlowSteps.Add(templateChild);
+        //        }
+        //    }
+
+        //    // Step 4: Attach the cloned root to the target parent
+        //    targetParent.ChildrenFlowSteps.Add(clonedRoot);
+
+        //    // Step 5: Save changes
+        //    await _baseDatawork.SaveChangesAsync();
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         [RelayCommand]
         private async Task OnTreeViewItemFlowStepButtonDeleteClick(EventParammeters eventParameters)

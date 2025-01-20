@@ -31,18 +31,6 @@ namespace Model.Models
 
         public bool Disabled { get; set; }
 
-        public int? FlowId { get; set; }
-        public virtual Flow? Flow { get; set; }
-
-        public int? ParentFlowStepId { get; set; }
-        public virtual FlowStep? ParentFlowStep { get; set; }
-
-        public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
-        public virtual ObservableCollection<Execution>? Executions { get; set; }  = new ObservableCollection<Execution>();
-        public virtual ObservableCollection<Execution>? CurrentMultipleTemplateSearchFlowStepExecutions { get; set; }  = new ObservableCollection<Execution>();
-
-
-
 
 
 
@@ -115,6 +103,18 @@ namespace Model.Models
 
         [ObservableProperty]
         public int _windowWidth;
+
+
+        public int? FlowId { get; set; }
+        public virtual Flow? Flow { get; set; }
+
+        public int? ParentFlowStepId { get; set; }
+        public virtual FlowStep? ParentFlowStep { get; set; }
+
+        public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
+        public virtual ObservableCollection<Execution> Executions { get; set; }  = new ObservableCollection<Execution>();
+        public virtual ObservableCollection<Execution> CurrentMultipleTemplateSearchFlowStepExecutions { get; set; }  = new ObservableCollection<Execution>();
+
 
 
         // Used by GoTo and also by "MultipleTemplateSearch"
