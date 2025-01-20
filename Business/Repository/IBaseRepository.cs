@@ -47,7 +47,8 @@ namespace DataAccess.Repository.Interface
         void RemoveRange(IEnumerable<TEntity> entities);
         IEnumerable<TEntity> Where(Expression<Func<TEntity, bool>> expression);
 
-        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+        TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> filter, List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>? includes = null);
         void Select(Func<TEntity, TEntity> predicate);
         void Select(Expression<Func<TEntity, bool>> predicate);

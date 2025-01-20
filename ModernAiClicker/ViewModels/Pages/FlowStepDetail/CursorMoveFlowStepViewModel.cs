@@ -30,7 +30,7 @@ namespace ModernAiClicker.ViewModels.Pages
             FlowStep = flowStep;
 
             if (FlowStep.ParentFlowStepId.HasValue)
-                Task.Run(async () => await GetParentsRecursively(FlowStep.ParentFlowStepId.Value));
+                GetParents(FlowStep.ParentFlowStepId.Value);
         }
 
 
@@ -57,7 +57,7 @@ namespace ModernAiClicker.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
-             
+
                 if (FlowStep.ParentTemplateSearchFlowStep != null)
                     updateFlowStep.ParentTemplateSearchFlowStepId = FlowStep.ParentTemplateSearchFlowStep.Id;
             }
@@ -88,32 +88,35 @@ namespace ModernAiClicker.ViewModels.Pages
             await _flowsViewModel.RefreshData();
         }
 
-        private async Task GetParentsRecursively(int? flowStepId)
+        private void GetParents(int? flowStepId)
         {
             if (!flowStepId.HasValue)
                 return;
 
-            FlowStep parent = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId.Value);
+            FlowStep? parent = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStepId.Value);
 
-            if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
-                Parents.Add(parent);
+            while (parent != null)
+            {
+                if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
+                    Parents.Add(parent);
 
-            if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP)
-                Parents.Add(parent);
+                if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP)
+                    Parents.Add(parent);
 
-            if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH)
-                Parents.Add(parent);
+                if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH)
+                    Parents.Add(parent);
 
-            if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
-                Parents.Add(parent);
+                if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
+                    Parents.Add(parent);
 
-            if (parent.FlowStepType == FlowStepTypesEnum.WAIT_FOR_TEMPLATE)
-                Parents.Add(parent);
+                if (parent.FlowStepType == FlowStepTypesEnum.WAIT_FOR_TEMPLATE)
+                    Parents.Add(parent);
 
-            if (!parent.ParentFlowStepId.HasValue)
-                return;
+                if (!parent.ParentFlowStepId.HasValue)
+                    return;
 
-            await GetParentsRecursively(parent.ParentFlowStepId.Value);
+                parent = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == parent.ParentFlowStepId.Value);
+            }
         }
     }
 }

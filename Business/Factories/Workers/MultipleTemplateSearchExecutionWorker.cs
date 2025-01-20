@@ -64,6 +64,7 @@ namespace Business.Factories.Workers
                 parentLoopExecutions.Add(currentExecution);
 
                 currentExecution = await _baseDatawork.Executions.Query
+                    .AsNoTracking()
                     .Include(x => x.FlowStep)
                     .FirstAsync(x => x.Id == currentExecution.ParentLoopExecutionId.Value);
             }
@@ -86,7 +87,7 @@ namespace Business.Factories.Workers
             FlowStep? childTemplateSearchFlowStep = children
                 .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.id))
                 .ToList()
-                .OrderBy(x => x.Id)
+                .OrderBy(x => x.OrderingNum)
                 .FirstOrDefault();
 
 

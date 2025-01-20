@@ -18,23 +18,20 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents;
-        
+
         [ObservableProperty]
         private int _x;
-        
+
         [ObservableProperty]
         private int _y;
-        
-        public CursorMoveExecutionViewModel( IBaseDatawork baseDatawork)
+
+        public CursorMoveExecutionViewModel(IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _execution = new Execution();
 
-            //TODO fix parent
             Parents = new ObservableCollection<FlowStep>();
-            //Parents = GetParents();
-            //Execution execution = GetExecution();
 
             //TODO get result from parent flowstep execution
             if (Execution.ResultLocationX.HasValue && Execution.ResultLocationY.HasValue)
@@ -46,6 +43,11 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
         public void SetExecution(Execution execution)
         {
             Execution = execution;
+            FlowStep? flowStep = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == Execution.FlowStepId);
+            if (flowStep != null)
+            {
+                Parents = new ObservableCollection<FlowStep>() { flowStep };
+            }
         }
 
         [RelayCommand]
@@ -76,33 +78,26 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
             return templateSearchExecution;
         }
 
-        private async Task<ObservableCollection<FlowStep>> GetParents()
+
+        private List<FlowStep> GetParents(int? flowStepId)
         {
-            if (Execution?.FlowStep?.ParentFlowStepId == null)
-                return new ObservableCollection<FlowStep>();
+            if (!flowStepId.HasValue)
+                return new List<FlowStep>();
 
             List<FlowStep> parents = new List<FlowStep>();
+            FlowStep? parent = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStepId.Value);
 
-            // Get recursively all parents.
-            await GetParentsRecursivelly(parents, Execution.FlowStep.ParentFlowStepId.Value);
+            while (parent != null)
+            {
+                parents.Add(parent);
 
-            parents = parents
-                .Where(x => x != null && x.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
-                .ToList();
+                if (!parent.ParentFlowStepId.HasValue)
+                    parent = null;
+                else
+                    parent = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == parent.ParentFlowStepId.Value);
+            }
 
-            return new ObservableCollection<FlowStep>(parents);
-
-        }
-
-        private async Task GetParentsRecursivelly(List<FlowStep> parents, int flowStepId)
-        {
-            FlowStep flowStep = await _baseDatawork.FlowSteps
-                .FirstOrDefaultAsync(x => x.Id == flowStepId);
-
-            parents.Add(flowStep);
-
-            if (flowStep.ParentFlowStepId.HasValue)
-                await GetParentsRecursivelly(parents, flowStep.ParentFlowStepId.Value);
+            return parents;
         }
     }
 }

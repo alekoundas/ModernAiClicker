@@ -120,9 +120,14 @@ namespace DataAccess.Repository
             return _set.Count(predicate);
         }
 
-        public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _set.FirstOrDefaultAsync(predicate);
+        }
+
+        public TEntity? FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _set.FirstOrDefault(predicate);
         }
 
         public bool Any(Expression<Func<TEntity, bool>> predicate)

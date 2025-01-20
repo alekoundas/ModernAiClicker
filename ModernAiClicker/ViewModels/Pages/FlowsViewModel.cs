@@ -227,16 +227,6 @@ namespace ModernAiClicker.ViewModels.Pages
 
         public async Task<FlowStep> GetClonedFlowStepAsync(int sourceBranchId)
         {
-            //var mapper = new MapperConfiguration(x =>
-            //{
-            //    x.CreateMap<FlowStep, FlowStep>()
-            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => 0)) // Set Id to 0 for new entities
-            //    .ForMember(dest => dest.ParentFlowStep, opt => opt.Ignore()) // Set manually
-            //    .ForMember(dest => dest.ParentFlowStepId, opt => opt.Ignore()) // Set manually
-            //    .ForMember(dest => dest.ChildrenFlowSteps, opt => opt.Ignore()) // Handle manually for iterative approach
-            //    .ForMember(dest => dest.ChildrenTemplateSearchFlowSteps, opt => opt.MapFrom(src => src.ChildrenTemplateSearchFlowSteps)); // Retain references to existing entities
-            //}
-            //        ).CreateMapper();
 
             // Step 1: Load the source branch (including its children and template search relationships)
             var sourceBranch = await _baseDatawork.FlowSteps.Query
@@ -253,8 +243,8 @@ namespace ModernAiClicker.ViewModels.Pages
             {
                 //ParentFlowStep = targetParent,
                 //ParentFlowStepId = targetParent.Id,
-                ParentTemplateSearchFlowStep = sourceBranch.ParentTemplateSearchFlowStep,
-                ParentTemplateSearchFlowStepId = sourceBranch.ParentTemplateSearchFlowStepId,
+                //ParentTemplateSearchFlowStep = sourceBranch.ParentTemplateSearchFlowStep,
+                //ParentTemplateSearchFlowStepId = sourceBranch.ParentTemplateSearchFlowStepId,
                 Name = sourceBranch.Name,
                 ProcessName = sourceBranch.ProcessName,
                 IsExpanded = sourceBranch.IsExpanded,
@@ -292,28 +282,28 @@ namespace ModernAiClicker.ViewModels.Pages
             while (queue.Count > 0)
             {
                 var (currentSource, currentClone) = queue.Dequeue();
-
+                // Children flow steps.
                 var currentSourceChildrenFlowSteps = await _baseDatawork.FlowSteps.Query
                 .Include(fs => fs.ChildrenFlowSteps)
                 .Where(fs => fs.Id == currentSource.Id)
                 .SelectMany(x => x.ChildrenFlowSteps)
                 .ToListAsync();
-
+                
+                // Template search flow steps.
                 var currentSourceChildrenTemplateSearchFlowSteps = await _baseDatawork.FlowSteps.Query
                 .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
                 .Where(fs => fs.Id == currentSource.Id)
                 .SelectMany(x => x.ChildrenTemplateSearchFlowSteps)
                 .ToListAsync();
 
-                // Clone children (these are new entities)
                 foreach (var child in currentSourceChildrenFlowSteps)
                 {
                     var clonedChild = new FlowStep
                     {
                         ParentFlowStep = currentClone,
-                        ParentFlowStepId = currentClone.Id,
+                        //ParentFlowStepId = currentClone.Id,
                         ParentTemplateSearchFlowStep = child.ParentTemplateSearchFlowStep, // Preserve template references
-                        ParentTemplateSearchFlowStepId = child.ParentTemplateSearchFlowStepId, // Preserve template IDs
+                        //ParentTemplateSearchFlowStepId = child.ParentTemplateSearchFlowStepId, // Preserve template IDs
                         Name = child.Name,
                         ProcessName = child.ProcessName,
                         IsExpanded = child.IsExpanded,
@@ -354,7 +344,6 @@ namespace ModernAiClicker.ViewModels.Pages
                     queue.Enqueue((child, clonedChild));
                 }
 
-                // Maintain existing template search relationships
                 foreach (var templateChild in currentSourceChildrenTemplateSearchFlowSteps)
                 {
                     currentClone.ChildrenTemplateSearchFlowSteps.Add(templateChild);
@@ -364,7 +353,6 @@ namespace ModernAiClicker.ViewModels.Pages
             return cloneRoot;
 
         }
-
 
 
 
