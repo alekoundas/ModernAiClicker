@@ -285,25 +285,25 @@ namespace ModernAiClicker.ViewModels.Pages
             {
                 var (originalNode, clonedNode) = queue.Dequeue();
                 // Children flow steps.
-                var currentSourceChildrenFlowSteps = await _baseDatawork.FlowSteps.Query
+                var originalChildrenFlowSteps = await _baseDatawork.FlowSteps.Query
                 .Include(fs => fs.ChildrenFlowSteps)
                 .Where(fs => fs.Id == originalNode.Id)
                 .SelectMany(x => x.ChildrenFlowSteps)
                 .ToListAsync();
 
                 // Template search flow steps.
-                var currentSourceChildrenTemplateSearchFlowSteps = await _baseDatawork.FlowSteps.Query
+                var originalChildrenTemplateSearchFlowSteps = await _baseDatawork.FlowSteps.Query
                 .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
                 .Where(fs => fs.Id == originalNode.Id)
                 .SelectMany(x => x.ChildrenTemplateSearchFlowSteps)
                 .ToListAsync();
 
-                foreach (var child in currentSourceChildrenFlowSteps)
+                foreach (var child in originalChildrenFlowSteps)
                 {
                     FlowStep? parentTemplateSearchFlowStep = null;
-                    if (child.ParentFlowStepId.HasValue)
+                    if (child.ParentTemplateSearchFlowStepId.HasValue)
                         parentTemplateSearchFlowStep = clonedFlowSteps
-                            .Where(x => x.Key == child.ParentFlowStepId.Value)
+                            .Where(x => x.Key == child.ParentTemplateSearchFlowStepId.Value)
                             .FirstOrDefault()
                             .Value;
 
@@ -352,13 +352,13 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 }
 
-                foreach (var child in currentSourceChildrenTemplateSearchFlowSteps)
+                foreach (var child in originalChildrenTemplateSearchFlowSteps)
                 {
                     clonedNode.ChildrenTemplateSearchFlowSteps.Add(new FlowStep
                     {
                         //ParentFlowStep = currentClone,
                         //ParentFlowStepId = currentClone.Id,
-                        ParentTemplateSearchFlowStep = clonedNode, // Preserve template references
+                        //ParentTemplateSearchFlowStep = clonedNode, // Preserve template references
                         //ParentTemplateSearchFlowStepId = child.ParentTemplateSearchFlowStepId, // Preserve template IDs
                         Name = child.Name,
                         ProcessName = child.ProcessName,

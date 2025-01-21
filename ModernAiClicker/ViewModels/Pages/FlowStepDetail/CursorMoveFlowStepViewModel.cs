@@ -29,8 +29,8 @@ namespace ModernAiClicker.ViewModels.Pages
             _flowsViewModel = flowsViewModel;
             FlowStep = flowStep;
 
-            if (FlowStep.ParentFlowStepId.HasValue)
-                GetParents(FlowStep.ParentFlowStepId.Value);
+            if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
+                GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);
         }
 
 

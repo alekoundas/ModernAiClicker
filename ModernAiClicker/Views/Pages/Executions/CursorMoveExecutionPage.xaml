@@ -62,10 +62,10 @@
 
             <StackPanel Grid.Column="2">
                 <Label>X:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.Name, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.LocationX, Mode=TwoWay}" />
 
                 <Label>Y:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.Name, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.LocationY, Mode=TwoWay}" />
 
             </StackPanel>
 
@@ -75,10 +75,10 @@
                 HorizontalAlignment="Center">
                 <Label>Result location:</Label>
                 <Label>X:</Label>
-                <TextBox Text="{Binding X, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.ResultLocationX, Mode=TwoWay}" />
 
                 <Label>Y:</Label>
-                <TextBox Text="{Binding Y, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.ResultLocationX, Mode=TwoWay}" />
 
                 <Label>Test result location:</Label>
                 <Button Content="test">
@@ -99,30 +99,30 @@
 
 
         <!--<Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1*" />
+        <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                <Button Content="Cancel">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-            </StackPanel>
+        <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+        <Button Content="Cancel">
+        <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Click">
+        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
+        </i:EventTrigger>
+        </i:Interaction.Triggers>
+        </Button>
+        </StackPanel>
 
-            <StackPanel Grid.Column="1" HorizontalAlignment="right">
-                <Button Content="Save">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-            </StackPanel>
+        <StackPanel Grid.Column="1" HorizontalAlignment="right">
+        <Button Content="Save">
+        <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Click">
+        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
+        </i:EventTrigger>
+        </i:Interaction.Triggers>
+        </Button>
+        </StackPanel>
         </Grid>-->
     </StackPanel>
 
