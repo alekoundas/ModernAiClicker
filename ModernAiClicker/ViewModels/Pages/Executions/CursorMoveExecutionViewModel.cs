@@ -6,6 +6,7 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using Business.Extensions;
 using Model.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages.Executions
 {
@@ -43,11 +44,13 @@ namespace ModernAiClicker.ViewModels.Pages.Executions
         public void SetExecution(Execution execution)
         {
             Execution = execution;
-            FlowStep? flowStep = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == Execution.FlowStepId);
+            FlowStep? flowStep = _baseDatawork.FlowSteps.Query
+                .Include(x => x.ParentTemplateSearchFlowStep)
+                .FirstOrDefault(x => x.Id == Execution.FlowStepId);
+
             if (flowStep != null)
-            {
-                Parents = new ObservableCollection<FlowStep>() { flowStep };
-            }
+                Parents = new ObservableCollection<FlowStep>() { flowStep.ParentTemplateSearchFlowStep };
+
         }
 
         [RelayCommand]

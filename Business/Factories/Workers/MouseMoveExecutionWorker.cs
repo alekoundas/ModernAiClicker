@@ -26,39 +26,38 @@ namespace Business.Factories.Workers
                 return ;
 
             Point pointToMove;
+            Execution? parentExecution = null;
 
             // Get point from result of parent template search.
             if (execution.ParentExecutionId != null)
             {
-                List<Execution> parentExecutions = new List<Execution>();
                 Execution? currentExecution = execution;
                 while (currentExecution.ParentExecutionId != null)
                 {
-                    parentExecutions.Add(currentExecution);
-                    
                     currentExecution = await _baseDatawork.Executions.Query
                         .Include(x=>x.FlowStep)
                         .FirstAsync(x=>x.Id==currentExecution.ParentExecutionId.Value);
+
+                    if(currentExecution.FlowStepId == execution.FlowStep.ParentTemplateSearchFlowStepId)
+                    {
+                        parentExecution = currentExecution;
+                        break;
+                    }
                 }
 
-                Execution? parentExecution = parentExecutions
-                    .Where(x => x.FlowStepId == execution.FlowStep.ParentTemplateSearchFlowStepId)
-                    .OrderByDescending(x => x.Id)
-                    .FirstOrDefault();
 
-
-
+                // If parentExecution exists get value from result.
+                // Else get point from flow step.
                 if (parentExecution?.ResultLocationX != null && parentExecution?.ResultLocationY != null)
                     pointToMove = new Point(parentExecution.ResultLocationX.Value, parentExecution.ResultLocationY.Value);
-
-                // Else get point from flow step.
-                else
+                else   
                     pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
 
                 _systemService.SetCursorPossition(pointToMove);
+                execution.ResultLocationX = pointToMove.X;
+                execution.ResultLocationY = pointToMove.Y;
+                await _baseDatawork.SaveChangesAsync();
             }
-
-            return ;
         }
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)
