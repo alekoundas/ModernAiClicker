@@ -895,6 +895,9 @@
                                             <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP}">
                                                 <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExistingTemplateSearch}" />
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding FlowStepType}" Value="{x:Static enum:FlowStepTypesEnum.WAIT_FOR_TEMPLATE}">
+                                                <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExistingTemplateSearch}" />
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </ContentPresenter.Style>

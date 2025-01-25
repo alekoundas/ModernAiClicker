@@ -47,7 +47,7 @@ namespace Business.Services
             // Draws rectangle in result image.
             DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle, removeTemplateFromResult);
 
-            //Save result image to drive
+            //Save result image to drive for debugging.
             string resultFilePath = Path.Combine(PathHelper.GetAppDataPath(), "Result.png");
             matScreenshot.SaveImage(resultFilePath);
 

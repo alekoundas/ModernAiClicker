@@ -10,6 +10,7 @@ using AutoMapper;
 using Model.Enums;
 using Model.Business;
 using Path = System.IO.Path;
+using System.Drawing.Imaging;
 
 namespace Business.Services
 {
@@ -243,20 +244,50 @@ namespace Business.Services
             Directory.CreateDirectory(folderUrl);
         }
 
+        //public Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot")
+        //{
+        //    string filePath = Path.Combine(PathHelper.GetAppDataPath(), filename + ".png");
+
+        //    if (File.Exists(filePath))
+        //        try
+        //        {
+        //            File.Delete(filePath);
+
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine($"Error: {ex.Message}");
+        //        }
+
+        //    int width = rectangle.Right - rectangle.Left;
+        //    int height = rectangle.Bottom - rectangle.Top;
+
+        //    if (width <= 0 || height <= 0)
+        //        return null;
+
+        //    //Take screenshot
+        //    using (Bitmap bmp = new Bitmap(Math.Abs(width), height, PixelFormat.Format32bppArgb))
+        //    {
+        //        using (Graphics graphics = Graphics.FromImage(bmp))
+        //        {
+        //            graphics.CopyFromScreen(rectangle.Left, rectangle.Top, 0, 0, new Size(width, height));
+        //            bmp.Save(filePath, ImageFormat.Png);
+
+        //            graphics.Dispose();
+        //            bmp.Dispose();
+        //        }
+        //    }
+
+        //    //Return it
+        //    Bitmap img = (Bitmap)Image.FromFile(filePath);
+        //    return img;
+
+
+        //}
+
         public Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot")
         {
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), filename + ".png");
-
-            if (File.Exists(filePath))
-                try
-                {
-                    File.Delete(filePath);
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
 
             int width = rectangle.Right - rectangle.Left;
             int height = rectangle.Bottom - rectangle.Top;
@@ -264,24 +295,57 @@ namespace Business.Services
             if (width <= 0 || height <= 0)
                 return null;
 
-            //Take screenshot
-            using (Bitmap bmp = new Bitmap(Math.Abs(width), height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+            // Delete the existing file if it exists
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deleting file: {ex.Message}");
+                    return null; // If we can't delete, we can't proceed
+                }
+            }
+
+            // Take screenshot
+            using (Bitmap bmp = new Bitmap(Math.Abs(width), height, PixelFormat.Format32bppArgb))
             {
                 using (Graphics graphics = Graphics.FromImage(bmp))
                 {
                     graphics.CopyFromScreen(rectangle.Left, rectangle.Top, 0, 0, new System.Drawing.Size(width, height));
-                    bmp.Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+                }
 
-                    graphics.Dispose();
-                    bmp.Dispose();
+                // Save the image, ensuring it's fully written
+                using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    bmp.Save(fileStream, ImageFormat.Png);
+                    fileStream.Flush(); // Ensure all data is written to disk
                 }
             }
 
-            //Return it
-            Bitmap img = (Bitmap)Image.FromFile(filePath);
-            return img;
+            // Wait until the file is fully written
+            FileInfo fileInfo = new FileInfo(filePath);
+            while (fileInfo.Length == 0)
+            {
+                Thread.Sleep(10); // Wait a bit before checking again
+                fileInfo.Refresh();
+            }
 
-
+            // Load the image from the file (returning a new Bitmap to avoid file locking issues)
+            try
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    return new Bitmap(fileStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading screenshot: {ex.Message}");
+                return null;
+            }
         }
 
         public Model.Structs.Rectangle GetWindowSize(string processName)

@@ -60,7 +60,7 @@ namespace ModernAiClicker.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.MaxLoopCount= FlowStep.MaxLoopCount;
+                updateFlowStep.MaxLoopCount = FlowStep.MaxLoopCount;
             }
 
             /// Add mode
@@ -75,43 +75,15 @@ namespace ModernAiClicker.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _baseDatawork.SaveChangesAsync();
 
-
-                // "Add" Flow steps
+                // "Add" Flow step
                 FlowStep newFlowStep = new FlowStep();
-                FlowStep newFlowStep2 = new FlowStep();
                 newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
-                newFlowStep2.FlowStepType = FlowStepTypesEnum.IS_NEW;
 
-                // "Success" Flow step
-                FlowStep successFlowStep = new FlowStep();
-                successFlowStep.Name = "Success";
-                successFlowStep.IsExpanded = false;
-                successFlowStep.FlowStepType = FlowStepTypesEnum.IS_SUCCESS;
-                successFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
-                {
-                    newFlowStep
-                };
-
-                // "Fail" Flow step
-                FlowStep failFlowStep = new FlowStep();
-                failFlowStep.Name = "Fail";
-                failFlowStep.IsExpanded = false;
-                failFlowStep.FlowStepType = FlowStepTypesEnum.IS_FAILURE;
-                failFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
-                {
-                    newFlowStep2
-                };
-
-                FlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
-                {
-                    successFlowStep,
-                    failFlowStep
-                };
+                FlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep> { newFlowStep };
 
                 if (FlowStep.Name.Length == 0)
-                    FlowStep.Name = "Loop.";
+                    FlowStep.Name = "Loop";
 
                 FlowStep.IsExpanded = true;
 

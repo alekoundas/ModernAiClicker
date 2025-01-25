@@ -78,7 +78,7 @@
                 <TextBox Text="{Binding Execution.ResultLocationX, Mode=TwoWay}" />
 
                 <Label>Y:</Label>
-                <TextBox Text="{Binding Execution.ResultLocationX, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.ResultLocationY, Mode=TwoWay}" />
 
                 <Label>Test result location:</Label>
                 <Button Content="test">

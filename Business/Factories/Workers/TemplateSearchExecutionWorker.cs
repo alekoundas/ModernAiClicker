@@ -17,6 +17,8 @@ namespace Business.Factories.Workers
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
+        private byte[]? _resultImage = null;
+
         public TemplateSearchExecutionWorker(
               IBaseDatawork baseDatawork
             , ISystemService systemService
@@ -61,10 +63,12 @@ namespace Business.Factories.Workers
                 execution.ResultLocationX = x;
                 execution.ResultLocationY = y;
                 //execution.ResultImage = result.ResultImage;
-                execution.ResultImagePath = result.ResultImagePath;
+                //execution.ResultImagePath = result.ResultImagePath;
                 execution.ResultAccuracy = result.Confidence;
 
                 await _baseDatawork.SaveChangesAsync();
+
+                _resultImage = result.ResultImage;
             }
         }
 
@@ -86,13 +90,13 @@ namespace Business.Factories.Workers
                 nextFlowStep = nextFlowStep.ChildrenFlowSteps
                     .First(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
                     .ChildrenFlowSteps
-                    .OrderBy(x=>x.OrderingNum)
+                    .OrderBy(x => x.OrderingNum)
                     .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
             else
                 nextFlowStep = nextFlowStep.ChildrenFlowSteps
                     .First(x => x.FlowStepType == FlowStepTypesEnum.IS_FAILURE)
                     .ChildrenFlowSteps
-                    .OrderBy(x=>x.OrderingNum)
+                    .OrderBy(x => x.OrderingNum)
                     .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
 
             return nextFlowStep;
@@ -131,14 +135,17 @@ namespace Business.Factories.Workers
 
         public async override Task SaveToDisk(Execution execution)
         {
-            if (!execution.ParentExecutionId.HasValue || execution.ResultImagePath == null || execution.ExecutionFolderDirectory.Length == 0)
+            if (!execution.ParentExecutionId.HasValue || execution.ExecutionFolderDirectory.Length == 0)
                 return;
 
-            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss");
+            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
             string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
 
-            _systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);
+            //_systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);_resultImage
+            if (_resultImage != null)
+                await _systemService.SaveImageToDisk(newFilePath, _resultImage);
             execution.ResultImagePath = newFilePath;
+                await _baseDatawork.SaveChangesAsync();
         }
     }
 }

@@ -15,6 +15,8 @@ namespace Business.Factories.Workers
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
+        private byte[]? _resultImage = null;
+
         public WaitForTemplateExecutionWorker(
               IBaseDatawork baseDatawork
             , ISystemService systemService
@@ -62,36 +64,50 @@ namespace Business.Factories.Workers
             else
                 searchRectangle = _systemService.GetScreenSize();
 
-            // Get screenshot.
-            // New if not previous exists.
-            // Get previous one if exists.
-            Bitmap? screenshot = null;
-            Execution? parentLoopExecution = await _baseDatawork.Executions.FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
-            if (parentLoopExecution?.ResultImagePath?.Length > 0 && execution.FlowStep.RemoveTemplateFromResult)
-                screenshot = (Bitmap)Image.FromFile(parentLoopExecution.ResultImagePath);
-            else
-                screenshot = _systemService.TakeScreenShot(searchRectangle);
-
-            if (screenshot == null)
-                return;
-
-            ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
-            using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
+            bool isSuccessful = false;
+            while (!isSuccessful)
             {
-                Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
+                ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
+                using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
+                {
+                    // Get screenshot.
+                    Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle);
+                    if (screenshot == null)
+                        return;
 
-                int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
-                int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
+                    Bitmap templateImage = new Bitmap(ms);
+                    TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
 
-                bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
-                execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
-                execution.ResultLocationX = x;
-                execution.ResultLocationY = y;
-                execution.ResultImagePath = result.ResultImagePath;
-                execution.ResultAccuracy = result.Confidence;
+                    int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
+                    int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
-                await _baseDatawork.SaveChangesAsync();
+                    isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
+                    execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
+                    execution.ResultLocationX = x;
+                    execution.ResultLocationY = y;
+                    execution.ResultImagePath = result.ResultImagePath;
+                    execution.ResultAccuracy = result.Confidence;
+
+                    await _baseDatawork.SaveChangesAsync();
+                    _resultImage = result.ResultImage;
+
+
+                    int miliseconds = 0;
+
+                    if (execution.FlowStep.SleepForMilliseconds.HasValue)
+                        miliseconds += execution.FlowStep.SleepForMilliseconds.Value;
+
+                    if (execution.FlowStep.SleepForSeconds.HasValue)
+                        miliseconds += execution.FlowStep.SleepForSeconds.Value * 1000;
+
+                    if (execution.FlowStep.SleepForMinutes.HasValue)
+                        miliseconds += execution.FlowStep.SleepForMinutes.Value * 60 * 1000;
+
+                    if (execution.FlowStep.SleepForHours.HasValue)
+                        miliseconds += execution.FlowStep.SleepForHours.Value * 60 * 60 * 1000;
+
+                    Thread.Sleep(miliseconds);
+                }
             }
         }
 
@@ -108,13 +124,10 @@ namespace Business.Factories.Workers
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .FirstOrDefaultAsync(x => x.Id == execution.FlowStepId);
 
-            if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
                 nextFlowStep = nextFlowStep.ChildrenFlowSteps
                     .First(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
                     .ChildrenFlowSteps
                     .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0);
-            else
-                nextFlowStep = execution.FlowStep;
 
             return nextFlowStep;
         }
@@ -123,15 +136,6 @@ namespace Business.Factories.Workers
         {
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
-
-            // If execution was successfull and (MaxLoopCount is 0 or CurrentLoopCount < MaxLoopCount), return te same flow step.
-            if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
-            {
-                if (execution.FlowStep.MaxLoopCount == 0)
-                    return execution.FlowStep;
-                else if (execution.LoopCount < execution.FlowStep.MaxLoopCount)
-                    return execution.FlowStep;
-            }
 
             // If not, get next sibling flow step. 
             Expression<Func<FlowStep, bool>> nextStepFilter;
@@ -158,16 +162,20 @@ namespace Business.Factories.Workers
             return nextFlowStep;
         }
 
+
         public async override Task SaveToDisk(Execution execution)
         {
-            if (!execution.ParentExecutionId.HasValue || execution.ResultImagePath == null || execution.ExecutionFolderDirectory.Length == 0)
+            if (!execution.ParentExecutionId.HasValue || execution.ExecutionFolderDirectory.Length == 0)
                 return;
 
-            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss");
+            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
             string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
 
-            _systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);
+            //_systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);_resultImage
+            if (_resultImage != null)
+                await _systemService.SaveImageToDisk(newFilePath, _resultImage);
             execution.ResultImagePath = newFilePath;
+            await _baseDatawork.SaveChangesAsync();
         }
     }
 }

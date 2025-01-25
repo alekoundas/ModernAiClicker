@@ -820,6 +820,10 @@
                                         MaxWidth="50"
                                         MaxHeight="50"
                                         Source="{Binding FlowStep.TemplateImage}" />
+                                    <Image
+                                        MaxWidth="50"
+                                        MaxHeight="50"
+                                        Source="{Binding CurrentMultipleTemplateSearchFlowStep.TemplateImage}" />
                                     <TextBlock Text="{Binding FlowStep.FlowStepType}" />
 
                                 </StackPanel>

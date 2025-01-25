@@ -17,6 +17,8 @@ namespace Business.Factories.Workers
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
+        private byte[]? _resultImage = null;
+
         public TemplateSearchLoopExecutionWorker(
               IBaseDatawork baseDatawork
             , ISystemService systemService
@@ -94,6 +96,7 @@ namespace Business.Factories.Workers
                 execution.ResultAccuracy = result.Confidence;
 
                 await _baseDatawork.SaveChangesAsync();
+                _resultImage = result.ResultImage;
             }
         }
 
@@ -168,14 +171,17 @@ namespace Business.Factories.Workers
 
         public async override Task SaveToDisk(Execution execution)
         {
-            if (!execution.ParentExecutionId.HasValue || execution.ResultImagePath == null || execution.ExecutionFolderDirectory.Length == 0)
+            if (!execution.ParentExecutionId.HasValue   || execution.ExecutionFolderDirectory.Length == 0)
                 return;
 
-            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss");
+            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
             string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
 
-            _systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);
+            //_systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);_resultImage
+            if (_resultImage != null)
+                await _systemService.SaveImageToDisk(newFilePath, _resultImage);
             execution.ResultImagePath = newFilePath;
+                await _baseDatawork.SaveChangesAsync();
         }
     }
 }

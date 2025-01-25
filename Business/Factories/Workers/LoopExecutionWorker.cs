@@ -62,20 +62,9 @@ namespace Business.Factories.Workers
             // Get next executable child.
             nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
                 .Include(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
                 .FirstOrDefaultAsync(x => x.Id == execution.FlowStepId);
 
-
-            if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
                 nextFlowStep = nextFlowStep.ChildrenFlowSteps
-                    .First(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
-                    .ChildrenFlowSteps
-                    .OrderBy(x => x.OrderingNum)
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
-            else
-                nextFlowStep = nextFlowStep.ChildrenFlowSteps
-                    .First(x => x.FlowStepType == FlowStepTypesEnum.IS_FAILURE)
-                    .ChildrenFlowSteps
                     .OrderBy(x => x.OrderingNum)
                     .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
 

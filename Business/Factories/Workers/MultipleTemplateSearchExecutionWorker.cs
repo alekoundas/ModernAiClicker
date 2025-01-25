@@ -16,6 +16,8 @@ namespace Business.Factories.Workers
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
+        private byte[]? _resultImage = null;
+
         public MultipleTemplateSearchExecutionWorker(
               IBaseDatawork baseDatawork
             , ISystemService systemService
@@ -31,6 +33,8 @@ namespace Business.Factories.Workers
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));
+
+
 
             Execution execution = new Execution();
             execution.FlowStepId = flowStep.Id;
@@ -129,6 +133,7 @@ namespace Business.Factories.Workers
             using (var ms = new MemoryStream(childTemplateSearchFlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
+
                 TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, childTemplateSearchFlowStep.RemoveTemplateFromResult);
                 ImageSizeResult imageSizeResult = _systemService.GetImageSize(childTemplateSearchFlowStep.TemplateImage);
 
@@ -144,6 +149,8 @@ namespace Business.Factories.Workers
                 execution.CurrentMultipleTemplateSearchFlowStepId = childTemplateSearchFlowStep.Id;
 
                 await _baseDatawork.SaveChangesAsync();
+                _resultImage = result.ResultImage;
+
             }
         }
 
@@ -248,14 +255,17 @@ namespace Business.Factories.Workers
 
         public async override Task SaveToDisk(Execution execution)
         {
-            if (!execution.ParentExecutionId.HasValue || execution.ResultImagePath == null || execution.ExecutionFolderDirectory.Length == 0)
+            if (!execution.ParentExecutionId.HasValue   || execution.ExecutionFolderDirectory.Length == 0)
                 return;
 
-            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss");
+            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
             string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
 
-            _systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);
+            //_systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);_resultImage
+            if (_resultImage != null)
+                await _systemService.SaveImageToDisk(newFilePath, _resultImage);
             execution.ResultImagePath = newFilePath;
+                await _baseDatawork.SaveChangesAsync();
         }
     }
 }
