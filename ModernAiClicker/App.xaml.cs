@@ -24,10 +24,12 @@ using ModernAiClicker.Services;
 using ModernAiClicker.ViewModels;
 using ModernAiClicker.ViewModels.Pages;
 using ModernAiClicker.ViewModels.Pages.Executions;
+using ModernAiClicker.ViewModels.UserControls;
 using ModernAiClicker.ViewModels.Windows;
 using ModernAiClicker.Views.Pages;
 using ModernAiClicker.Views.Pages.Executions;
 using ModernAiClicker.Views.Pages.FlowStepDetail;
+using ModernAiClicker.Views.UserControls;
 using ModernAiClicker.Views.Windows;
 using OpenCvSharp;
 using System.Collections.ObjectModel;
@@ -88,6 +90,10 @@ namespace ModernAiClicker
                 services.AddScoped<MultipleTemplateSearchLoopExecutionWorker>();
                 services.AddScoped<SleepExecutionWorker>();
                 services.AddScoped<GoToExecutionWorker>();
+
+                // User Controls
+                services.AddSingleton<TreeViewUserControl>();
+                services.AddSingleton<TreeViewUserControlViewModel>();
 
                 // Pages
                 //Tabs

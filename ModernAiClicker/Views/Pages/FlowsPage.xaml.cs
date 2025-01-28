@@ -4,6 +4,8 @@ using Model.Models;
 using ModernAiClicker.ViewModels.Pages;
 using ModernAiClicker.Views.Pages.FlowStepDetail;
 using Wpf.Ui.Controls;
+using System.Windows.Forms;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.Views.Pages
 {
@@ -40,5 +42,14 @@ namespace ModernAiClicker.Views.Pages
             UIFlowStepTypeSelectionFrame.Navigate(new NewSelectTypeFlowStepPage(detailViewModel, ViewModel, _systemService, _templateMatchingService, _baseDatawork));
         }
 
+        private void OnSelectedFlowStepIdChange(object sender, int id)
+        {
+            ViewModel.TreeViewItemSelectedCommand.Execute(id);
+        }
+
+        private void OnFlowStepClone(object sender, int id)
+        {
+            ViewModel.CoppiedFlowStepId = id;
+        }
     }
 }

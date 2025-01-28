@@ -5,9 +5,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using Model.ConverterModels;
 using Model.Enums;
 using Model.Models;
+using ModernAiClicker.ViewModels.UserControls;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,13 +21,11 @@ namespace ModernAiClicker.ViewModels.Pages
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
         private readonly IExecutionFactory _executionFactory;
+        private readonly TreeViewUserControlViewModel _treeViewUserControlViewModel;
+
 
         public event NavigateToExecutionDetailEvent? NavigateToExecutionDetail;
         public delegate void NavigateToExecutionDetailEvent(FlowStepTypesEnum flowStepTypes, Execution? execution);
-
-        // Treeview
-        [ObservableProperty]
-        private ObservableCollection<Flow> _treeviewFlows = new ObservableCollection<Flow>();
 
         // Combobox Flows
         [ObservableProperty]
@@ -67,14 +65,19 @@ namespace ModernAiClicker.ViewModels.Pages
         public bool _isLocked = true;
         public bool StopExecution { get; set; }
 
-        public ExecutionViewModel(IBaseDatawork baseDatawork, ISystemService systemService, IExecutionFactory executionFactory)
+        public ExecutionViewModel(
+            IBaseDatawork baseDatawork,
+            ISystemService systemService,
+            IExecutionFactory executionFactory,
+            TreeViewUserControlViewModel treeViewUserControlViewModel)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _executionFactory = executionFactory;
+            _treeViewUserControlViewModel = treeViewUserControlViewModel;
 
+            _treeViewUserControlViewModel.IsLocked = true;
             ComboBoxFlows = GetFlows();
-            IsLocked = true;
         }
 
         private ObservableCollection<Flow> GetFlows()
@@ -97,19 +100,17 @@ namespace ModernAiClicker.ViewModels.Pages
             {
                 IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
                 Execution flowExecution = await flowWorker.CreateExecutionModelFlow(ComboBoxSelectedFlow.Id, null);
-
+                FlowStep? nextFlowStep;
                 // Add Execution to listbox and select it
                 List<Execution> executions = ComboBoxExecutionHistories.ToList();
                 executions.Add(flowExecution);
                 ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
                 ComboBoxSelectedExecutionHistory = flowExecution;
 
-
-                //await flowWorker.ExpandAndSelectFlowStep(flowExecution);
                 await flowWorker.SetExecutionModelStateRunning(flowExecution);
                 await flowWorker.SaveToDisk(flowExecution);
 
-                FlowStep? nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
+                nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
                 await ExecuteStepLoop(nextFlowStep, flowExecution);
                 await flowWorker.SetExecutionModelStateComplete(flowExecution);
             });
@@ -140,7 +141,7 @@ namespace ModernAiClicker.ViewModels.Pages
                 // Add execution to history listbox.
                 Application.Current.Dispatcher.Invoke(() => ListBoxExecutions.Add(flowStepExecution));
 
-                await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, TreeviewFlows);
+                await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, _treeViewUserControlViewModel.FlowsList);
                 await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
                 await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
                 await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
@@ -189,41 +190,15 @@ namespace ModernAiClicker.ViewModels.Pages
             if (ComboBoxSelectedFlow == null)
                 return;
 
-            var flow = await _baseDatawork.Query.Flows
-                .Include(x => x.FlowSteps)
-                .FirstOrDefaultAsync(x => x.Id == ComboBoxSelectedFlow.Id);
-
-            foreach (FlowStep flowStep in flow.FlowSteps)
-                await LoadFlowStepChildren(flowStep);
-
-
             List<Execution> executions = await _baseDatawork.Executions.Query
                 .Where(x => x.FlowId == ComboBoxSelectedFlow.Id)
                 .ToListAsync();
 
             ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
 
-            TreeviewFlows.Clear();
-            TreeviewFlows.Add(flow);
+            await _treeViewUserControlViewModel.LoadFlowsAsync(ComboBoxSelectedFlow.Id);
         }
 
-        private async Task LoadFlowStepChildren(FlowStep flowStep)
-        {
-            List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                        .Include(x => x.ChildrenFlowSteps)
-                        .ThenInclude(x => x.ChildrenFlowSteps)
-                        .Where(x => x.Id == flowStep.Id)
-                        .SelectMany(x => x.ChildrenFlowSteps)
-                        .ToListAsync();
-
-            flowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
-
-            foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
-            {
-                if (childFlowStep.IsExpanded)
-                    await LoadFlowStepChildren(childFlowStep);
-            }
-        }
 
         private async Task LoadExecutionChild(Execution execution)
         {
@@ -240,31 +215,6 @@ namespace ModernAiClicker.ViewModels.Pages
             await LoadExecutionChild(execution.ChildExecution);
         }
 
-        [RelayCommand]
-        private async Task OnTreeViewItemExpanded(EventParammeters eventParameters)
-        {
-            if (eventParameters == null)
-                return;
-
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-
-                if (flowStep.ChildrenFlowSteps == null)
-                    return;
-
-                foreach (var childrenFlowStep in flowStep.ChildrenFlowSteps)
-                    await LoadFlowStepChildren(childrenFlowStep);
-            }
-
-            else if (eventParameters.FlowId is Flow)
-            {
-                Flow flow = (Flow)eventParameters.FlowId;
-
-                foreach (var childFlowStep in flow.FlowSteps)
-                    await LoadFlowStepChildren(childFlowStep);
-            }
-        }
 
         [RelayCommand]
         private async Task OnButtonDeleteClick()
@@ -364,6 +314,26 @@ namespace ModernAiClicker.ViewModels.Pages
 
             ListBoxExecutions = new ObservableCollection<Execution>(executions);
         }
+
+
+        private async Task LoadFlowStepChildren(FlowStep flowStep)
+        {
+            List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
+                        .Include(x => x.ChildrenFlowSteps)
+                        .ThenInclude(x => x.ChildrenFlowSteps)
+                        .Where(x => x.Id == flowStep.Id)
+                        .SelectMany(x => x.ChildrenFlowSteps)
+                        .ToListAsync();
+
+            flowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
+
+            foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
+            {
+                if (childFlowStep.IsExpanded)
+                    await LoadFlowStepChildren(childFlowStep);
+            }
+        }
+
 
         public void OnNavigatedTo()
         {
