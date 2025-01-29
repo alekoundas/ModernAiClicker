@@ -58,14 +58,14 @@ namespace ModernAiClicker.ViewModels.Pages
 
         public async Task RefreshData()
         {
-            await _treeViewUserControlViewModel.LoadFlowsAsync();
+            await _treeViewUserControlViewModel.LoadFlows();
 
         }
 
         [RelayCommand]
         private async Task OnButtonSyncClick()
         {
-            await _treeViewUserControlViewModel.LoadFlowsAsync();
+            await _treeViewUserControlViewModel.LoadFlows();
         }
 
         [RelayCommand]

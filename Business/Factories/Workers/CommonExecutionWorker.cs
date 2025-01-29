@@ -1,12 +1,9 @@
 ﻿using Business.Extensions;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
-using Microsoft.EntityFrameworkCore;
 using Model.Enums;
 using Model.Models;
 using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Threading;
 
 namespace Business.Factories.Workers
 {
@@ -71,10 +68,10 @@ namespace Business.Factories.Workers
             await _baseDatawork.SaveChangesAsync();
         }
 
-        public async virtual Task ExpandAndSelectFlowStep(Execution execution, ObservableCollection<Flow> treeviewFlows)
+        public virtual Task ExpandAndSelectFlowStep(Execution execution, ObservableCollection<Flow> treeviewFlows)
         {
             if (execution.FlowStep == null)
-                return;
+                return Task.CompletedTask;
 
             //Application.Current.Dispatcher.Invoke(() =>
             //{
@@ -95,7 +92,7 @@ namespace Business.Factories.Workers
                     uiFlowStep.Flow.IsExpanded = true;
             //});
 
-            return;
+            return Task.CompletedTask;
         }
 
         public async virtual Task<FlowStep?> GetNextChildFlowStep(Execution execution)

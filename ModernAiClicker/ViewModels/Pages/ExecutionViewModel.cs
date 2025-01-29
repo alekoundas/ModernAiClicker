@@ -196,7 +196,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
             ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
 
-            await _treeViewUserControlViewModel.LoadFlowsAsync(ComboBoxSelectedFlow.Id);
+            await _treeViewUserControlViewModel.LoadFlows(ComboBoxSelectedFlow.Id);
         }
 
 

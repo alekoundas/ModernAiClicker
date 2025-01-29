@@ -1,14 +1,10 @@
-﻿using Business.Extensions;
-using Business.Interfaces;
+﻿using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Business;
 using Model.Enums;
 using Model.Models;
-using OpenCvSharp;
-using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
 {
@@ -37,47 +33,9 @@ namespace Business.Factories.Workers
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));
 
-            // Get all parents of loop execution.
-            List<Execution> parentLoopExecutions = new List<Execution>();
-            Execution? currentExecution = parentExecution;
-            while (currentExecution.ParentLoopExecutionId != null)
-            {
-                parentLoopExecutions.Add(currentExecution);
-
-                currentExecution = await _baseDatawork.Executions.Query
-                    .AsNoTracking()
-                    .Include(x => x.FlowStep)
-                    .FirstAsync(x => x.Id == currentExecution.ParentLoopExecutionId.Value);
-            }
-
-            // Get all completed children template flow steps.
-            List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
-                .Where(x => x.ExecutionResultEnum == ExecutionResultEnum.FAIL || (x.FlowStep.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.MaxLoopCount))
-                .Select(x => x.CurrentMultipleTemplateSearchFlowStepId ?? 0)
-                .Where(x => x != 0)
-                .ToList();
-
-            // Get all child template search flow steps.
-            var children = await _baseDatawork.FlowSteps.Query
-                .AsNoTracking()
-                .Where(x => x.ParentTemplateSearchFlowStepId == flowStep.Id)
-                .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
-                .ToListAsync();
 
             // Get first child template search flow step that isnt completed.
-            FlowStep? childTemplateSearchFlowStep = children
-                .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.id))
-                .ToList()
-                .OrderBy(x => x.Id)
-                .FirstOrDefault();
-
-
-
-
-
-
-
-
+            FlowStep? childTemplateSearchFlowStep = await GetChildTemplateSearchFlowStep(flowStep.Id, parentExecution.Id);
 
             Execution execution = new Execution();
             execution.FlowStepId = flowStep.Id;
@@ -105,6 +63,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return;
 
+            FlowStep? currentMultipleTemplateSearchFlowStep = await _baseDatawork.FlowSteps.Query.AsNoTracking().FirstOrDefaultAsync(x => x.Id == execution.CurrentMultipleTemplateSearchFlowStepId);
 
             // Find search area.
             Model.Structs.Rectangle searchRectangle;
@@ -116,10 +75,10 @@ namespace Business.Factories.Workers
             // Get screenshot.
             // New if not previous exists.
             // Get previous one if exists.
-            Bitmap? screenshot = null;
-            FlowStep? currentMultipleTemplateSearchFlowStep = await _baseDatawork.FlowSteps.Query.AsNoTracking().FirstOrDefaultAsync(x => x.Id == execution.CurrentMultipleTemplateSearchFlowStepId);
             Execution? parentLoopExecution = await _baseDatawork.Executions.FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
             bool canUseParentResult = parentLoopExecution?.CurrentMultipleTemplateSearchFlowStepId == execution.CurrentMultipleTemplateSearchFlowStepId && currentMultipleTemplateSearchFlowStep.RemoveTemplateFromResult; // Refresh image if parent is not the same step or remove template from result is false.
+
+            Bitmap? screenshot = null;
             if (parentLoopExecution?.ResultImagePath?.Length > 0 && canUseParentResult)
                 screenshot = (Bitmap)Image.FromFile(parentLoopExecution.ResultImagePath);
             else
@@ -136,8 +95,8 @@ namespace Business.Factories.Workers
 
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
                 int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
-
                 bool isSuccessful = currentMultipleTemplateSearchFlowStep.Accuracy <= result.Confidence;
+
                 execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
                 execution.ResultLocationX = x;
                 execution.ResultLocationY = y;
@@ -151,31 +110,10 @@ namespace Business.Factories.Workers
 
         public async override Task<FlowStep?> GetNextChildFlowStep(Execution execution)
         {
-            if (execution.FlowStep == null)
+            if (execution.FlowStepId == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep;
-
-            // Get next executable child.
-            nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
-                .Include(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .FirstOrDefaultAsync(x => x.Id == execution.FlowStepId);
-
-
-            if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
-                nextFlowStep = nextFlowStep.ChildrenFlowSteps
-                    .First(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
-                    .ChildrenFlowSteps
-                    .OrderBy(x => x.OrderingNum)
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
-            else
-                nextFlowStep = nextFlowStep.ChildrenFlowSteps
-                    .First(x => x.FlowStepType == FlowStepTypesEnum.IS_FAILURE)
-                    .ChildrenFlowSteps
-                    .OrderBy(x => x.OrderingNum)
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
-
+            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.ExecutionResultEnum);
             return nextFlowStep;
         }
 
@@ -184,67 +122,14 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            // Get all parents of loop execution.
-            List<Execution> parentLoopExecutions = new List<Execution>();
-            Execution? currentExecution = execution;
-            while (currentExecution.ParentLoopExecutionId != null)
-            {
-                parentLoopExecutions.Add(currentExecution);
+            // Get next child TemplateSearchFlowStep.
+            FlowStep? nextChildTemplateSearchFlowStep = await GetChildTemplateSearchFlowStep(execution.FlowStep.Id, execution.Id);
 
-                currentExecution = await _baseDatawork.Executions.Query
-                    .Include(x => x.FlowStep)
-                    .FirstAsync(x => x.Id == currentExecution.ParentLoopExecutionId.Value);
-            }
-
-            // Get all completed children template flow steps.
-            List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
-                .Where(x => x.ExecutionResultEnum == ExecutionResultEnum.FAIL || (x.FlowStep.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.MaxLoopCount))
-                .Select(x => x.CurrentMultipleTemplateSearchFlowStepId ?? 0)
-                .Where(x => x != 0)
-                .ToList();
-
-            // Get all child template search flow steps.
-            var children = await _baseDatawork.Query.FlowSteps
-                .AsNoTracking()
-                .Where(x => x.ParentTemplateSearchFlowStepId == execution.FlowStepId)
-                .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
-                .ToListAsync();
-
-            // Find unexecuted flow steps.
-            children = children
-                .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id)).ToList();
-
-            if (children.Any())
+            if (nextChildTemplateSearchFlowStep != null)
                 return execution.FlowStep;
 
-
-
-
-
-
-
             // If not, get next sibling flow step. 
-            Expression<Func<FlowStep, bool>> nextStepFilter;
-
-            if (execution.FlowStep.ParentFlowStepId != null)
-                nextStepFilter = (x) =>
-                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
-                    && x.OrderingNum > execution.FlowStep.OrderingNum
-                    && x.ParentFlowStepId == execution.FlowStep.ParentFlowStepId;
-            else
-                nextStepFilter = (x) =>
-                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
-                    && x.OrderingNum > execution.FlowStep.OrderingNum
-                    && x.FlowId == execution.FlowStep.FlowId;
-
-            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps.AsNoTracking()
-                .Where(nextStepFilter)
-                .ToListAsync();
-
-            FlowStep? nextFlowStep = null;
-            if (nextFlowSteps.Any())
-                nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
-
+            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
 
@@ -260,7 +145,35 @@ namespace Business.Factories.Workers
             if (_resultImage != null)
                 await _systemService.SaveImageToDisk(newFilePath, _resultImage);
             execution.ResultImagePath = newFilePath;
-                await _baseDatawork.SaveChangesAsync();
+            await _baseDatawork.SaveChangesAsync();
+        }
+
+        private async Task<FlowStep?> GetChildTemplateSearchFlowStep(int flowStepId,int parentExecutionId)
+        {
+            // Get all parents of loop execution.
+            List<Execution> parentLoopExecutions = await _baseDatawork.Executions.GetAllParentLoopExecutions(parentExecutionId);
+
+            // Get all completed children template flow steps.
+            List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
+                .Select(x => x.CurrentMultipleTemplateSearchFlowStepId ?? 0)
+                .Where(x => x != 0)
+                .ToList();
+
+            // Get all child template search flow steps.
+            List<FlowStep> children = await _baseDatawork.Query.FlowSteps
+                .AsNoTracking()
+                .Where(x => x.ParentTemplateSearchFlowStepId == flowStepId)
+                .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
+                .ToListAsync();
+
+            // Get first child template search flow step that isnt completed.
+            FlowStep? flowStep = children
+                .Where(x => !completedChildrenTemplateFlowStepIds.Any(y => y == x.Id))
+                .ToList()
+                .OrderBy(x => x.OrderingNum)
+                .FirstOrDefault();
+
+            return flowStep;
         }
     }
 }

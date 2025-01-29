@@ -5,7 +5,6 @@ using Model.Business;
 using Model.Enums;
 using Model.Models;
 using System.Drawing;
-using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
 {
@@ -113,22 +112,10 @@ namespace Business.Factories.Workers
 
         public async override Task<FlowStep?> GetNextChildFlowStep(Execution execution)
         {
-            if (execution.FlowStep == null)
+            if (execution.FlowStepId == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep;
-
-            // Get next executable child.
-            nextFlowStep = await _baseDatawork.Query.FlowSteps.AsNoTracking()
-                .Include(x => x.ChildrenFlowSteps)
-                .ThenInclude(x => x.ChildrenFlowSteps)
-                .FirstOrDefaultAsync(x => x.Id == execution.FlowStepId);
-
-                nextFlowStep = nextFlowStep.ChildrenFlowSteps
-                    .First(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
-                    .ChildrenFlowSteps
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW && x.OrderingNum == 0);
-
+            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.ExecutionResultEnum);
             return nextFlowStep;
         }
 
@@ -137,28 +124,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            // If not, get next sibling flow step. 
-            Expression<Func<FlowStep, bool>> nextStepFilter;
-
-            if (execution.FlowStep.ParentFlowStepId != null)
-                nextStepFilter = (x) =>
-                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
-                    && x.OrderingNum > execution.FlowStep.OrderingNum
-                    && x.ParentFlowStepId == execution.FlowStep.ParentFlowStepId;
-            else
-                nextStepFilter = (x) =>
-                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
-                    && x.OrderingNum > execution.FlowStep.OrderingNum
-                    && x.FlowId == execution.FlowStep.FlowId;
-
-            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps.AsNoTracking()
-                .Where(nextStepFilter)
-                .ToListAsync();
-
-            FlowStep? nextFlowStep = null;
-            if (nextFlowSteps.Any())
-                nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
-
+            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
 

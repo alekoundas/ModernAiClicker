@@ -1,13 +1,10 @@
-﻿using Business.Extensions;
-using Business.Interfaces;
+﻿using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Business;
 using Model.Enums;
 using Model.Models;
-using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Linq.Expressions;
 
 namespace Business.Factories.Workers
 {
@@ -127,6 +124,7 @@ namespace Business.Factories.Workers
                     .OrderBy(x => x.OrderingNum)
                     .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
 
+            nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.ExecutionResultEnum);
             return nextFlowStep;
         }
 
@@ -145,27 +143,7 @@ namespace Business.Factories.Workers
             }
 
             // If not, get next sibling flow step. 
-            Expression<Func<FlowStep, bool>> nextStepFilter;
-
-            if (execution.FlowStep.ParentFlowStepId != null)
-                nextStepFilter = (x) =>
-                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
-                    && x.OrderingNum > execution.FlowStep.OrderingNum
-                    && x.ParentFlowStepId == execution.FlowStep.ParentFlowStepId;
-            else
-                nextStepFilter = (x) =>
-                       x.FlowStepType != FlowStepTypesEnum.IS_NEW
-                    && x.OrderingNum > execution.FlowStep.OrderingNum
-                    && x.FlowId == execution.FlowStep.FlowId;
-
-            List<FlowStep>? nextFlowSteps = await _baseDatawork.Query.FlowSteps.AsNoTracking()
-                .Where(nextStepFilter)
-                .ToListAsync();
-
-            FlowStep? nextFlowStep = null;
-            if (nextFlowSteps.Any())
-                nextFlowStep = nextFlowSteps.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
-
+            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
 
