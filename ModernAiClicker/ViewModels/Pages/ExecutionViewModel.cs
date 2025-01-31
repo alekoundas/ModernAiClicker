@@ -66,6 +66,8 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
         private bool _stopExecution = false;
+        private CancellationTokenSource _cancellationToken = new CancellationTokenSource();
+
         private readonly DispatcherTimer _timer;
         private TimeSpan _timeElapsed;
 
@@ -84,6 +86,7 @@ namespace ModernAiClicker.ViewModels.Pages
             _treeViewUserControlViewModel.IsLocked = true;
             ComboBoxFlows = GetFlows();
 
+            _executionFactory.SetCancellationToken(_cancellationToken);
             _timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(1) // Update every second
@@ -139,6 +142,10 @@ namespace ModernAiClicker.ViewModels.Pages
                 });
 
             _stopExecution = false;
+            _cancellationToken = new CancellationTokenSource();
+            _executionFactory.SetCancellationToken(_cancellationToken);
+            _executionFactory.DestroyWorkers();
+
         }
 
 
@@ -164,7 +171,8 @@ namespace ModernAiClicker.ViewModels.Pages
                 parentExecution.ResultImage = null;// TODO test if needed.
 
                 // Add execution to history listbox.
-                Application.Current.Dispatcher.Invoke(() => {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
                     CurrentStep = flowStep.FlowStepType.ToString();
                     ListBoxExecutions.Add(flowStepExecution);
                 });
@@ -209,6 +217,7 @@ namespace ModernAiClicker.ViewModels.Pages
         private void OnButtonStopClick()
         {
             _stopExecution = true;
+            _cancellationToken.Cancel();
         }
 
 

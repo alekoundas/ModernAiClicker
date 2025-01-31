@@ -2,6 +2,7 @@
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using Model.Models;
+using System.Threading;
 
 namespace Business.Factories.Workers
 {
@@ -9,17 +10,20 @@ namespace Business.Factories.Workers
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
+        private CancellationTokenSource _cancellationToken;
 
-        public SleepExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork, systemService)
+
+        public SleepExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService, CancellationTokenSource cancellationToken) : base(baseDatawork, systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
+            _cancellationToken = cancellationToken;
         }
 
-        public Task ExecuteFlowStepAction(Execution execution)
+        public async Task ExecuteFlowStepAction(Execution execution)
         {
             if (execution.FlowStep == null)
-                return Task.CompletedTask;
+                return;
 
             int miliseconds = 0;
 
@@ -36,10 +40,11 @@ namespace Business.Factories.Workers
                 miliseconds += execution.FlowStep.SleepForHours.Value * 60 * 60 * 1000;
 
 
-            Thread.Sleep(miliseconds);
-
-
-            return Task.CompletedTask;
+            try
+            {
+                await Task.Delay(miliseconds, _cancellationToken.Token);
+            }
+            catch (TaskCanceledException) { return; }
         }
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)
