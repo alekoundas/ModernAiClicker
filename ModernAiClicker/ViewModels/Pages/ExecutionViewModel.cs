@@ -56,14 +56,19 @@ namespace ModernAiClicker.ViewModels.Pages
         public string _status = "-";
 
         [ObservableProperty]
-        public int _runFor = 0;
+        public string _runFor;
 
         [ObservableProperty]
-        public int _currentStep = 0;
+        public string _currentStep;
 
         [ObservableProperty]
         public bool _isLocked = true;
-        public bool StopExecution { get; set; }
+
+
+        private bool _stopExecution = false;
+        private readonly DispatcherTimer _timer;
+        private TimeSpan _timeElapsed;
+
 
         public ExecutionViewModel(
             IBaseDatawork baseDatawork,
@@ -78,6 +83,11 @@ namespace ModernAiClicker.ViewModels.Pages
 
             _treeViewUserControlViewModel.IsLocked = true;
             ComboBoxFlows = GetFlows();
+
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1) // Update every second
+            };
         }
 
         private ObservableCollection<Flow> GetFlows()
@@ -94,29 +104,45 @@ namespace ModernAiClicker.ViewModels.Pages
             if (ComboBoxSelectedFlow == null)
                 return;
 
+            _timeElapsed = TimeSpan.Zero;
+            void UpdateTimer(object sender, EventArgs e)
+            {
+                _timeElapsed = _timeElapsed.Add(TimeSpan.FromSeconds(1));
+                RunFor = _timeElapsed.ToString(@"hh\:mm\:ss");
+            }
+            _timer.Tick += UpdateTimer;
+            _timer.Start();
+
+            Status = ExecutionStatusEnum.RUNNING.ToString();
 
             // Create new thread so UI doesnt freeze.
             await Task.Run(async () =>
-            {
-                IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
-                Execution flowExecution = await flowWorker.CreateExecutionModelFlow(ComboBoxSelectedFlow.Id, null);
-                FlowStep? nextFlowStep;
-                // Add Execution to listbox and select it
-                List<Execution> executions = ComboBoxExecutionHistories.ToList();
-                executions.Add(flowExecution);
-                ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
-                ComboBoxSelectedExecutionHistory = flowExecution;
+                {
+                    IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
+                    Execution flowExecution = await flowWorker.CreateExecutionModelFlow(ComboBoxSelectedFlow.Id, null);
+                    FlowStep? nextFlowStep;
+                    // Add Execution to listbox and select it
+                    List<Execution> executions = ComboBoxExecutionHistories.ToList();
+                    executions.Add(flowExecution);
+                    ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
+                    ComboBoxSelectedExecutionHistory = flowExecution;
 
-                await flowWorker.SetExecutionModelStateRunning(flowExecution);
-                await flowWorker.SaveToDisk(flowExecution);
+                    await flowWorker.SetExecutionModelStateRunning(flowExecution);
+                    await flowWorker.SaveToDisk(flowExecution);
 
-                nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
-                await ExecuteStepLoop(nextFlowStep, flowExecution);
-                await flowWorker.SetExecutionModelStateComplete(flowExecution);
-            });
+                    nextFlowStep = await flowWorker.GetNextChildFlowStep(flowExecution);
+                    await ExecuteStepLoop(nextFlowStep, flowExecution);
+                    await flowWorker.SetExecutionModelStateComplete(flowExecution);
+                    _timer.Stop();
+                    Status = ExecutionStatusEnum.COMPLETED.ToString();
 
-            StopExecution = false;
+                });
+
+            _stopExecution = false;
         }
+
+
+
 
 
 
@@ -129,7 +155,7 @@ namespace ModernAiClicker.ViewModels.Pages
             {
                 var (flowStep, parentExecution) = stack.Pop();
 
-                if (flowStep == null || StopExecution == true)
+                if (flowStep == null || _stopExecution == true)
                     return;
 
                 IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
@@ -138,7 +164,10 @@ namespace ModernAiClicker.ViewModels.Pages
                 parentExecution.ResultImage = null;// TODO test if needed.
 
                 // Add execution to history listbox.
-                Application.Current.Dispatcher.Invoke(() => ListBoxExecutions.Add(flowStepExecution));
+                Application.Current.Dispatcher.Invoke(() => {
+                    CurrentStep = flowStep.FlowStepType.ToString();
+                    ListBoxExecutions.Add(flowStepExecution);
+                });
 
                 await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, _treeViewUserControlViewModel.FlowsList);
                 await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
@@ -179,7 +208,7 @@ namespace ModernAiClicker.ViewModels.Pages
         [RelayCommand]
         private void OnButtonStopClick()
         {
-            StopExecution = true;
+            _stopExecution = true;
         }
 
 
