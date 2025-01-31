@@ -51,5 +51,10 @@ namespace ModernAiClicker.Views.Pages
         {
             ViewModel.CoppiedFlowStepId = id;
         }
+
+        private void OnAddFlowStepClick(object sender, FlowStep newFlowStep)
+        {
+            NavigateToFlowStepTypeSelectionPage(newFlowStep);
+        }
     }
 }

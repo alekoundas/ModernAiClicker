@@ -11,6 +11,7 @@ using System.IO;
 using System.Drawing;
 using Rectangle = Model.Structs.Rectangle;
 using Model.ConverterModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -25,13 +26,14 @@ namespace ModernAiClicker.ViewModels.Pages
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
         [ObservableProperty]
+        private ObservableCollection<FlowStep> _childrenTemplateSearchFlowSteps;
+        private List<FlowStep> _childrenTemplateSearchFlowStepsToRemove;
+
+        [ObservableProperty]
         private string _templateImgPath = "";
 
         [ObservableProperty]
         private FlowStep _flowStep;
-
-        [ObservableProperty]
-        private ObservableCollection<FlowStep> _flowSteps;
 
         public event ShowTemplateImgEvent? ShowTemplateImg;
         public delegate void ShowTemplateImgEvent(string filePath);
@@ -50,7 +52,8 @@ namespace ModernAiClicker.ViewModels.Pages
             _flowsViewModel = flowsViewModel;
 
             TemplateImgPath = flowStep.TemplateImagePath;
-            FlowSteps = flowStep.ChildrenTemplateSearchFlowSteps;
+            List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION).ToList();
+            _childrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
             //ShowTemplateImg?.Invoke(TemplateImgPath);
 
         }
@@ -77,62 +80,62 @@ namespace ModernAiClicker.ViewModels.Pages
 
 
         [RelayCommand]
-        private async Task OnButtonUpClick(EventParammeters eventParameters)
+        private void OnButtonUpClick(EventParammeters eventParameters)
         {
             if (eventParameters.FlowId is FlowStep)
             {
                 FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                List<FlowStep> simplingsAbove = FlowStep.ChildrenTemplateSearchFlowSteps
+                List<FlowStep> simplingsAbove = ChildrenTemplateSearchFlowSteps
                         .Where(x => x.OrderingNum < flowStep.OrderingNum)
                         .ToList();
 
-                //if (simplingsAbove.Any())
-                //{
-                //    // Find max
-                //    FlowStep simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
+                flowStep.OrderingNum++;
 
-                //    // Swap values
-                //    (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
-
-                //}
-                //else
-                    flowStep.OrderingNum++;
-
-                FlowSteps = new ObservableCollection<FlowStep>(FlowSteps.OrderBy(x => x.OrderingNum).ToList());
+                ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
 
             }
         }
 
         [RelayCommand]
-        private async Task OnButtonDownClick(EventParammeters eventParameters)
+        private void OnButtonDownClick(EventParammeters eventParameters)
         {
             if (eventParameters.FlowId is FlowStep)
             {
                 FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                List<FlowStep> simplingsBellow = FlowStep.ChildrenTemplateSearchFlowSteps
+                List<FlowStep> simplingsBellow = ChildrenTemplateSearchFlowSteps
                         .Where(x => x.OrderingNum > flowStep.OrderingNum)
                         .ToList();
 
-                //if (simplingsBellow.Any())
-                //{
-                //    // Find min
-                //    FlowStep simplingBellow = simplingsBellow.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
-
-                //    // Swap values
-                //    (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
-
-                //}
-
                 flowStep.OrderingNum--;
 
-                FlowStep.ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(FlowStep.ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
+                ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
             }
         }
 
         [RelayCommand]
         public void OnButtonAddClick()
         {
-            FlowSteps.Add(new FlowStep());
+            FlowStep newFlowStep = new FlowStep();
+
+            // In edit mode set parent ID.
+            if (FlowStep.Id > 0)
+                newFlowStep.ParentTemplateSearchFlowStepId = FlowStep.Id;
+
+            ChildrenTemplateSearchFlowSteps.Add(newFlowStep);
+        }
+
+        [RelayCommand]
+        private void OnButtonDeleteClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
+
+                if (templateFlowStep.Id > 0)
+                    _childrenTemplateSearchFlowStepsToRemove.Add(templateFlowStep);
+
+                ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
+            }
         }
 
         [RelayCommand]
@@ -144,16 +147,6 @@ namespace ModernAiClicker.ViewModels.Pages
                 templateFlowStep.LoopResultImagePath = "";
             }
             ShowResultImage?.Invoke("");
-        }
-
-        [RelayCommand]
-        private void OnButtonDeleteClick(EventParammeters eventParameters)
-        {
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
-                FlowSteps.Remove(templateFlowStep);
-            }
         }
 
         [RelayCommand]
@@ -205,24 +198,24 @@ namespace ModernAiClicker.ViewModels.Pages
         private async Task OnButtonSaveClick()
         {
             // Remove flow steps that dont contain a template image.
-            List<FlowStep> templateFlowSteps = FlowStep.ChildrenTemplateSearchFlowSteps
+            List<FlowStep> templateFlowSteps = ChildrenTemplateSearchFlowSteps
                 .Where(x => x.TemplateImage == null)
                 .ToList();
 
             foreach (var templateFlowStep in templateFlowSteps)
-                FlowStep.ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
+                ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
 
 
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                //_baseDatawork.Query.ChangeTracker.Clear();
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.ChildrenTemplateSearchFlowSteps = FlowSteps;
 
-                //_baseDatawork.Update(updateFlowStep);
+                _baseDatawork.UpdateRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id > 0).ToList());
+                _baseDatawork.FlowSteps.AddRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id == 0).ToList());
+                _baseDatawork.FlowSteps.RemoveRange(_childrenTemplateSearchFlowStepsToRemove);
             }
 
             /// Add mode
@@ -276,6 +269,7 @@ namespace ModernAiClicker.ViewModels.Pages
                     FlowStep.Name = "Multiple template search loop.";
 
                 FlowStep.IsExpanded = true;
+                FlowStep.ChildrenTemplateSearchFlowSteps = ChildrenTemplateSearchFlowSteps;
 
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }
@@ -284,6 +278,12 @@ namespace ModernAiClicker.ViewModels.Pages
 
             await _baseDatawork.SaveChangesAsync();
             await _flowsViewModel.RefreshData();
+            List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.Query
+                .AsNoTracking()
+                .Where(x => x.ParentTemplateSearchFlowStepId == FlowStep.Id)
+                .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
+                .ToListAsync();
+            ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
         }
     }
 }

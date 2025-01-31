@@ -42,7 +42,7 @@ namespace Business.Factories.Workers
 
 
             Execution execution = new Execution();
-            execution.FlowStepId = flowStep.Id;
+            execution.FlowStepId = flowStep.id;
             execution.ParentExecutionId = parentExecution.Id;// TODO This is wrong!
             execution.ParentLoopExecutionId = parentExecution.Id;
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
@@ -57,8 +57,13 @@ namespace Business.Factories.Workers
             parentExecution.ChildLoopExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
-            execution.CurrentMultipleTemplateSearchFlowStep = childTemplateSearchFlowStep;
-            execution.FlowStep = flowStep;
+
+            execution = await _baseDatawork.Executions.Query
+                .Include(x=>x.FlowStep)
+                .Include(x=>x.CurrentMultipleTemplateSearchFlowStep)
+                .FirstAsync(x => x.Id == execution.Id);
+            //execution.FlowStep = flowStep;
+            //execution.CurrentMultipleTemplateSearchFlowStep = childTemplateSearchFlowStep;
             return execution;
         }
 

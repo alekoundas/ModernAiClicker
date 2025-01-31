@@ -1,5 +1,5 @@
-﻿using ModernAiClicker.ViewModels.UserControls;
-using System.Windows;
+﻿using Model.Models;
+using ModernAiClicker.ViewModels.UserControls;
 using System.Windows.Controls;
 
 namespace ModernAiClicker.Views.UserControls
@@ -8,6 +8,7 @@ namespace ModernAiClicker.Views.UserControls
     {
         public event EventHandler<int>? OnSelectedFlowStepIdChange;
         public event EventHandler<int>? OnFlowStepClone;
+        public event EventHandler<FlowStep>? OnAddFlowStepClick;
         public TreeViewUserControlViewModel ViewModel { get; set; }
 
         public TreeViewUserControl()
@@ -24,6 +25,7 @@ namespace ModernAiClicker.Views.UserControls
             InitializeComponent();
             ViewModel.OnSelectedFlowStepIdChangedEvent += OnSelectedFlowStepIdChangedEvent;
             ViewModel.OnFlowStepCloneEvent += OnFlowStepCloneEvent;
+            ViewModel.OnAddFlowStepClickEvent += OnAddFlowStepClickEvent;
 
         }
 
@@ -35,6 +37,11 @@ namespace ModernAiClicker.Views.UserControls
         public void OnFlowStepCloneEvent(int id)
         {
             OnFlowStepClone?.Invoke(this, id);
+        }
+
+        public void OnAddFlowStepClickEvent(FlowStep adddFlowSttep)
+        {
+            OnAddFlowStepClick?.Invoke(this, adddFlowSttep);
         }
 
 

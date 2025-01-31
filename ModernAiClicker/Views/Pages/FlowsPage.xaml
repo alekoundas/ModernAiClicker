@@ -173,7 +173,7 @@
             <Border.Effect>
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
-            <UserControls:TreeViewUserControl OnFlowStepClone="OnFlowStepClone" OnSelectedFlowStepIdChange="OnSelectedFlowStepIdChange" />
+            <UserControls:TreeViewUserControl OnFlowStepClone="OnFlowStepClone" OnSelectedFlowStepIdChange="OnSelectedFlowStepIdChange" OnAddFlowStepClick="OnAddFlowStepClick" />
         </Border>
 
     </Grid>

@@ -26,6 +26,10 @@ namespace ModernAiClicker.ViewModels.Pages
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
         [ObservableProperty]
+        private ObservableCollection<FlowStep> _childrenTemplateSearchFlowSteps;
+        private List<FlowStep> _childrenTemplateSearchFlowStepsToRemove;
+
+        [ObservableProperty]
         private string _templateImgPath = "";
 
         [ObservableProperty]
@@ -47,6 +51,8 @@ namespace ModernAiClicker.ViewModels.Pages
             _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
 
+            List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION).ToList();
+            _childrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
             TemplateImgPath = flowStep.TemplateImagePath;
             //ShowTemplateImg?.Invoke(TemplateImgPath);
 
@@ -73,10 +79,65 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
         [RelayCommand]
+        private void OnButtonUpClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+                List<FlowStep> simplingsAbove = ChildrenTemplateSearchFlowSteps
+                        .Where(x => x.OrderingNum < flowStep.OrderingNum)
+                        .ToList();
+
+                flowStep.OrderingNum++;
+
+                ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
+
+            }
+        }
+
+        [RelayCommand]
+        private void OnButtonDownClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+                List<FlowStep> simplingsBellow = ChildrenTemplateSearchFlowSteps
+                        .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                        .ToList();
+
+                flowStep.OrderingNum--;
+
+                ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
+            }
+        }
+
+        [RelayCommand]
         public void OnButtonAddClick()
         {
-            FlowStep.ChildrenTemplateSearchFlowSteps.Add(new FlowStep());
+            FlowStep newFlowStep = new FlowStep();
+
+            // In edit mode set parent ID.
+            if (FlowStep.Id > 0)
+                newFlowStep.ParentTemplateSearchFlowStepId = FlowStep.Id;
+
+            ChildrenTemplateSearchFlowSteps.Add(newFlowStep);
         }
+
+
+        [RelayCommand]
+        private void OnButtonDeleteClick(EventParammeters eventParameters)
+        {
+            if (eventParameters.FlowId is FlowStep)
+            {
+                FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
+                
+                if (templateFlowStep.Id > 0)
+                    _childrenTemplateSearchFlowStepsToRemove.Add(templateFlowStep);
+
+                ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
+            }
+        }
+
 
         [RelayCommand]
         private void OnButtonClearTestClick(EventParammeters eventParameters)
@@ -145,13 +206,13 @@ namespace ModernAiClicker.ViewModels.Pages
         private async Task OnButtonSaveClick()
         {
             // Remove flow steps that dont contain a template image.
-            List<FlowStep> templateFlowSteps = FlowStep.ChildrenTemplateSearchFlowSteps
+            List<FlowStep> templateFlowSteps = ChildrenTemplateSearchFlowSteps
                 .Where(x => x.TemplateImage == null)
                 .ToList();
 
             foreach (var templateFlowStep in templateFlowSteps)
-                FlowStep.ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
-                
+                ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
+
 
             // Edit mode
             if (FlowStep.Id > 0)
@@ -159,7 +220,10 @@ namespace ModernAiClicker.ViewModels.Pages
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.ChildrenTemplateSearchFlowSteps = FlowStep.ChildrenTemplateSearchFlowSteps;
+
+                _baseDatawork.UpdateRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id > 0).ToList());
+                _baseDatawork.FlowSteps.AddRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id == 0).ToList());
+                _baseDatawork.FlowSteps.RemoveRange(_childrenTemplateSearchFlowStepsToRemove);
             }
 
             /// Add mode
@@ -213,6 +277,7 @@ namespace ModernAiClicker.ViewModels.Pages
                     FlowStep.Name = "Multiple template search loop.";
 
                 FlowStep.IsExpanded = true;
+                FlowStep.ChildrenTemplateSearchFlowSteps = ChildrenTemplateSearchFlowSteps;
 
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }
@@ -221,6 +286,12 @@ namespace ModernAiClicker.ViewModels.Pages
 
             await _baseDatawork.SaveChangesAsync();
             await _flowsViewModel.RefreshData();
+            List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.Query
+                .AsNoTracking()
+                .Where(x => x.ParentTemplateSearchFlowStepId == FlowStep.Id)
+                .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
+                .ToListAsync();
+            ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
         }
     }
 }

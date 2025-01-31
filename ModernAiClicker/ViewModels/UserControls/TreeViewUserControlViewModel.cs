@@ -23,6 +23,9 @@ namespace ModernAiClicker.ViewModels.UserControls
         public event OnFlowStepClone? OnFlowStepCloneEvent;
         public delegate void OnFlowStepClone(int Id);
 
+        public event OnAddFlowStepClick? OnAddFlowStepClickEvent;
+        public delegate void OnAddFlowStepClick(FlowStep newFlowStep);
+
         [ObservableProperty]
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
 
@@ -106,34 +109,28 @@ namespace ModernAiClicker.ViewModels.UserControls
         }
 
         [RelayCommand]
-        private void OnButtonNewClick(EventParammeters eventParameters)
+        private async Task OnButtonNewClick(EventParammeters eventParameters)
         {
-            FlowStep flowStep = new FlowStep();
-
-            // If flowId is available
-            if (eventParameters.FlowId != null)
-            {
-                bool isFlowIdParsable = Int32.TryParse(eventParameters.FlowId.ToString(), out int flowId);
-
-                if (isFlowIdParsable)
-                    flowStep.FlowId = flowId;
-            }
             // If flowStepId is available
-            else if (eventParameters.FlowStepId != null)
+            if (eventParameters.FlowStepId != null)
             {
                 bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
                 if (isFlowStepIdParsable)
                 {
+                    FlowStep newFlowStep = new FlowStep();
+                    FlowStep addflowStep = await _baseDatawork.FlowSteps.Query
+                        .AsNoTracking()
+                        .FirstAsync(x => x.Id == flowStepId);
 
-                    int? parentFlowStepId = _baseDatawork.FlowSteps
-                        .Where(x => x.Id == flowStepId)
-                        .Select(x => x.ParentFlowStepId)
-                        .First();
+                    if (addflowStep.ParentFlowStepId.HasValue)
+                        newFlowStep.ParentFlowStepId = addflowStep.ParentFlowStepId;
 
-                    flowStep.ParentFlowStepId = parentFlowStepId;
+                    if (addflowStep.FlowId.HasValue)
+                        newFlowStep.FlowId = addflowStep.FlowId;
+
+                    OnAddFlowStepClickEvent?.Invoke(newFlowStep);
                 }
             }
-
         }
 
         [RelayCommand]

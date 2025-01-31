@@ -31,22 +31,7 @@
                     <x:Type TypeName="enum:FlowStepTypesEnum" />
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
-            <ObjectDataProvider
-                x:Key="FlowStepActionsFoundEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepActionsFoundEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-            <ObjectDataProvider
-                x:Key="FlowStepActionsNotFoundEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepActionsNotFoundEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
+
         </Grid.Resources>
 
 
@@ -78,7 +63,7 @@
                 Content="Add" />
 
 
-            <ItemsControl ItemsSource="{Binding ViewModel.FlowSteps}">
+            <ItemsControl ItemsSource="{Binding ViewModel.ChildrenTemplateSearchFlowSteps}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!--  Use a WrapPanel for a horizontal layout  -->
