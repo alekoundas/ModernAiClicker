@@ -2,14 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
-using Model.Structs;
-using Business.Helpers;
-using Model.Business;
 using DataAccess.Repository.Interface;
-using System.Windows.Forms;
-using Model.Enums;
-using System.Collections.ObjectModel;
-using Microsoft.EntityFrameworkCore;
 
 namespace ModernAiClicker.ViewModels.Pages
 {
@@ -22,7 +15,8 @@ namespace ModernAiClicker.ViewModels.Pages
         [ObservableProperty]
         private FlowStep _flowStep;
 
-
+        [ObservableProperty]
+        private string _timeTotal;
         public SleepFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
 
@@ -30,6 +24,21 @@ namespace ModernAiClicker.ViewModels.Pages
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
             _flowStep = flowStep;
+
+            int miliseconds = 0;
+            if (FlowStep.SleepForMilliseconds.HasValue)
+                miliseconds += FlowStep.SleepForMilliseconds.Value;
+
+            if (FlowStep.SleepForSeconds.HasValue)
+                miliseconds += FlowStep.SleepForSeconds.Value * 1000;
+
+            if (FlowStep.SleepForMinutes.HasValue)
+                miliseconds += FlowStep.SleepForMinutes.Value * 60 * 1000;
+
+            if (FlowStep.SleepForHours.HasValue)
+                miliseconds += FlowStep.SleepForHours.Value * 60 * 60 * 1000;
+
+            TimeTotal = TimeSpan.FromMilliseconds(miliseconds).ToString(@"hh\:mm\:ss");
         }
 
 

@@ -87,10 +87,9 @@ namespace ModernAiClicker.ViewModels.Pages
             ComboBoxFlows = GetFlows();
 
             _executionFactory.SetCancellationToken(_cancellationToken);
-            _timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1) // Update every second
-            };
+
+            // Update every second
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         }
 
         private ObservableCollection<Flow> GetFlows()

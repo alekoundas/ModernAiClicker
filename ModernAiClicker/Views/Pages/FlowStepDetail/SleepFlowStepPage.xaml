@@ -17,37 +17,39 @@
 
     <StackPanel>
 
-        <Label>Configure wait time.</Label>
+        <Label>Wait time.</Label>
 
         <Grid Margin="10,10,10,50">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.3*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.1*" />
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-
-
-
-
-
 
 
             <StackPanel>
-                <Label>Set hours:</Label>
+                <Label>Hours:</Label>
                 <TextBox Text="{Binding ViewModel.FlowStep.SleepForHours, Mode=TwoWay}" />
 
-                <Label>Set minutes:</Label>
+                <Label>Minutes:</Label>
                 <TextBox Text="{Binding ViewModel.FlowStep.SleepForMinutes, Mode=TwoWay}" />
 
-                <Label>Set seconds:</Label>
+                <Label>Seconds:</Label>
                 <TextBox Text="{Binding ViewModel.FlowStep.SleepForSeconds, Mode=TwoWay}" />
 
-                <Label>Set milliseconds:</Label>
+                <Label>Milliseconds:</Label>
                 <TextBox Text="{Binding ViewModel.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
+
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom">
+
+                <Label Padding="0,20,0,0">Total time.</Label>
+                <Label Content="{Binding ViewModel.TimeTotal}" />
             </StackPanel>
         </Grid>
 

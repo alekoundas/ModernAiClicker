@@ -24,16 +24,8 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.3*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="0.1*" />
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-
-
-
-
-
 
 
             <StackPanel>
@@ -48,6 +40,18 @@
 
                 <Label>Milliseconds:</Label>
                 <TextBox Text="{Binding Execution.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
+
+                <Label Padding="0,20,0,0">Time left.</Label>
+                <Label Content="{Binding TimeLeft}" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom">
+
+                <Label Padding="0,20,0,0">Total time.</Label>
+                <Label Content="{Binding TimeTotal}" />
             </StackPanel>
         </Grid>
     </StackPanel>
