@@ -20,7 +20,10 @@ namespace Business.Repository.Entities
         public async Task<List<Execution>> GetAllParentLoopExecutions(int executionId)
         {
             List<Execution> parentLoopExecutions = new List<Execution>();
-            Execution? currentExecution = await InMemoryDbContext.Executions.AsNoTracking().FirstAsync(x => x.Id == executionId);
+            Execution? currentExecution = await InMemoryDbContext.Executions
+                .AsNoTracking()
+                .Include(x => x.FlowStep)
+                .FirstAsync(x => x.Id == executionId);
 
             while (currentExecution.ParentLoopExecutionId != null)
             {

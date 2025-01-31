@@ -53,6 +53,7 @@ namespace Business.Factories.Workers
             parentExecution.ChildLoopExecutionId = execution.Id;
             await _baseDatawork.SaveChangesAsync();
 
+            execution.CurrentMultipleTemplateSearchFlowStep = childTemplateSearchFlowStep;
             execution.FlowStep = flowStep;
             return execution;
         }
@@ -62,7 +63,9 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return;
 
-            FlowStep? currentMultipleTemplateSearchFlowStep = await _baseDatawork.FlowSteps.Query.AsNoTracking().FirstOrDefaultAsync(x => x.Id == execution.CurrentMultipleTemplateSearchFlowStepId);
+            FlowStep currentMultipleTemplateSearchFlowStep = await _baseDatawork.FlowSteps.Query
+                .AsNoTracking()
+                .FirstAsync(x => x.Id == execution.CurrentMultipleTemplateSearchFlowStepId);
 
             // Find search area.
             Model.Structs.Rectangle searchRectangle;
@@ -74,7 +77,7 @@ namespace Business.Factories.Workers
             // Get screenshot.
             // New if not previous exists.
             // Get previous one if exists.
-            Execution? parentLoopExecution = await _baseDatawork.Executions.FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
+            Execution parentLoopExecution = await _baseDatawork.Executions.FirstAsync(x => x.Id == execution.ParentLoopExecutionId);
             Bitmap? screenshot = null;
             if (parentLoopExecution.ResultImagePath?.Length > 0 && currentMultipleTemplateSearchFlowStep.RemoveTemplateFromResult)
                 screenshot = (Bitmap)Image.FromFile(parentLoopExecution.ResultImagePath);
@@ -102,7 +105,6 @@ namespace Business.Factories.Workers
 
                 await _baseDatawork.SaveChangesAsync();
                 _resultImage = result.ResultImage;
-
             }
         }
 

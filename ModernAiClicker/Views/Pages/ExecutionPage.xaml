@@ -107,12 +107,11 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.6*" />
-            <RowDefinition Height="0.1*" MinHeight="100" />
-            <RowDefinition Height="3*" />
-            <RowDefinition Height="0.25*" />
-            <RowDefinition Height="0.35*" />
-            <RowDefinition Height="0.6*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" MinHeight="100" />
+            <RowDefinition Height="100*" MinHeight="200" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -134,7 +133,7 @@
             </i:Interaction.Triggers>
         </ComboBox>
 
-        <!--  Flow  -->
+        <!--  Execuution Details  -->
         <Border
             Grid.Row="1"
             Margin="0,0,20,0"
@@ -228,7 +227,25 @@
 
 
 
-
+        <!--  Frame  -->
+        <Border
+            Grid.Row="2"
+            Margin="0,5,20,0"
+            Padding="10,10,0,0"
+            Background="#272727"
+            BorderBrush="#C4C4C4"
+            BorderThickness="2"
+            CornerRadius="10">
+            <Border.Effect>
+                <DropShadowEffect Opacity="1" ShadowDepth="5" />
+            </Border.Effect>
+            <ScrollViewer>
+                <Frame
+                    x:Name="UIExecutionDetailFrame"
+                    ScrollViewer.CanContentScroll="True"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible" />
+            </ScrollViewer>
+        </Border>
 
         <!--  TreeView  -->
         <Border
@@ -247,79 +264,69 @@
 
         </Border>
 
-        <!--  Frame  -->
-        <Border
-            Grid.Row="2"
-            Margin="0,0,20,0"
-            Padding="10,20,0,0"
-            Background="#272727"
-            BorderBrush="#C4C4C4"
-            BorderThickness="2"
-            CornerRadius="10">
-            <Border.Effect>
-                <DropShadowEffect Opacity="1" ShadowDepth="5" />
-            </Border.Effect>
-            <ScrollViewer>
-                <Frame
-                    x:Name="UIExecutionDetailFrame"
-                    ScrollViewer.CanContentScroll="True"
-                    ScrollViewer.VerticalScrollBarVisibility="Visible" />
-            </ScrollViewer>
-        </Border>
+
 
         <!--  Execution History  -->
-        <TextBlock
-            Grid.Row="3"
-            Margin="0,20,0,0"
-            Text="Execution history" />
+        <StackPanel
+            Grid.Row="4"
+            Margin="0,0,0,10"
+            Orientation="Vertical">
+            <TextBlock
+                Grid.Row="3"
+                Margin="0,5,0,5"
+                Text="Execution history" />
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal">
+                <ComboBox
+                    VerticalAlignment="Top"
+                    ItemsSource="{Binding ViewModel.ComboBoxExecutionHistories}"
+                    SelectedItem="{Binding ViewModel.ComboBoxSelectedExecutionHistory}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedExecutionCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Id}" />
+                                <TextBlock Text=" - " />
+                                <TextBlock Text="{Binding Path=StartedOn}" />
+                            </StackPanel>
+                        </DataTemplate>
 
-            <ComboBox
-                VerticalAlignment="Top"
-                ItemsSource="{Binding ViewModel.ComboBoxExecutionHistories}"
-                SelectedItem="{Binding ViewModel.ComboBoxSelectedExecutionHistory}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedExecutionCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Id}" />
-                            <TextBlock Text=" - " />
-                            <TextBlock Text="{Binding Path=StartedOn}" />
-                        </StackPanel>
-                    </DataTemplate>
-
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-
-            <ui:Button
-                MaxHeight="37"
-                Margin="10,0,0,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top">
-                <icons:BootstrapIcon Icon="Trash" />
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonDeleteClickCommand}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ui:Button>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <ui:Button
+                    MaxHeight="37"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top">
+                    <icons:BootstrapIcon Icon="Trash" />
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonDeleteClickCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ui:Button>
+            </StackPanel>
         </StackPanel>
 
         <!--  ListBox  -->
         <Border
             Grid.Row="5"
             Grid.ColumnSpan="2"
+            Margin="0,0,0,15"
+            Padding="5,5,0,5"
             Background="#272727"
             BorderBrush="#C4C4C4"
-            BorderThickness="2">
+            BorderThickness="1"
+            CornerRadius="10">
             <Border.Effect>
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
+
+
             <StackPanel>
 
                 <ListBox
@@ -343,20 +350,30 @@
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border BorderThickness="2" CornerRadius="5">
+                            <Border
+                                Height="120"
+                                BorderThickness="2"
+                                CornerRadius="5">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Id}" />
-                                    <TextBlock Text="{Binding FlowStepId}" />
-                                    <TextBlock Text="{Binding FlowId}" />
+                                    <TextBlock>
+                                        <Run Text="Execution ID" />
+                                        <Run Text="{Binding Id}" />
+                                    </TextBlock>
+                                    <TextBlock>
+                                        <Run Text="Flow Step ID" />
+                                        <Run Text="{Binding FlowStepId}" />
+                                    </TextBlock>
+                                    <!--<TextBlock Text="{Binding FlowId}" />-->
+                                    <TextBlock Margin="0,0,0,0" Text="{Binding FlowStep.FlowStepType}" />
                                     <Image
-                                        MaxWidth="50"
+                                        MaxWidth="100"
                                         MaxHeight="50"
                                         Source="{Binding FlowStep.TemplateImage}" />
                                     <Image
-                                        MaxWidth="50"
+                                        MaxWidth="100"
                                         MaxHeight="50"
                                         Source="{Binding CurrentMultipleTemplateSearchFlowStep.TemplateImage}" />
-                                    <TextBlock Text="{Binding FlowStep.FlowStepType}" />
+
 
                                 </StackPanel>
                             </Border>

@@ -137,7 +137,6 @@ namespace ModernAiClicker.ViewModels.Pages
                 Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution);
                 parentExecution.ResultImage = null;// TODO test if needed.
 
-
                 // Add execution to history listbox.
                 Application.Current.Dispatcher.Invoke(() => ListBoxExecutions.Add(flowStepExecution));
 
@@ -335,9 +334,7 @@ namespace ModernAiClicker.ViewModels.Pages
         }
 
 
-        public void OnNavigatedTo()
-        {
-        }
+        public void OnNavigatedTo() { }
 
         public void OnNavigatedFrom() { }
 

@@ -51,17 +51,19 @@ namespace Business.Repository.Entities
         {
             FlowStep? nextSimpling = null;
             IQueryable<FlowStep>? simplings = null;
-            FlowStep flowStep = await InMemoryDbContext.FlowSteps.FirstAsync(x => x.Id == flowStepId);
+            FlowStep flowStep = await InMemoryDbContext.FlowSteps.AsNoTracking().FirstAsync(x => x.Id == flowStepId);
 
             if (flowStep.ParentFlowStepId.HasValue)
                 simplings = InMemoryDbContext.FlowSteps
-                          .Where(x => x.Id == flowStep.ParentFlowStepId.Value)
-                          .SelectMany(x => x.ChildrenFlowSteps);
+                    .AsNoTracking()
+                    .Where(x => x.Id == flowStep.ParentFlowStepId.Value)
+                    .SelectMany(x => x.ChildrenFlowSteps);
 
             else if (flowStep.FlowId.HasValue)
                 simplings = InMemoryDbContext.Flows
-                      .Where(x => x.Id == flowStep.FlowId.Value)
-                      .SelectMany(x => x.FlowSteps);
+                    .AsNoTracking()
+                    .Where(x => x.Id == flowStep.FlowId.Value)
+                    .SelectMany(x => x.FlowSteps);
 
             if (simplings != null)
                 nextSimpling = await simplings
@@ -76,6 +78,7 @@ namespace Business.Repository.Entities
         public async Task<FlowStep?> GetNextChild(int flowStepId, ExecutionResultEnum? resultEnum)
         {
             IQueryable<FlowStep> childrenFlowSteps = InMemoryDbContext.FlowSteps
+                .AsNoTracking()
                 .Where(x => x.Id == flowStepId)
                 .SelectMany(x => x.ChildrenFlowSteps);
 
