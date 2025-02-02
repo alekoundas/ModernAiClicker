@@ -27,7 +27,7 @@ namespace ModernAiClicker.ViewModels.Pages
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _childrenTemplateSearchFlowSteps;
-        private List<FlowStep> _childrenTemplateSearchFlowStepsToRemove;
+        private List<FlowStep> _childrenTemplateSearchFlowStepsToRemove = new List<FlowStep>();
 
         [ObservableProperty]
         private string _templateImgPath = "";
