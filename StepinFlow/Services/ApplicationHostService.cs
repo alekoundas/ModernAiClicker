@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using StepinFlow.Views.Pages;
 using StepinFlow.Views.Windows;
 using System.Windows;
+using Wpf.Ui;
 
 namespace StepinFlow.Services
 {
@@ -17,6 +18,8 @@ namespace StepinFlow.Services
     public class ApplicationHostService : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
+
+        private INavigationWindow _navigationWindow;
 
         public ApplicationHostService(IServiceProvider serviceProvider)
         {
@@ -46,24 +49,17 @@ namespace StepinFlow.Services
         /// </summary>
         private async Task HandleActivationAsync()
         {
-            await Task.CompletedTask;
-
             if (!Application.Current.Windows.OfType<MainWindow>().Any())
             {
-                var navigationWindow = _serviceProvider.GetRequiredService<MainWindow>();
-                navigationWindow.Loaded += OnNavigationWindowLoaded;
-                navigationWindow.Show();
-            }
-        }
+                _navigationWindow = (
+                    _serviceProvider.GetService(typeof(INavigationWindow)) as INavigationWindow
+                )!;
+                _navigationWindow!.ShowWindow();
 
-        private void OnNavigationWindowLoaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is not MainWindow navigationWindow)
-            {
-                return;
+                _navigationWindow.Navigate(typeof(Views.Pages.DashboardPage));
             }
 
-            navigationWindow.NavigationView.Navigate(typeof(DashboardPage));
+            await Task.CompletedTask;
         }
     }
 }

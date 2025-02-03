@@ -41,47 +41,6 @@
         Command="{Binding ViewModel.CounterIncrementCommand, Mode=OneWay}"
         Content="Click me!"
         Icon="Fluent24" />-->
-        <TextBlock
-            Grid.Row="0"
-            Grid.Column="3"
-            Grid.ColumnSpan="3"
-            VerticalAlignment="Center"
-            Text="Set process or let application search every monitor" />
 
-        <ComboBox
-            Name="ProcessList"
-            Grid.Row="1"
-            Grid.Column="3"
-            Grid.ColumnSpan="3"
-            VerticalAlignment="Center"
-            ItemsSource="{Binding ViewModel.ProcessList}" />
-
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="6"
-            Margin="10,30,0,10"
-            VerticalAlignment="Top"
-            FontSize="15"
-            FontWeight="Bold"
-            Text="Flows" />
-        <ui:Button
-            Grid.Row="2"
-            Grid.Column="7"
-            Content="Start"
-            Icon="Fluent24" />
-
-        <ListView
-            Grid.Row="3"
-            Grid.Column="6"
-            Width="200"
-            Height="300"
-            ItemsSource="{Binding ViewModel.FlowsList}">
-            <ListView.Template>
-                <ControlTemplate>
-                    <ItemsPresenter />
-                </ControlTemplate>
-            </ListView.Template>
-
-        </ListView>
     </Grid>
 </Page>

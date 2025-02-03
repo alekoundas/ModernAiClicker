@@ -31,14 +31,10 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
-using Wpf.Ui.Contracts;
-using Wpf.Ui.Services;
+using Wpf.Ui;
 
 namespace StepinFlow
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App
     {
 
@@ -55,6 +51,18 @@ namespace StepinFlow
             {
                 services.AddHostedService<ApplicationHostService>();
 
+                // Page resolver service
+                services.AddSingleton<IPageService, PageService>();
+
+                // Theme manipulation
+                services.AddSingleton<IThemeService, ThemeService>();
+
+                // TaskBar manipulation
+                services.AddSingleton<ITaskBarService, TaskBarService>();
+
+                // Service containing navigation, same as INavigationWindow... but without window
+                services.AddSingleton<INavigationService, NavigationService>();
+
                 // Repository
                 //services.AddScoped<IDbContextFactory, DbContextFactory>();
                 services.AddTransient<IBaseDatawork, BaseDatawork>();
@@ -63,7 +71,7 @@ namespace StepinFlow
                 services.AddScoped<IExecutionRepository, ExecutionRepository>();
 
 
-                services.AddSingleton<MainWindow>();
+                services.AddSingleton<INavigationWindow, MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
 
                 services.AddSingleton<INavigationService, NavigationService>();
