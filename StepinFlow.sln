@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{FBB11C2B-3DA3-4BBD-8774-B1DC566E3599}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{BEE1B8DE-536B-4CD9-A731-C74A9FB5482B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepinFlow", "StepinFlow\StepinFlow.csproj", "{137A26DC-C175-4ECB-B358-25DB2715BBDE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBB11C2B-3DA3-4BBD-8774-B1DC566E3599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBB11C2B-3DA3-4BBD-8774-B1DC566E3599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBB11C2B-3DA3-4BBD-8774-B1DC566E3599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBB11C2B-3DA3-4BBD-8774-B1DC566E3599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEE1B8DE-536B-4CD9-A731-C74A9FB5482B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEE1B8DE-536B-4CD9-A731-C74A9FB5482B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEE1B8DE-536B-4CD9-A731-C74A9FB5482B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEE1B8DE-536B-4CD9-A731-C74A9FB5482B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{137A26DC-C175-4ECB-B358-25DB2715BBDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{137A26DC-C175-4ECB-B358-25DB2715BBDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{137A26DC-C175-4ECB-B358-25DB2715BBDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{137A26DC-C175-4ECB-B358-25DB2715BBDE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09150779-6954-410D-A653-84762B8E3B52}
+	EndGlobalSection
+EndGlobal

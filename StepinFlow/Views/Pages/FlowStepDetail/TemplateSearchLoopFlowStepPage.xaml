@@ -1,0 +1,160 @@
+﻿<Page
+    x:Class="StepinFlow.Views.Pages.FlowStepDetail.TemplateSearchLoopFlowStepPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:StepinFlow.Views.Pages.FlowStepDetail"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="TemplateSearchLoopFlowStepPage"
+    d:DataContext="{d:DesignInstance local:TemplateSearchLoopFlowStepPage,
+    IsDesignTimeCreatable=False}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+
+    <Grid VerticalAlignment="Top">
+        <Grid.Resources>
+            <ObjectDataProvider
+                x:Key="FlowStepTypesEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="enum:FlowStepTypesEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+            <ObjectDataProvider
+                x:Key="FlowStepActionsFoundEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="enum:FlowStepActionsFoundEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+            <ObjectDataProvider
+                x:Key="FlowStepActionsNotFoundEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="enum:FlowStepActionsNotFoundEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+        </Grid.Resources>
+
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+
+
+
+        <StackPanel Grid.Column="1">
+            <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
+
+            <Label>1. Set Name</Label>
+            <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
+
+            <Label>2. Select Process (leave empty for screen search)</Label>
+            <ComboBox
+                VerticalAlignment="Center"
+                ItemsSource="{Binding ViewModel.ProcessList}"
+                SelectedItem="{Binding ViewModel.FlowStep.ProcessName, Mode=TwoWay}" />
+
+
+
+            <Label>3. Select image for search</Label>
+            <Button Grid.Column="1" Content="Open file">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <Image
+                x:Name="UITemplateImage"
+                Grid.Column="0"
+                MaxWidth="100"
+                MaxHeight="100"
+                Source="{Binding ViewModel.FlowStep.TemplateImage}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ImageFailed">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Image>
+
+
+
+
+            <Label>4. Select minimum accuracy</Label>
+            <TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay}" />
+
+            <Label>5. Remove template from result image.(Avoid finding the same location multiple times.)</Label>
+            <CheckBox IsChecked="{Binding ViewModel.FlowStep.RemoveTemplateFromResult}" />
+
+            <Label>6. Force loop exit after X times.(0 = Dont exit.)</Label>
+            <TextBox Text="{Binding ViewModel.FlowStep.MaxLoopCount, Mode=TwoWay}" />
+
+            <Label>7. Test</Label>
+            <Button Grid.Column="1" Content="Test">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTestClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <Button Grid.Column="1" Content="Clear Test">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonClearTestClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+            <Image x:Name="UIResultImage" Grid.Column="0" />
+
+
+
+
+
+
+
+
+
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+                    <Button Content="Cancel">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="right">
+                    <Button Content="Save">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                </StackPanel>
+
+
+            </Grid>
+        </StackPanel>
+
+
+    </Grid>
+</Page>

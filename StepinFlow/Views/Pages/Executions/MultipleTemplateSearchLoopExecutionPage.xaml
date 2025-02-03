@@ -1,0 +1,184 @@
+﻿<Page
+    x:Class="StepinFlow.Views.Pages.Executions.MultipleTemplateSearchLoopExecutionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:converters="clr-namespace:StepinFlow.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:StepinFlow.Views.Pages.FlowStepDetail"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MultipleTemplateSearchLoopExecutionPage"
+    d:DataContext="{d:DesignInstance local:MultipleTemplateSearchLoopExecutionPage,
+    IsDesignTimeCreatable=False}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+
+    <Page.Resources>
+        <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
+    </Page.Resources>
+    <Grid VerticalAlignment="Top">
+        <Grid.Resources>
+            <ObjectDataProvider
+                x:Key="FlowStepTypesEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="enum:FlowStepTypesEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+            <ObjectDataProvider
+                x:Key="FlowStepActionsFoundEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="enum:FlowStepActionsFoundEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+            <ObjectDataProvider
+                x:Key="FlowStepActionsNotFoundEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type System:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="enum:FlowStepActionsNotFoundEnum" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+        </Grid.Resources>
+
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+
+
+
+        <StackPanel Grid.Column="1">
+            <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
+
+            <Label>1. Set Name</Label>
+            <TextBox Text="{Binding Execution.FlowStep.Name, Mode=TwoWay}" />
+
+            <Label>2. Select Process (leave empty for screen search)</Label>
+            <ComboBox
+                VerticalAlignment="Center"
+                ItemsSource="{Binding Execution.ProcessList}"
+                SelectedItem="{Binding Execution.FlowStep.ProcessName, Mode=TwoWay}" />
+
+
+
+            <Label>3. Add template images to be searched.</Label>
+            <Button
+                Margin="5"
+                Command="{Binding Execution.ButtonAddClickCommand}"
+                Content="Add" />
+
+
+            <ItemsControl ItemsSource="{Binding Execution.FlowStep.ChildrenTemplateSearchFlowSteps}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <!--  Use a WrapPanel for a horizontal layout  -->
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Margin="5"
+                            Padding="10"
+                            BorderBrush="Gray"
+                            BorderThickness="1">
+                            <StackPanel>
+
+                                <Label>Select template image to search:</Label>
+                                <StackPanel Margin="0,0,0,15" Orientation="Horizontal">
+                                    <Button Content="Open file">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchLoopFlowStepPage}}, Path=Execution.ButtonOpenFileClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                            <Binding ElementName="TreeViewItemButtonDelete" />
+                                                            <Binding Path="" />
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                    <Image
+                                        MaxWidth="100"
+                                        MaxHeight="100"
+                                        Source="{Binding TemplateImage}" />
+                                </StackPanel>
+
+
+                                <Label>Select minimum accuracy:</Label>
+                                <TextBox Margin="0,0,0,15" Text="{Binding Accuracy, Mode=TwoWay}" />
+
+
+                                <Label>Remove template from result image.</Label>
+                                <Label>(Avoid finding the same location multiple times.)</Label>
+                                <CheckBox Margin="0,0,0,15" IsChecked="{Binding RemoveTemplateFromResult}" />
+
+
+                                <Label>Force loop exit after X times.(0 = Dont exit.)</Label>
+                                <TextBox Margin="0,0,0,15" Text="{Binding MaxLoopCount, Mode=TwoWay}" />
+
+
+                                <Label>Test</Label>
+                                <StackPanel Orientation="Horizontal">
+
+                                    <Button Content="Test">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchLoopFlowStepPage}}, Path=Execution.ButtonTestClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                            <Binding ElementName="ButtonTestClickCommand" />
+                                                            <Binding Path="" />
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                    <Button Content="Clear Test">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchLoopFlowStepPage}}, Path=Execution.ButtonClearTestClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
+                                                            <Binding ElementName="ButtonTestClickCommand" />
+                                                            <Binding Path="" />
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                    <Image x:Name="UIResultImage" Grid.Column="0" />
+
+                                </StackPanel>
+
+
+
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Image x:Name="UIResultImage" Grid.Column="0" />
+
+
+
+
+
+
+        </StackPanel>
+    </Grid>
+</Page>
