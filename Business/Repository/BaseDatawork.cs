@@ -9,7 +9,7 @@ namespace DataAccess
     public class BaseDatawork : IBaseDatawork, IDisposable
     {
         private InMemoryDbContext _dbContext { get; set; }
-        public InMemoryDbContext Query { get; set; } 
+        public InMemoryDbContext Query { get; set; }
 
         public IFlowRepository Flows { get; set; }
         public IFlowStepRepository FlowSteps { get; set; }
@@ -45,7 +45,8 @@ namespace DataAccess
         public void UpdateRange<TEntity>(List<TEntity> models)
         {
             foreach (var model in models)
-                _dbContext.Entry(model).State = EntityState.Modified;
+                if (model != null)
+                    _dbContext.Entry(model).State = EntityState.Modified;
         }
 
         public void Dispose()

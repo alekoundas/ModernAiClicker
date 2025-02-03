@@ -23,12 +23,6 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private FlowStep _flowStep;
 
-        public event ShowTemplateImgEvent? ShowTemplateImg;
-        public delegate void ShowTemplateImgEvent(string filePath);
-
-        //public event ShowResultImageEvent? ShowResultImage;
-        //public delegate void ShowResultImageEvent(string filePath);
-
         public LoopFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
 

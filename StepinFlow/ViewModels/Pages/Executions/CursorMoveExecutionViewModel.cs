@@ -44,11 +44,12 @@ namespace StepinFlow.ViewModels.Pages.Executions
         {
             Execution = execution;
             FlowStep? flowStep = _baseDatawork.FlowSteps.Query
-                .Include(x => x.ParentTemplateSearchFlowStep)
-                .FirstOrDefault(x => x.Id == Execution.FlowStepId);
+                .Where(x => x.Id == Execution.FlowStepId)
+                .Select(x=>x.ParentTemplateSearchFlowStep)
+                .FirstOrDefault();
 
             if (flowStep != null)
-                Parents = new ObservableCollection<FlowStep>() { flowStep.ParentTemplateSearchFlowStep };
+                Parents = new ObservableCollection<FlowStep>() { flowStep };
 
         }
 

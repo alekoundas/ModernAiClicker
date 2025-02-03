@@ -302,7 +302,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private void OnListBoxSelectedItemChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
         {
-            if (routedPropertyChangedEventArgs.AddedItems[0] != null)
+            if (routedPropertyChangedEventArgs?.AddedItems.Count > 0)
             {
 
                 object selectedItem = routedPropertyChangedEventArgs.AddedItems[0];

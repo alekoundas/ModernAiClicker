@@ -42,7 +42,7 @@ namespace Business.Factories.Workers
 
 
             Execution execution = new Execution();
-            execution.FlowStepId = flowStep.id;
+            execution.FlowStepId = flowStep.Id;
             execution.ParentExecutionId = parentExecution.Id;// TODO This is wrong!
             execution.ParentLoopExecutionId = parentExecution.Id;
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
