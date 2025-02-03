@@ -58,7 +58,7 @@ namespace StepinFlow.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
+                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
 
                 if (FlowStep.ParentTemplateSearchFlowStep != null)

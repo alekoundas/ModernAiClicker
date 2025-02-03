@@ -130,12 +130,12 @@ namespace StepinFlow.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
+                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Accuracy = FlowStep.Accuracy;
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
                 updateFlowStep.TemplateImagePath = FlowStep.TemplateImagePath;
-                updateFlowStep.MaxLoopCount= FlowStep.MaxLoopCount;
+                updateFlowStep.MaxLoopCount = FlowStep.MaxLoopCount;
             }
 
             /// Add mode

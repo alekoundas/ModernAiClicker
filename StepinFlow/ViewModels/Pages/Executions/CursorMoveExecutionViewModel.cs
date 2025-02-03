@@ -53,32 +53,32 @@ namespace StepinFlow.ViewModels.Pages.Executions
         }
 
         [RelayCommand]
-        private async Task OnButtonTestClick()
+        private  void OnButtonTestClick()
         {
             //Execution templateSearchExecution = GetExecution();
 
             //_systemService.SetCursorPossition(new Point(Execution.ResultLocationX.Value, Execution.ResultLocationY.Value));
         }
 
-        private Execution GetExecution()
-        {
-            FlowStep templateSearchFlowStep = Execution.FlowStep.ParentTemplateSearchFlowStep;
-            if (templateSearchFlowStep == null)
-            {
+        //private Execution GetExecution()
+        //{
+        //    FlowStep templateSearchFlowStep = Execution.FlowStep.ParentTemplateSearchFlowStep;
+        //    if (templateSearchFlowStep == null)
+        //    {
 
-            }
+        //    }
 
-            // Get recursively all parents of execution.
-            List<Execution> parents = _baseDatawork.Executions
-                .GetAll()
-                .First(x => x.Id == Execution.Id)
-                .SelectRecursive<Execution>(x => x.ParentExecution)
-                .ToList();
+        //    // Get recursively all parents of execution.
+        //    List<Execution> parents = _baseDatawork.Executions
+        //        .GetAll()
+        //        .First(x => x.Id == Execution.Id)
+        //        .SelectRecursive<Execution>(x => x.ParentExecution)
+        //        .ToList();
 
-            Execution templateSearchExecution = parents.FirstOrDefault(x => x.FlowStepId == templateSearchFlowStep.Id);
+        //    Execution templateSearchExecution = parents.FirstOrDefault(x => x.FlowStepId == templateSearchFlowStep.Id);
 
-            return templateSearchExecution;
-        }
+        //    return templateSearchExecution;
+        //}
 
 
         private List<FlowStep> GetParents(int? flowStepId)

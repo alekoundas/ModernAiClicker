@@ -13,7 +13,7 @@ namespace DataAccess.Repository.Interface
         Task<List<TEntity>> GetAllAsync();
         List<TEntity> GetAll();
         IQueryable<TEntity> Query { get; }
-        Task<TEntity> FindAsync(int id);
+        Task<TEntity?> FindAsync(int id);
         Task<int> CountAllAsync();
         Task<int> CountAllAsyncFiltered(Expression<Func<TEntity, bool>> filter);
         Task<List<TResult>> SelectAllAsync<TResult>(Expression<Func<TEntity, TResult>> selector);

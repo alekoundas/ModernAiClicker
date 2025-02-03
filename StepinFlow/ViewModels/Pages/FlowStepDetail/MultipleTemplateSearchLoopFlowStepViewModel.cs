@@ -35,9 +35,6 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private FlowStep _flowStep;
 
-        public event ShowTemplateImgEvent? ShowTemplateImg;
-        public delegate void ShowTemplateImgEvent(string filePath);
-
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
@@ -59,7 +56,7 @@ namespace StepinFlow.ViewModels.Pages
         }
 
         [RelayCommand]
-        private async Task OnButtonOpenFileClick(EventParammeters eventParameters)
+        private void OnButtonOpenFileClick(EventParammeters eventParameters)
         {
             if (eventParameters.FlowId is FlowStep)
             {
@@ -130,7 +127,7 @@ namespace StepinFlow.ViewModels.Pages
             if (eventParameters.FlowId is FlowStep)
             {
                 FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
-                
+
                 if (templateFlowStep.Id > 0)
                     _childrenTemplateSearchFlowStepsToRemove.Add(templateFlowStep);
 
@@ -217,7 +214,7 @@ namespace StepinFlow.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
+                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
 

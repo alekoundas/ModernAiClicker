@@ -56,10 +56,10 @@ namespace StepinFlow.ViewModels.Pages
         public string _status = "-";
 
         [ObservableProperty]
-        public string _runFor;
+        public string _runFor = "";
 
         [ObservableProperty]
-        public string _currentStep;
+        public string _currentStep = "";
 
         [ObservableProperty]
         public bool _isLocked = true;
@@ -239,10 +239,9 @@ namespace StepinFlow.ViewModels.Pages
         private async Task LoadExecutionChild(Execution execution)
         {
             Execution? executionChild = await _baseDatawork.Query.Executions
-                        .Include(x => x.ChildExecution)
-                        .FirstOrDefaultAsync(x => x.Id == execution.Id);
-
-            executionChild = executionChild.ChildExecution;
+                        .Where(x => x.Id == execution.Id)
+                        .Select(x => x.ChildExecution)
+                        .FirstOrDefaultAsync();
 
             if (executionChild == null)
                 return;
@@ -301,16 +300,16 @@ namespace StepinFlow.ViewModels.Pages
         }
 
         [RelayCommand]
-        private async void OnListBoxSelectedItemChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
+        private void OnListBoxSelectedItemChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
         {
-            if (routedPropertyChangedEventArgs?.AddedItems.Count > 0)
+            if (routedPropertyChangedEventArgs.AddedItems[0] != null)
             {
 
-                object selectedItem = routedPropertyChangedEventArgs?.AddedItems[0];
+                object selectedItem = routedPropertyChangedEventArgs.AddedItems[0];
                 if (selectedItem is not Execution)
                     return;
 
-                Execution selectedExecution = selectedItem as Execution;
+                Execution selectedExecution = (Execution)selectedItem;
                 ListboxSelectedExecution = selectedExecution;
 
 

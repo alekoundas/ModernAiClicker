@@ -20,7 +20,7 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution? parentExecution)
+        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution)
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));

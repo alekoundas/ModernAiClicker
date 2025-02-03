@@ -13,7 +13,6 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private FlowsViewModel _flowsViewModel;
-        private string _previousTestResultImagePath = "";
 
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
@@ -27,8 +26,8 @@ namespace StepinFlow.ViewModels.Pages
         public event ShowTemplateImgEvent? ShowTemplateImg;
         public delegate void ShowTemplateImgEvent(string filePath);
 
-        public event ShowResultImageEvent? ShowResultImage;
-        public delegate void ShowResultImageEvent(string filePath);
+        //public event ShowResultImageEvent? ShowResultImage;
+        //public delegate void ShowResultImageEvent(string filePath);
 
         public LoopFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
@@ -53,7 +52,7 @@ namespace StepinFlow.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FindAsync(FlowStep.Id);
+                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.MaxLoopCount = FlowStep.MaxLoopCount;
             }

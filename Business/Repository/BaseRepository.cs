@@ -164,7 +164,7 @@ namespace DataAccess.Repository
             _set.RemoveRange(entities);
         }
 
-        public async Task<TEntity> FindAsync(int id)
+        public async Task<TEntity?> FindAsync(int id)
         {
             return await _set.FindAsync(id);
         }
@@ -177,7 +177,7 @@ namespace DataAccess.Repository
                 foreach (var include in includes)
                     qry = include(qry);
 
-            return await qry.FirstOrDefaultAsync(filter);
+            return await qry.FirstAsync(filter);
         }
 
         public async Task<List<TEntity>> GetFiltered(Expression<Func<TEntity, bool>> filter)

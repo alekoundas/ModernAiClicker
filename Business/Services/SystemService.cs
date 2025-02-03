@@ -411,7 +411,7 @@ namespace Business.Services
 
         public void SetCursorPossition(Model.Structs.Point point)
         {
-            SetCursorPos(point.X, point.Y);
+            SetCursorPos(point.X,point.Y);
         }
 
         public async Task UpdateFlowsJSON(List<Flow> flows)

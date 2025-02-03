@@ -28,7 +28,7 @@ namespace Business.Factories.Workers
             return execution;
         }
 
-        public async virtual Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution? parentExecution)
+        public async virtual Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution)
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));

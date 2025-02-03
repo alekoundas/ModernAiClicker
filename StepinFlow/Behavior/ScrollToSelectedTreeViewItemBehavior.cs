@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Wpf.Ui.Controls;
+using TreeViewItem = System.Windows.Controls.TreeViewItem;
 
 namespace StepinFlow.Behavior
 {
@@ -24,7 +26,7 @@ namespace StepinFlow.Behavior
 
         static void OnIsBroughtIntoViewWhenSelectedChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
-            TreeViewItem item = depObj as TreeViewItem;
+            TreeViewItem item = (TreeViewItem)depObj;
             if (item == null)
                 return;
 
@@ -44,10 +46,13 @@ namespace StepinFlow.Behavior
             // who are merely reporting that a descendant's Selected fired.
             if (!Object.ReferenceEquals(sender, e.OriginalSource))
                 return;
+            if (e.OriginalSource is TreeViewItem)
+            {
 
-            TreeViewItem item = e.OriginalSource as TreeViewItem;
-            if (item != null)
-                item.BringIntoView();
+                TreeViewItem item = (TreeViewItem)e.OriginalSource;
+                if (item != null)
+                    item.BringIntoView();
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Business.Factories
 {
     public interface IExecutionWorker
     {
-        Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution? parentExecution);
+        Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution);
         Task<Execution> CreateExecutionModelFlow(int id, Execution? parentExecution);
         Task ExecuteFlowStepAction(Execution execution);
         Task<FlowStep?> GetNextChildFlowStep(Execution execution);

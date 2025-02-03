@@ -15,7 +15,7 @@ namespace StepinFlow.Behavior
         {
             if (sender is ListBox)
             {
-                ListBox listBox = (sender as ListBox);
+                ListBox listBox = (ListBox)sender ;
                 if (listBox.SelectedItem != null)
                 {
                     listBox.Dispatcher.BeginInvoke(() =>

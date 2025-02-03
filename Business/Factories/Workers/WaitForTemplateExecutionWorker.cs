@@ -27,7 +27,7 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution? parentExecution)
+        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution)
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));
@@ -134,14 +134,17 @@ namespace Business.Factories.Workers
             if (!execution.ParentExecutionId.HasValue || execution.ExecutionFolderDirectory.Length == 0)
                 return;
 
-            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
-            string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
+            if (execution.StartedOn.HasValue)
+            {
+                string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
+                string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
 
-            //_systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);_resultImage
-            if (_resultImage != null)
-                await _systemService.SaveImageToDisk(newFilePath, _resultImage);
-            execution.ResultImagePath = newFilePath;
-            await _baseDatawork.SaveChangesAsync();
+                //_systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);_resultImage
+                if (_resultImage != null)
+                    await _systemService.SaveImageToDisk(newFilePath, _resultImage);
+                execution.ResultImagePath = newFilePath;
+                await _baseDatawork.SaveChangesAsync();
+            }
         }
     }
 }
