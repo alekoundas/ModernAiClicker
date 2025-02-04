@@ -226,7 +226,7 @@ namespace Business.Services
             {
                 // Ensure the destination directory exists
                 string? destinationDirectory = Path.GetDirectoryName(destinationFilePath);
-                if (!Directory.Exists(destinationDirectory))
+                if (!Directory.Exists(destinationDirectory) && destinationDirectory != null)
                     Directory.CreateDirectory(destinationDirectory);
 
                 // Copy the file to the new location with the new name
@@ -411,7 +411,7 @@ namespace Business.Services
 
         public void SetCursorPossition(Model.Structs.Point point)
         {
-            SetCursorPos(point.X,point.Y);
+            SetCursorPos(point.X, point.Y);
         }
 
         public async Task UpdateFlowsJSON(List<Flow> flows)

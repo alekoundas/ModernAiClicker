@@ -18,7 +18,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
         private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
         public CursorClickExecutionViewModel() 
         {
-            _execution= new Execution();
+            _execution = new Execution() { FlowStep = new FlowStep() };
             MouseButtonsEnum = Enum.GetValues(typeof(MouseButtonsEnum)).Cast<MouseButtonsEnum>();
             MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
         }

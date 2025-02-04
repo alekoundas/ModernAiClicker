@@ -169,7 +169,7 @@ namespace Business.Factories.Workers
 
             // Get all completed children template flow steps.
             List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
-                .Where(x => x.ExecutionResultEnum == ExecutionResultEnum.FAIL || (x.FlowStep.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.MaxLoopCount))
+                .Where(x => x.ExecutionResultEnum == ExecutionResultEnum.FAIL || (x?.FlowStep?.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.MaxLoopCount))
                 .Select(x => x.CurrentMultipleTemplateSearchFlowStepId ?? 0)
                 .Where(x => x != 0)
                 .ToList();

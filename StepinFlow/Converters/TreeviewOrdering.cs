@@ -9,7 +9,7 @@ namespace StepinFlow.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            IList collection = value as IList;
+            IList collection = (IList)value;
             if (collection == null)
                 return new object();
 
@@ -19,7 +19,7 @@ namespace StepinFlow.Converters
 
             return view;
         }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return null;
         }

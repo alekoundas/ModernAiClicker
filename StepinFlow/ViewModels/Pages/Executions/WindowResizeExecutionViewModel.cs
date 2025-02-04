@@ -15,7 +15,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
 
         public WindowResizeExecutionViewModel()
         {
-            _execution = new Execution();
+            _execution = new Execution() { FlowStep = new FlowStep() };
         }
 
         public void SetExecution(Execution execution)

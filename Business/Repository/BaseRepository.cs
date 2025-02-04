@@ -1,10 +1,9 @@
 ﻿using Business.DatabaseContext;
-using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace DataAccess.Repository
+namespace Business.Repository
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
     {

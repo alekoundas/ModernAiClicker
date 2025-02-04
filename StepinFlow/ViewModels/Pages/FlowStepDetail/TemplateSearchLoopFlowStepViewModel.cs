@@ -17,7 +17,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
-        private FlowsViewModel _flowsViewModel;
+        private readonly FlowsViewModel _flowsViewModel;
         private string _previousTestResultImagePath = "";
 
         [ObservableProperty]
@@ -53,10 +53,12 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private void OnButtonOpenFileClick()
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.InitialDirectory = PathHelper.GetAppDataPath();
-            openFileDialog.Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*";
-            openFileDialog.RestoreDirectory = true;
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                InitialDirectory = PathHelper.GetAppDataPath(),
+                Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*",
+                RestoreDirectory = true
+            };
 
             if (openFileDialog.ShowDialog() == true)
             {
@@ -91,7 +93,7 @@ namespace StepinFlow.ViewModels.Pages
             // Get screenshot.
             // New if not previous exists.
             // Get previous one if exists.
-            Bitmap? screenshot = null;
+            Bitmap? screenshot;
             if (_previousTestResultImagePath.Length > 0)
                 screenshot = (Bitmap)Image.FromFile(_previousTestResultImagePath);
             else
@@ -145,8 +147,10 @@ namespace StepinFlow.ViewModels.Pages
 
                 if (FlowStep.ParentFlowStepId != null)
                     isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
-                else
+                else if (FlowStep.FlowId.HasValue)
                     isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
+                else
+                    return;
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;

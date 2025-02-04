@@ -305,7 +305,7 @@ namespace StepinFlow.ViewModels.Pages
             if (routedPropertyChangedEventArgs?.AddedItems.Count > 0)
             {
 
-                object selectedItem = routedPropertyChangedEventArgs.AddedItems[0];
+                object? selectedItem = routedPropertyChangedEventArgs.AddedItems[0];
                 if (selectedItem is not Execution)
                     return;
 

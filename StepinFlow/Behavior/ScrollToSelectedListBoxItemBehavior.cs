@@ -13,9 +13,8 @@ namespace StepinFlow.Behavior
 
         void AssociatedObject_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ListBox)
+            if (sender is ListBox listBox)
             {
-                ListBox listBox = (ListBox)sender ;
                 if (listBox.SelectedItem != null)
                 {
                     listBox.Dispatcher.BeginInvoke(() =>

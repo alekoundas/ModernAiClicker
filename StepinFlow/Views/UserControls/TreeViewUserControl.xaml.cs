@@ -9,7 +9,7 @@ namespace StepinFlow.Views.UserControls
         public event EventHandler<int>? OnSelectedFlowStepIdChange;
         public event EventHandler<int>? OnFlowStepClone;
         public event EventHandler<FlowStep>? OnAddFlowStepClick;
-        public TreeViewUserControlViewModel ViewModel { get; set; }
+        public TreeViewUserControlViewModel? ViewModel { get; set; }
 
         public TreeViewUserControl()
         {

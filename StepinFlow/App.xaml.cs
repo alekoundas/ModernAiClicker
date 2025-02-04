@@ -7,10 +7,10 @@ using Business.DatabaseContext;
 using Business.Factories;
 using Business.Factories.Workers;
 using Business.Interfaces;
+using Business.Repository;
 using Business.Repository.Entities;
 using Business.Repository.Interfaces;
 using Business.Services;
-using DataAccess;
 using DataAccess.Repository.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -194,7 +194,7 @@ namespace StepinFlow
         /// </summary>
         /// <typeparam name="T">Type of the service to get.</typeparam>
         /// <returns>Instance of the service or <see langword="null"/>.</returns>
-        public static T GetService<T>()
+        public static T? GetService<T>()
             where T : class
         {
             return _host.Services.GetService(typeof(T)) as T;

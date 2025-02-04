@@ -13,7 +13,7 @@ namespace StepinFlow.Views.Pages.Executions
         public WaitForTemplateExecutionPage()
         {
             ViewModel = new WaitForTemplateExecutionViewModel();
-            DataContext = ViewModel;
+            DataContext = this;
             InitializeComponent();
         }
 

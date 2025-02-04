@@ -22,9 +22,6 @@ namespace Business.Factories.Workers
 
         public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution)
         {
-            if (parentExecution == null)
-                throw new ArgumentNullException(nameof(parentExecution));
-
             Execution execution = new Execution();
             execution.FlowStepId = flowStep.Id;
             execution.ParentExecutionId = parentExecution.Id;// TODO This is wrong!

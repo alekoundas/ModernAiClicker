@@ -32,7 +32,7 @@
             </Grid.RowDefinitions>
 
             <Label>Parents successful locations:</Label>
-            <ComboBox ItemsSource="{Binding Parents}" SelectedItem="{Binding Execution.FlowStep.ParentTemplateSearchFlowStep, Mode=TwoWay}">
+            <ComboBox ItemsSource="{Binding ViewModel.Parents}" SelectedItem="{Binding ViewModel.Execution.FlowStep.ParentTemplateSearchFlowStep, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -43,14 +43,6 @@
                     </DataTemplate>
 
                 </ComboBox.ItemTemplate>
-                <!--<i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
-                <i:InvokeCommandAction Command="{Binding ComboBoxSelectionChangedCommand}" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="Loaded">
-                <i:InvokeCommandAction Command="{Binding ComboBoxSelectionChangedCommand}" />
-                </i:EventTrigger>
-                </i:Interaction.Triggers>-->
             </ComboBox>
 
             <StackPanel
@@ -62,10 +54,10 @@
 
             <StackPanel Grid.Column="2">
                 <Label>X:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.LocationX, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.LocationX, Mode=TwoWay}" />
 
                 <Label>Y:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.LocationY, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.LocationY, Mode=TwoWay}" />
 
             </StackPanel>
 
@@ -75,55 +67,14 @@
                 HorizontalAlignment="Center">
                 <Label>Result location:</Label>
                 <Label>X:</Label>
-                <TextBox Text="{Binding Execution.ResultLocationX, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.ResultLocationX, Mode=TwoWay}" />
 
                 <Label>Y:</Label>
-                <TextBox Text="{Binding Execution.ResultLocationY, Mode=TwoWay}" />
-
-                <Label>Test result location:</Label>
-                <Button Content="test">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ButtonTestClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-
+                <TextBox Text="{Binding ViewModel.Execution.ResultLocationY, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 
 
-
-
-
-
-
-        <!--<Grid>
-        <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="1*" />
-        <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
-
-        <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-        <Button Content="Cancel">
-        <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Click">
-        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
-        </i:EventTrigger>
-        </i:Interaction.Triggers>
-        </Button>
-        </StackPanel>
-
-        <StackPanel Grid.Column="1" HorizontalAlignment="right">
-        <Button Content="Save">
-        <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Click">
-        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
-        </i:EventTrigger>
-        </i:Interaction.Triggers>
-        </Button>
-        </StackPanel>
-        </Grid>-->
     </StackPanel>
 
 

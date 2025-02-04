@@ -53,7 +53,7 @@ namespace Business.Factories.Workers
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
-            if (execution.FlowStep == null)
+            if (execution.FlowStep == null || execution.FlowStep.TemplateImage == null)
                 return;
 
             // Find search area.

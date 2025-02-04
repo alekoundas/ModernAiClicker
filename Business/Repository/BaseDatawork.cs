@@ -4,7 +4,7 @@ using Business.Repository.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccess
+namespace Business.Repository
 {
     public class BaseDatawork : IBaseDatawork, IDisposable
     {

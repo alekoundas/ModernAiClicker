@@ -9,8 +9,8 @@ namespace StepinFlow.Views.Pages.Executions
         public WindowMoveExecutionViewModel ViewModel { get; set; }
         public WindowMoveExecutionPage()
         {
-            DataContext = this;
             ViewModel = new WindowMoveExecutionViewModel();
+            DataContext = this;
             InitializeComponent();
         }
 

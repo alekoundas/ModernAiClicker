@@ -10,7 +10,7 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
-        private FlowsViewModel _flowsViewModel;
+        private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private FlowStep _flowStep;
@@ -70,8 +70,10 @@ namespace StepinFlow.ViewModels.Pages
 
                 if (FlowStep.ParentFlowStepId != null)
                     isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
-                else
+                else if (FlowStep.FlowId.HasValue)
                     isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
+                else
+                    return;
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;

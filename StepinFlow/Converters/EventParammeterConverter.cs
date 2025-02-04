@@ -10,7 +10,8 @@ namespace StepinFlow.Converters
         {
             EventParammeters findCommandParameters = new EventParammeters();
 
-            findCommandParameters.FlowId = values[1];
+            if (values.Length >= 2)
+                findCommandParameters.FlowId = values[1];
 
             if (values.Length >= 3)
                 findCommandParameters.FlowStepId = values[2];

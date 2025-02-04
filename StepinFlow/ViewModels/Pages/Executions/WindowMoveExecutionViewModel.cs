@@ -15,7 +15,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
 
         public WindowMoveExecutionViewModel()
         {
-            _execution = new Execution();
+            _execution = new Execution() { FlowStep = new FlowStep() { TemplateImage = new byte[0] } };
         }
 
         public void SetExecution(Execution execution)

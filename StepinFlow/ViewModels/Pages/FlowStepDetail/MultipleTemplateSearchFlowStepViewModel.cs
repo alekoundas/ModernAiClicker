@@ -12,6 +12,7 @@ using System.Drawing;
 using Rectangle = Model.Structs.Rectangle;
 using Model.ConverterModels;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -20,14 +21,14 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
-        private FlowsViewModel _flowsViewModel;
+        private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _childrenTemplateSearchFlowSteps;
-        private List<FlowStep> _childrenTemplateSearchFlowStepsToRemove = new List<FlowStep>();
+        private readonly List<FlowStep> _childrenTemplateSearchFlowStepsToRemove = new List<FlowStep>();
 
         [ObservableProperty]
         private string _templateImgPath = "";
@@ -82,9 +83,8 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private void OnButtonUpClick(EventParammeters eventParameters)
         {
-            if (eventParameters.FlowId is FlowStep)
+            if (eventParameters.FlowId is FlowStep flowStep)
             {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
                 List<FlowStep> simplingsAbove = ChildrenTemplateSearchFlowSteps
                         .Where(x => x.OrderingNum < flowStep.OrderingNum)
                         .ToList();
@@ -225,8 +225,10 @@ namespace StepinFlow.ViewModels.Pages
 
                 if (FlowStep.ParentFlowStepId != null)
                     isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
-                else
+                else if (FlowStep.FlowId.HasValue)
                     isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
+                else
+                    return;
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
