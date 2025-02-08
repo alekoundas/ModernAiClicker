@@ -28,7 +28,6 @@
 
     <!--  change tect color on hover?  -->
     <Page.Resources>
-        <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
         <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
         <behavior:ScrollToSelectedListBoxItemBehavior x:Key="ListBoxOrdering" />
 

@@ -18,7 +18,6 @@
 
 
     <Page.Resources>
-        <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
         <ObjectDataProvider
             x:Key="FlowStepTypesEnum"
             MethodName="GetValues"

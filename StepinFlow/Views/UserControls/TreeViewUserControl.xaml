@@ -17,8 +17,6 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
-
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Fill" Color="#FF595959" />
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Stroke" Color="#FF262626" />
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Stroke" Color="#FF27C7F7" />
@@ -112,10 +110,7 @@
                                     <i:EventTrigger EventName="Checked">
                                         <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ExpandedCommand}">
                                             <i:InvokeCommandAction.CommandParameter>
-                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                    <Binding ElementName="TreeViewItemChecked" />
-                                                    <Binding Path="" />
-                                                </MultiBinding>
+                                                <Binding Path="" />
                                             </i:InvokeCommandAction.CommandParameter>
                                         </i:InvokeCommandAction>
                                     </i:EventTrigger>
@@ -288,10 +283,7 @@
                                     <i:EventTrigger EventName="Click">
                                         <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.FlowButtonDeleteClickCommand}">
                                             <i:InvokeCommandAction.CommandParameter>
-                                                <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                    <Binding ElementName="TreeViewItemFlowDeleteButton" />
-                                                    <Binding Path="Id" />
-                                                </MultiBinding>
+                                                <Binding Path="" />
                                             </i:InvokeCommandAction.CommandParameter>
                                         </i:InvokeCommandAction>
                                     </i:EventTrigger>
@@ -404,10 +396,7 @@
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonUpClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -424,10 +413,7 @@
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonDownClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -448,10 +434,7 @@
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonCopyClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonCopy" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -472,10 +455,7 @@
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.FlowStepButtonDeleteClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -582,10 +562,7 @@
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonUpClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -602,10 +579,7 @@
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonDownClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -626,10 +600,7 @@
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonCopyClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonCopy" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -649,10 +620,7 @@
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.FlowStepButtonDeleteClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonDelete" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -675,13 +643,9 @@
                                             Content="Add">
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="Click">
-                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonNewClickCommand}" PassEventArgsToCommand="True">
+                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonNewClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonNew" />
-                                                                <Binding Path="FlowId" />
-                                                                <Binding Path="Id" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>
@@ -695,12 +659,9 @@
                                             Content="Paste">
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="Click">
-                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonPasteClickCommand}" PassEventArgsToCommand="True">
+                                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonPasteClickCommand}">
                                                         <i:InvokeCommandAction.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                                <Binding ElementName="TreeViewItemButtonPaste" />
-                                                                <Binding Path="" />
-                                                            </MultiBinding>
+                                                            <Binding Path="" />
                                                         </i:InvokeCommandAction.CommandParameter>
                                                     </i:InvokeCommandAction>
                                                 </i:EventTrigger>

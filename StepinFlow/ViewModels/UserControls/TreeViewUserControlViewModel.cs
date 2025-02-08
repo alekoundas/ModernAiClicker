@@ -65,16 +65,12 @@ namespace StepinFlow.ViewModels.UserControls
         }
 
         [RelayCommand]
-        private void OnButtonCopyClick(EventParammeters eventParameters)
+        private void OnButtonCopyClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                CoppiedFlowStepId = flowStep.Id;
+            CoppiedFlowStepId = flowStep.Id;
 
-                // Fire event.
-                OnFlowStepCloneEvent?.Invoke(flowStep.Id);
-            }
+            // Fire event.
+            OnFlowStepCloneEvent?.Invoke(flowStep.Id);
         }
 
         public async Task AddNewFlow()
@@ -109,94 +105,105 @@ namespace StepinFlow.ViewModels.UserControls
         }
 
         [RelayCommand]
-        private async Task OnButtonNewClick(EventParammeters eventParameters)
+        private async Task OnButtonNewClick(FlowStep flowStep)
         {
-            // If flowStepId is available
-            if (eventParameters.FlowStepId != null)
-            {
-                bool isFlowStepIdParsable = Int32.TryParse(eventParameters.FlowStepId.ToString(), out int flowStepId);
-                if (isFlowStepIdParsable)
-                {
-                    FlowStep newFlowStep = new FlowStep();
-                    FlowStep addflowStep = await _baseDatawork.FlowSteps.Query
-                        .AsNoTracking()
-                        .FirstAsync(x => x.Id == flowStepId);
+            FlowStep newFlowStep = new FlowStep();
 
-                    if (addflowStep.ParentFlowStepId.HasValue)
-                        newFlowStep.ParentFlowStepId = addflowStep.ParentFlowStepId;
+            if (flowStep.ParentFlowStepId.HasValue)
+                newFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
 
-                    if (addflowStep.FlowId.HasValue)
-                        newFlowStep.FlowId = addflowStep.FlowId;
+            if (flowStep.FlowId.HasValue)
+                newFlowStep.FlowId = flowStep.FlowId;
 
-                    OnAddFlowStepClickEvent?.Invoke(newFlowStep);
-                }
-            }
+            OnAddFlowStepClickEvent?.Invoke(newFlowStep);
         }
 
         [RelayCommand]
-        private async Task OnButtonPasteClick(EventParammeters eventParameters)
+        private async Task OnButtonPasteClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
+            FlowStep? clonedFlowStep = null;
+            int? parentId = flowStep.ParentFlowStepId ?? flowStep.FlowId ?? null;
+            if (CoppiedFlowStepId.HasValue)
+                clonedFlowStep = await _baseDatawork.FlowSteps.GetFlowStepClone(CoppiedFlowStepId.Value);
+
+            if (flowStep.ParentFlowStepId.HasValue && clonedFlowStep != null)
             {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                int? parentId = flowStep.ParentFlowStepId ?? flowStep.FlowId ?? null;
-                if (CoppiedFlowStepId.HasValue)
-                {
+                //  Load the target parent.
+                FlowStep? targetParent = await _baseDatawork.FlowSteps.Query
+                .Include(fs => fs.ChildrenFlowSteps)
+                .FirstOrDefaultAsync(fs => fs.Id == flowStep.ParentFlowStepId.Value);
 
-                    FlowStep? clonedFlowStep = await _baseDatawork.FlowSteps.GetFlowStepClone(CoppiedFlowStepId.Value);
-                    if (flowStep.ParentFlowStepId.HasValue && clonedFlowStep != null)
-                    {
-                        //  Load the target parent.
-                        FlowStep? targetParent = await _baseDatawork.FlowSteps.Query
-                        .Include(fs => fs.ChildrenFlowSteps)
-                        .FirstOrDefaultAsync(fs => fs.Id == flowStep.ParentFlowStepId.Value);
+                if (targetParent == null)
+                    return;
 
-                        if (targetParent == null)
-                            return;
+                FlowStep isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(targetParent.Id);
+                clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
+                clonedFlowStep.OrderingNum = isNewSimpling.OrderingNum;
+                isNewSimpling.OrderingNum++;
 
-                        FlowStep isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(targetParent.Id);
-                        clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
-                        clonedFlowStep.OrderingNum = isNewSimpling.OrderingNum;
-                        isNewSimpling.OrderingNum++;
-
-                        // Attach the cloned root to the target parent.
-                        targetParent.ChildrenFlowSteps.Add(clonedFlowStep);
-
-                    }
-                    else if (flowStep.FlowId.HasValue && clonedFlowStep != null)
-                    {
-                        //  Load the target parent.
-                        Flow? targetParent = await _baseDatawork.Flows.Query
-                        .Include(fs => fs.FlowSteps)
-                        .FirstOrDefaultAsync(fs => fs.Id == flowStep.FlowId.Value);
-
-                        if (targetParent == null)
-                            return;
-
-                        FlowStep isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(targetParent.Id);
-                        clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
-                        clonedFlowStep.OrderingNum = isNewSimpling.OrderingNum;
-                        isNewSimpling.OrderingNum++;
-
-                        // Attach the cloned root to the target parent.
-                        targetParent.FlowSteps.Add(clonedFlowStep);
-
-                    }
-                    // Save changes.
-                    await _baseDatawork.SaveChangesAsync();
-                }
+                // Attach the cloned root to the target parent.
+                targetParent.ChildrenFlowSteps.Add(clonedFlowStep);
             }
+            else if (flowStep.FlowId.HasValue && clonedFlowStep != null)
+            {
+                //  Load the target parent.
+                Flow? targetParent = await _baseDatawork.Flows.Query
+                .Include(fs => fs.FlowSteps)
+                .FirstOrDefaultAsync(fs => fs.Id == flowStep.FlowId.Value);
+
+                if (targetParent == null)
+                    return;
+
+                FlowStep isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(targetParent.Id);
+                clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
+                clonedFlowStep.OrderingNum = isNewSimpling.OrderingNum;
+                isNewSimpling.OrderingNum++;
+
+                // Attach the cloned root to the target parent.
+                targetParent.FlowSteps.Add(clonedFlowStep);
+            }
+
+            // Save changes.
+            await _baseDatawork.SaveChangesAsync();
         }
 
 
 
         [RelayCommand]
-        private async Task OnFlowStepButtonDeleteClick(EventParammeters eventParameters)
+        private async Task OnFlowStepButtonDeleteClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
+            _baseDatawork.FlowSteps.Remove(flowStep);
+
+            await _baseDatawork.SaveChangesAsync();
+            await LoadFlows();
+        }
+
+        [RelayCommand]
+        private async Task OnFlowButtonDeleteClick(Flow flow)
+        {
+            _baseDatawork.Flows.Remove(flow);
+
+            await _baseDatawork.SaveChangesAsync();
+            await LoadFlows();
+        }
+
+
+        [RelayCommand]
+        private async Task OnButtonUpClick(FlowStep flowStep)
+        {
+            List<FlowStep> simplings = await _baseDatawork.FlowSteps.GetSiblings(flowStep.Id);
+            List<FlowStep> simplingsAbove = simplings
+                .Where(x => x.OrderingNum < flowStep.OrderingNum)
+                .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                .ToList();
+
+            if (simplingsAbove.Any())
             {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                _baseDatawork.FlowSteps.Remove(flowStep);
+                // Find max
+                FlowStep simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
+
+                // Swap values
+                (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
 
                 await _baseDatawork.SaveChangesAsync();
                 await LoadFlows();
@@ -204,68 +211,24 @@ namespace StepinFlow.ViewModels.UserControls
         }
 
         [RelayCommand]
-        private async Task OnFlowButtonDeleteClick(EventParammeters eventParameters)
+        private async Task OnButtonDownClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is Flow)
+            List<FlowStep> simplings = await _baseDatawork.FlowSteps.GetSiblings(flowStep.Id);
+            List<FlowStep> simplingsBellow = simplings
+                .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                .ToList();
+
+            if (simplingsBellow.Any())
             {
-                Flow flow = (Flow)eventParameters.FlowId;
-                _baseDatawork.Flows.Remove(flow);
+                // Find min
+                FlowStep simplingBellow = simplingsBellow.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
+
+                // Swap values
+                (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
 
                 await _baseDatawork.SaveChangesAsync();
                 await LoadFlows();
-            }
-        }
-
-
-        [RelayCommand]
-        private async Task OnButtonUpClick(EventParammeters eventParameters)
-        {
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                List<FlowStep> simplings = await _baseDatawork.FlowSteps.GetSiblings(flowStep.Id);
-                List<FlowStep> simplingsAbove = simplings
-                    .Where(x => x.OrderingNum < flowStep.OrderingNum)
-                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
-                    .ToList();
-
-                if (simplingsAbove.Any())
-                {
-                    // Find max
-                    FlowStep simplingAbove = simplingsAbove.Aggregate((currentMax, x) => x.OrderingNum > currentMax.OrderingNum ? x : currentMax);
-
-                    // Swap values
-                    (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
-
-                    await _baseDatawork.SaveChangesAsync();
-                    await LoadFlows();
-                }
-            }
-        }
-
-        [RelayCommand]
-        private async Task OnButtonDownClick(EventParammeters eventParameters)
-        {
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                List<FlowStep> simplings = await _baseDatawork.FlowSteps.GetSiblings(flowStep.Id);
-                List<FlowStep> simplingsBellow = simplings
-                    .Where(x => x.OrderingNum > flowStep.OrderingNum)
-                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
-                    .ToList();
-
-                if (simplingsBellow.Any())
-                {
-                    // Find min
-                    FlowStep simplingBellow = simplingsBellow.Aggregate((currentMin, x) => x.OrderingNum < currentMin.OrderingNum ? x : currentMin);
-
-                    // Swap values
-                    (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
-
-                    await _baseDatawork.SaveChangesAsync();
-                    await LoadFlows();
-                }
             }
         }
 
@@ -283,22 +246,18 @@ namespace StepinFlow.ViewModels.UserControls
         }
 
         [RelayCommand]
-        private async Task OnExpanded(EventParammeters eventParameters)
+        private async Task OnExpanded(object eventParameter)
         {
-            if (eventParameters == null)
-                return;
-
-            if (eventParameters.FlowId is FlowStep)
+            if (eventParameter is FlowStep)
             {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
+                FlowStep flowStep = (FlowStep)eventParameter;
 
                 foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
                     await _baseDatawork.FlowSteps.LoadAllChildren(childFlowStep);
             }
-
-            else if (eventParameters.FlowId is Flow)
+            else if (eventParameter is Flow)
             {
-                Flow flow = (Flow)eventParameters.FlowId;
+                Flow flow = (Flow)eventParameter;
 
                 foreach (var childFlowStep in flow.FlowSteps)
                     await _baseDatawork.FlowSteps.LoadAllChildren(childFlowStep);

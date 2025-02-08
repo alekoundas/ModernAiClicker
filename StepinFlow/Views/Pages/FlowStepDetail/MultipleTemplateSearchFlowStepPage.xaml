@@ -17,23 +17,18 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-
     <Page.Resources>
-        <converters:EventParammeterConverter x:Key="EventParammeterConverter" />
+        <ObjectDataProvider
+            x:Key="FlowStepTypesEnum"
+            MethodName="GetValues"
+            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:FlowStepTypesEnum" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Page.Resources>
+
     <Grid VerticalAlignment="Top">
-        <Grid.Resources>
-            <ObjectDataProvider
-                x:Key="FlowStepTypesEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepTypesEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-
-        </Grid.Resources>
-
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -43,7 +38,6 @@
 
 
         <StackPanel Grid.Column="1">
-            <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
 
             <Label>1. Set Name</Label>
             <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
@@ -91,10 +85,7 @@
                                             <i:EventTrigger EventName="Click">
                                                 <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonUpClickCommand}">
                                                     <i:InvokeCommandAction.CommandParameter>
-                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                            <Binding ElementName="TreeViewItemButtonDelete" />
-                                                            <Binding Path="" />
-                                                        </MultiBinding>
+                                                        <Binding Path="" />
                                                     </i:InvokeCommandAction.CommandParameter>
                                                 </i:InvokeCommandAction>
                                             </i:EventTrigger>
@@ -112,10 +103,7 @@
                                             <i:EventTrigger EventName="Click">
                                                 <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonDownClickCommand}">
                                                     <i:InvokeCommandAction.CommandParameter>
-                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                            <Binding ElementName="TreeViewItemButtonDelete" />
-                                                            <Binding Path="" />
-                                                        </MultiBinding>
+                                                        <Binding Path="" />
                                                     </i:InvokeCommandAction.CommandParameter>
                                                 </i:InvokeCommandAction>
                                             </i:EventTrigger>
@@ -133,10 +121,7 @@
                                             <i:EventTrigger EventName="Click">
                                                 <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonDeleteClickCommand}">
                                                     <i:InvokeCommandAction.CommandParameter>
-                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                            <Binding ElementName="TreeViewItemButtonDelete" />
-                                                            <Binding Path="" />
-                                                        </MultiBinding>
+                                                        <Binding Path="" />
                                                     </i:InvokeCommandAction.CommandParameter>
                                                 </i:InvokeCommandAction>
                                             </i:EventTrigger>
@@ -153,10 +138,7 @@
                                             <i:EventTrigger EventName="Click">
                                                 <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonOpenFileClickCommand}">
                                                     <i:InvokeCommandAction.CommandParameter>
-                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                            <Binding ElementName="TreeViewItemButtonDelete" />
-                                                            <Binding Path="" />
-                                                        </MultiBinding>
+                                                        <Binding Path="" />
                                                     </i:InvokeCommandAction.CommandParameter>
                                                 </i:InvokeCommandAction>
                                             </i:EventTrigger>
@@ -180,10 +162,7 @@
                                             <i:EventTrigger EventName="Click">
                                                 <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonTestClickCommand}">
                                                     <i:InvokeCommandAction.CommandParameter>
-                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                            <Binding ElementName="ButtonTestClickCommand" />
-                                                            <Binding Path="" />
-                                                        </MultiBinding>
+                                                        <Binding Path="" />
                                                     </i:InvokeCommandAction.CommandParameter>
                                                 </i:InvokeCommandAction>
                                             </i:EventTrigger>
@@ -194,10 +173,7 @@
                                             <i:EventTrigger EventName="Click">
                                                 <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.ButtonClearTestClickCommand}">
                                                     <i:InvokeCommandAction.CommandParameter>
-                                                        <MultiBinding Converter="{StaticResource EventParammeterConverter}">
-                                                            <Binding ElementName="ButtonTestClickCommand" />
-                                                            <Binding Path="" />
-                                                        </MultiBinding>
+                                                        <Binding Path="" />
                                                     </i:InvokeCommandAction.CommandParameter>
                                                 </i:InvokeCommandAction>
                                             </i:EventTrigger>

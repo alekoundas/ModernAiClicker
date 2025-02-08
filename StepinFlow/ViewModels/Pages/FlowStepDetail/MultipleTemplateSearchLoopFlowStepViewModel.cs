@@ -11,7 +11,6 @@ using System.IO;
 using System.Drawing;
 using Microsoft.EntityFrameworkCore;
 using Rectangle = Model.Structs.Rectangle;
-using Model.ConverterModels;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -51,61 +50,45 @@ namespace StepinFlow.ViewModels.Pages
             List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD).ToList();
             _childrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
             TemplateImgPath = flowStep.TemplateImagePath;
-            //ShowTemplateImg?.Invoke(TemplateImgPath);
 
         }
 
         [RelayCommand]
-        private void OnButtonOpenFileClick(EventParammeters eventParameters)
+        private void OnButtonOpenFileClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog.InitialDirectory = PathHelper.GetAppDataPath();
+            openFileDialog.Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*";
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == true)
             {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-
-                Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-                openFileDialog.InitialDirectory = PathHelper.GetAppDataPath();
-                openFileDialog.Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*";
-                openFileDialog.RestoreDirectory = true;
-
-                if (openFileDialog.ShowDialog() == true)
-                {
-                    TemplateImgPath = openFileDialog.FileName;
-                    flowStep.TemplateImage = File.ReadAllBytes(TemplateImgPath);
-                }
+                TemplateImgPath = openFileDialog.FileName;
+                flowStep.TemplateImage = File.ReadAllBytes(TemplateImgPath);
             }
         }
 
         [RelayCommand]
-        private void OnButtonUpClick(EventParammeters eventParameters)
+        private void OnButtonUpClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                List<FlowStep> simplingsAbove = ChildrenTemplateSearchFlowSteps
-                        .Where(x => x.OrderingNum < flowStep.OrderingNum)
-                        .ToList();
+            List<FlowStep> simplingsAbove = ChildrenTemplateSearchFlowSteps
+                    .Where(x => x.OrderingNum < flowStep.OrderingNum)
+                    .ToList();
 
-                flowStep.OrderingNum++;
+            flowStep.OrderingNum++;
+            ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
 
-                ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
-
-            }
         }
 
         [RelayCommand]
-        private void OnButtonDownClick(EventParammeters eventParameters)
+        private void OnButtonDownClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep flowStep = (FlowStep)eventParameters.FlowId;
-                List<FlowStep> simplingsBellow = ChildrenTemplateSearchFlowSteps
-                        .Where(x => x.OrderingNum > flowStep.OrderingNum)
-                        .ToList();
+            List<FlowStep> simplingsBellow = ChildrenTemplateSearchFlowSteps
+                    .Where(x => x.OrderingNum > flowStep.OrderingNum)
+                    .ToList();
 
-                flowStep.OrderingNum--;
-
-                ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
-            }
+            flowStep.OrderingNum--;
+            ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(ChildrenTemplateSearchFlowSteps.OrderBy(x => x.OrderingNum).ToList());
         }
 
         [RelayCommand]
@@ -122,72 +105,59 @@ namespace StepinFlow.ViewModels.Pages
 
 
         [RelayCommand]
-        private void OnButtonDeleteClick(EventParammeters eventParameters)
+        private void OnButtonDeleteClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
+            if (flowStep.Id > 0)
+                _childrenTemplateSearchFlowStepsToRemove.Add(flowStep);
 
-                if (templateFlowStep.Id > 0)
-                    _childrenTemplateSearchFlowStepsToRemove.Add(templateFlowStep);
-
-                ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
-            }
+            ChildrenTemplateSearchFlowSteps.Remove(flowStep);
         }
 
 
         [RelayCommand]
-        private void OnButtonClearTestClick(EventParammeters eventParameters)
+        private void OnButtonClearTestClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
-            {
-                FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
-                templateFlowStep.LoopResultImagePath = "";
-            }
+            flowStep.LoopResultImagePath = "";
             ShowResultImage?.Invoke("");
         }
 
         [RelayCommand]
-        private void OnButtonTestClick(EventParammeters eventParameters)
+        private void OnButtonTestClick(FlowStep flowStep)
         {
-            if (eventParameters.FlowId is FlowStep)
+            if (flowStep.TemplateImage == null)
+                return;
+
+            // Find search area.
+            Rectangle searchRectangle;
+            if (FlowStep.ProcessName.Length > 0 && TemplateImgPath != null)
+                searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
+            else
+                searchRectangle = _systemService.GetScreenSize();
+
+            // Get screenshot.
+            // New if not previous exists.
+            // Get previous one if exists.
+            Bitmap? screenshot;
+            if (flowStep.LoopResultImagePath.Length > 0)
+                screenshot = (Bitmap)Image.FromFile(flowStep.LoopResultImagePath);
+            else
+                screenshot = _systemService.TakeScreenShot(searchRectangle);
+
+            if (screenshot == null)
+                return;
+
+            using (var ms = new MemoryStream(flowStep.TemplateImage))
             {
-                FlowStep templateFlowStep = (FlowStep)eventParameters.FlowId;
-                if (templateFlowStep.TemplateImage == null)
-                    return;
+                Bitmap templateImage = new Bitmap(ms);
+                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, flowStep.RemoveTemplateFromResult);
 
-                // Find search area.
-                Rectangle searchRectangle;
-                if (FlowStep.ProcessName.Length > 0 && TemplateImgPath != null)
-                    searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
-                else
-                    searchRectangle = _systemService.GetScreenSize();
+                int x = searchRectangle.Left + result.ResultRectangle.Top;
+                int y = searchRectangle.Top + result.ResultRectangle.Left;
 
-                // Get screenshot.
-                // New if not previous exists.
-                // Get previous one if exists.
-                Bitmap? screenshot;
-                if (templateFlowStep.LoopResultImagePath.Length > 0)
-                    screenshot = (Bitmap)Image.FromFile(templateFlowStep.LoopResultImagePath);
-                else
-                    screenshot = _systemService.TakeScreenShot(searchRectangle);
-
-                if (screenshot == null)
-                    return;
-
-                using (var ms = new MemoryStream(templateFlowStep.TemplateImage))
+                if (result.ResultImagePath.Length > 0)
                 {
-                    Bitmap templateImage = new Bitmap(ms);
-                    TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, templateFlowStep.RemoveTemplateFromResult);
-
-                    int x = searchRectangle.Left + result.ResultRectangle.Top;
-                    int y = searchRectangle.Top + result.ResultRectangle.Left;
-
-                    if (result.ResultImagePath.Length > 0)
-                    {
-                        templateFlowStep.LoopResultImagePath = result.ResultImagePath;
-                        ShowResultImage?.Invoke(result.ResultImagePath);
-                    }
+                    flowStep.LoopResultImagePath = result.ResultImagePath;
+                    ShowResultImage?.Invoke(result.ResultImagePath);
 
                 }
             }
