@@ -261,7 +261,7 @@ namespace StepinFlow.ViewModels.Pages
             List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.Query
                 .AsNoTracking()
                 .Where(x => x.ParentTemplateSearchFlowStepId == FlowStep.Id)
-                .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
+                .Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD)
                 .ToListAsync();
             ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
         }

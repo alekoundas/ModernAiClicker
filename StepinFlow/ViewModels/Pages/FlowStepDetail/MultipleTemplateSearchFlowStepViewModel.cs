@@ -179,7 +179,7 @@ namespace StepinFlow.ViewModels.Pages
                 ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
 
             foreach (var templateFlowStep in ChildrenTemplateSearchFlowSteps)
-                templateFlowStep.FlowStepType = FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD;
+                templateFlowStep.FlowStepType = FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD;
 
             // Edit mode
             if (FlowStep.Id > 0)
@@ -258,7 +258,7 @@ namespace StepinFlow.ViewModels.Pages
             List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.Query
                 .AsNoTracking()
                 .Where(x => x.ParentTemplateSearchFlowStepId == FlowStep.Id)
-                .Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION)
+                .Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)
                 .ToListAsync();
             ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
         }
