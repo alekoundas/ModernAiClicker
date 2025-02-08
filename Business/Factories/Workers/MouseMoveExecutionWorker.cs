@@ -20,22 +20,28 @@ namespace Business.Factories.Workers
         public async Task ExecuteFlowStepAction(Execution execution)
         {
             if (execution.FlowStep == null)
-                return ;
+                return;
 
             Point pointToMove;
             Execution? parentExecution = null;
+            Execution? currentExecution = execution;
 
             // Get point from result of parent template search.
             if (execution.ParentExecutionId != null)
             {
-                Execution? currentExecution = execution;
                 while (currentExecution.ParentExecutionId != null)
                 {
                     currentExecution = await _baseDatawork.Executions.Query
-                        .Include(x=>x.FlowStep)
-                        .FirstAsync(x=>x.Id==currentExecution.ParentExecutionId.Value);
+                        .Include(x => x.FlowStep)
+                        .FirstAsync(x => x.Id == currentExecution.ParentExecutionId.Value);
 
-                    if(currentExecution.FlowStepId == execution.FlowStep.ParentTemplateSearchFlowStepId)
+                    if (currentExecution.FlowStepId == execution.FlowStep.ParentTemplateSearchFlowStepId)
+                    {
+                        parentExecution = currentExecution;
+                        break;
+                    }
+
+                    if (currentExecution.FlowStep?.ParentTemplateSearchFlowStepId == execution.FlowStep.ParentTemplateSearchFlowStepId)
                     {
                         parentExecution = currentExecution;
                         break;
@@ -47,7 +53,7 @@ namespace Business.Factories.Workers
                 // Else get point from flow step.
                 if (parentExecution?.ResultLocationX != null && parentExecution?.ResultLocationY != null)
                     pointToMove = new Point(parentExecution.ResultLocationX.Value, parentExecution.ResultLocationY.Value);
-                else   
+                else
                     pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
 
                 _systemService.SetCursorPossition(pointToMove);

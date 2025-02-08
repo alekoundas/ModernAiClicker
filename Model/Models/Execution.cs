@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Enums;
-using Model.Structs;
-using System.Collections.ObjectModel;
 
 namespace Model.Models
 {
@@ -70,8 +68,5 @@ namespace Model.Models
 
         public int? ChildLoopExecutionId { get; set; }
         public virtual Execution? ChildLoopExecution { get; set; }
-
-        public int? CurrentMultipleTemplateSearchFlowStepId { get; set; }
-        public virtual FlowStep? CurrentMultipleTemplateSearchFlowStep { get; set; }
     }
 }

@@ -113,8 +113,6 @@ namespace Model.Models
 
         public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<Execution> Executions { get; set; }  = new ObservableCollection<Execution>();
-        public virtual ObservableCollection<Execution> CurrentMultipleTemplateSearchFlowStepExecutions { get; set; }  = new ObservableCollection<Execution>();
-
 
 
         // Used by GoTo and also by "MultipleTemplateSearch"

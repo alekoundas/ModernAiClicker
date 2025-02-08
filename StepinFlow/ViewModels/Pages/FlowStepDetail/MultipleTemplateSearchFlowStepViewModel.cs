@@ -53,7 +53,7 @@ namespace StepinFlow.ViewModels.Pages
             _flowsViewModel = flowsViewModel;
 
             TemplateImgPath = flowStep.TemplateImagePath;
-            List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION).ToList();
+            List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD).ToList();
             _childrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
             //ShowTemplateImg?.Invoke(TemplateImgPath);
 
@@ -205,6 +205,8 @@ namespace StepinFlow.ViewModels.Pages
             foreach (var templateFlowStep in templateFlowSteps)
                 ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
 
+            foreach (var templateFlowStep in ChildrenTemplateSearchFlowSteps)
+                templateFlowStep.FlowStepType = FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD;
 
             // Edit mode
             if (FlowStep.Id > 0)

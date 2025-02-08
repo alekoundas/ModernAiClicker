@@ -54,12 +54,6 @@ namespace DataAccess.Configurations
              .HasForeignKey<Execution>(x => x.ChildLoopExecutionId)
              .IsRequired(false)
              .OnDelete(DeleteBehavior.SetNull);
-
-            builder.HasOne(x => x.CurrentMultipleTemplateSearchFlowStep)
-              .WithMany(x => x.CurrentMultipleTemplateSearchFlowStepExecutions)
-              .HasForeignKey(x => x.CurrentMultipleTemplateSearchFlowStepId)
-              .IsRequired(false)
-              .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

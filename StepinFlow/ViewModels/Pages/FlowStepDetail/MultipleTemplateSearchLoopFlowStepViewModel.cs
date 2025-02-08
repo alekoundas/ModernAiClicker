@@ -12,7 +12,6 @@ using System.Drawing;
 using Microsoft.EntityFrameworkCore;
 using Rectangle = Model.Structs.Rectangle;
 using Model.ConverterModels;
-using System.Collections.Generic;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -49,7 +48,7 @@ namespace StepinFlow.ViewModels.Pages
             _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
 
-            List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.NO_SELECTION).ToList();
+            List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD).ToList();
             _childrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
             TemplateImgPath = flowStep.TemplateImagePath;
             //ShowTemplateImg?.Invoke(TemplateImgPath);
@@ -210,6 +209,9 @@ namespace StepinFlow.ViewModels.Pages
 
             foreach (var templateFlowStep in templateFlowSteps)
                 ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
+
+            foreach (var templateFlowStep in ChildrenTemplateSearchFlowSteps)
+                templateFlowStep.FlowStepType = FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD;
 
 
             // Edit mode
