@@ -23,5 +23,16 @@
 
             return exportPath;
         }
+
+        public static string GetExecutionHistoryDataPath()
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string exportPath = Path.Combine(localAppData, "StepinFlow", "Execution History");
+
+            if (!Directory.Exists(exportPath))
+                Directory.CreateDirectory(exportPath);
+
+            return exportPath;
+        }
     }
 }

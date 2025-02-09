@@ -48,17 +48,13 @@ namespace Business.Factories.Workers
 
         public async override Task SaveToDisk(Execution execution)
         {
-            DateTime dateTime = DateTime.Now;
-            string filename = "";
+            string folderName = "Execution - " + DateTime.Now.ToString("yy-MM-dd hh.mm");
+            string folderPath = Path.Combine(PathHelper.GetExecutionHistoryDataPath(), folderName);
 
-            filename += "Execution";
-            filename += " - ";
-            filename += DateTime.Now.ToString("yy-MM-dd hh.mm");
+            execution.ExecutionFolderDirectory = folderPath;
 
-            execution.ExecutionFolderDirectory = PathHelper.GetAppDataPath() + "\\" + filename;
             await _baseDatawork.SaveChangesAsync();
-
-            _systemService.CreateFolderOnDisk(filename);
+            Directory.CreateDirectory(folderPath);
         }
     }
 }

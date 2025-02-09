@@ -79,7 +79,6 @@ namespace Business.Services
         [DllImport("user32.dll")]
         private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
 
-
         [DllImport("user32.dll", SetLastError = true)]
         private static extern uint SendInput(uint numberOfInputs, INPUT[] inputs, int sizeOfInputStructure);
 
@@ -135,7 +134,6 @@ namespace Business.Services
                 Thread.Sleep(50);
                 mouse_event(0x0004, x, y, 0, 0);
             }
-
         }
 
         public List<string> GetProcessWindowTitles()
@@ -168,12 +166,6 @@ namespace Business.Services
             {
                 Console.WriteLine($"Error: {ex.Message}");
             }
-        }
-
-        public void CreateFolderOnDisk(string folderName)
-        {
-            string folderUrl = PathHelper.GetAppDataPath() + "\\" + folderName;
-            Directory.CreateDirectory(folderUrl);
         }
 
         public Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot")

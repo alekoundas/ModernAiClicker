@@ -54,9 +54,6 @@ namespace Business.Factories.Workers
             execution.StartedOn = DateTime.Now;
             execution.LoopCount += 1;
 
-            if (execution.ParentExecution != null)
-                execution.ExecutionFolderDirectory = execution.ParentExecution.ExecutionFolderDirectory;
-
             await _baseDatawork.SaveChangesAsync();
         }
 

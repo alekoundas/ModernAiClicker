@@ -19,7 +19,6 @@ namespace Business.Interfaces
         List<Flow>? ImportFlowsJSON(string importFilePath);
         ImageSizeResult GetImageSize(byte[] imagePath);
         List<string> GetProcessWindowTitles();
-        void CreateFolderOnDisk(string folderName);
         Task SaveImageToDisk(string filePath, byte[] image);
         void CopyImageToDisk(string sourceFilePath, string destinationFilePath);
         void CursorScroll(MouseScrollDirectionEnum scrollDirection, int steps);
