@@ -70,26 +70,26 @@ namespace Model.Models
         public bool _mouseLoopInfinite;
 
         [ObservableProperty]
-        public int? _mouseLoopTimes;
+        public int _mouseLoopTimes;
 
         [ObservableProperty]
-        public int? _mouseLoopDebounceTime;
+        public int _mouseLoopDebounceTime;
 
         [ObservableProperty]
         public TimeOnly? _mouseLoopTime;
 
         //System
         [ObservableProperty]
-        public int? _sleepForHours;
+        public int _sleepForHours;
 
         [ObservableProperty]
-        public int? _sleepForMinutes;
+        public int _sleepForMinutes;
 
         [ObservableProperty]
-        public int? _sleepForSeconds;
+        public int _sleepForSeconds;
 
         [ObservableProperty]
-        public int? _sleepForMilliseconds;
+        public int _sleepForMilliseconds;
 
         // Window
         [ObservableProperty]

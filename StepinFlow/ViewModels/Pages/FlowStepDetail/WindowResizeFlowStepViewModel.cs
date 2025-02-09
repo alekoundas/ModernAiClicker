@@ -59,6 +59,11 @@ namespace StepinFlow.ViewModels.Pages
             _systemService.MoveWindow(FlowStep.ProcessName, newWindowRect);
         }
 
+        [RelayCommand]
+        private void OnButtonCancelClick()
+        {
+            //TODO
+        }
 
         [RelayCommand]
         private async Task OnButtonSaveClick()

@@ -17,7 +17,7 @@ namespace StepinFlow.Views.Pages.Executions
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
             ViewModel = (CursorClickExecutionViewModel)executionViewModel;
-            DataContext = ViewModel;
+            DataContext = this;
         }
     }
 }

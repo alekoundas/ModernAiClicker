@@ -123,6 +123,7 @@ namespace StepinFlow.ViewModels.Pages
                     IExecutionWorker flowWorker = _executionFactory.GetWorker(null);
                     Execution flowExecution = await flowWorker.CreateExecutionModelFlow(ComboBoxSelectedFlow.Id, null);
                     FlowStep? nextFlowStep;
+
                     // Add Execution to listbox and select it
                     List<Execution> executions = ComboBoxExecutionHistories.ToList();
                     executions.Add(flowExecution);
@@ -146,11 +147,6 @@ namespace StepinFlow.ViewModels.Pages
             _executionFactory.DestroyWorkers();
 
         }
-
-
-
-
-
 
         private async Task ExecuteStepLoop(FlowStep? initialFlowStep, Execution initialParentExecution)
         {
@@ -194,23 +190,6 @@ namespace StepinFlow.ViewModels.Pages
                     stack.Push((nextFlowStep, flowStepExecution));
             }
         }
-
-        private static void AllowUIToUpdate()
-        {
-            DispatcherFrame frame = new();
-            // DispatcherPriority set to Input, the highest priority
-            Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Input, new DispatcherOperationCallback(delegate (object parameter)
-            {
-                frame.Continue = false;
-                Thread.Sleep(100); // Stop all processes to make sure the UI update is perform
-                return null;
-            }), null);
-            Dispatcher.PushFrame(frame);
-            // DispatcherPriority set to Input, the highest priority
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Input, new Action(delegate { }));
-        }
-
-
 
         [RelayCommand]
         private void OnButtonStopClick()

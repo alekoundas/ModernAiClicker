@@ -31,23 +31,18 @@
 
 
 
-
-
-
-
-
             <StackPanel>
                 <Label>Set hours:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.SleepForHours, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.SleepForHours, Mode=TwoWay}" />
 
                 <Label>Set minutes:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.SleepForMinutes, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.SleepForMinutes, Mode=TwoWay}" />
 
                 <Label>Set seconds:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.SleepForSeconds, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.SleepForSeconds, Mode=TwoWay}" />
 
                 <Label>Set milliseconds:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 

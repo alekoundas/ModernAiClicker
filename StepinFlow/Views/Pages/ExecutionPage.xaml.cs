@@ -82,8 +82,15 @@ namespace StepinFlow.Views.Pages
             if (execution == null)
                 return;
 
-            var viewModel = GetViewModel(flowStepType);
-            var page = GetPage(flowStepType);
+            if (flowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)
+                flowStepType = FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH;
+
+            if (flowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD)
+                flowStepType = FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP;
+
+
+            IExecutionViewModel? viewModel = GetViewModel(flowStepType);
+            IExecutionPage? page = GetPage(flowStepType);
 
             if (viewModel == null || page == null)
                 return;

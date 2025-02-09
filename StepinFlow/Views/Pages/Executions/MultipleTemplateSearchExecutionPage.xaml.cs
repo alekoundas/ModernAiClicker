@@ -14,7 +14,7 @@ namespace StepinFlow.Views.Pages.Executions
         public MultipleTemplateSearchExecutionPage(IBaseDatawork baseDatawork)
         {
             ViewModel = new MultipleTemplateSearchExecutionViewModel(baseDatawork);
-            DataContext = ViewModel;
+            DataContext = this;
             InitializeComponent();
         }
 
@@ -23,9 +23,7 @@ namespace StepinFlow.Views.Pages.Executions
             ViewModel.ShowResultImage -= ShowResultImage;
             ViewModel = (MultipleTemplateSearchExecutionViewModel)executionViewModel;
             ViewModel.ShowResultImage += ShowResultImage;
-            DataContext = ViewModel;
-
-            //Image display in ui
+            DataContext = this;
         }
 
         public void ShowResultImage(string filePath)

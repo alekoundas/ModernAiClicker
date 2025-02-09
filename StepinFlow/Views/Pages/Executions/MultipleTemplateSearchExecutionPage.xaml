@@ -27,6 +27,7 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Page.Resources>
+
     <Grid VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -39,24 +40,17 @@
             <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
 
             <Label>1. Set Name</Label>
-            <TextBox Text="{Binding Execution.FlowStep.Name, Mode=TwoWay}" />
+            <TextBox Text="{Binding ViewModel.Execution.FlowStep.Name, Mode=TwoWay}" />
 
             <Label>2. Select Process (leave empty for screen search)</Label>
             <ComboBox
                 VerticalAlignment="Center"
-                ItemsSource="{Binding Execution.ProcessList}"
-                SelectedItem="{Binding Execution.FlowStep.ProcessName, Mode=TwoWay}" />
+                ItemsSource="{Binding ViewModel.Execution.ProcessList}"
+                SelectedItem="{Binding ViewModel.Execution.FlowStep.ProcessName, Mode=TwoWay}" />
 
 
 
-            <Label>3. Add template images to be searched.</Label>
-            <Button
-                Margin="5"
-                Command="{Binding Execution.ButtonAddClickCommand}"
-                Content="Add" />
-
-
-            <ItemsControl ItemsSource="{Binding Execution.FlowStep.ChildrenTemplateSearchFlowSteps}">
+            <ItemsControl ItemsSource="{Binding ViewModel.Execution.FlowStep.ChildrenTemplateSearchFlowSteps}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!--  Use a WrapPanel for a horizontal layout  -->

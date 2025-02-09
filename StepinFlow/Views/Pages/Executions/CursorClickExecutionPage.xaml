@@ -15,32 +15,30 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
+    <Page.Resources>
+
+        <ObjectDataProvider
+            x:Key="MouseActionsEnum"
+            MethodName="GetValues"
+            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:MouseActionsEnum" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider
+            x:Key="MouseButtonEnum"
+            MethodName="GetValues"
+            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:MouseButtonsEnum" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Page.Resources>
+
     <StackPanel>
 
         <Label>Configure click action</Label>
-
-
         <Grid Margin="10,10,10,50">
-
-            <Grid.Resources>
-
-                <ObjectDataProvider
-                    x:Key="MouseActionsEnum"
-                    MethodName="GetValues"
-                    ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:MouseActionsEnum" />
-                    </ObjectDataProvider.MethodParameters>
-                </ObjectDataProvider>
-                <ObjectDataProvider
-                    x:Key="MouseButtonEnum"
-                    MethodName="GetValues"
-                    ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:MouseButtonsEnum" />
-                    </ObjectDataProvider.MethodParameters>
-                </ObjectDataProvider>
-            </Grid.Resources>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
@@ -49,25 +47,19 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-
                 <RowDefinition Name="rowToHide">
                     <RowDefinition.Style>
                         <Style TargetType="{x:Type RowDefinition}">
                             <Setter Property="Height" Value="0" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Execution.FlowStep.MouseAction}" Value="{x:Static enum:MouseActionsEnum.LOOP_CLICK}">
+                                <DataTrigger Binding="{Binding ViewModel.Execution.FlowStep.MouseAction}" Value="{x:Static enum:MouseActionsEnum.LOOP_CLICK}">
                                     <Setter Property="Height" Value="Auto" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </RowDefinition.Style>
                 </RowDefinition>
-
             </Grid.RowDefinitions>
-
-
-
-
 
 
 
@@ -75,32 +67,28 @@
             <StackPanel>
 
                 <Label>Click button</Label>
-                <ComboBox ItemsSource="{Binding MouseButtonsEnum}" SelectedItem="{Binding Execution.FlowStep.MouseButton}" />
+                <ComboBox ItemsSource="{Binding ViewModel.MouseButtonsEnum}" SelectedItem="{Binding ViewModel.Execution.FlowStep.MouseButton}" />
 
                 <Label>Click action</Label>
-                <ComboBox ItemsSource="{Binding MouseActionsEnum}" SelectedItem="{Binding Execution.FlowStep.MouseAction}" />
+                <ComboBox ItemsSource="{Binding ViewModel.MouseActionsEnum}" SelectedItem="{Binding ViewModel.Execution.FlowStep.MouseAction}" />
 
             </StackPanel>
 
             <StackPanel Grid.Row="1">
 
                 <Label>Debounce time (miliseconds)</Label>
-                <TextBox Text="{Binding Execution.FlowStep.MouseLoopDebounceTime, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.MouseLoopDebounceTime, Mode=TwoWay}" />
 
 
                 <Label>Loop times</Label>
-                <TextBox Text="{Binding Execution.FlowStep.MouseLoopTimes, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.MouseLoopTimes, Mode=TwoWay}" />
 
 
                 <Label>Infinite loop</Label>
-                <CheckBox IsChecked="{Binding Execution.FlowStep.MouseLoopInfinite}" />
+                <CheckBox IsChecked="{Binding ViewModel.Execution.FlowStep.MouseLoopInfinite}" />
 
             </StackPanel>
 
         </Grid>
-
-
-
     </StackPanel>
-
 </Page>

@@ -316,7 +316,7 @@
             Grid.Row="5"
             Grid.ColumnSpan="2"
             Margin="0,0,0,15"
-            Padding="5,5,0,5"
+            Padding="5,5,5,5"
             Background="#272727"
             BorderBrush="#C4C4C4"
             BorderThickness="1"
@@ -327,11 +327,7 @@
 
 
             <StackPanel>
-
-                <ListBox
-                    Name="ExecutionsListBox"
-                    ItemContainerStyle="{DynamicResource _ListBoxItemStyle}"
-                    ItemsSource="{Binding ViewModel.ListBoxExecutions}">
+                <ListBox ItemContainerStyle="{DynamicResource _ListBoxItemStyle}" ItemsSource="{Binding ViewModel.ListBoxExecutions}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding ViewModel.ListBoxSelectedItemChangedCommand}" PassEventArgsToCommand="True" />
@@ -349,10 +345,7 @@
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border
-                                Height="120"
-                                BorderThickness="2"
-                                CornerRadius="5">
+                            <Border BorderThickness="2" CornerRadius="5">
                                 <StackPanel>
                                     <TextBlock>
                                         <Run Text="Execution ID" />
@@ -368,11 +361,6 @@
                                         MaxWidth="100"
                                         MaxHeight="50"
                                         Source="{Binding FlowStep.TemplateImage}" />
-                                    <Image
-                                        MaxWidth="100"
-                                        MaxHeight="50"
-                                        Source="{Binding CurrentMultipleTemplateSearchFlowStep.TemplateImage}" />
-
 
                                 </StackPanel>
                             </Border>

@@ -12,13 +12,12 @@ namespace StepinFlow.Views.Pages.Executions
             ViewModel = new WindowResizeExecutionViewModel();
             DataContext = this;
             InitializeComponent();
+            DataContext = this;
         }
 
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
             ViewModel = (WindowResizeExecutionViewModel)executionViewModel;
-            DataContext = ViewModel;
-
         }
     }
 }

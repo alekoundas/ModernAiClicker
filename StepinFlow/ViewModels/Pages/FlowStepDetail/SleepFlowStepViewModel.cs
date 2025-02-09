@@ -26,17 +26,10 @@ namespace StepinFlow.ViewModels.Pages
             _flowStep = flowStep;
 
             int miliseconds = 0;
-            if (FlowStep.SleepForMilliseconds.HasValue)
-                miliseconds += FlowStep.SleepForMilliseconds.Value;
-
-            if (FlowStep.SleepForSeconds.HasValue)
-                miliseconds += FlowStep.SleepForSeconds.Value * 1000;
-
-            if (FlowStep.SleepForMinutes.HasValue)
-                miliseconds += FlowStep.SleepForMinutes.Value * 60 * 1000;
-
-            if (FlowStep.SleepForHours.HasValue)
-                miliseconds += FlowStep.SleepForHours.Value * 60 * 60 * 1000;
+            miliseconds += FlowStep.SleepForMilliseconds;
+            miliseconds += FlowStep.SleepForSeconds * 1000;
+            miliseconds += FlowStep.SleepForMinutes * 60 * 1000;
+            miliseconds += FlowStep.SleepForHours * 60 * 60 * 1000;
 
             TimeTotal = TimeSpan.FromMilliseconds(miliseconds).ToString(@"hh\:mm\:ss");
         }

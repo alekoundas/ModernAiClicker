@@ -27,17 +27,10 @@ namespace Business.Factories.Workers
 
             int miliseconds = 0;
 
-            if (execution.FlowStep.SleepForMilliseconds.HasValue)
-                miliseconds += execution.FlowStep.SleepForMilliseconds.Value;
-
-            if (execution.FlowStep.SleepForSeconds.HasValue)
-                miliseconds += execution.FlowStep.SleepForSeconds.Value * 1000;
-
-            if (execution.FlowStep.SleepForMinutes.HasValue)
-                miliseconds += execution.FlowStep.SleepForMinutes.Value * 60 * 1000;
-
-            if (execution.FlowStep.SleepForHours.HasValue)
-                miliseconds += execution.FlowStep.SleepForHours.Value * 60 * 60 * 1000;
+            miliseconds += execution.FlowStep.SleepForMilliseconds;
+            miliseconds += execution.FlowStep.SleepForSeconds * 1000;
+            miliseconds += execution.FlowStep.SleepForMinutes * 60 * 1000;
+            miliseconds += execution.FlowStep.SleepForHours * 60 * 60 * 1000;
 
 
             try

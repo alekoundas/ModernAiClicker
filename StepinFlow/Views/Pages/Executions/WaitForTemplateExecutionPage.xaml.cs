@@ -22,8 +22,7 @@ namespace StepinFlow.Views.Pages.Executions
             ViewModel.ShowResultImage -= ShowResultImage;
             ViewModel = (WaitForTemplateExecutionViewModel)executionViewModel;
             ViewModel.ShowResultImage += ShowResultImage;
-            DataContext = ViewModel;
-
+            DataContext = this;
         }
 
         public void ShowResultImage(string filePath)

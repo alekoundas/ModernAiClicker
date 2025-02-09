@@ -15,40 +15,22 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <ObjectDataProvider
+            x:Key="FlowStepTypesEnum"
+            MethodName="GetValues"
+            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:FlowStepTypesEnum" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Page.Resources>
 
     <Grid VerticalAlignment="Top">
-        <Grid.Resources>
-            <ObjectDataProvider
-                x:Key="FlowStepTypesEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepTypesEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-            <ObjectDataProvider
-                x:Key="FlowStepActionsFoundEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepActionsFoundEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-            <ObjectDataProvider
-                x:Key="FlowStepActionsNotFoundEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepActionsNotFoundEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-        </Grid.Resources>
-
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-
 
 
 
@@ -58,10 +40,8 @@
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding Execution.FlowStep.Name, Mode=TwoWay}" />
-
-
-
+                Text="{Binding ViewModel.Execution.FlowStep.Name}" />
         </StackPanel>
+
     </Grid>
 </Page>

@@ -39,17 +39,17 @@
         <StackPanel Grid.Column="1">
 
             <Label>1. Set Name</Label>
-            <TextBox Text="{Binding Execution.FlowStep.Name, Mode=TwoWay}" />
+            <TextBox Text="{Binding ViewModel.Execution.FlowStep.Name, Mode=TwoWay}" />
 
             <Label>2. Select Process (leave empty for screen search)</Label>
             <ComboBox
                 VerticalAlignment="Center"
-                ItemsSource="{Binding ProcessList}"
-                SelectedItem="{Binding Execution.FlowStep.ProcessName, Mode=TwoWay}" />
+                ItemsSource="{Binding ViewModel.ProcessList}"
+                SelectedItem="{Binding ViewModel.Execution.FlowStep.ProcessName, Mode=TwoWay}" />
 
 
 
-            <ItemsControl ItemsSource="{Binding Execution.FlowStep.ChildrenTemplateSearchFlowSteps}">
+            <ItemsControl ItemsSource="{Binding ViewModel.Execution.FlowStep.ChildrenTemplateSearchFlowSteps}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!--  Use a WrapPanel for a horizontal layout  -->
