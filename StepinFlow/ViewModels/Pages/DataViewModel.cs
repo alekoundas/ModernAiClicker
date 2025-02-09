@@ -107,6 +107,17 @@ namespace StepinFlow.ViewModels.Pages
             await _baseDatawork.SaveChangesAsync();
         }
 
+        [RelayCommand]
+        private async Task OnButtonDeleteClick()
+        {
+            var executions = _baseDatawork.Executions.GetAll();
+            _baseDatawork.Executions.RemoveRange(executions);
+            _baseDatawork.SaveChanges();
+
+            // Reclaim free space in database file.
+            await _baseDatawork.Query.Database.ExecuteSqlRawAsync("VACUUM;");
+        }
+
 
         private async Task<Flow?> FlowStepClone(Flow flow)
         {

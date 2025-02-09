@@ -255,12 +255,6 @@ namespace StepinFlow.ViewModels.Pages
         private async Task OnButtonDeleteClick()
         {
 
-            //Import
-            //var aaaaa = _systemService.LoadFlowsJSON();
-            //_baseDatawork.Flows.Add(aaaaa[0]);
-            //await _baseDatawork.SaveChangesAsync();
-
-
             //Delete all.
             var aa = _baseDatawork.Executions.GetAll();
             _baseDatawork.Executions.RemoveRange(aa);
