@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
-
-namespace Model.Models
+﻿namespace Model.Models
 {
     public partial class FlowDto 
     {
@@ -13,8 +10,8 @@ namespace Model.Models
 
         public int OrderingNum;
 
-        public virtual ObservableCollection<FlowStepDto> FlowSteps { get; set; } = new ObservableCollection<FlowStepDto>();
-        public virtual ObservableCollection<ExecutionDto> Executions { get; set; } = new ObservableCollection<ExecutionDto>();
+        public virtual List<FlowStepDto> FlowSteps { get; set; } = new List<FlowStepDto>();
+        public virtual List<ExecutionDto> Executions { get; set; } = new List<ExecutionDto>();
 
     }
 }

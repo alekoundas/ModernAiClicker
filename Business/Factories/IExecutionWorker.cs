@@ -14,7 +14,7 @@ namespace Business.Factories
         Task SetExecutionModelStateRunning(Execution execution);
         Task SetExecutionModelStateComplete(Execution execution);
         Task ExpandAndSelectFlowStep(Execution execution, ObservableCollection<Flow> treeviewFlows);
-        Task SaveToJson();
+        //Task SaveToJson();
         //void RefreshUI();
         Task SaveToDisk(Execution execution);
         void ClearEntityFrameworkChangeTracker();

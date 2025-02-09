@@ -34,7 +34,7 @@
             <ComboBox
                 IsSynchronizedWithCurrentItem="True"
                 ItemsSource="{Binding ViewModel.Parents}"
-                SelectedItem="{Binding ViewModel.FlowStep.ParentTemplateSearchFlowStep, Mode=TwoWay}">
+                SelectedItem="{Binding ViewModel.SelectedFlowStep, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">

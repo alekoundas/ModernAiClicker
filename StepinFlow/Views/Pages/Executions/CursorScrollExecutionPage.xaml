@@ -15,6 +15,7 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
+
     <StackPanel>
 
         <Label>Configure click action</Label>
@@ -25,11 +26,11 @@
             <Grid.Resources>
 
                 <ObjectDataProvider
-                    x:Key="MouseActionsEnum"
+                    x:Key="MouseScrollDirectionEnum"
                     MethodName="GetValues"
                     ObjectType="{x:Type System:Enum}">
                     <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:MouseActionsEnum" />
+                        <x:Type TypeName="enum:MouseScrollDirectionEnum" />
                     </ObjectDataProvider.MethodParameters>
                 </ObjectDataProvider>
                 <ObjectDataProvider
@@ -49,20 +50,7 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-
-                <RowDefinition Name="rowToHide">
-                    <RowDefinition.Style>
-                        <Style TargetType="{x:Type RowDefinition}">
-                            <Setter Property="Height" Value="0" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Execution.FlowStep.MouseAction}" Value="{x:Static enum:MouseActionsEnum.LOOP_CLICK}">
-                                    <Setter Property="Height" Value="Auto" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RowDefinition.Style>
-                </RowDefinition>
-
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
 
@@ -74,63 +62,18 @@
 
             <StackPanel>
 
-                <Label>Click button</Label>
-                <ComboBox ItemsSource="{Binding MouseButtonsEnum}" SelectedItem="{Binding Execution.FlowStep.MouseButton}" />
+                <Label>Scroll direction:</Label>
+                <ComboBox ItemsSource="{Binding ViewModel.Execution.FlowStep.MouseScrollDirectionEnum}" SelectedItem="{Binding ViewModel.Execution.FlowStep.MouseScrollDirectionEnum}" />
 
-                <Label>Click action</Label>
-                <ComboBox ItemsSource="{Binding MouseActionsEnum}" SelectedItem="{Binding Execution.FlowStep.MouseAction}" />
-
-            </StackPanel>
-
-            <StackPanel Grid.Row="1">
-
-                <Label>Debounce time (miliseconds)</Label>
-                <TextBox Text="{Binding Execution.FlowStep.MouseLoopDebounceTime, Mode=TwoWay}" />
-
-
-                <Label>Loop times</Label>
-                <TextBox Text="{Binding Execution.FlowStep.MouseLoopTimes, Mode=TwoWay}" />
-
-
-                <Label>Infinite loop</Label>
-                <CheckBox IsChecked="{Binding Execution.FlowStep.MouseLoopInfinite}" />
+                <Label>Scroll steps:</Label>
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.MouseLoopTimes}" />
 
             </StackPanel>
+
 
         </Grid>
 
 
-
-
-
-
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                <Button Content="Cancel">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ButtonCancelClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" HorizontalAlignment="right">
-                <Button Content="Save">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ButtonSaveClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-            </StackPanel>
-        </Grid>
     </StackPanel>
 
 </Page>

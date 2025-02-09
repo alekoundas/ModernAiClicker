@@ -21,6 +21,10 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
 
+        [ObservableProperty]
+        private FlowStep? _selectedFlowStep = null;
+
+
         public CursorMoveFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
 
@@ -28,6 +32,8 @@ namespace StepinFlow.ViewModels.Pages
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
             FlowStep = flowStep;
+
+            SelectedFlowStep = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
 
             if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
                 GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);

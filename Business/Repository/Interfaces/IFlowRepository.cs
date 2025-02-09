@@ -8,6 +8,7 @@ namespace Business.Repository.Interfaces
         Task<FlowStep> GetIsNewSibling(int id);
         Task<List<Flow>> LoadAllExpanded();
         Task<List<Flow>> LoadAllCollapsed();
+        Task<List<Flow>> LoadAllExport(int? flowId = null);
 
     }
 }

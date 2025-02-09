@@ -101,11 +101,6 @@ namespace Business.Factories.Workers
         }
 
 
-        public async Task SaveToJson()
-        {
-            await _systemService.UpdateFlowsJSON(await _baseDatawork.Flows.GetAllAsync());
-        }
-
         public async virtual Task SaveToDisk(Execution execution)
         {
             await _baseDatawork.SaveChangesAsync();

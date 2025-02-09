@@ -3,13 +3,15 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:icons="https://github.com/helluvamatt/BootstrapIcons.Wpf/"
     xmlns:local="clr-namespace:StepinFlow.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:StepinFlow.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="DataPage"
     d:DataContext="{d:DesignInstance local:DataPage,
-                                     IsDesignTimeCreatable=False}"
+    IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
@@ -18,26 +20,127 @@
     ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
 
-    <Grid>
-        <!--<ui:VirtualizingItemsControl
-            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-            ItemsSource="{Binding ViewModel.Colors, Mode=OneWay}"
-            VirtualizingPanel.CacheLengthUnit="Item">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:DataColor}">
-                    <ui:Button
-                        Width="80"
-                        Height="80"
-                        Margin="2"
-                        Padding="0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Appearance="Secondary"
-                        Background="{Binding Color, Mode=OneWay}"
-                        FontSize="25"
-                        Icon="Fluent24" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ui:VirtualizingItemsControl>-->
-    </Grid>
+    <Page.Resources />
+
+    <ScrollViewer>
+        <StackPanel>
+
+
+            <Label>Export Flow</Label>
+            <Border
+                Grid.Row="1"
+                Margin="0,0,0,30"
+                Padding="20,20,20,20"
+                Background="#272727"
+                BorderBrush="#C4C4C4"
+                BorderThickness="2"
+                CornerRadius="10">
+                <Border.Effect>
+                    <DropShadowEffect Opacity="1" ShadowDepth="5" />
+                </Border.Effect>
+                <StackPanel>
+                    <Label>Export location:</Label>
+                    <StackPanel Margin="0,0,0,20" Orientation="Horizontal">
+                        <ui:Button Margin="0,0,10,0" Content="Reset">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:DataPage}}, Path=ViewModel.ButtonResetDirectoryClickCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ui:Button>
+                        <ui:Button Margin="0,0,10,0" HorizontalAlignment="Center">
+                            <icons:BootstrapIcon Icon="Folder2Open" />
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:DataPage}}, Path=ViewModel.ButtonChangeDirectoryClickCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ui:Button>
+                        <Label Content="{Binding ViewModel.ExportPath}" />
+                    </StackPanel>
+
+                    <Label>Select Flow to export. (Leave empty to export all flows):</Label>
+                    <ComboBox
+                        Name="ProcessList"
+                        Margin="0,0,0,10"
+                        DisplayMemberPath="Id"
+                        ItemsSource="{Binding ViewModel.ComboBoxFlows}"
+                        SelectedItem="{Binding ViewModel.ComboBoxSelectedFlow}" />
+
+
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+                            <Label Content="{Binding ViewModel.ExportedFileLocation}" />
+
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" HorizontalAlignment="right">
+                            <ui:Button Content="Export">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:DataPage}}, Path=ViewModel.ButtonExportClickCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </ui:Button>
+                        </StackPanel>
+
+
+                    </Grid>
+
+                </StackPanel>
+            </Border>
+
+
+
+            <Label>Import Flow</Label>
+            <Border
+                Grid.Row="1"
+                Margin="0,0,0,0"
+                Padding="20,20,20,20"
+                Background="#272727"
+                BorderBrush="#C4C4C4"
+                BorderThickness="2"
+                CornerRadius="10">
+                <Border.Effect>
+                    <DropShadowEffect Opacity="1" ShadowDepth="5" />
+                </Border.Effect>
+                <StackPanel>
+                    <Label>Import file location:</Label>
+                    <StackPanel Margin="0,0,0,20" Orientation="Horizontal">
+                        <ui:Button Margin="0,0,10,0" HorizontalAlignment="Center">
+                            <icons:BootstrapIcon Icon="Folder2Open" />
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:DataPage}}, Path=ViewModel.ButtonChangeImportFilePathClickCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ui:Button>
+                        <Label Content="{Binding ViewModel.ImportFileLocation}" />
+                    </StackPanel>
+
+
+
+
+
+
+                    <StackPanel Grid.Column="1" HorizontalAlignment="right">
+                        <ui:Button Content="Import">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:DataPage}}, Path=ViewModel.ButtonImportClickCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ui:Button>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

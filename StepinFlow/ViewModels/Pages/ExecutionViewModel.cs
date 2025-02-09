@@ -255,14 +255,6 @@ namespace StepinFlow.ViewModels.Pages
         private async Task OnButtonDeleteClick()
         {
 
-            // Export.
-            //var flow = await _baseDatawork.Query.Flows
-            //    .Include(x => x.FlowSteps)
-            //    .FirstOrDefaultAsync(x => x.Id == 2);
-            //foreach (FlowStep flowStep in flow.FlowSteps)
-            //    await LoadFlowStepChildrenExport(flowStep);
-
-
             //Import
             //var aaaaa = _systemService.LoadFlowsJSON();
             //_baseDatawork.Flows.Add(aaaaa[0]);
@@ -273,31 +265,17 @@ namespace StepinFlow.ViewModels.Pages
             var aa = _baseDatawork.Executions.GetAll();
             _baseDatawork.Executions.RemoveRange(aa);
             _baseDatawork.SaveChanges();
-            //// Reclaim free space in database file.
+
+            // Reclaim free space in database file.
             await _baseDatawork.Query.Database.ExecuteSqlRawAsync("VACUUM;");
 
             //ComboBoxExecutionHistories.Remove(ComboBoxSelectedExecutionHistory);
-            //ComboBoxSelectedExecutionHistory = null;
-            //ListBoxExecutions.Clear();
+            ComboBoxSelectedExecutionHistory = null;
+            ListBoxExecutions.Clear();
 
         }
 
-        private async Task LoadFlowStepChildrenExport(FlowStep flowStep)
-        {
-            List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                        .Include(x => x.ChildrenFlowSteps)
-                        .ThenInclude(x => x.ChildrenFlowSteps)
-                        .Where(x => x.Id == flowStep.Id)
-                        .SelectMany(x => x.ChildrenFlowSteps)
-                        .ToListAsync();
-
-            flowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
-
-            foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
-            {
-                await LoadFlowStepChildren(childFlowStep);
-            }
-        }
+     
 
         [RelayCommand]
         private void OnListBoxSelectedItemChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
@@ -351,23 +329,7 @@ namespace StepinFlow.ViewModels.Pages
         }
 
 
-        private async Task LoadFlowStepChildren(FlowStep flowStep)
-        {
-            List<FlowStep> flowSteps = await _baseDatawork.Query.FlowSteps
-                        .Include(x => x.ChildrenFlowSteps)
-                        .ThenInclude(x => x.ChildrenFlowSteps)
-                        .Where(x => x.Id == flowStep.Id)
-                        .SelectMany(x => x.ChildrenFlowSteps)
-                        .ToListAsync();
-
-            flowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
-
-            foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
-            {
-                if (childFlowStep.IsExpanded)
-                    await LoadFlowStepChildren(childFlowStep);
-            }
-        }
+        
 
 
         public void OnNavigatedTo() { }

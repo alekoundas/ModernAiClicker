@@ -3,6 +3,7 @@ using Model.Models;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace StepinFlow.ViewModels.Pages.Executions
 {
@@ -16,12 +17,6 @@ namespace StepinFlow.ViewModels.Pages.Executions
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
 
-        [ObservableProperty]
-        private int _x;
-
-        [ObservableProperty]
-        private int _y;
-
         public CursorMoveExecutionViewModel(IBaseDatawork baseDatawork)
         {
 
@@ -32,13 +27,14 @@ namespace StepinFlow.ViewModels.Pages.Executions
         public void SetExecution(Execution execution)
         {
             Execution = execution;
-            FlowStep? flowStep = _baseDatawork.FlowSteps.Query
-                .Where(x => x.Id == Execution.FlowStepId)
-                .Select(x => x.ParentTemplateSearchFlowStep)
-                .FirstOrDefault();
+            Execution = _baseDatawork.Executions.Query
+                .Where(x => x.Id == Execution.Id)
+                .Include(x => x.FlowStep.ParentTemplateSearchFlowStep)
+                .First();
 
-            if (flowStep != null)
-                Parents = new ObservableCollection<FlowStep>() { flowStep };
+
+            //if (flowStep != null)
+            //    Parents = new ObservableCollection<FlowStep>() { flowStep };
 
         }
 

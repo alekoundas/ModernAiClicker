@@ -15,7 +15,6 @@ using DataAccess.Repository.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Model.Models;
 using StepinFlow.Services;
 using StepinFlow.ViewModels.Pages;
 using StepinFlow.ViewModels.Pages.Executions;
@@ -26,7 +25,6 @@ using StepinFlow.Views.Pages.Executions;
 using StepinFlow.Views.Pages.FlowStepDetail;
 using StepinFlow.Views.UserControls;
 using StepinFlow.Views.Windows;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -64,7 +62,6 @@ namespace StepinFlow
                 services.AddSingleton<INavigationService, NavigationService>();
 
                 // Repository
-                //services.AddScoped<IDbContextFactory, DbContextFactory>();
                 services.AddTransient<IBaseDatawork, BaseDatawork>();
                 services.AddScoped<IFlowRepository, FlowRepository>();
                 services.AddScoped<IFlowStepRepository, FlowStepRepository>();
@@ -230,22 +227,6 @@ namespace StepinFlow
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             // For more info see https://docs.microsoft.com/en-us/dotnet/api/system.windows.application.dispatcherunhandledexception?view=windowsdesktop-6.0
-        }
-
-
-
-
-
-        private static ObservableCollection<Flow>? GetFlowsFromJson()
-        {
-            var systemService = new SystemService();
-
-            List<Flow>? flows = systemService.LoadFlowsJSON();
-
-            if (flows == null)
-                return null;
-
-            return new ObservableCollection<Flow>(flows);
         }
     }
 }

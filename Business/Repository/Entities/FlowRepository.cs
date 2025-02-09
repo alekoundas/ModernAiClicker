@@ -1,6 +1,5 @@
 ﻿using Business.DatabaseContext;
 using Business.Repository.Interfaces;
-using DataAccess.Repository;
 using Microsoft.EntityFrameworkCore;
 using Model.Enums;
 using Model.Models;
@@ -62,6 +61,27 @@ namespace Business.Repository.Entities
             return flows;
         }
 
+        public async Task<List<Flow>> LoadAllExport(int? flowId = null)
+        {
+            List<Flow> flows = new List<Flow>();
+
+            if(flowId.HasValue)
+                flows = await InMemoryDbContext.Flows
+                    .Include(x => x.FlowSteps)
+                    .Where(x => x.Id == flowId)
+                    .ToListAsync();
+            else
+                flows = await InMemoryDbContext.Flows
+                .Include(x => x.FlowSteps)
+                .ToListAsync();
+
+            foreach (Flow flow in flows)
+                foreach (FlowStep flowStep in flow.FlowSteps)
+                    await LoadAllChildren(flowStep, false);
+
+            return flows;
+        }
+
         private async Task<FlowStep> LoadAllChildren(FlowStep flowStep, bool isExpanded)
         {
             // Initialize a stack to simulate recursion.
@@ -77,6 +97,36 @@ namespace Business.Repository.Entities
                 var childFlowSteps = await InMemoryDbContext.FlowSteps
                     .Where(x => x.Id == currentFlowStep.Id)
                     .SelectMany(x => x.ChildrenFlowSteps)
+                    .Include(x=>x.ChildrenTemplateSearchFlowSteps)
+                    .ToListAsync();
+
+                currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);
+                currentFlowStep.IsExpanded = isExpanded;
+
+                // Push children onto the stack for further processing.
+                foreach (var childFlowStep in childFlowSteps)
+                    stack.Push(childFlowStep);
+            }
+
+            return flowStep;
+        }
+
+        private async Task<FlowStep> LoadAllChildrenExport(FlowStep flowStep, bool isExpanded)
+        {
+            // Initialize a stack to simulate recursion.
+            var stack = new Stack<FlowStep>();
+            stack.Push(flowStep);
+
+            while (stack.Count > 0)
+            {
+                // Process the current node
+                var currentFlowStep = stack.Pop();
+
+                // Load its children from the database.
+                var childFlowSteps = await InMemoryDbContext.FlowSteps
+                    .Where(x => x.Id == currentFlowStep.Id)
+                    .SelectMany(x => x.ChildrenFlowSteps)
+                    .Include(x=>x.ChildrenTemplateSearchFlowSteps)
                     .ToListAsync();
 
                 currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);

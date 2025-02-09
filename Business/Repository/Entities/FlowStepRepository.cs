@@ -146,42 +146,7 @@ namespace Business.Repository.Entities
 
 
             // Step 2: Use a queue to clone the tree iteratively
-            FlowStep clonedFlowStep = new FlowStep
-            {
-                //ParentFlowStep = targetParent,
-                //ParentFlowStepId = targetParent.Id,
-                //ParentTemplateSearchFlowStep = sourceBranch.ParentTemplateSearchFlowStep,
-                //ParentTemplateSearchFlowStepId = sourceBranch.ParentTemplateSearchFlowStepId,
-                Name = originalFlowStep.Name,
-                ProcessName = originalFlowStep.ProcessName,
-                IsExpanded = originalFlowStep.IsExpanded,
-                Disabled = originalFlowStep.Disabled,
-                IsSelected = false,
-                OrderingNum = originalFlowStep.OrderingNum,
-                FlowStepType = originalFlowStep.FlowStepType,
-                TemplateImagePath = originalFlowStep.TemplateImagePath,
-                TemplateImage = originalFlowStep.TemplateImage,
-                Accuracy = originalFlowStep.Accuracy,
-                LocationX = originalFlowStep.LocationX,
-                LocationY = originalFlowStep.LocationY,
-                MaxLoopCount = originalFlowStep.MaxLoopCount,
-                RemoveTemplateFromResult = originalFlowStep.RemoveTemplateFromResult,
-                LoopResultImagePath = originalFlowStep.LoopResultImagePath,
-                MouseAction = originalFlowStep.MouseAction,
-                MouseButton = originalFlowStep.MouseButton,
-                MouseScrollDirectionEnum = originalFlowStep.MouseScrollDirectionEnum,
-                MouseLoopInfinite = originalFlowStep.MouseLoopInfinite,
-                MouseLoopTimes = originalFlowStep.MouseLoopTimes,
-                MouseLoopDebounceTime = originalFlowStep.MouseLoopDebounceTime,
-                MouseLoopTime = originalFlowStep.MouseLoopTime,
-                SleepForHours = originalFlowStep.SleepForHours,
-                SleepForMinutes = originalFlowStep.SleepForMinutes,
-                SleepForSeconds = originalFlowStep.SleepForSeconds,
-                SleepForMilliseconds = originalFlowStep.SleepForMilliseconds,
-                WindowHeight = originalFlowStep.WindowHeight,
-                WindowWidth = originalFlowStep.WindowWidth,
-
-            };
+            FlowStep clonedFlowStep = CreateFlowStepClone(originalFlowStep);
 
             queue.Enqueue((originalFlowStep, clonedFlowStep));
             clonedFlowSteps.Add(originalFlowStep.Id, clonedFlowStep);
@@ -189,21 +154,15 @@ namespace Business.Repository.Entities
             while (queue.Count > 0)
             {
                 var (originalNode, clonedNode) = queue.Dequeue();
+
                 // Children flow steps.
-                var originalChildrenFlowSteps = await InMemoryDbContext.FlowSteps
+                List<FlowStep> originalChildrenFlowSteps = await InMemoryDbContext.FlowSteps
                 .Include(fs => fs.ChildrenFlowSteps)
                 .Where(fs => fs.Id == originalNode.Id)
                 .SelectMany(x => x.ChildrenFlowSteps)
                 .ToListAsync();
 
-                // Template search flow steps.
-                var originalChildrenTemplateSearchFlowSteps = await InMemoryDbContext.FlowSteps
-                .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
-                .Where(fs => fs.Id == originalNode.Id)
-                .SelectMany(x => x.ChildrenTemplateSearchFlowSteps)
-                .ToListAsync();
-
-                foreach (var child in originalChildrenFlowSteps)
+                foreach (FlowStep child in originalChildrenFlowSteps)
                 {
                     FlowStep? parentTemplateSearchFlowStep = null;
                     if (child.ParentTemplateSearchFlowStepId.HasValue)
@@ -212,41 +171,7 @@ namespace Business.Repository.Entities
                             .FirstOrDefault()
                             .Value;
 
-                    var clonedChild = new FlowStep
-                    {
-                        ParentFlowStep = clonedNode,
-                        //ParentFlowStepId = currentClone.Id,
-                        ParentTemplateSearchFlowStep = parentTemplateSearchFlowStep, // Preserve template references
-                        //ParentTemplateSearchFlowStepId = child.ParentTemplateSearchFlowStepId, // Preserve template IDs
-                        Name = child.Name,
-                        ProcessName = child.ProcessName,
-                        IsExpanded = child.IsExpanded,
-                        Disabled = child.Disabled,
-                        IsSelected = false,
-                        OrderingNum = child.OrderingNum,
-                        FlowStepType = child.FlowStepType,
-                        TemplateImagePath = child.TemplateImagePath,
-                        TemplateImage = child.TemplateImage,
-                        Accuracy = child.Accuracy,
-                        LocationX = child.LocationX,
-                        LocationY = child.LocationY,
-                        MaxLoopCount = child.MaxLoopCount,
-                        RemoveTemplateFromResult = child.RemoveTemplateFromResult,
-                        LoopResultImagePath = child.LoopResultImagePath,
-                        MouseAction = child.MouseAction,
-                        MouseButton = child.MouseButton,
-                        MouseScrollDirectionEnum = child.MouseScrollDirectionEnum,
-                        MouseLoopInfinite = child.MouseLoopInfinite,
-                        MouseLoopTimes = child.MouseLoopTimes,
-                        MouseLoopDebounceTime = child.MouseLoopDebounceTime,
-                        MouseLoopTime = child.MouseLoopTime,
-                        SleepForHours = child.SleepForHours,
-                        SleepForMinutes = child.SleepForMinutes,
-                        SleepForSeconds = child.SleepForSeconds,
-                        SleepForMilliseconds = child.SleepForMilliseconds,
-                        WindowHeight = child.WindowHeight,
-                        WindowWidth = child.WindowWidth,
-                    };
+                    var clonedChild = CreateFlowStepClone(child, clonedNode, parentTemplateSearchFlowStep);
 
                     // Add to the parent's children
                     clonedNode.ChildrenFlowSteps.Add(clonedChild);
@@ -257,48 +182,56 @@ namespace Business.Repository.Entities
 
                 }
 
-                foreach (var child in originalChildrenTemplateSearchFlowSteps)
-                {
-                    clonedNode.ChildrenTemplateSearchFlowSteps.Add(new FlowStep
-                    {
-                        //ParentFlowStep = currentClone,
-                        //ParentFlowStepId = currentClone.Id,
-                        //ParentTemplateSearchFlowStep = clonedNode, // Preserve template references
-                        //ParentTemplateSearchFlowStepId = child.ParentTemplateSearchFlowStepId, // Preserve template IDs
-                        Name = child.Name,
-                        ProcessName = child.ProcessName,
-                        IsExpanded = child.IsExpanded,
-                        Disabled = child.Disabled,
-                        IsSelected = false,
-                        OrderingNum = child.OrderingNum,
-                        FlowStepType = child.FlowStepType,
-                        TemplateImagePath = child.TemplateImagePath,
-                        TemplateImage = child.TemplateImage,
-                        Accuracy = child.Accuracy,
-                        LocationX = child.LocationX,
-                        LocationY = child.LocationY,
-                        MaxLoopCount = child.MaxLoopCount,
-                        RemoveTemplateFromResult = child.RemoveTemplateFromResult,
-                        LoopResultImagePath = child.LoopResultImagePath,
-                        MouseAction = child.MouseAction,
-                        MouseButton = child.MouseButton,
-                        MouseScrollDirectionEnum = child.MouseScrollDirectionEnum,
-                        MouseLoopInfinite = child.MouseLoopInfinite,
-                        MouseLoopTimes = child.MouseLoopTimes,
-                        MouseLoopDebounceTime = child.MouseLoopDebounceTime,
-                        MouseLoopTime = child.MouseLoopTime,
-                        SleepForHours = child.SleepForHours,
-                        SleepForMinutes = child.SleepForMinutes,
-                        SleepForSeconds = child.SleepForSeconds,
-                        SleepForMilliseconds = child.SleepForMilliseconds,
-                        WindowHeight = child.WindowHeight,
-                        WindowWidth = child.WindowWidth,
-                    });
-                }
+                // Template search flow steps.
+                List<FlowStep> originalChildrenTemplateSearchFlowSteps = await InMemoryDbContext.FlowSteps
+                .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
+                .Where(fs => fs.Id == originalNode.Id)
+                .SelectMany(x => x.ChildrenTemplateSearchFlowSteps)
+                .ToListAsync();
+
+                foreach (FlowStep child in originalChildrenTemplateSearchFlowSteps)
+                    clonedNode.ChildrenTemplateSearchFlowSteps.Add(CreateFlowStepClone(child));
             }
 
             return clonedFlowStep;
 
+        }
+
+        private FlowStep CreateFlowStepClone(FlowStep flowStep, FlowStep? parentFlowStep = null, FlowStep? parentTemplateSearchFlowStep = null)
+        {
+            return new FlowStep
+            {
+                ParentFlowStep = parentFlowStep,
+                ParentTemplateSearchFlowStep = parentTemplateSearchFlowStep,
+                Name = flowStep.Name,
+                ProcessName = flowStep.ProcessName,
+                IsExpanded = flowStep.IsExpanded,
+                Disabled = flowStep.Disabled,
+                IsSelected = false,
+                OrderingNum = flowStep.OrderingNum,
+                FlowStepType = flowStep.FlowStepType,
+                TemplateImagePath = flowStep.TemplateImagePath,
+                TemplateImage = flowStep.TemplateImage,
+                Accuracy = flowStep.Accuracy,
+                LocationX = flowStep.LocationX,
+                LocationY = flowStep.LocationY,
+                MaxLoopCount = flowStep.MaxLoopCount,
+                RemoveTemplateFromResult = flowStep.RemoveTemplateFromResult,
+                LoopResultImagePath = flowStep.LoopResultImagePath,
+                MouseAction = flowStep.MouseAction,
+                MouseButton = flowStep.MouseButton,
+                MouseScrollDirectionEnum = flowStep.MouseScrollDirectionEnum,
+                MouseLoopInfinite = flowStep.MouseLoopInfinite,
+                MouseLoopTimes = flowStep.MouseLoopTimes,
+                MouseLoopDebounceTime = flowStep.MouseLoopDebounceTime,
+                MouseLoopTime = flowStep.MouseLoopTime,
+                SleepForHours = flowStep.SleepForHours,
+                SleepForMinutes = flowStep.SleepForMinutes,
+                SleepForSeconds = flowStep.SleepForSeconds,
+                SleepForMilliseconds = flowStep.SleepForMilliseconds,
+                WindowHeight = flowStep.WindowHeight,
+                WindowWidth = flowStep.WindowWidth,
+            };
         }
     }
 }

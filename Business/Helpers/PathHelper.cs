@@ -12,5 +12,16 @@
 
             return appDataFolder;
         }
+
+        public static string GetExportDataPath()
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string exportPath = Path.Combine(localAppData, "StepinFlow", "Export");
+
+            if (!Directory.Exists(exportPath))
+                Directory.CreateDirectory(exportPath);
+
+            return exportPath;
+        }
     }
 }

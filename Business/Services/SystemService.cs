@@ -414,39 +414,31 @@ namespace Business.Services
             SetCursorPos(point.X, point.Y);
         }
 
-        public async Task UpdateFlowsJSON(List<Flow> flows)
+        public async Task ExportFlowsJSON(List<Flow> flows, string exportFilePath)
         {
             var mapper = new MapperConfiguration(x =>
             {
                 x.CreateMap<Flow, FlowDto>();
                 x.CreateMap<FlowStep, FlowStepDto>();
-                x.CreateMap<Execution, ExecutionDto>();
-            }
-            ).CreateMapper();
-
+            }).CreateMapper();
 
             List<FlowDto> flowsDto = mapper.Map<List<FlowDto>>(flows);
-            //var json = System.Text.Json.JsonSerializer.Serialize( flowsDto );
-
-            string json = JsonConvert.SerializeObject(flowsDto, new JsonSerializerSettings
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 Formatting = Formatting.Indented
-            });
+            };
 
-            string filePath = Path.Combine(PathHelper.GetAppDataPath(), "FlowsExport.json");
-            await File.WriteAllTextAsync(filePath, json);
-
-            return;
+            string json = JsonConvert.SerializeObject(flowsDto, jsonSerializerSettings);
+            await File.WriteAllTextAsync(exportFilePath, json);
         }
 
-        public List<Flow>? LoadFlowsJSON()
+        public List<Flow>? ImportFlowsJSON(string importFilePath)
         {
-            string filePath = Path.Combine(PathHelper.GetAppDataPath(), "FlowExport.json");
-            string flowsJSON = File.ReadAllText(filePath);
+            string flowsJSON = File.ReadAllText(importFilePath);
             if (flowsJSON != null)
             {
-                var JsonFlows = JsonConvert.DeserializeObject<List<Flow>>(flowsJSON);
+                List<Flow>? JsonFlows = JsonConvert.DeserializeObject<List<Flow>>(flowsJSON);
                 if (JsonFlows != null && JsonFlows.Count > 0)
                     return JsonFlows;
             }

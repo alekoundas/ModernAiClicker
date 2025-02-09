@@ -27,7 +27,7 @@ namespace Business.Factories.Workers
             Execution? currentExecution = execution;
 
             // Get point from result of parent template search.
-            if (execution.ParentExecutionId != null)
+            if (execution.FlowStep.ParentTemplateSearchFlowStepId != null)
             {
                 while (currentExecution.ParentExecutionId != null)
                 {

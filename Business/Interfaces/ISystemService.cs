@@ -15,8 +15,8 @@ namespace Business.Interfaces
         bool MoveWindow(string processName, Model.Structs.Rectangle newWindowSize);
         void SetCursorPossition(Model.Structs.Point point);
         void CursorClick(MouseButtonsEnum mouseButtonEnum);
-        Task UpdateFlowsJSON(List<Flow> flows);
-        List<Flow>? LoadFlowsJSON();
+        Task ExportFlowsJSON(List<Flow> flows, string exportFilePath);
+        List<Flow>? ImportFlowsJSON(string importFilePath);
         ImageSizeResult GetImageSize(byte[] imagePath);
         List<string> GetProcessWindowTitles();
         void CreateFolderOnDisk(string folderName);
