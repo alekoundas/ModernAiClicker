@@ -2,6 +2,8 @@
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using Model.Models;
+using StepinFlow.Interfaces;
+using StepinFlow.Services;
 using StepinFlow.ViewModels.Pages;
 using System.Windows.Controls;
 
@@ -12,6 +14,7 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
+        private readonly IWindowService _windowService;
         private FlowsViewModel _flowsViewModel;
         public NewSelectTypeFlowStepViewModel ViewModel { get; }
 
@@ -20,14 +23,17 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
             FlowsViewModel flowsViewModel,
             ISystemService systemService,
             ITemplateSearchService templateMatchingService,
-            IBaseDatawork baseDatawork
-            )
+            IBaseDatawork baseDatawork,
+            IWindowService windowService)
+            
         {
+
+
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
             _flowsViewModel = flowsViewModel;
-
+            _windowService = windowService;
 
             ViewModel = viewModel;
             DataContext = this;
@@ -42,7 +48,7 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
 
             if (flowStep.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
             {
-                TemplateSearchFlowStepViewModel viewModel = new TemplateSearchFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _baseDatawork);
+                TemplateSearchFlowStepViewModel viewModel = new TemplateSearchFlowStepViewModel(flowStep, _flowsViewModel, _systemService, _templateMatchingService, _baseDatawork, _windowService);
                 this.UIFlowStepDetailFrame.Navigate(new TemplateSearchFlowStepPage(viewModel));
             }
             else if (flowStep.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP)

@@ -15,6 +15,7 @@ using DataAccess.Repository.Interface;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StepinFlow.Interfaces;
 using StepinFlow.Services;
 using StepinFlow.ViewModels.Pages;
 using StepinFlow.ViewModels.Pages.Executions;
@@ -67,35 +68,44 @@ namespace StepinFlow
                 services.AddScoped<IFlowStepRepository, FlowStepRepository>();
                 services.AddScoped<IExecutionRepository, ExecutionRepository>();
 
+                // Windows.
+                services.AddTransient<ScreenshotSelectionWindow>();
+                services.AddTransient<ScreenshotSelectionWindowViewModel>();
 
                 services.AddSingleton<INavigationWindow, MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
 
-                services.AddSingleton<INavigationService, NavigationService>();
+                // Services.
                 services.AddSingleton<ISnackbarService, SnackbarService>();
+                services.AddSingleton<INavigationService, NavigationService>();
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
+
                 services.AddScoped<ISystemService, SystemService>();
+                services.AddScoped<IWindowService, WindowService>();
                 services.AddScoped<ITemplateSearchService, TemplateSearchService>();
 
+                // DB context
+                services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Transient);
+
+                // Factory.
                 services.AddScoped<IExecutionFactory, ExecutionFactory>();
-                services.AddScoped<WindowMoveExecutionWorker>();
-                services.AddScoped<WindowResizeExecutionWorker>();
+                services.AddScoped<GoToExecutionWorker>();
+                services.AddScoped<SleepExecutionWorker>();
                 services.AddScoped<MouseMoveExecutionWorker>();
+                services.AddScoped<WindowMoveExecutionWorker>();
                 services.AddScoped<MouseClickExecutionWorker>();
                 services.AddScoped<MouseScrollExecutionWorker>();
+                services.AddScoped<WindowResizeExecutionWorker>();
                 services.AddScoped<TemplateSearchExecutionWorker>();
                 services.AddScoped<TemplateSearchLoopExecutionWorker>();
                 services.AddScoped<MultipleTemplateSearchExecutionWorker>();
                 services.AddScoped<MultipleTemplateSearchLoopExecutionWorker>();
-                services.AddScoped<SleepExecutionWorker>();
-                services.AddScoped<GoToExecutionWorker>();
 
                 // User Controls
                 services.AddSingleton<TreeViewUserControl>();
                 services.AddSingleton<TreeViewUserControlViewModel>();
 
                 // Pages
-                //Tabs
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
 
@@ -146,7 +156,6 @@ namespace StepinFlow
                 services.AddSingleton<WindowMoveFlowStepPage>();
 
                 //Flow execution step detail
-
                 services.AddSingleton<TemplateSearchExecutionPage>();
                 services.AddSingleton<TemplateSearchExecutionViewModel>();
 
@@ -180,10 +189,6 @@ namespace StepinFlow
                 services.AddSingleton<WindowMoveExecutionViewModel>();
                 services.AddSingleton<WindowMoveExecutionPage>();
 
-
-
-                // DB context
-                services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Transient);
             }).Build();
 
         /// <summary>
@@ -202,15 +207,9 @@ namespace StepinFlow
         /// </summary>
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            //DispatcherUnhandledException += app_DispatcherUnhandledException;
             _host.Start();
-            //v_host.Services.GetRequiredService<>()
         }
-        //static void app_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        //{
-        //    throw e.Exception;
-        //    // Log/inspect the inspection here
-        //}
+     
         /// <summary>
         /// Occurs when the application is closing.
         /// </summary>

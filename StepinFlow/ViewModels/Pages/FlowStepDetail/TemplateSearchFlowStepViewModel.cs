@@ -9,6 +9,7 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
+using StepinFlow.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -17,6 +18,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
+        private readonly IWindowService _windowService;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
@@ -34,12 +36,19 @@ namespace StepinFlow.ViewModels.Pages
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
-        public TemplateSearchFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public TemplateSearchFlowStepViewModel(
+            FlowStep flowStep, 
+            FlowsViewModel flowsViewModel, 
+            ISystemService systemService, 
+            ITemplateSearchService templateMatchingService, 
+            IBaseDatawork baseDatawork,
+            IWindowService windowService)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
+            _windowService = windowService;
 
             _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
@@ -63,7 +72,16 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep.TemplateImage = File.ReadAllBytes(TemplateImgPath);
                 ShowTemplateImg?.Invoke(openFileDialog.FileName);
             }
+        }
 
+        [RelayCommand]
+        private async Task OnButtonTakeScreenshotClick()
+        {
+            byte[]? resultTemplate = await _windowService.OpenScreenshotSelectionWindow();
+            if (resultTemplate == null)
+                return;
+
+            FlowStep.TemplateImage = resultTemplate;
         }
 
 

@@ -15,40 +15,22 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <ObjectDataProvider
+            x:Key="FlowStepTypesEnum"
+            MethodName="GetValues"
+            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:FlowStepTypesEnum" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Page.Resources>
 
     <Grid VerticalAlignment="Top">
-        <Grid.Resources>
-            <ObjectDataProvider
-                x:Key="FlowStepTypesEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepTypesEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-            <ObjectDataProvider
-                x:Key="FlowStepActionsFoundEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepActionsFoundEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-            <ObjectDataProvider
-                x:Key="FlowStepActionsNotFoundEnum"
-                MethodName="GetValues"
-                ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enum:FlowStepActionsNotFoundEnum" />
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-        </Grid.Resources>
-
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-
 
 
 
@@ -67,13 +49,24 @@
 
 
             <Label>3. Select image for search</Label>
-            <Button Grid.Column="1" Content="Open file">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Button>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+
+                <Button Content="Open file">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+
+                <Button Content="Take screenshot">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTakeScreenshotClickCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+            </StackPanel>
             <Image
                 x:Name="UITemplateImage"
                 Grid.Column="0"
@@ -91,7 +84,6 @@
 
 
             <Label>4. Select minimum accuracy</Label>
-            <!--<TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay}" />-->
             <TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay}" />
 
             <Label>4. Test</Label>

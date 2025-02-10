@@ -26,16 +26,16 @@ namespace StepinFlow.ViewModels.Windows
             },
             new NavigationViewItem()
             {
+                Content = "Flows",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Flow16},
+                TargetPageType = typeof(Views.Pages.FlowsPage)
+            },
+            new NavigationViewItem()
+            {
                 Content = "Execute",
                 Icon = new SymbolIcon { Symbol = SymbolRegular.PersonRunning20},
                 TargetPageType = typeof(Views.Pages.ExecutionPage)
             },
-            new NavigationViewItem()
-            {
-                Content = "Flows",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Flow16},
-                TargetPageType = typeof(Views.Pages.FlowsPage)
-            }
         };
 
         [ObservableProperty]
