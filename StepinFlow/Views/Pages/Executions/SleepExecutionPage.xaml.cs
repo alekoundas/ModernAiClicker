@@ -10,15 +10,14 @@ namespace StepinFlow.Views.Pages.Executions
         public SleepExecutionPage()
         {
             ViewModel = new SleepExecutionViewModel();
-            DataContext = this;
+            DataContext = ViewModel;
             InitializeComponent();
         }
 
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
             ViewModel = (SleepExecutionViewModel)executionViewModel;
-            InitializeComponent();
-            DataContext = this;
+            DataContext = ViewModel;
         }
     }
 }

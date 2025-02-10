@@ -9,15 +9,13 @@ namespace StepinFlow.Views.Pages.Executions
         public WindowResizeExecutionViewModel ViewModel { get; set; }
         public WindowResizeExecutionPage()
         {
-            ViewModel = new WindowResizeExecutionViewModel();
-            DataContext = this;
+            DataContext = new WindowResizeExecutionViewModel();
             InitializeComponent();
-            DataContext = this;
         }
 
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
-            ViewModel = (WindowResizeExecutionViewModel)executionViewModel;
+            DataContext = (WindowResizeExecutionViewModel)executionViewModel;
         }
     }
 }

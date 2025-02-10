@@ -10,14 +10,14 @@ namespace StepinFlow.Views.Pages.Executions
         public CursorScrollExecutionPage()
         {
             ViewModel = new CursorScrollExecutionViewModel();
-            DataContext = this;
+            DataContext = ViewModel;
             InitializeComponent();
         }
 
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
             ViewModel = (CursorScrollExecutionViewModel)executionViewModel;
-            DataContext = this;
+            DataContext = ViewModel;
         }
 
     }

@@ -47,7 +47,7 @@
             <StackPanel>
                 <Label>Resize application window.</Label>
                 <Label>Select application window to resize:</Label>
-                <ComboBox ItemsSource="{Binding ViewModel.ProcessList}" SelectedItem="{Binding ViewModel.Execution.FlowStep.ProcessName}" />
+                <ComboBox ItemsSource="{Binding ProcessList}" SelectedItem="{Binding Execution.FlowStep.ProcessName}" />
             </StackPanel>
 
 
@@ -56,13 +56,13 @@
             <!--  Width  -->
             <StackPanel Grid.Row="2">
                 <Label>Width:</Label>
-                <TextBox Text="{Binding ViewModel.Execution.FlowStep.WindowWidth, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.WindowWidth, Mode=TwoWay}" />
             </StackPanel>
 
             <!--  Height  -->
             <StackPanel Grid.Row="2" Grid.Column="3">
                 <Label>Height:</Label>
-                <TextBox Text="{Binding ViewModel.Execution.FlowStep.WindowHeight, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.WindowHeight, Mode=TwoWay}" />
             </StackPanel>
 
 

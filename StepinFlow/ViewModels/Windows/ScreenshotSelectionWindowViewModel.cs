@@ -1,23 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Model.Structs;
-using Point = System.Windows.Point;
 using System.Drawing;
 using Business.Interfaces;
-using Model.Models;
-using System.Windows.Shapes;
 using System.Drawing.Imaging;
-using Business.Helpers;
+using Point = System.Windows.Point;
 
 namespace StepinFlow.ViewModels.Windows
 {
@@ -33,7 +24,7 @@ namespace StepinFlow.ViewModels.Windows
         public byte[]? ResultImage = null;
         private Stack<BitmapSource> _undoStack = new Stack<BitmapSource>();
         private Stack<BitmapSource> _redoStack = new Stack<BitmapSource>();
-        private System.Windows.Point _startPoint;
+        private Point _startPoint;
 
         [ObservableProperty]
         private BitmapSource? _screenshot;
@@ -81,7 +72,7 @@ namespace StepinFlow.ViewModels.Windows
 
             _startPoint = e.GetPosition(canvas);
 
-            // Set initial position for the selection rectangle
+            // Set initial position for the selection rectangle.
             RectangleLeft = _startPoint.X;
             RectangleTop = _startPoint.Y;
             RectangleWidth = 0;
@@ -98,7 +89,7 @@ namespace StepinFlow.ViewModels.Windows
 
             Point endPoint = e.GetPosition(canvas);
 
-            // Calculate selection rectangle
+            // Calculate selection rectangle.
             RectangleLeft = Math.Min(endPoint.X, _startPoint.X);
             RectangleTop = Math.Min(endPoint.Y, _startPoint.Y);
             RectangleWidth = Math.Abs(endPoint.X - _startPoint.X);
@@ -153,7 +144,7 @@ namespace StepinFlow.ViewModels.Windows
                 Bitmap resultBitmap = BitmapSourceToBitmap(Screenshot);
                 resultBitmap.Save(stream, ImageFormat.Png);
 
-                // Convert Bitmap to Byte[]
+                // Convert Bitmap to Byte[].
                 ResultImage = stream.ToArray();
                 CloseWindow?.Invoke();
             }
@@ -185,7 +176,8 @@ namespace StepinFlow.ViewModels.Windows
             if (Screenshot == null)
                 return null;
 
-            // Convert selection area to original image coordinates
+            // Convert selection area to original image coordinates.
+            // (since the image is scaled to fit the window)
             double scaleX = Screenshot.PixelWidth / ImageActualWidth;
             double scaleY = Screenshot.PixelHeight / ImageActualHeight;
 
@@ -224,7 +216,7 @@ namespace StepinFlow.ViewModels.Windows
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            // Create a new Bitmap with the same dimensions
+            // Create a new Bitmap with the same dimensions.
             Bitmap bitmap = new Bitmap(source.PixelWidth, source.PixelHeight, PixelFormat.Format32bppPArgb);
 
             // Lock the bitmap's bits for writing
@@ -233,7 +225,7 @@ namespace StepinFlow.ViewModels.Windows
                 ImageLockMode.WriteOnly,
                 bitmap.PixelFormat);
 
-            // Copy the BitmapSource pixels to the Bitmap
+            // Copy the BitmapSource pixels to the Bitmap.
             source.CopyPixels(
                 Int32Rect.Empty,
                 data.Scan0,

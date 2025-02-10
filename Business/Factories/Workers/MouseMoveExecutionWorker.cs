@@ -28,7 +28,6 @@ namespace Business.Factories.Workers
 
             // Get point from result of parent template search.
             if (execution.FlowStep.ParentTemplateSearchFlowStepId != null)
-            {
                 while (currentExecution.ParentExecutionId != null)
                 {
                     currentExecution = await _baseDatawork.Executions.Query
@@ -49,18 +48,17 @@ namespace Business.Factories.Workers
                 }
 
 
-                // If parentExecution exists get value from result.
-                // Else get point from flow step.
-                if (parentExecution?.ResultLocationX != null && parentExecution?.ResultLocationY != null)
-                    pointToMove = new Point(parentExecution.ResultLocationX.Value, parentExecution.ResultLocationY.Value);
-                else
-                    pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
+            // If parentExecution exists get value from result.
+            // Else get point from flow step.
+            if (parentExecution?.ResultLocationX != null && parentExecution?.ResultLocationY != null)
+                pointToMove = new Point(parentExecution.ResultLocationX.Value, parentExecution.ResultLocationY.Value);
+            else
+                pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
 
-                _systemService.SetCursorPossition(pointToMove);
-                execution.ResultLocationX = pointToMove.X;
-                execution.ResultLocationY = pointToMove.Y;
-                await _baseDatawork.SaveChangesAsync();
-            }
+            _systemService.SetCursorPossition(pointToMove);
+            execution.ResultLocationX = pointToMove.X;
+            execution.ResultLocationY = pointToMove.Y;
+            await _baseDatawork.SaveChangesAsync();
         }
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)

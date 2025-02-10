@@ -8,7 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:StepinFlow.Views.Pages.FlowStepDetail"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="CursorClickFlowStepPage"
+    Title="WindowMoveFlowStepPage"
     d:DataContext="{d:DesignInstance local:WindowMoveFlowStepPage,
     IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
@@ -18,16 +18,6 @@
     <StackPanel>
 
         <Grid Margin="10,10,10,50">
-            <Grid.Resources>
-                <ObjectDataProvider
-                    x:Key="MouseButtonEnum"
-                    MethodName="GetValues"
-                    ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:MouseButtonsEnum" />
-                    </ObjectDataProvider.MethodParameters>
-                </ObjectDataProvider>
-            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.1*" />

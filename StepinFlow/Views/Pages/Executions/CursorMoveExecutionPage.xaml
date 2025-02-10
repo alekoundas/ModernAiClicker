@@ -32,7 +32,7 @@
             </Grid.RowDefinitions>
 
             <Label>Parents successful locations:</Label>
-            <ComboBox ItemsSource="{Binding ViewModel.Parents}" SelectedItem="{Binding ViewModel.Execution.FlowStep.ParentTemplateSearchFlowStep, Mode=TwoWay}">
+            <ComboBox ItemsSource="{Binding  Parents}" SelectedItem="{Binding  Execution.FlowStep.ParentTemplateSearchFlowStep, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -54,10 +54,10 @@
 
             <StackPanel Grid.Column="2">
                 <Label>X:</Label>
-                <TextBox Text="{Binding ViewModel.Execution.FlowStep.LocationX, Mode=TwoWay}" />
+                <TextBox Text="{Binding  Execution.FlowStep.LocationX, Mode=TwoWay}" />
 
                 <Label>Y:</Label>
-                <TextBox Text="{Binding ViewModel.Execution.FlowStep.LocationY, Mode=TwoWay}" />
+                <TextBox Text="{Binding  Execution.FlowStep.LocationY, Mode=TwoWay}" />
 
             </StackPanel>
 
@@ -67,10 +67,10 @@
                 HorizontalAlignment="Center">
                 <Label>Result location:</Label>
                 <Label>X:</Label>
-                <TextBox Text="{Binding ViewModel.Execution.ResultLocationX, Mode=TwoWay}" />
+                <TextBox Text="{Binding  Execution.ResultLocationX, Mode=TwoWay}" />
 
                 <Label>Y:</Label>
-                <TextBox Text="{Binding ViewModel.Execution.ResultLocationY, Mode=TwoWay}" />
+                <TextBox Text="{Binding  Execution.ResultLocationY, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 

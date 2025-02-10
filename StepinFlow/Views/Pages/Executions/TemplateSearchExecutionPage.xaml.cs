@@ -13,7 +13,7 @@ namespace StepinFlow.Views.Pages.Executions
         public TemplateSearchExecutionPage()
         {
             ViewModel = new TemplateSearchExecutionViewModel();
-            DataContext = this;
+            DataContext = ViewModel;
             InitializeComponent();
         }
 
@@ -22,7 +22,7 @@ namespace StepinFlow.Views.Pages.Executions
             ViewModel.ShowResultImage -= ShowResultImage;
             ViewModel = (TemplateSearchExecutionViewModel)executionViewModel;
             ViewModel.ShowResultImage += ShowResultImage;
-            DataContext = this;
+            DataContext = ViewModel;
         }
 
         public void ShowResultImage(string filePath)

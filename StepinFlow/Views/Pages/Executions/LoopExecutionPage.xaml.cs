@@ -11,14 +11,14 @@ namespace StepinFlow.Views.Pages.Executions
         public LoopExecutionPage()
         {
             ViewModel = new LoopExecutionViewModel();
-            DataContext = this;
+            DataContext = ViewModel;
             InitializeComponent();
         }
 
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
             ViewModel = (LoopExecutionViewModel)executionViewModel;
-            DataContext = this;
+            DataContext = ViewModel;
         }
     }
 }

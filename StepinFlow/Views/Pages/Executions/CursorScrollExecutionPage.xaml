@@ -54,10 +54,10 @@
 
             <StackPanel>
                 <Label>Scroll direction:</Label>
-                <ComboBox ItemsSource="{Binding ViewModel.Execution.FlowStep.MouseScrollDirectionEnum}" SelectedItem="{Binding ViewModel.Execution.FlowStep.MouseScrollDirectionEnum}" />
+                <ComboBox ItemsSource="{Binding  Execution.FlowStep.MouseScrollDirectionEnum}" SelectedItem="{Binding  Execution.FlowStep.MouseScrollDirectionEnum}" />
 
                 <Label>Scroll steps:</Label>
-                <TextBox Text="{Binding ViewModel.Execution.FlowStep.MouseLoopTimes}" />
+                <TextBox Text="{Binding  Execution.FlowStep.MouseLoopTimes}" />
             </StackPanel>
 
         </Grid>

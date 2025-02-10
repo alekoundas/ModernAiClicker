@@ -11,14 +11,14 @@ namespace StepinFlow.Views.Pages.Executions
         public GoToExecutionPage(IBaseDatawork baseDatawork)
         {
             ViewModel = new GoToExecutionViewModel(baseDatawork);
-            DataContext = this;
+            DataContext = ViewModel;
             InitializeComponent();
         }
 
         public void SetViewModel(IExecutionViewModel executionViewModel)
         {
             ViewModel = (GoToExecutionViewModel)executionViewModel;
-            DataContext = this;
+            DataContext = ViewModel;
         }
     }
 }

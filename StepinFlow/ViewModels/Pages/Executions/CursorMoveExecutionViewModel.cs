@@ -33,8 +33,8 @@ namespace StepinFlow.ViewModels.Pages.Executions
                 .First();
 
 
-            if (Execution?.FlowStep?.ParentTemplateSearchFlowStep != null)
-                Parents = new ObservableCollection<FlowStep>() { Execution.FlowStep.ParentTemplateSearchFlowStep };
+            //if (Execution?.FlowStep?.ParentTemplateSearchFlowStep != null)
+            //    Parents = new ObservableCollection<FlowStep>() { Execution.FlowStep.ParentTemplateSearchFlowStep };
 
         }
 
