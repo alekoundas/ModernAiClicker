@@ -26,6 +26,10 @@ namespace StepinFlow.ViewModels.UserControls
         public event OnAddFlowStepClick? OnAddFlowStepClickEvent;
         public delegate void OnAddFlowStepClick(FlowStep newFlowStep);
 
+        private FlowStep? _selectedFlowStep = null;
+        private Flow? _selectedFlow = null;
+
+
         [ObservableProperty]
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
 
@@ -64,15 +68,6 @@ namespace StepinFlow.ViewModels.UserControls
             FlowsList = new ObservableCollection<Flow>(flows);
         }
 
-        [RelayCommand]
-        private void OnButtonCopyClick(FlowStep flowStep)
-        {
-            CoppiedFlowStepId = flowStep.Id;
-
-            // Fire event.
-            OnFlowStepCloneEvent?.Invoke(flowStep.Id);
-        }
-
         public async Task AddNewFlow()
         {
             FlowStep newFlowStep = new FlowStep();
@@ -104,8 +99,20 @@ namespace StepinFlow.ViewModels.UserControls
             FlowsList = new ObservableCollection<Flow>(flows);
         }
 
+
+
+
         [RelayCommand]
-        private async Task OnButtonNewClick(FlowStep flowStep)
+        private void OnButtonCopyClick(FlowStep flowStep)
+        {
+            CoppiedFlowStepId = flowStep.Id;
+
+            // Fire event.
+            OnFlowStepCloneEvent?.Invoke(flowStep.Id);
+        }
+
+        [RelayCommand]
+        private void OnButtonNewClick(FlowStep flowStep)
         {
             FlowStep newFlowStep = new FlowStep();
 
@@ -237,12 +244,29 @@ namespace StepinFlow.ViewModels.UserControls
         private void OnSelected(RoutedPropertyChangedEventArgs<object> routedPropertyChangedEventArgs)
         {
             object selectedItem = routedPropertyChangedEventArgs.NewValue;
-            if (selectedItem is FlowStep)
+            if (selectedItem is FlowStep flowStep)
             {
-                FlowStep flowStep = (FlowStep)selectedItem;
+                _selectedFlowStep = flowStep;
+                _selectedFlow = null;
                 OnSelectedFlowStepIdChangedEvent?.Invoke(flowStep.Id);
             }
+            else if (selectedItem is Flow flow)
+            {
+                _selectedFlowStep = null;
+                _selectedFlow = flow;
+                OnSelectedFlowStepIdChangedEvent?.Invoke(flow.Id);
+            }
+        }
 
+
+        [RelayCommand]
+        private void OnDoubleClick()
+        {
+            if (_selectedFlowStep != null)
+                _selectedFlowStep.IsExpanded = !_selectedFlowStep.IsExpanded;
+
+            if (_selectedFlow != null)
+                _selectedFlow.IsExpanded = !_selectedFlow.IsExpanded;
         }
 
         [RelayCommand]

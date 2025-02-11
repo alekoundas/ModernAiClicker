@@ -209,6 +209,9 @@
                 <i:EventTrigger EventName="SelectedItemChanged">
                     <i:InvokeCommandAction Command="{Binding ViewModel.SelectedCommand}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding ViewModel.DoubleClickCommand}" />
+                </i:EventTrigger>
             </i:Interaction.Triggers>
 
             <i:Interaction.Behaviors>

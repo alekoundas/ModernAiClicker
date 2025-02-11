@@ -28,7 +28,6 @@ namespace StepinFlow.ViewModels.Pages.Executions
         public async void  SetExecution(Execution execution)
         {
             execution = await _baseDatawork.Executions.Query
-                .AsNoTracking()
                 .Include(x=>x.FlowStep.ParentTemplateSearchFlowStep.ChildrenTemplateSearchFlowSteps)
                 .FirstAsync(x=>x.Id==execution.Id);
 
