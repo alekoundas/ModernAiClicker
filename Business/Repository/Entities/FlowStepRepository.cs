@@ -102,7 +102,7 @@ namespace Business.Repository.Entities
             return nextChild;
         }
 
-        public async Task<FlowStep> LoadAllChildren(FlowStep flowStep)
+        public async Task<FlowStep> LoadAllExpandedChildren(FlowStep flowStep)
         {
             // Initialize a stack to simulate recursion.
             var stack = new Stack<FlowStep>();
@@ -111,10 +111,10 @@ namespace Business.Repository.Entities
             while (stack.Count > 0)
             {
                 // Process the current node.
-                var currentFlowStep = stack.Pop();
+                FlowStep currentFlowStep = stack.Pop();
 
                 // Load its children from the database.
-                var childFlowSteps = await InMemoryDbContext.FlowSteps
+                List<FlowStep> childFlowSteps = await InMemoryDbContext.FlowSteps
                     .Where(x => x.Id == currentFlowStep.Id)
                     .SelectMany(x => x.ChildrenFlowSteps)
                     .ToListAsync();
@@ -125,6 +125,17 @@ namespace Business.Repository.Entities
                 foreach (var childFlowStep in childFlowSteps)
                     if (childFlowStep.IsExpanded)
                         stack.Push(childFlowStep);
+
+                    // Add one more layer to make expander in ui visible.
+                    else
+                    {
+                        List<FlowStep> notexpandedFlowSteps = await InMemoryDbContext.FlowSteps
+                            .Where(x => x.Id == childFlowStep.Id)
+                            .SelectMany(x => x.ChildrenFlowSteps)
+                            .ToListAsync();
+
+                        childFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(notexpandedFlowSteps);
+                    }
             }
 
             return flowStep;

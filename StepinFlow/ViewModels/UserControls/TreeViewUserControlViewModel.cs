@@ -61,7 +61,7 @@ namespace StepinFlow.ViewModels.UserControls
 
             foreach (Flow flow in flows)
                 foreach (FlowStep flowStep in flow.FlowSteps)
-                    await _baseDatawork.FlowSteps.LoadAllChildren(flowStep);
+                    await _baseDatawork.FlowSteps.LoadAllExpandedChildren(flowStep);
 
             //FlowsList = null;
             FlowsList = new ObservableCollection<Flow>(flows);
@@ -274,16 +274,14 @@ namespace StepinFlow.ViewModels.UserControls
             if (eventParameter is FlowStep)
             {
                 FlowStep flowStep = (FlowStep)eventParameter;
-
-                foreach (var childFlowStep in flowStep.ChildrenFlowSteps)
-                    await _baseDatawork.FlowSteps.LoadAllChildren(childFlowStep);
+                await _baseDatawork.FlowSteps.LoadAllExpandedChildren(flowStep);
             }
             else if (eventParameter is Flow)
             {
                 Flow flow = (Flow)eventParameter;
 
                 foreach (var childFlowStep in flow.FlowSteps)
-                    await _baseDatawork.FlowSteps.LoadAllChildren(childFlowStep);
+                    await _baseDatawork.FlowSteps.LoadAllExpandedChildren(childFlowStep);
             }
         }
     }
