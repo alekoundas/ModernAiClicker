@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class MultipleTemplateSearchFlowStepViewModel : ObservableObject
+    public partial class MultipleTemplateSearchFlowStepViewModel : ObservableObject, IFlowStepViewModel
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
@@ -25,37 +25,39 @@ namespace StepinFlow.ViewModels.Pages
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
         [ObservableProperty]
-        private ObservableCollection<FlowStep> _childrenTemplateSearchFlowSteps;
+        private ObservableCollection<FlowStep> _childrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>();
         private readonly List<FlowStep> _childrenTemplateSearchFlowStepsToRemove = new List<FlowStep>();
 
         [ObservableProperty]
-        private string _templateImgPath = "";
-
-        [ObservableProperty]
-        private FlowStep _flowStep;
-
-        //public event ShowTemplateImgEvent? ShowTemplateImg;
-        //public delegate void ShowTemplateImgEvent(string filePath);
+        private FlowStep _flowStep = new FlowStep();
 
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
-        public MultipleTemplateSearchFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public MultipleTemplateSearchFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
-
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-
-            _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
-
-            TemplateImgPath = flowStep.TemplateImagePath;
-            List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD).ToList();
-            _childrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
-            //ShowTemplateImg?.Invoke(TemplateImgPath);
-
         }
+
+        public async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if(flowStep != null)
+            {
+                FlowStep = flowStep;
+                List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD).ToList();
+                ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
+            }
+        }
+
+        public void LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
+        }
+
 
         [RelayCommand]
         private void OnButtonOpenFileClick(FlowStep flowStep)
@@ -67,8 +69,7 @@ namespace StepinFlow.ViewModels.Pages
 
             if (openFileDialog.ShowDialog() == true)
             {
-                TemplateImgPath = openFileDialog.FileName;
-                flowStep.TemplateImage = File.ReadAllBytes(TemplateImgPath);
+                flowStep.TemplateImage = File.ReadAllBytes(openFileDialog.FileName);
             }
         }
 
@@ -132,7 +133,7 @@ namespace StepinFlow.ViewModels.Pages
 
             // Find search area.
             Rectangle searchRectangle;
-            if (FlowStep.ProcessName.Length > 0 && TemplateImgPath != null)
+            if (FlowStep.ProcessName.Length > 0 )
                 searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
             else
                 searchRectangle = _systemService.GetScreenSize();

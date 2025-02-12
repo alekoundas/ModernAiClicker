@@ -100,8 +100,9 @@ namespace StepinFlow.ViewModels.Pages
             if (flows != null)
                 foreach (Flow flow in flows)
                 {
-                    Flow? clonedFlow = await FlowStepClone(flow);
-                    _baseDatawork.Flows.Add(clonedFlow);
+                    Flow? clonedFlow = FlowStepClone(flow);
+                    if (clonedFlow != null)
+                        _baseDatawork.Flows.Add(clonedFlow);
                 }
 
             await _baseDatawork.SaveChangesAsync();
@@ -119,7 +120,7 @@ namespace StepinFlow.ViewModels.Pages
         }
 
 
-        private async Task<Flow?> FlowStepClone(Flow flow)
+        private Flow? FlowStepClone(Flow flow)
         {
             Queue<(FlowStep, FlowStep)> queue = new Queue<(FlowStep, FlowStep)>();
             Dictionary<int, FlowStep> clonedFlowSteps = new Dictionary<int, FlowStep>();

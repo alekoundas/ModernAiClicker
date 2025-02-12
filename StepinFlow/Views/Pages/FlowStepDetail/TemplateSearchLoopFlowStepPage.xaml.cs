@@ -1,13 +1,14 @@
-﻿using StepinFlow.ViewModels.Pages;
+﻿using Business.Interfaces;
+using StepinFlow.ViewModels.Pages;
 using System.Net.Cache;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class TemplateSearchLoopFlowStepPage : Page
+    public partial class TemplateSearchLoopFlowStepPage : Page, IPage
     {
-        public TemplateSearchLoopFlowStepViewModel ViewModel { get; }
+        public IFlowStepViewModel ViewModel { get; set; }
 
         public TemplateSearchLoopFlowStepPage(TemplateSearchLoopFlowStepViewModel viewModel)
         {

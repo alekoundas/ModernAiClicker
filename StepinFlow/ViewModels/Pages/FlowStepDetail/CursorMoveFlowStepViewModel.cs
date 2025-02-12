@@ -9,14 +9,14 @@ using Model.Structs;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class CursorMoveFlowStepViewModel : ObservableObject
+    public partial class CursorMoveFlowStepViewModel : ObservableObject, IFlowStepViewModel
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private FlowStep _flowStep;
+        private FlowStep _flowStep = new FlowStep();
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
@@ -25,21 +25,34 @@ namespace StepinFlow.ViewModels.Pages
         private FlowStep? _selectedFlowStep = null;
 
 
-        public CursorMoveFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public CursorMoveFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
-
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
-            FlowStep = flowStep;
+            FlowStep = new FlowStep();
 
-            SelectedFlowStep = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
 
             if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
                 GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);
 
             if (FlowStep.ParentFlowStepId.HasValue)
                 GetParents(FlowStep.ParentFlowStepId.Value);
+        }
+
+        public async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (flowStep != null)
+            {
+                FlowStep = flowStep;
+                SelectedFlowStep = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
+            }
+        }
+
+        public void LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
         }
 
 
@@ -49,8 +62,6 @@ namespace StepinFlow.ViewModels.Pages
             Point point = new Point(FlowStep.LocationX, FlowStep.LocationY);
             _systemService.SetCursorPossition(point);
         }
-
-
 
         [RelayCommand]
         private void OnButtonCancelClick()

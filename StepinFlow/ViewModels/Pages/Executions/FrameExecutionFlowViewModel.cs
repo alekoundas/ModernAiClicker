@@ -13,7 +13,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
 
         public Flow? Flow;
 
-        public ObservableCollection<Execution> Executions;
+        public ObservableCollection<Execution> Executions = new ObservableCollection<Execution>();
         public bool StopExecution { get; set; }
 
 

@@ -11,10 +11,10 @@ namespace StepinFlow.ViewModels.Pages.Executions
         private Execution _execution;
 
         [ObservableProperty]
-        private string _timeLeft;
+        private string _timeLeft = "";
 
         [ObservableProperty]
-        private string _timeTotal;
+        private string _timeTotal = "";
 
         private readonly DispatcherTimer _timer;
         private TimeSpan _timeElapsed = new TimeSpan();

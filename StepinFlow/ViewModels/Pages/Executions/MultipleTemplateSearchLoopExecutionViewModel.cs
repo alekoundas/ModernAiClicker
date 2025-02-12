@@ -29,12 +29,12 @@ namespace StepinFlow.ViewModels.Pages.Executions
         public async void SetExecution(Execution execution)
         {
             execution = await _baseDatawork.Executions.Query
-                .Include(x=>x.FlowStep.ParentTemplateSearchFlowStep.ChildrenTemplateSearchFlowSteps)
+                .Include(x => x.FlowStep!.ParentTemplateSearchFlowStep!.ChildrenTemplateSearchFlowSteps)
                 .FirstAsync(x => x.Id == execution.Id);
 
             Execution = execution;
 
-            List<FlowStep> flowSteps = execution.FlowStep.ParentTemplateSearchFlowStep.ChildrenTemplateSearchFlowSteps
+            List<FlowStep> flowSteps = execution.FlowStep!.ParentTemplateSearchFlowStep!.ChildrenTemplateSearchFlowSteps
                 .Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD)
                 .ToList();
 

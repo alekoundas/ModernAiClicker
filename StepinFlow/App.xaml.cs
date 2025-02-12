@@ -59,15 +59,6 @@ namespace StepinFlow
                 // TaskBar manipulation
                 services.AddSingleton<ITaskBarService, TaskBarService>();
 
-                // Service containing navigation, same as INavigationWindow... but without window
-                services.AddSingleton<INavigationService, NavigationService>();
-
-                // Repository
-                services.AddTransient<IBaseDatawork, BaseDatawork>();
-                services.AddScoped<IFlowRepository, FlowRepository>();
-                services.AddScoped<IFlowStepRepository, FlowStepRepository>();
-                services.AddScoped<IExecutionRepository, ExecutionRepository>();
-
                 // Windows.
                 services.AddTransient<ScreenshotSelectionWindow>();
                 services.AddTransient<ScreenshotSelectionWindowViewModel>();
@@ -83,6 +74,12 @@ namespace StepinFlow
                 services.AddScoped<ISystemService, SystemService>();
                 services.AddScoped<IWindowService, WindowService>();
                 services.AddScoped<ITemplateSearchService, TemplateSearchService>();
+                services.AddTransient<IBaseDatawork, BaseDatawork>();
+
+                // Repository
+                services.AddScoped<IFlowRepository, FlowRepository>();
+                services.AddScoped<IFlowStepRepository, FlowStepRepository>();
+                services.AddScoped<IExecutionRepository, ExecutionRepository>();
 
                 // DB context
                 services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Transient);
@@ -105,6 +102,9 @@ namespace StepinFlow
                 services.AddSingleton<TreeViewUserControl>();
                 services.AddSingleton<TreeViewUserControlViewModel>();
 
+                services.AddSingleton<FlowStepFrameUserControl>();
+                services.AddSingleton<FlowStepFrameUserControlViewModel>();
+
                 // Pages
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
@@ -122,9 +122,6 @@ namespace StepinFlow
                 services.AddSingleton<SettingsViewModel>();
 
                 //Flow step detail
-                services.AddSingleton<NewSelectTypeFlowStepPage>();
-                services.AddSingleton<NewSelectTypeFlowStepViewModel>();
-
                 services.AddSingleton<TemplateSearchFlowStepPage>();
                 services.AddSingleton<TemplateSearchFlowStepViewModel>();
 
@@ -137,11 +134,17 @@ namespace StepinFlow
                 services.AddSingleton<MultipleTemplateSearchFlowStepPage>();
                 services.AddSingleton<MultipleTemplateSearchFlowStepViewModel>();
 
+                services.AddSingleton<WaitForTemplateFlowStepPage>();
+                services.AddSingleton<WaitForTemplateFlowStepViewModel>();
+
                 services.AddSingleton<CursorClickFlowStepPage>();
                 services.AddSingleton<CursorClickFlowStepViewModel>();
 
                 services.AddSingleton<CursorMoveFlowStepPage>();
                 services.AddSingleton<CursorMoveFlowStepViewModel>();
+
+                services.AddSingleton<CursorScrollFlowStepPage>();
+                services.AddSingleton<CursorScrollFlowStepViewModel>();
 
                 services.AddSingleton<SleepFlowStepPage>();
                 services.AddSingleton<SleepFlowStepViewModel>();
@@ -149,11 +152,14 @@ namespace StepinFlow
                 services.AddSingleton<GoToFlowStepPage>();
                 services.AddSingleton<GoToFlowStepViewModel>();
 
-                services.AddSingleton<WindowResizeFlowStepViewModel>();
                 services.AddSingleton<WindowResizeFlowStepPage>();
+                services.AddSingleton<WindowResizeFlowStepViewModel>();
 
-                services.AddSingleton<WindowMoveFlowStepViewModel>();
                 services.AddSingleton<WindowMoveFlowStepPage>();
+                services.AddSingleton<WindowMoveFlowStepViewModel>();
+
+                services.AddSingleton<LoopFlowStepPage>();
+                services.AddSingleton<LoopFlowStepViewModel>();
 
                 //Flow execution step detail
                 services.AddSingleton<TemplateSearchExecutionPage>();
@@ -167,6 +173,9 @@ namespace StepinFlow
 
                 services.AddSingleton<MultipleTemplateSearchExecutionPage>();
                 services.AddSingleton<MultipleTemplateSearchExecutionViewModel>();
+
+                services.AddSingleton<WaitForTemplateExecutionPage>();
+                services.AddSingleton<WaitForTemplateExecutionViewModel>();
 
                 services.AddSingleton<CursorClickExecutionPage>();
                 services.AddSingleton<CursorClickExecutionViewModel>();
@@ -189,6 +198,9 @@ namespace StepinFlow
                 services.AddSingleton<WindowMoveExecutionViewModel>();
                 services.AddSingleton<WindowMoveExecutionPage>();
 
+                services.AddSingleton<LoopExecutionViewModel>();
+                services.AddSingleton<LoopExecutionPage>();
+
             }).Build();
 
         /// <summary>
@@ -209,7 +221,7 @@ namespace StepinFlow
         {
             _host.Start();
         }
-     
+
         /// <summary>
         /// Occurs when the application is closing.
         /// </summary>

@@ -12,7 +12,7 @@ using System.Drawing;
 using Rectangle = Model.Structs.Rectangle;
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class TemplateSearchLoopFlowStepViewModel : ObservableObject
+    public partial class TemplateSearchLoopFlowStepViewModel : ObservableObject, IFlowStepViewModel
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
@@ -24,30 +24,31 @@ namespace StepinFlow.ViewModels.Pages
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
         [ObservableProperty]
-        private string _templateImgPath = "";
-
-        [ObservableProperty]
-        private FlowStep _flowStep;
-
-        public event ShowTemplateImgEvent? ShowTemplateImg;
-        public delegate void ShowTemplateImgEvent(string filePath);
+        private FlowStep _flowStep = new FlowStep();
 
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
-        public TemplateSearchLoopFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public TemplateSearchLoopFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-
-            _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
+        }
 
-            TemplateImgPath = flowStep.TemplateImagePath;
-            ShowTemplateImg?.Invoke(TemplateImgPath);
 
+        public async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (flowStep != null)
+                FlowStep = flowStep;
+        }
+
+        public void LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
         }
 
         [RelayCommand]
@@ -62,9 +63,7 @@ namespace StepinFlow.ViewModels.Pages
 
             if (openFileDialog.ShowDialog() == true)
             {
-                TemplateImgPath = openFileDialog.FileName;
-                FlowStep.TemplateImage = File.ReadAllBytes(TemplateImgPath);
-                ShowTemplateImg?.Invoke(openFileDialog.FileName);
+                FlowStep.TemplateImage = File.ReadAllBytes(openFileDialog.FileName);
             }
 
         }
@@ -85,7 +84,7 @@ namespace StepinFlow.ViewModels.Pages
 
             // Find search area.
             Rectangle searchRectangle;
-            if (FlowStep.ProcessName.Length > 0 && TemplateImgPath != null)
+            if (FlowStep.ProcessName.Length > 0 )
                 searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
             else
                 searchRectangle = _systemService.GetScreenSize();

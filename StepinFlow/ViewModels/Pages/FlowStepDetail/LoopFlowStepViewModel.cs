@@ -8,7 +8,7 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class LoopFlowStepViewModel : ObservableObject
+    public partial class LoopFlowStepViewModel : ObservableObject, IFlowStepViewModel
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
@@ -21,18 +21,27 @@ namespace StepinFlow.ViewModels.Pages
         private string _templateImgPath = "";
 
         [ObservableProperty]
-        private FlowStep _flowStep;
+        private FlowStep _flowStep =new FlowStep();
 
-        public LoopFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public LoopFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
-
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-
-            _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
-
         }
+
+        public async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (flowStep != null)
+                FlowStep = flowStep;
+        }
+
+        public void LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
+        }
+
 
         [RelayCommand]
         private void OnButtonCancelClick()

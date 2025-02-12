@@ -1,11 +1,13 @@
-﻿using StepinFlow.ViewModels.Pages;
+﻿using Business.Interfaces;
+using StepinFlow.ViewModels.Pages;
+using System.Windows.Controls;
 using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class WindowMoveFlowStepPage : INavigableView<WindowMoveFlowStepViewModel>
+    public partial class WindowMoveFlowStepPage : Page,IPage
     {
-        public WindowMoveFlowStepViewModel ViewModel { get; }
+        public IFlowStepViewModel ViewModel { get; set; }
         public WindowMoveFlowStepPage(WindowMoveFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;

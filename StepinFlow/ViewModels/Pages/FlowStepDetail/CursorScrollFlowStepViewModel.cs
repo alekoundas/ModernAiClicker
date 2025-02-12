@@ -4,33 +4,42 @@ using Model.Models;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Enums;
-using Wpf.Ui.Controls;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class CursorScrollFlowStepViewModel : ObservableObject, INavigationAware
+    public partial class CursorScrollFlowStepViewModel : ObservableObject, IFlowStepViewModel
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private FlowStep _flowStep;
+        private FlowStep _flowStep = new FlowStep();
 
 
         [ObservableProperty]
         private IEnumerable<MouseScrollDirectionEnum> _mouseScrollDirectionEnum;
 
 
-        public CursorScrollFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public CursorScrollFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
 
-
             MouseScrollDirectionEnum = Enum.GetValues(typeof(MouseScrollDirectionEnum)).Cast<MouseScrollDirectionEnum>();
+        }
+
+        public async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (flowStep != null)
+                FlowStep = flowStep;
+        }
+
+        public void LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
         }
 
         public void OnNavigatedFrom()

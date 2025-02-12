@@ -9,26 +9,40 @@ using Business.Extensions;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class GoToFlowStepViewModel : ObservableObject
+    public partial class GoToFlowStepViewModel : ObservableObject, IFlowStepViewModel
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private FlowStep _flowStep;
-
-
+        private FlowStep _flowStep = new FlowStep();
         [ObservableProperty]
-        private ObservableCollection<FlowStep> _previousSteps;
-        public GoToFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        private ObservableCollection<FlowStep> _previousSteps = new ObservableCollection<FlowStep>();
+
+
+        public GoToFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
-            _flowStep = flowStep;
-            PreviousSteps = GetParents();
         }
+
+        public async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (flowStep != null)
+            {
+                FlowStep = flowStep;
+                PreviousSteps = GetParents();
+            }
+        }
+
+        public void LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
+        }
+
         private ObservableCollection<FlowStep> GetParents()
         {
             if (FlowStep?.FlowId != null)

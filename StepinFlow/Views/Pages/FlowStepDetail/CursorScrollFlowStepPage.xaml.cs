@@ -1,11 +1,12 @@
-﻿using StepinFlow.ViewModels.Pages;
+﻿using Business.Interfaces;
+using StepinFlow.ViewModels.Pages;
 using System.Windows.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class CursorScrollFlowStepPage : Page
+    public partial class CursorScrollFlowStepPage : Page, IPage
     {
-        public CursorScrollFlowStepViewModel ViewModel { get; }
+        public IFlowStepViewModel ViewModel { get; set; }
         public CursorScrollFlowStepPage(CursorScrollFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;

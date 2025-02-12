@@ -6,24 +6,23 @@ using DataAccess.Repository.Interface;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class SleepFlowStepViewModel : ObservableObject
+    public partial class SleepFlowStepViewModel : ObservableObject, IFlowStepViewModel
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private FlowStep _flowStep;
+        private FlowStep _flowStep = new FlowStep();
 
         [ObservableProperty]
         private string _timeTotal;
-        public SleepFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public SleepFlowStepViewModel( FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
-            _flowStep = flowStep;
 
             int miliseconds = 0;
             miliseconds += FlowStep.SleepForMilliseconds;
@@ -34,6 +33,17 @@ namespace StepinFlow.ViewModels.Pages
             TimeTotal = TimeSpan.FromMilliseconds(miliseconds).ToString(@"hh\:mm\:ss");
         }
 
+        public async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (flowStep != null)
+                FlowStep = flowStep;
+        }
+
+        public void LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
+        }
 
         [RelayCommand]
         private void OnButtonCancelClick()

@@ -7,36 +7,41 @@ using Model.Enums;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class CursorClickFlowStepViewModel : ObservableObject
+    public partial class CursorClickFlowStepViewModel : ObservableObject, IFlowStepViewModel
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private FlowStep _flowStep;
-
-
+        private FlowStep _flowStep = new FlowStep();
         [ObservableProperty]
         private IEnumerable<MouseButtonsEnum> _mouseButtonsEnum;
-
-
         [ObservableProperty]
         private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
 
 
-        public CursorClickFlowStepViewModel(FlowStep flowStep, FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public CursorClickFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
         {
-
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _flowStep = flowStep;
             _flowsViewModel = flowsViewModel;
 
             MouseButtonsEnum = Enum.GetValues(typeof(MouseButtonsEnum)).Cast<MouseButtonsEnum>();
             MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
         }
 
+        public async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (flowStep != null)
+                FlowStep = flowStep;
+        }
+
+        public void LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
+        }
 
         [RelayCommand]
         private void OnButtonCancelClick()

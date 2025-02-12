@@ -1,18 +1,18 @@
-﻿using StepinFlow.ViewModels.Pages;
+﻿using Business.Interfaces;
+using StepinFlow.ViewModels.Pages;
+using System.Windows.Controls;
 using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class WindowResizeFlowStepPage : INavigableView<WindowResizeFlowStepViewModel>
+    public partial class WindowResizeFlowStepPage : Page, IPage
     {
-        public WindowResizeFlowStepViewModel ViewModel { get; }
+        public IFlowStepViewModel ViewModel { get; set; }
         public WindowResizeFlowStepPage(WindowResizeFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();
             DataContext = this;
-
         }
-
     }
 }

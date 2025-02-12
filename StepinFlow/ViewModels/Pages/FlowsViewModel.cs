@@ -16,9 +16,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
         private readonly TreeViewUserControlViewModel _treeViewUserControlViewModel;
-
-        public event NavigateToFlowStepTypeSelectionPageEvent? NavigateToFlowStepTypeSelectionPage;
-        public delegate void NavigateToFlowStepTypeSelectionPageEvent(FlowStep flowStep);
+        private readonly FlowStepFrameUserControlViewModel _flowStepFrameUserControlViewModel;
 
         [ObservableProperty]
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
@@ -30,15 +28,34 @@ namespace StepinFlow.ViewModels.Pages
         private int? _coppiedFlowStepId;
 
 
-        public FlowsViewModel(IBaseDatawork baseDatawork, ISystemService systemService, TreeViewUserControlViewModel treeViewUserControlViewModel)
+        public FlowsViewModel(
+            IBaseDatawork baseDatawork,
+            ISystemService systemService,
+            TreeViewUserControlViewModel treeViewUserControlViewModel,
+            FlowStepFrameUserControlViewModel flowStepFrameUserControlViewModel)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _treeViewUserControlViewModel = treeViewUserControlViewModel;
+            _flowStepFrameUserControlViewModel = flowStepFrameUserControlViewModel;
 
             Task.Run(async () => await RefreshData());
         }
 
+        public async Task RefreshData()
+        {
+            await _treeViewUserControlViewModel.LoadFlows();
+        }
+
+        public void OnAddFlowStepClick(FlowStep newFlowStep)
+        {
+            _flowStepFrameUserControlViewModel.NavigateToNewFlowStep(newFlowStep);
+        }
+
+        public async Task OnTreeViewItemSelected(int id)
+        {
+            await _flowStepFrameUserControlViewModel.NavigateToFlowStep(id);
+        }
 
 
         [RelayCommand]
@@ -47,19 +64,11 @@ namespace StepinFlow.ViewModels.Pages
             await _treeViewUserControlViewModel.AddNewFlow();
         }
 
-
         [RelayCommand]
         private void OnButtonLockClick()
         {
             IsLocked = !IsLocked;
             _treeViewUserControlViewModel.IsLocked = IsLocked;
-
-        }
-
-        public async Task RefreshData()
-        {
-            await _treeViewUserControlViewModel.LoadFlows();
-
         }
 
         [RelayCommand]
@@ -80,20 +89,6 @@ namespace StepinFlow.ViewModels.Pages
             await _treeViewUserControlViewModel.CollapseAll();
         }
 
-
-
-        [RelayCommand]
-        private async Task OnTreeViewItemSelected(int id)
-        {
-
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.Query
-                .Include(x => x.ChildrenTemplateSearchFlowSteps)
-                .Where(x => x.Id == id)
-                .FirstOrDefaultAsync();
-
-            if (flowStep != null)
-                NavigateToFlowStepTypeSelectionPage?.Invoke(flowStep);
-        }
 
         public void OnNavigatedTo() { }
 

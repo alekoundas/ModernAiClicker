@@ -26,25 +26,12 @@ namespace StepinFlow.Views.Pages
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
-
-
-
-            viewModel.NavigateToFlowStepTypeSelectionPage += NavigateToFlowStepTypeSelectionPage;
         }
 
 
-        public void NavigateToFlowStepTypeSelectionPage(FlowStep flowStep)
+        private void OnAddFlowStepClick(object sender, FlowStep newFlowStep)
         {
-
-            NewSelectTypeFlowStepViewModel detailViewModel = new NewSelectTypeFlowStepViewModel(_baseDatawork);
-            detailViewModel.FlowStep = flowStep;
-
-            UIFlowStepTypeSelectionFrame.Navigate(new NewSelectTypeFlowStepPage(detailViewModel, ViewModel, _systemService, _templateMatchingService, _baseDatawork, _windowService));
-        }
-
-        private void OnSelectedFlowStepIdChange(object sender, int id)
-        {
-            ViewModel.TreeViewItemSelectedCommand.Execute(id);
+            ViewModel.OnAddFlowStepClick(newFlowStep);
         }
 
         private void OnFlowStepClone(object sender, int id)
@@ -52,9 +39,9 @@ namespace StepinFlow.Views.Pages
             ViewModel.CoppiedFlowStepId = id;
         }
 
-        private void OnAddFlowStepClick(object sender, FlowStep newFlowStep)
+        private void OnSelectedFlowStepIdChange(object sender, int id)
         {
-            NavigateToFlowStepTypeSelectionPage(newFlowStep);
+            ViewModel.OnTreeViewItemSelected(id);
         }
     }
 }
