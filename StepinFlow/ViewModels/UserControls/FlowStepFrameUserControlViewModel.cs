@@ -64,9 +64,8 @@ namespace StepinFlow.ViewModels.UserControls
             // Navigate to new flow step.
             IsEnabled = true;
             SelectedFlowStepType = FlowStepTypesEnum.NO_SELECTION;
-            //NavigateToNewFlowStepDetailPage(newFlowStep);
             _newFlowStep = newFlowStep;
-
+            FramePage = null;
         }
 
         public async Task NavigateToFlowStep(int id)
@@ -93,7 +92,10 @@ namespace StepinFlow.ViewModels.UserControls
         private void OnComboboxSelectionChanged()
         {
             if (_newFlowStep != null)
+            {
+                _newFlowStep.FlowStepType = SelectedFlowStepType;
                 NavigateToNewFlowStepDetailPage(_newFlowStep);
+            }
         }
 
         private void NavigateToFlowStepDetailPage(int id)
@@ -105,6 +107,8 @@ namespace StepinFlow.ViewModels.UserControls
                 page.ViewModel.LoadFlowStepId(id);
                 FramePage = page;
             }
+            else
+                FramePage = null;
         }
 
         private void NavigateToNewFlowStepDetailPage(FlowStep newFlowStep)
@@ -116,6 +120,8 @@ namespace StepinFlow.ViewModels.UserControls
                 page.ViewModel.LoadNewFlowStep(newFlowStep);
                 FramePage = page;
             }
+            else
+                FramePage = null;
         }
     }
 }
