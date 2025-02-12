@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using StepinFlow.ViewModels.UserControls;
+using System.Windows;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -25,8 +26,13 @@ namespace StepinFlow.ViewModels.Pages
         private bool _isLocked;
 
         [ObservableProperty]
-        private int? _coppiedFlowStepId;
-
+        private int? _coppiedFlowStepId = null;
+        [ObservableProperty]
+        private int? _coppiedFlowId = null;
+        [ObservableProperty]
+        private string? _coppiedDisplayText = "";
+        [ObservableProperty]
+        private Visibility _Visible = Visibility.Collapsed;
 
         public FlowsViewModel(
             IBaseDatawork baseDatawork,
@@ -57,6 +63,22 @@ namespace StepinFlow.ViewModels.Pages
             await _flowStepFrameUserControlViewModel.NavigateToFlowStep(id);
         }
 
+        public void OnFlowStepCopy(int id)
+        {
+            CoppiedFlowStepId = id;
+            CoppiedDisplayText = "Coppied FlowStep ID: ";
+            Visible = Visibility.Visible;
+        }
+
+
+        [RelayCommand]
+        private void OnButtonClearCopyClick()
+        {
+            CoppiedFlowStepId = null;
+            CoppiedFlowId = null;
+            Visible = Visibility.Collapsed;
+            _treeViewUserControlViewModel.ClearCopy();
+        }
 
         [RelayCommand]
         private async Task OnButtonAddFlowClick()

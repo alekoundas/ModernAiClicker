@@ -43,19 +43,39 @@
 
         <!--  Grid Definition  -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.3*" />
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*" />
             <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="0.6*" />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
+        <StackPanel
+            Grid.Column="1"
+            Margin="0,0,0,10"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Visibility="{Binding ViewModel.Visible}">
+            <Label VerticalAlignment="Center" Content="{Binding ViewModel.CoppiedDisplayText}" />
+            <Label VerticalAlignment="Center" Content="{Binding ViewModel.CoppiedFlowId}" />
+            <Label VerticalAlignment="Center" Content="{Binding ViewModel.CoppiedFlowStepId}" />
+            <ui:Button Margin="10,0,0,0">
+                <icons:BootstrapIcon
+                    Width="20"
+                    Height="20"
+                    Icon="XCircle" />
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonClearCopyClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ui:Button>
 
+        </StackPanel>
         <DockPanel
-            Grid.Row="0"
+            Grid.Row="1"
             Grid.Column="1"
             LastChildFill="False">
             <!--  Left-aligned buttons  -->
@@ -124,100 +144,11 @@
             </StackPanel>
         </DockPanel>
 
-        <!--  Treeview Toolbar Buttons Expand/Collapse/Add/Refresh  -->
-        <!--
-        <StackPanel
-        Grid.ColumnSpan="5"
-        HorizontalAlignment="Right"
-        Orientation="Horizontal">
-
-        <Label VerticalAlignment="Center" Content="Coppied FlowStep ID: " />
-        <Label VerticalAlignment="Center" Content="{Binding ViewModel.CoppiedFlowStepId}" />
-
-        -->
-        <!--  Expand all  -->
-        <!--
-        <ui:Button IsEnabled="true">
-        <icons:BootstrapIcon
-        Width="20"
-        Height="20"
-        Icon="ArrowsExpand" />
-        <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Click">
-        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonExpandAllClickCommand}" />
-        </i:EventTrigger>
-        </i:Interaction.Triggers>
-        </ui:Button>
-
-        -->
-        <!--  Collapse all  -->
-        <!--
-        <ui:Button Margin="3,0,0,0" IsEnabled="true">
-        <icons:BootstrapIcon
-        Width="20"
-        Height="20"
-        Icon="ArrowsCollapse" />
-        <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Click">
-        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCollapseAllClickCommand}" />
-        </i:EventTrigger>
-        </i:Interaction.Triggers>
-        </ui:Button>
-
-        -->
-        <!--  Add flow  -->
-        <!--
-        <ui:Button
-        Margin="10,0,0,0"
-        Content="Add flow"
-        IsEnabled="true">
-        <Button.Effect>
-        <DropShadowEffect Opacity="1" ShadowDepth="3" />
-        </Button.Effect>
-        <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Click">
-        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonAddFlowClickCommand}" />
-        </i:EventTrigger>
-        </i:Interaction.Triggers>
-        </ui:Button>
-
-        -->
-        <!--  Refresh  -->
-        <!--
-        <ui:Button Margin="10" IsEnabled="true">
-        <icons:BootstrapIcon
-        Width="20"
-        Height="20"
-        Icon="ArrowRepeat" />
-        <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Click">
-        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSyncClickCommand}" />
-        </i:EventTrigger>
-        </i:Interaction.Triggers>
-        </ui:Button>
-
-        -->
-        <!--  Lock  -->
-        <!--
-        <ui:Button Margin="10" IsEnabled="true">
-        <icons:BootstrapIcon
-        Width="20"
-        Height="20"
-        Icon="LockFill" />
-        <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Click">
-        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonLockClickCommand}" />
-        </i:EventTrigger>
-        </i:Interaction.Triggers>
-        </ui:Button>
-
-        </StackPanel>-->
-
 
         <!--  Frame  -->
         <Border
-            Grid.Row="1"
-            Margin="0,0,20,0"
+            Grid.Row="2"
+            Margin="0,0,20,30"
             Background="#272727"
             BorderBrush="#C4C4C4"
             BorderThickness="2"
@@ -226,13 +157,7 @@
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
             <ScrollViewer>
-                <!--<Frame
-                x:Name="UIFlowStepTypeSelectionFrame"
-                Padding="10,0,10,30"
-                ScrollViewer.CanContentScroll="True"
-                ScrollViewer.VerticalScrollBarVisibility="Visible" />-->
                 <UserControls:FlowStepFrameUserControl Padding="20,20,20,20" />
-
             </ScrollViewer>
         </Border>
 
@@ -242,8 +167,10 @@
 
         <!--  TreeView  -->
         <Border
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.Column="1"
+            Margin="0,0,0,30"
+            Padding="5,5,5,0"
             Background="#272727"
             BorderBrush="#C4C4C4"
             BorderThickness="2"

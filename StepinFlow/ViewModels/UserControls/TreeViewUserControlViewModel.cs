@@ -39,6 +39,9 @@ namespace StepinFlow.ViewModels.UserControls
         private int? _coppiedFlowStepId;
 
 
+        [ObservableProperty]
+        private Visibility? _pasteVisibility = Visibility.Collapsed;
+
         public TreeViewUserControlViewModel(IBaseDatawork baseDatawork, ISystemService systemService)
         {
             _baseDatawork = baseDatawork;
@@ -65,6 +68,12 @@ namespace StepinFlow.ViewModels.UserControls
 
             //FlowsList = null;
             FlowsList = new ObservableCollection<Flow>(flows);
+        }
+
+        public void ClearCopy()
+        {
+            CoppiedFlowStepId = null;
+            PasteVisibility = Visibility.Collapsed;
         }
 
         public async Task AddNewFlow()
@@ -105,6 +114,7 @@ namespace StepinFlow.ViewModels.UserControls
         private void OnButtonCopyClick(FlowStep flowStep)
         {
             CoppiedFlowStepId = flowStep.Id;
+            PasteVisibility = Visibility.Visible;
 
             // Fire event.
             OnFlowStepCloneEvent?.Invoke(flowStep.Id);

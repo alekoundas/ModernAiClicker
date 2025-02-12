@@ -635,7 +635,7 @@
 
 
 
-                                <!--  Child TreeViewItem New ContentPresenter  (New Flow Step)  -->
+                                <!--  Child TreeViewItem New/Paste ContentPresenter  (New Flow Step / Paste)  -->
                                 <DataTemplate x:Key="FlowStepNew">
                                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
@@ -659,7 +659,8 @@
                                             x:Name="TreeViewItemButtonPaste"
                                             Padding="10"
                                             HorizontalAlignment="Center"
-                                            Content="Paste">
+                                            Content="Paste"
+                                            Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.PasteVisibility}">
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="Click">
                                                     <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonPasteClickCommand}">

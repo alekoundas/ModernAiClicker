@@ -36,7 +36,7 @@ namespace StepinFlow.Views.Pages
 
         private void OnFlowStepClone(object sender, int id)
         {
-            ViewModel.CoppiedFlowStepId = id;
+            ViewModel.OnFlowStepCopy(id);
         }
 
         private void OnSelectedFlowStepIdChange(object sender, int id)
