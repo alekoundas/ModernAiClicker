@@ -24,6 +24,8 @@ namespace StepinFlow.ViewModels.Pages
 
         [ObservableProperty]
         private bool _isLocked;
+        [ObservableProperty]
+        private Visibility _visibleAddFlow = Visibility.Collapsed;
 
         [ObservableProperty]
         private int? _coppiedFlowStepId = null;
@@ -32,7 +34,7 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private string? _coppiedDisplayText = "";
         [ObservableProperty]
-        private Visibility _Visible = Visibility.Collapsed;
+        private Visibility _visible = Visibility.Collapsed;
 
         public FlowsViewModel(
             IBaseDatawork baseDatawork,
@@ -91,6 +93,10 @@ namespace StepinFlow.ViewModels.Pages
         {
             IsLocked = !IsLocked;
             _treeViewUserControlViewModel.IsLocked = IsLocked;
+            if (IsLocked)
+                VisibleAddFlow = Visibility.Collapsed;
+            else
+                VisibleAddFlow = Visibility.Visible;
         }
 
         [RelayCommand]

@@ -107,7 +107,10 @@
 
             <!--  Right-aligned buttons  -->
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <ui:Button Margin="10,0,0,10" Content="Add flow">
+                <ui:Button
+                    Margin="10,0,0,10"
+                    Content="Add flow"
+                    Visibility="{Binding ViewModel.VisibleAddFlow}">
                     <Button.Effect>
                         <DropShadowEffect Opacity="1" ShadowDepth="3" />
                     </Button.Effect>
