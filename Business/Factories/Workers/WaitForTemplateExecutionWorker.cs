@@ -27,14 +27,14 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution)
+        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution, Execution latestParentExecution)
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));
 
             Execution execution = new Execution();
             execution.FlowStepId = flowStep.Id;
-            execution.ParentExecutionId = parentExecution.Id;// TODO This is wrong!
+            execution.ParentExecutionId = latestParentExecution.Id;
             execution.ParentLoopExecutionId = parentExecution.Id;
 
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;

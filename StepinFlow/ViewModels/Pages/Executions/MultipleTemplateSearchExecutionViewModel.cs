@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using Business.Helpers;
+using Business.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,8 @@ namespace StepinFlow.ViewModels.Pages.Executions
         public delegate void ShowResultImageEvent(string filePath);
         [ObservableProperty]
         private ObservableCollection<FlowStep>? _childrenTemplateSearchFlowSteps;
+        [ObservableProperty]
+        private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
         public MultipleTemplateSearchExecutionViewModel(IBaseDatawork baseDatawork)
         {
             _baseDatawork = baseDatawork;

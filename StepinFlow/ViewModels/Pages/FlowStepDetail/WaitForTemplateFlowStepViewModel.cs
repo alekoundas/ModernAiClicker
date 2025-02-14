@@ -117,7 +117,6 @@ namespace StepinFlow.ViewModels.Pages
                 updateFlowStep.Accuracy = FlowStep.Accuracy;
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.TemplateImagePath = FlowStep.TemplateImagePath;
                 updateFlowStep.SleepForHours = FlowStep.SleepForHours;
                 updateFlowStep.SleepForMinutes = FlowStep.SleepForMinutes;
                 updateFlowStep.SleepForSeconds = FlowStep.SleepForSeconds;

@@ -29,7 +29,7 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
-        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution)
+        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution, Execution latestParentExecution)
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));
@@ -39,7 +39,7 @@ namespace Business.Factories.Workers
             Execution execution = new Execution
             {
                 FlowStepId = childTemplateSearchFlowStep?.Id,
-                ParentExecutionId = parentExecution.Id,// TODO This is wrong!
+                ParentExecutionId = latestParentExecution.Id,
                 ParentLoopExecutionId = parentExecution.Id,
                 ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory,
                 LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1,

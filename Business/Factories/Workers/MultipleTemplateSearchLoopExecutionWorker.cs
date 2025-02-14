@@ -28,7 +28,7 @@ namespace Business.Factories.Workers
         }
 
 
-        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution)
+        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution, Execution latestParent )
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));
@@ -40,7 +40,7 @@ namespace Business.Factories.Workers
             Execution execution = new Execution
             {
                 FlowStepId = childTemplateSearchFlowStep?.Id,
-                ParentExecutionId = parentExecution.Id,// TODO This is wrong!
+                ParentExecutionId = latestParent.Id,
                 ParentLoopExecutionId = parentExecution.Id,
                 ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory,
                 LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1

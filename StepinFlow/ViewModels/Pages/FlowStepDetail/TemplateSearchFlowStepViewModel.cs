@@ -135,7 +135,6 @@ namespace StepinFlow.ViewModels.Pages
                 updateFlowStep.Accuracy = FlowStep.Accuracy;
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.TemplateImagePath = FlowStep.TemplateImagePath;
             }
 
             /// Add mode

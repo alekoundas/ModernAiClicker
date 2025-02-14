@@ -150,6 +150,7 @@ namespace StepinFlow.ViewModels.Pages
 
         private async Task ExecuteStepLoop(FlowStep? initialFlowStep, Execution initialParentExecution)
         {
+            Execution? latestParentExecution = initialParentExecution;
             var stack = new Stack<(FlowStep? flowStep, Execution parentExecution)>();
             stack.Push((initialFlowStep, initialParentExecution));
 
@@ -162,7 +163,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
                 factoryWorker.ClearEntityFrameworkChangeTracker();
-                Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution);
+                Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution, latestParentExecution);
                 parentExecution.ResultImage = null;// TODO test if needed.
 
                 // Add execution to history listbox.

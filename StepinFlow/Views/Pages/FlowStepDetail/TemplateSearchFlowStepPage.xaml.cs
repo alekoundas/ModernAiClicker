@@ -21,8 +21,6 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
             //viewModel.ShowTemplateImg += ShowTemplateImg;
             viewModel.ShowResultImage += ShowResultImage;
 
-            //if (viewModel.FlowStep.TemplateImagePath.Length > 0)
-            //    ShowTemplateImg(viewModel.FlowStep.TemplateImagePath);
         }
 
 

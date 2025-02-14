@@ -44,7 +44,10 @@ namespace StepinFlow.ViewModels.Pages
 
         public async Task LoadFlowStepId(int flowStepId)
         {
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.Query
+                .Include(x=>x.ChildrenTemplateSearchFlowSteps)
+                .FirstOrDefaultAsync(x => x.Id == flowStepId);
+
             if(flowStep != null)
             {
                 FlowStep = flowStep;

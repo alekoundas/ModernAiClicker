@@ -221,7 +221,6 @@ namespace Business.Repository.Entities
                 IsSelected = false,
                 OrderingNum = flowStep.OrderingNum,
                 FlowStepType = flowStep.FlowStepType,
-                TemplateImagePath = flowStep.TemplateImagePath,
                 TemplateImage = flowStep.TemplateImage,
                 Accuracy = flowStep.Accuracy,
                 LocationX = flowStep.LocationX,

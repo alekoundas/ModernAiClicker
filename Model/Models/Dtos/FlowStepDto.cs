@@ -14,8 +14,7 @@ namespace Model.Models
         public bool Disabled { get; set; }
 
         // Template search
-        public string TemplateImagePath = "";
-        public byte[]? TemplateImage;
+        public byte[] TemplateImage = new byte[0];
         public decimal Accuracy = 0.00m;
         public int LocationX;
         public int LocationY;

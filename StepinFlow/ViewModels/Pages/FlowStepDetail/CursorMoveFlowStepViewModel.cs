@@ -47,6 +47,12 @@ namespace StepinFlow.ViewModels.Pages
             {
                 FlowStep = flowStep;
                 SelectedFlowStep = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
+
+                if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
+                    GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);
+
+                if (FlowStep.ParentFlowStepId.HasValue)
+                    GetParents(FlowStep.ParentFlowStepId.Value);
             }
         }
 

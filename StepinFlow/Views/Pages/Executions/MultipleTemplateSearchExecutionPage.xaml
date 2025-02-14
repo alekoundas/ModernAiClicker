@@ -45,7 +45,7 @@
             <Label>2. Select Process (leave empty for screen search)</Label>
             <ComboBox
                 VerticalAlignment="Center"
-                ItemsSource="{Binding Execution.ProcessList}"
+                ItemsSource="{Binding ProcessList}"
                 SelectedItem="{Binding Execution.FlowStep.ParentTemplateSearchFlowStep.ProcessName, Mode=TwoWay}" />
 
 
