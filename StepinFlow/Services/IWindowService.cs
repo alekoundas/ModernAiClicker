@@ -4,7 +4,8 @@ namespace StepinFlow.Interfaces
 {
     public interface IWindowService
     {
-        Task<byte[]?> OpenScreenshotSelectionWindow();
+        Task<byte[]?> OpenScreenshotSelectionWindow(byte[]? image = null, bool allowSave = true);
+
         void CloseScreenshotSelectionWindow();
     }
 }

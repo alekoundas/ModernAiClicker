@@ -10,6 +10,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
 using Rectangle = Model.Structs.Rectangle;
+using System.Windows.Input;
+using StepinFlow.Interfaces;
 namespace StepinFlow.ViewModels.Pages
 {
     public partial class TemplateSearchLoopFlowStepViewModel : ObservableObject, IFlowStepViewModel
@@ -17,25 +19,30 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
+        private readonly IWindowService _windowService;
         private readonly FlowsViewModel _flowsViewModel;
         private string _previousTestResultImagePath = "";
 
         [ObservableProperty]
+        private FlowStep _flowStep = new FlowStep();
+        [ObservableProperty]
+        private byte[] _resultImage = new byte[0];
+        [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
-        [ObservableProperty]
-        private FlowStep _flowStep = new FlowStep();
-
-        public event ShowResultImageEvent? ShowResultImage;
-        public delegate void ShowResultImageEvent(string filePath);
-
-        public TemplateSearchLoopFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public TemplateSearchLoopFlowStepViewModel(
+            FlowsViewModel flowsViewModel,
+            ISystemService systemService,
+            ITemplateSearchService templateMatchingService,
+            IBaseDatawork baseDatawork,
+            IWindowService windowService)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
             _flowsViewModel = flowsViewModel;
+            _windowService = windowService;
         }
 
 
@@ -68,12 +75,21 @@ namespace StepinFlow.ViewModels.Pages
 
         }
 
+        [RelayCommand]
+        private async Task OnButtonTakeScreenshotClick()
+        {
+            byte[]? resultTemplate = await _windowService.OpenScreenshotSelectionWindow();
+            if (resultTemplate == null)
+                return;
+
+            FlowStep.TemplateImage = resultTemplate;
+        }
 
         [RelayCommand]
         private void OnButtonClearTestClick()
         {
             _previousTestResultImagePath = "";
-            ShowResultImage?.Invoke(_previousTestResultImagePath);
+            ResultImage = new byte[0];
         }
 
         [RelayCommand]
@@ -106,16 +122,33 @@ namespace StepinFlow.ViewModels.Pages
                 Bitmap templateImage = new Bitmap(ms);
                 TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, FlowStep.RemoveTemplateFromResult);
 
-                int x = searchRectangle.Left + result.ResultRectangle.Top;
-                int y = searchRectangle.Top + result.ResultRectangle.Left;
-
                 if (result.ResultImagePath.Length > 0)
                 {
                     _previousTestResultImagePath = result.ResultImagePath;
-                    ShowResultImage?.Invoke(result.ResultImagePath);
+                    ResultImage = File.ReadAllBytes(result.ResultImagePath);
                 }
 
             }
+        }
+
+        [RelayCommand]
+        private async Task OnTemplateImageDoubleClick(MouseButtonEventArgs e)
+        {
+            // Check if it's a double-click.
+            if (e.ClickCount == 2)
+            {
+                byte[]? image = await _windowService.OpenScreenshotSelectionWindow(FlowStep.TemplateImage);
+                if (image != null)
+                    FlowStep.TemplateImage = image;
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnResultImageDoubleClick(MouseButtonEventArgs e)
+        {
+            // Check if it's a double-click.
+            if (e.ClickCount == 2)
+                await _windowService.OpenScreenshotSelectionWindow(ResultImage, false);
         }
 
         [RelayCommand]
@@ -155,30 +188,28 @@ namespace StepinFlow.ViewModels.Pages
                 await _baseDatawork.SaveChangesAsync();
 
 
-                // "Add" Flow steps
-                FlowStep newFlowStep = new FlowStep();
-                FlowStep newFlowStep2 = new FlowStep();
-                newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
-                newFlowStep2.FlowStepType = FlowStepTypesEnum.IS_NEW;
-
                 // "Success" Flow step
-                FlowStep successFlowStep = new FlowStep();
-                successFlowStep.Name = "Success";
-                successFlowStep.IsExpanded = false;
-                successFlowStep.FlowStepType = FlowStepTypesEnum.IS_SUCCESS;
-                successFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                FlowStep successFlowStep = new FlowStep
                 {
-                    newFlowStep
+                    Name = "Success",
+                    IsExpanded = false,
+                    FlowStepType = FlowStepTypesEnum.IS_SUCCESS,
+                    ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                    {
+                        new FlowStep(){FlowStepType = FlowStepTypesEnum.IS_NEW}
+                    }
                 };
 
                 // "Fail" Flow step
-                FlowStep failFlowStep = new FlowStep();
-                failFlowStep.Name = "Fail";
-                failFlowStep.IsExpanded = false;
-                failFlowStep.FlowStepType = FlowStepTypesEnum.IS_FAILURE;
-                failFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                FlowStep failFlowStep = new FlowStep
                 {
-                    newFlowStep2
+                    Name = "Fail",
+                    IsExpanded = false,
+                    FlowStepType = FlowStepTypesEnum.IS_FAILURE,
+                    ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                    {
+                        new FlowStep(){FlowStepType = FlowStepTypesEnum.IS_NEW}
+                    }
                 };
 
                 FlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
@@ -194,8 +225,6 @@ namespace StepinFlow.ViewModels.Pages
 
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }
-
-
 
             await _baseDatawork.SaveChangesAsync();
             await _flowsViewModel.RefreshData();

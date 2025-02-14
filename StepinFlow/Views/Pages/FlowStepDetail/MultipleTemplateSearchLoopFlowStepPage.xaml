@@ -145,12 +145,32 @@
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </Button>
-                                    <Image
-                                        MaxWidth="100"
-                                        MaxHeight="100"
-                                        Source="{Binding TemplateImage}" />
-                                </StackPanel>
+                                    <Button Content="Take screenshot">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchLoopFlowStepPage}}, Path=ViewModel.ButtonTakeScreenshotClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <Binding Path="" />
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
 
+                                </StackPanel>
+                                <Image
+                                    MaxWidth="100"
+                                    MaxHeight="100"
+                                    Source="{Binding TemplateImage}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="ImageFailed">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchLoopFlowStepPage}}, Path=ViewModel.ButtonOpenFileClickCommand}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchLoopFlowStepPage}}, Path=ViewModel.TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Image>
 
                                 <Label>Select minimum accuracy:</Label>
                                 <TextBox Margin="0,0,0,15" Text="{Binding Accuracy, Mode=TwoWay}" />
@@ -190,7 +210,6 @@
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </Button>
-                                    <Image x:Name="UIResultImage" Grid.Column="0" />
 
                                 </StackPanel>
 
@@ -202,7 +221,13 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Image x:Name="UIResultImage" Grid.Column="0" />
+            <Image Source="{Binding ViewModel.ResultImage}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Image>
 
 
 

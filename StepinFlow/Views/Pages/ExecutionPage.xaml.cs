@@ -3,6 +3,8 @@ using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using Model.Models;
+using StepinFlow.Interfaces;
+using StepinFlow.Services;
 using StepinFlow.ViewModels.Pages;
 using StepinFlow.ViewModels.Pages.Executions;
 using StepinFlow.Views.Pages.Executions;
@@ -17,6 +19,7 @@ namespace StepinFlow.Views.Pages
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly IExecutionFactory _executionFactory;
+        private readonly IWindowService _windowService;
         private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionViewModel>> _executionViewModelCache;
         private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>> _executionPageCache;
 
@@ -26,12 +29,14 @@ namespace StepinFlow.Views.Pages
             , ISystemService systemService
             , ITemplateSearchService templateMatchingService
             , IBaseDatawork baseDatawork
-            , IExecutionFactory executionFactory)
+            , IExecutionFactory executionFactory
+            , IWindowService windowService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
             _executionFactory = executionFactory;
+            _windowService = windowService;
 
             ViewModel = viewModel;
             DataContext = this;
@@ -49,10 +54,10 @@ namespace StepinFlow.Views.Pages
                 { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionViewModel>(() => new CursorClickExecutionViewModel  ()) },
                 { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionViewModel>(() => new CursorScrollExecutionViewModel()) },
                 { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionViewModel>(() => new WaitForTemplateExecutionViewModel()) },
-                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionViewModel>(() => new TemplateSearchExecutionViewModel()) },
-                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionViewModel>(() => new TemplateSearchLoopExecutionViewModel()) },
-                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionViewModel>(() => new MultipleTemplateSearchExecutionViewModel(baseDatawork)) },
-                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionViewModel>(() => new MultipleTemplateSearchLoopExecutionViewModel(baseDatawork)) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionViewModel>(() => new TemplateSearchExecutionViewModel(_windowService)) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionViewModel>(() => new TemplateSearchLoopExecutionViewModel(_windowService)) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionViewModel>(() => new MultipleTemplateSearchExecutionViewModel(baseDatawork,_windowService)) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionViewModel>(() => new MultipleTemplateSearchLoopExecutionViewModel(baseDatawork, _windowService)) },
                 { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionViewModel>(() => new SleepExecutionViewModel  ()) },
                 { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionViewModel>(() => new GoToExecutionViewModel(baseDatawork)) },
                 { FlowStepTypesEnum.LOOP, new Lazy<IExecutionViewModel>(() => new LoopExecutionViewModel()) }
@@ -66,10 +71,10 @@ namespace StepinFlow.Views.Pages
                 { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionPage>(() => new CursorClickExecutionPage()) },
                 { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionPage>(() => new CursorScrollExecutionPage()) },
                 { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionPage>(() => new WaitForTemplateExecutionPage()) },
-                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => new TemplateSearchExecutionPage()) },
-                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => new TemplateSearchLoopExecutionPage()) },
-                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => new MultipleTemplateSearchExecutionPage(baseDatawork)) },
-                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => new MultipleTemplateSearchLoopExecutionPage(baseDatawork)) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => new TemplateSearchExecutionPage(new TemplateSearchExecutionViewModel(_windowService))) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => new TemplateSearchLoopExecutionPage(new TemplateSearchLoopExecutionViewModel(_windowService)) )},
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => new MultipleTemplateSearchExecutionPage(new MultipleTemplateSearchExecutionViewModel(_baseDatawork,_windowService)) )},
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => new MultipleTemplateSearchLoopExecutionPage(new MultipleTemplateSearchLoopExecutionViewModel(_baseDatawork,_windowService))) },
                 { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionPage>(() => new SleepExecutionPage()) },
                 { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionPage>(() => new GoToExecutionPage(baseDatawork)) },
                 { FlowStepTypesEnum.LOOP, new Lazy<IExecutionPage>(() => new LoopExecutionPage()) }

@@ -14,7 +14,7 @@ namespace StepinFlow.Services
             _serviceProvider = serviceProvider;
         }
 
-        public Task<byte[]?> OpenScreenshotSelectionWindow()
+        public Task<byte[]?> OpenScreenshotSelectionWindow(byte[]? image = null, bool allowSave = true)
         {
             TaskCompletionSource<byte[]?> taskCompletionSource = new TaskCompletionSource<byte[]?>();
             Application.Current.Dispatcher.Invoke(() =>
@@ -30,8 +30,9 @@ namespace StepinFlow.Services
                 window.Closed += (s, e) => taskCompletionSource.SetResult(window.ViewModel.ResultImage);
 
                 // Initialize view model.
-                window.ViewModel.SetScreenshot();
-
+                window.ViewModel.SetScreenshot(image);
+                window.ViewModel.ImportVisibility = allowSave ? Visibility.Visible : Visibility.Collapsed;
+                
                 // Show window.
                 window.ShowDialog();
             });

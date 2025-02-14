@@ -20,8 +20,9 @@ namespace StepinFlow.ViewModels.Windows
         public event CloseWindowEvent? CloseWindow;
         public delegate void CloseWindowEvent();
 
-
         public byte[]? ResultImage = null;
+
+
         private Stack<BitmapSource> _undoStack = new Stack<BitmapSource>();
         private Stack<BitmapSource> _redoStack = new Stack<BitmapSource>();
         private Point _startPoint;
@@ -44,22 +45,30 @@ namespace StepinFlow.ViewModels.Windows
         [ObservableProperty]
         private Visibility _rectangleVisibility = Visibility.Hidden;
 
+        [ObservableProperty]
+        private Visibility _importVisibility;
 
         public ScreenshotSelectionWindowViewModel(ISystemService systemService)
         {
             _systemService = systemService;
         }
 
-        public void SetScreenshot(Bitmap? screenshot = null)
+        public void SetScreenshot(byte[]? screenshot = null)
         {
             if (screenshot != null)
-                Screenshot = ConvertBitmapToBitmapSource(screenshot);
+            {
+                Bitmap bitmapScreenshot;
+                using (var ms = new MemoryStream(screenshot))
+                    bitmapScreenshot = new Bitmap(ms);
+
+                Screenshot = ConvertBitmapToBitmapSource(bitmapScreenshot);
+            }
             else
             {
                 Model.Structs.Rectangle searchRectangle = _systemService.GetScreenSize();
-                screenshot = _systemService.TakeScreenShot(searchRectangle);
-                if (screenshot != null)
-                    Screenshot = ConvertBitmapToBitmapSource(screenshot);
+                Bitmap? bitmapScreenshot = _systemService.TakeScreenShot(searchRectangle);
+                if (bitmapScreenshot != null)
+                    Screenshot = ConvertBitmapToBitmapSource(bitmapScreenshot);
             }
         }
 

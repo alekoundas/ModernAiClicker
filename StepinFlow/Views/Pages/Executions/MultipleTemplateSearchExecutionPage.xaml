@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:StepinFlow.Views.Pages.FlowStepDetail"
+    xmlns:local="clr-namespace:StepinFlow.Views.Pages.Executions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MultipleTemplateSearchExecutionPage"
     d:DataContext="{d:DesignInstance local:MultipleTemplateSearchExecutionPage,
@@ -67,22 +67,27 @@
                             <StackPanel>
 
                                 <Label>Select template image to search:</Label>
-                                <StackPanel Margin="0,0,0,15" Orientation="Horizontal">
-                                    <Image
-                                        MaxWidth="100"
-                                        MaxHeight="100"
-                                        Source="{Binding TemplateImage}" />
-                                </StackPanel>
+
+                                <Image
+                                    MaxWidth="100"
+                                    MaxHeight="100"
+                                    Source="{Binding TemplateImage}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="ImageFailed">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchExecutionPage}}, Path=ButtonOpenFileClickCommand}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="MouseDown">
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchExecutionPage}}, Path=TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Image>
 
 
                                 <Label>Select minimum accuracy:</Label>
                                 <TextBox Margin="0,0,0,15" Text="{Binding Accuracy, Mode=TwoWay}" />
 
 
-                                <Label>Test</Label>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image x:Name="UIResultImage" Grid.Column="0" />
-                                </StackPanel>
+                                <Label>Result</Label>
 
                             </StackPanel>
                         </Border>
@@ -90,7 +95,13 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Image x:Name="UIResultImage" Grid.Column="0" />
+            <Image Source="{Binding ResultImage}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <i:InvokeCommandAction Command="{Binding ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Image>
 
 
 

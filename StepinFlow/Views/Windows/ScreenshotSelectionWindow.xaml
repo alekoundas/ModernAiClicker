@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:StepinFlow.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="ScreenshotSelectionWindow"
     Width="800"
     Height="450"
@@ -55,19 +56,20 @@
             Margin="10"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom"
-            Background="LightGray"
+            Background="{DynamicResource ApplicationBackgroundBrush}"
             Orientation="Horizontal">
-            <Button
+            <ui:Button
                 Width="80"
                 Margin="5"
-                Content="Import">
+                Content="Import"
+                Visibility="{Binding ViewModel.ImportVisibility}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <i:InvokeCommandAction Command="{Binding ViewModel.ButtonImportClickCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Button>
-            <Button
+            </ui:Button>
+            <ui:Button
                 Width="80"
                 Margin="5"
                 Content="Save">
@@ -76,8 +78,8 @@
                         <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Button>
-            <Button
+            </ui:Button>
+            <ui:Button
                 Width="80"
                 Margin="5"
                 Content="Undo">
@@ -86,8 +88,8 @@
                         <i:InvokeCommandAction Command="{Binding ViewModel.ButtonUndoClickCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Button>
-            <Button
+            </ui:Button>
+            <ui:Button
                 Width="80"
                 Margin="5"
                 Content="Redo">
@@ -96,7 +98,7 @@
                         <i:InvokeCommandAction Command="{Binding ViewModel.ButtonRedoClickCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Button>
+            </ui:Button>
         </StackPanel>
     </Grid>
 </Window>

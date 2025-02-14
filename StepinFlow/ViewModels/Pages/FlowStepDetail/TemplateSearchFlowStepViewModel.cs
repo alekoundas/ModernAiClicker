@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
 using StepinFlow.Interfaces;
+using System.Windows.Input;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -22,13 +23,11 @@ namespace StepinFlow.ViewModels.Pages
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
-
-        [ObservableProperty]
         private FlowStep _flowStep = new FlowStep();
-
-        public event ShowResultImageEvent? ShowResultImage;
-        public delegate void ShowResultImageEvent(string filePath);
+        [ObservableProperty]
+        private byte[] _resultImage = new byte[0];
+        [ObservableProperty]
+        private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
         public TemplateSearchFlowStepViewModel(
             FlowsViewModel flowsViewModel,
@@ -90,7 +89,7 @@ namespace StepinFlow.ViewModels.Pages
         {
             // Find search area.
             Model.Structs.Rectangle searchRectangle;
-            if (FlowStep.ProcessName.Length > 0 )
+            if (FlowStep.ProcessName.Length > 0)
                 searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
             else
                 searchRectangle = _systemService.GetScreenSize();
@@ -103,20 +102,31 @@ namespace StepinFlow.ViewModels.Pages
             using (var ms = new MemoryStream(FlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-
                 TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, false);
 
-
-                int x = searchRectangle.Left;
-                int y = searchRectangle.Top;
-
-                x += result.ResultRectangle.Top;
-                y += result.ResultRectangle.Left;
-
-
                 if (result.ResultImagePath.Length > 1)
-                    ShowResultImage?.Invoke(result.ResultImagePath);
+                    ResultImage = File.ReadAllBytes(result.ResultImagePath);
             }
+        }
+
+        [RelayCommand]
+        private async Task OnTemplateImageDoubleClick(MouseButtonEventArgs e)
+        {
+            // Check if it's a double-click.
+            if (e.ClickCount == 2)
+            {
+                byte[]? image = await _windowService.OpenScreenshotSelectionWindow(FlowStep.TemplateImage);
+                if (image != null)
+                    FlowStep.TemplateImage = image;
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnResultImageDoubleClick(MouseButtonEventArgs e)
+        {
+            // Check if it's a double-click.
+            if (e.ClickCount == 2)
+                 await _windowService.OpenScreenshotSelectionWindow(ResultImage, false);
         }
 
         [RelayCommand]
@@ -128,7 +138,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
-            // Edit mode
+            // Edit mode.
             if (FlowStep.Id > 0)
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
@@ -137,7 +147,7 @@ namespace StepinFlow.ViewModels.Pages
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
             }
 
-            /// Add mode
+            // Add mode.
             else
             {
                 FlowStep isNewSimpling;
@@ -154,31 +164,28 @@ namespace StepinFlow.ViewModels.Pages
                 await _baseDatawork.SaveChangesAsync();
 
 
-
-                // "Add" Flow steps
-                FlowStep newFlowStep = new FlowStep();
-                FlowStep newFlowStep2 = new FlowStep();
-                newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
-                newFlowStep2.FlowStepType = FlowStepTypesEnum.IS_NEW;
-
                 // "Success" Flow step
-                FlowStep successFlowStep = new FlowStep();
-                successFlowStep.Name = "Success";
-                successFlowStep.IsExpanded = false;
-                successFlowStep.FlowStepType = FlowStepTypesEnum.IS_SUCCESS;
-                successFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                FlowStep successFlowStep = new FlowStep
                 {
-                    newFlowStep
+                    Name = "Success",
+                    IsExpanded = false,
+                    FlowStepType = FlowStepTypesEnum.IS_SUCCESS,
+                    ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                    {
+                        new FlowStep(){FlowStepType = FlowStepTypesEnum.IS_NEW}
+                    }
                 };
 
                 // "Fail" Flow step
-                FlowStep failFlowStep = new FlowStep();
-                failFlowStep.Name = "Fail";
-                failFlowStep.IsExpanded = false;
-                failFlowStep.FlowStepType = FlowStepTypesEnum.IS_FAILURE;
-                failFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                FlowStep failFlowStep = new FlowStep
                 {
-                    newFlowStep2
+                    Name = "Fail",
+                    IsExpanded = false,
+                    FlowStepType = FlowStepTypesEnum.IS_FAILURE,
+                    ChildrenFlowSteps = new ObservableCollection<FlowStep>
+                    {
+                        new FlowStep(){FlowStepType = FlowStepTypesEnum.IS_NEW}
+                    }
                 };
 
                 FlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
@@ -198,7 +205,6 @@ namespace StepinFlow.ViewModels.Pages
                 await _flowsViewModel.RefreshData();
             }
         }
-
     }
 }
 
