@@ -16,6 +16,9 @@ namespace StepinFlow.ViewModels.UserControls
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
+        public event OnSelectedFlowIdChanged? OnSelectedFlowIdChangedEvent;
+        public delegate void OnSelectedFlowIdChanged(int Id);
+
         public event OnSelectedFlowStepIdChanged? OnSelectedFlowStepIdChangedEvent;
         public delegate void OnSelectedFlowStepIdChanged(int Id);
 
@@ -263,7 +266,7 @@ namespace StepinFlow.ViewModels.UserControls
             {
                 _selectedFlowStep = null;
                 _selectedFlow = flow;
-                OnSelectedFlowStepIdChangedEvent?.Invoke(flow.Id);
+                OnSelectedFlowIdChangedEvent?.Invoke(flow.Id);
             }
         }
 

@@ -41,7 +41,12 @@ namespace StepinFlow.Views.Pages
 
         private void OnSelectedFlowStepIdChange(object sender, int id)
         {
-            ViewModel.OnTreeViewItemSelected(id);
+            ViewModel.OnTreeViewItemFlowStepSelected(id);
+        }
+
+        private void OnSelectedFlowIdChange(object sender, int id)
+        {
+            ViewModel.OnTreeViewItemFlowSelected(id);
         }
     }
 }

@@ -184,6 +184,7 @@
             <UserControls:TreeViewUserControl
                 OnAddFlowStepClick="OnAddFlowStepClick"
                 OnFlowStepClone="OnFlowStepClone"
+                OnSelectedFlowIdChange="OnSelectedFlowIdChange"
                 OnSelectedFlowStepIdChange="OnSelectedFlowStepIdChange" />
         </Border>
 

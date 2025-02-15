@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="GoToExecutionPage"
     d:DataContext="{d:DesignInstance local:GoToExecutionPage,
-    IsDesignTimeCreatable=False}"
+                                     IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -33,16 +33,16 @@
 
             <StackPanel>
                 <Label>Set hours:</Label>
-                <TextBox Text="{Binding  Execution.FlowStep.SleepForHours, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.SleepForHours, Mode=TwoWay}" />
 
                 <Label>Set minutes:</Label>
-                <TextBox Text="{Binding  Execution.FlowStep.SleepForMinutes, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.SleepForMinutes, Mode=TwoWay}" />
 
                 <Label>Set seconds:</Label>
-                <TextBox Text="{Binding  Execution.FlowStep.SleepForSeconds, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.SleepForSeconds, Mode=TwoWay}" />
 
                 <Label>Set milliseconds:</Label>
-                <TextBox Text="{Binding  Execution.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
+                <TextBox Text="{Binding Execution.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 

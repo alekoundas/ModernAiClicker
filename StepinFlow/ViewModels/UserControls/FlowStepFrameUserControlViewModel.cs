@@ -10,6 +10,7 @@ using StepinFlow.Views.Pages.FlowStepDetail;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 
 namespace StepinFlow.ViewModels.UserControls
 {
@@ -18,21 +19,33 @@ namespace StepinFlow.ViewModels.UserControls
         private readonly IBaseDatawork _baseDatawork;
         private readonly IServiceProvider _serviceProvider;
 
-        //public event NavigateToFlowStepDetailPageEvent? NavigateToFlowStepDetailPage;
-        //public delegate void NavigateToFlowStepDetailPageEvent(int? id = null);
-
+        // FlowStep Type
         [ObservableProperty]
         private FlowStepTypesEnum _selectedFlowStepType = FlowStepTypesEnum.NO_SELECTION;
         [ObservableProperty]
         private List<FlowStepTypesEnum> _flowStepTypes = Enum.GetValues(typeof(FlowStepTypesEnum)).Cast<FlowStepTypesEnum>().ToList();
         [ObservableProperty]
-        private bool _isEnabled = false;
+        private bool _isFlowStepTypeEnabled = false;
+        [ObservableProperty]
+        private Visibility _flowStepTypeVisibility = Visibility.Collapsed;
+
+
+        // Flow Type
+        [ObservableProperty]
+        private FlowTypesEnum _selectedFlowType = FlowTypesEnum.NO_SELECTION;
+        [ObservableProperty]
+        private List<FlowTypesEnum> _flowTypes = Enum.GetValues(typeof(FlowTypesEnum)).Cast<FlowTypesEnum>().ToList();
+        [ObservableProperty]
+        private bool _isFlowTypeEnabled = false;
+        [ObservableProperty]
+        private Visibility _flowTypeVisibility = Visibility.Collapsed;
 
 
         [ObservableProperty]
         private IPage? _framePage;
 
-        private readonly Dictionary<FlowStepTypesEnum, Lazy<IPage>> _pageFactory;
+        private readonly Dictionary<FlowStepTypesEnum, Lazy<IPage>> _flowStepPageFactory;
+        private readonly Dictionary<FlowTypesEnum, Lazy<IPage>> _flowPageFactory;
         private FlowStep? _newFlowStep = null;
 
         public FlowStepFrameUserControlViewModel(IBaseDatawork baseDatawork, IServiceProvider serviceProvider)
@@ -41,7 +54,7 @@ namespace StepinFlow.ViewModels.UserControls
             _serviceProvider = serviceProvider;
 
             // Lazy load the instances needed and not all at once.
-            _pageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IPage>>
+            _flowStepPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IPage>>
             {
                 { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IPage>(() => serviceProvider.GetRequiredService<TemplateSearchFlowStepPage>()) },
                 { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IPage>(() => serviceProvider.GetRequiredService<TemplateSearchLoopFlowStepPage>()) },
@@ -57,12 +70,18 @@ namespace StepinFlow.ViewModels.UserControls
                 { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IPage>(() => serviceProvider.GetRequiredService<WindowMoveFlowStepPage>()) },
                 { FlowStepTypesEnum.LOOP, new Lazy<IPage>(() => serviceProvider.GetRequiredService<LoopFlowStepPage>()) }
             };
+
+            _flowPageFactory = new Dictionary<FlowTypesEnum, Lazy<IPage>>
+            {
+            };
         }
 
         public void NavigateToNewFlowStep(FlowStep newFlowStep)
         {
             // Navigate to new flow step.
-            IsEnabled = true;
+            IsFlowStepTypeEnabled = true;
+            FlowStepTypeVisibility = Visibility.Visible;
+            FlowTypeVisibility = Visibility.Collapsed;
             SelectedFlowStepType = FlowStepTypesEnum.NO_SELECTION;
             _newFlowStep = newFlowStep;
             FramePage = null;
@@ -80,8 +99,30 @@ namespace StepinFlow.ViewModels.UserControls
             if (flowStepType != null)
             {
                 SelectedFlowStepType = flowStepType.Value;
-                IsEnabled = false;
+                FlowStepTypeVisibility = Visibility.Visible;
+                FlowTypeVisibility = Visibility.Collapsed;
+                IsFlowStepTypeEnabled = false;
                 NavigateToFlowStepDetailPage(id);
+            }
+
+        }
+
+        public async Task NavigateToFlow(int id)
+        {
+            // Navigate to existing flow.
+            FlowTypesEnum? flowType = await _baseDatawork.Flows.Query
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+                .Select(x => x.Type)
+                .FirstOrDefaultAsync();
+
+            if (flowType != null)
+            {
+                SelectedFlowType = flowType.Value;
+                IsFlowTypeEnabled = false;
+                FlowStepTypeVisibility = Visibility.Collapsed;
+                FlowTypeVisibility = Visibility.Visible;
+                NavigateToFlowDetailPage(id);
             }
 
         }
@@ -89,7 +130,7 @@ namespace StepinFlow.ViewModels.UserControls
 
 
         [RelayCommand]
-        private void OnComboboxSelectionChanged()
+        private void OnFlowTypeSelectionChanged()
         {
             if (_newFlowStep != null)
             {
@@ -98,9 +139,26 @@ namespace StepinFlow.ViewModels.UserControls
             }
         }
 
+        [RelayCommand]
+        private void OnFlowSelectionChanged()
+        {
+        }
+        private void NavigateToNewFlowStepDetailPage(FlowStep newFlowStep)
+        {
+            IPage? page = _flowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IPage>? lazzyPage) ? lazzyPage.Value : null;
+
+            if (page != null)
+            {
+                page.ViewModel.LoadNewFlowStep(newFlowStep);
+                FramePage = page;
+            }
+            else
+                FramePage = null;
+        }
+
         private void NavigateToFlowStepDetailPage(int id)
         {
-            IPage? page = _pageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IPage>? lazzyPage) ? lazzyPage.Value : null;
+            IPage? page = _flowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IPage>? lazzyPage) ? lazzyPage.Value : null;
 
             if (page != null)
             {
@@ -111,17 +169,18 @@ namespace StepinFlow.ViewModels.UserControls
                 FramePage = null;
         }
 
-        private void NavigateToNewFlowStepDetailPage(FlowStep newFlowStep)
+        private void NavigateToFlowDetailPage(int id)
         {
-            IPage? page = _pageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IPage>? lazzyPage) ? lazzyPage.Value : null;
+            IPage? page = _flowPageFactory.TryGetValue(SelectedFlowType, out Lazy<IPage>? lazzyPage) ? lazzyPage.Value : null;
 
             if (page != null)
             {
-                page.ViewModel.LoadNewFlowStep(newFlowStep);
+                page.ViewModel.LoadFlowStepId(id);
                 FramePage = page;
             }
             else
                 FramePage = null;
         }
+
     }
 }

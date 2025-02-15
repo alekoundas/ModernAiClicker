@@ -60,9 +60,14 @@ namespace StepinFlow.ViewModels.Pages
             _flowStepFrameUserControlViewModel.NavigateToNewFlowStep(newFlowStep);
         }
 
-        public async Task OnTreeViewItemSelected(int id)
+        public async Task OnTreeViewItemFlowStepSelected(int id)
         {
             await _flowStepFrameUserControlViewModel.NavigateToFlowStep(id);
+        }
+
+        public async Task OnTreeViewItemFlowSelected(int id)
+        {
+            await _flowStepFrameUserControlViewModel.NavigateToFlow(id);
         }
 
         public void OnFlowStepCopy(int id)

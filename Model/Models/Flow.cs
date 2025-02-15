@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Model.Enums;
 using System.Collections.ObjectModel;
 
 namespace Model.Models
@@ -9,6 +10,9 @@ namespace Model.Models
 
         [ObservableProperty]
         public string _name = "";
+
+        [ObservableProperty]
+        public FlowTypesEnum _type = FlowTypesEnum.NO_SELECTION;
 
         [ObservableProperty]
         public bool _isSelected = true;
