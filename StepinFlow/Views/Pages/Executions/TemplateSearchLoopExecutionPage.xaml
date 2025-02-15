@@ -72,10 +72,10 @@
             <Image
                 MaxWidth="100"
                 MaxHeight="100"
-                Source="{Binding TemplateImage}">
+                Source="{Binding Execution.FlowStep.TemplateImage}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ImageFailed">
-                        <i:InvokeCommandAction Command="{Binding ButtonOpenFileClickCommand}" />
+                        <i:InvokeCommandAction Command="{Binding ImageFailedCommand}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseDown">
                         <i:InvokeCommandAction Command="{Binding TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
@@ -87,6 +87,9 @@
             <Label>Result image</Label>
             <Image Source="{Binding ResultImage}">
                 <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ImageFailed">
+                        <i:InvokeCommandAction Command="{Binding ImageFailedCommand}" />
+                    </i:EventTrigger>
                     <i:EventTrigger EventName="MouseDown">
                         <i:InvokeCommandAction Command="{Binding ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>

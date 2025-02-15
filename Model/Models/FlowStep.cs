@@ -33,7 +33,7 @@ namespace Model.Models
 
         // Template search
         [ObservableProperty]
-        public byte[] _templateImage = new byte[0];
+        public byte[]? _templateImage = null;
 
         [ObservableProperty]
         public decimal _accuracy = 0.00m;

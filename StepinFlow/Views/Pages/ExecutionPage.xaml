@@ -360,7 +360,15 @@
                                     <Image
                                         MaxWidth="100"
                                         MaxHeight="50"
-                                        Source="{Binding FlowStep.TemplateImage}" />
+                                        Source="{Binding FlowStep.TemplateImage}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="ImageFailed">
+                                                <!--<i:InvokeCommandAction Command="{Binding ViewModel.ImageFailedCommand}" PassEventArgsToCommand="True" />-->
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.ImageFailedCommand}" PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Image>
+
 
                                 </StackPanel>
                             </Border>

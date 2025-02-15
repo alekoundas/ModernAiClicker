@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using StepinFlow.Interfaces;
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -66,6 +67,15 @@ namespace StepinFlow.ViewModels.Pages.Executions
             // Check if it's a double-click.
             if (e.ClickCount == 2)
                 await _windowService.OpenScreenshotSelectionWindow(ResultImage, false);
+        }
+
+        [RelayCommand]
+        private void OnImageFailed(object sender)
+        {
+            //if (sender is Image img)
+            //{
+            //    img.Source = null; // This prevents the error
+            //}
         }
     }
 }

@@ -301,9 +301,16 @@ namespace StepinFlow.ViewModels.Pages
 
             ListBoxExecutions = new ObservableCollection<Execution>(executions);
         }
+        [RelayCommand]
+        private void OnImageFailed(object sender)
+        {
+            //if (sender is Image img)
+            //{
+            //    img.Source = null; // This prevents the error
+            //}
+        }
 
 
-        
 
 
         public void OnNavigatedTo() { }

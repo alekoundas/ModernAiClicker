@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:StepinFlow.Views.Pages.FlowStepDetail"
+    xmlns:local="clr-namespace:StepinFlow.Views.Pages.Executions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="LoopExecutionPage"
     d:DataContext="{d:DesignInstance local:LoopExecutionPage,
@@ -40,7 +40,7 @@
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding  Execution.FlowStep.Name}" />
+                Text="{Binding Execution.FlowStep.Name}" />
         </StackPanel>
 
     </Grid>

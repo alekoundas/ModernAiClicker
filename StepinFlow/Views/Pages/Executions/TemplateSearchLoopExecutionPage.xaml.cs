@@ -1,8 +1,7 @@
 ﻿using Business.Interfaces;
 using StepinFlow.ViewModels.Pages.Executions;
-using System.Net.Cache;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 
 namespace StepinFlow.Views.Pages.Executions
 {

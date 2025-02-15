@@ -66,6 +66,16 @@ namespace StepinFlow.ViewModels.Pages.Executions
             if (e.ClickCount == 2)
                 await _windowService.OpenScreenshotSelectionWindow(ResultImage, false);
         }
+
+
+        [RelayCommand]
+        private void OnImageFailed(object sender)
+        {
+            //if (sender is Image img)
+            //{
+            //    img.Source = null; // This prevents the error
+            //}
+        }
     }
 }
 
