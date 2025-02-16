@@ -7,6 +7,7 @@ using Model.Enums;
 using System.Collections.ObjectModel;
 using Business.Extensions;
 using Business.BaseViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -34,52 +35,17 @@ namespace StepinFlow.ViewModels.Pages
             if (flowStep != null)
             {
                 FlowStep = flowStep;
-                PreviousSteps = GetParents();
+                PreviousSteps = await GetParents();
             }
         }
 
-        private ObservableCollection<FlowStep> GetParents()
+        public override async Task LoadNewFlowStep(FlowStep newFlowStep)
         {
-            if (FlowStep?.FlowId != null)
-            {
-                List<FlowStep> siblings = _baseDatawork.Query.Flows
-                    .First(x => x.Id == FlowStep.FlowId)
-                    .FlowSteps
-                    .Where(x => x.Id != FlowStep.Id)
-                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_SUCCESS)
-                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_FAILURE)
-                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
-                    .OrderBy(x => x.Id)
-                    .ToList();
-
-                return new ObservableCollection<FlowStep>(siblings);
-            }
-
-            if (FlowStep?.ParentFlowStepId != null)
-            {
-                List<FlowStep> parents = _baseDatawork.FlowSteps
-                 .GetAll()
-                 .First(x => x.Id == FlowStep.ParentFlowStepId)
-                 .SelectRecursive<FlowStep>(x => x.ParentFlowStep)
-                 .Where(x => x != null)
-                 .ToList();
-
-                List<FlowStep> parentsChildrensFlatten = parents
-                    .SelectMany(x => x.ChildrenFlowSteps.Append(x))
-                    .OrderBy(y => y.Id)
-                    .ToList();
-
-                parentsChildrensFlatten = parentsChildrensFlatten
-                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_SUCCESS)
-                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_FAILURE)
-                    .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
-                    .ToList();
-
-                return new ObservableCollection<FlowStep>(parentsChildrensFlatten);
-            }
-
-            return new ObservableCollection<FlowStep>();
+            FlowStep = newFlowStep;
+            PreviousSteps = await GetParents();
         }
+
+      
 
         [RelayCommand]
         private void OnButtonCancelClick()
@@ -120,6 +86,60 @@ namespace StepinFlow.ViewModels.Pages
 
             _baseDatawork.SaveChanges();
             await _flowsViewModel.RefreshData();
+        }
+
+        private async Task<ObservableCollection<FlowStep>> GetParents()
+        {
+            List<FlowStep> previousSteps = new List<FlowStep>();
+            var queue = new Queue<FlowStep>();
+            if (FlowStep?.Id != 0)
+            {
+                List<FlowStep> siblings = await _baseDatawork.FlowSteps.GetSiblings(FlowStep.Id);
+                foreach (FlowStep step in siblings)
+                    queue.Enqueue(step);
+            }
+            else
+            {
+                queue.Enqueue(FlowStep);
+                if (FlowStep.ParentFlowStepId != null)
+                {
+                    List<FlowStep> siblings = await _baseDatawork.FlowSteps.Query
+                        .Where(x => x.Id == FlowStep.ParentFlowStepId.Value)
+                        .SelectMany(x => x.ChildrenFlowSteps)
+                        .ToListAsync();
+
+                    foreach (var sibling in siblings)
+                        queue.Enqueue(sibling);
+                }
+            }
+
+
+            while (queue.Count > 0)
+            {
+                FlowStep currentFlowStep = queue.Dequeue();
+                previousSteps.Add(currentFlowStep);
+
+                if (currentFlowStep.ParentFlowStepId != null)
+                {
+                    int parentOrderingNum = _baseDatawork.FlowSteps.Where(x => x.Id == currentFlowStep.ParentFlowStepId.Value).Select(x => x.OrderingNum).First();
+                    List<FlowStep> parentSiblings = await _baseDatawork.FlowSteps.GetSiblings(currentFlowStep.ParentFlowStepId.Value);
+                    List<FlowStep> parentSiblingsAbove = parentSiblings.Where(x => x.OrderingNum <= parentOrderingNum).ToList();
+
+                    foreach (var sibling in parentSiblingsAbove)
+                        queue.Enqueue(sibling);
+                }
+            }
+
+            List<FlowStep> previousStepsFiltered = previousSteps
+           .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_SUCCESS)
+           .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_FAILURE)
+           .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+           .Where(x => x.FlowStepType != FlowStepTypesEnum.GO_TO)
+           .Distinct() // TODO: Fix query and remove this.
+           .ToList();
+
+
+            return new ObservableCollection<FlowStep>(previousStepsFiltered);
         }
     }
 }

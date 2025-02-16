@@ -4,6 +4,7 @@ using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
+using Model.Enums;
 
 namespace StepinFlow.ViewModels.Pages.Executions
 {
@@ -19,7 +20,6 @@ namespace StepinFlow.ViewModels.Pages.Executions
 
         public CursorMoveExecutionViewModel(IBaseDatawork baseDatawork)
         {
-
             _baseDatawork = baseDatawork;
             _execution = new Execution() { FlowStep = new FlowStep() };
         }
@@ -32,11 +32,38 @@ namespace StepinFlow.ViewModels.Pages.Executions
                 .Include(x => x.FlowStep.ParentTemplateSearchFlowStep)
                 .First();
 
-
-            //if (Execution?.FlowStep?.ParentTemplateSearchFlowStep != null)
-            //    Parents = new ObservableCollection<FlowStep>() { Execution.FlowStep.ParentTemplateSearchFlowStep };
-
+            GetParents(execution.FlowStepId);
         }
 
+        private void GetParents(int? flowStepId)
+        {
+            if (!flowStepId.HasValue)
+                return;
+
+            FlowStep? parent = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStepId.Value);
+
+            while (parent != null)
+            {
+                if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH)
+                    Parents.Add(parent);
+
+                if (parent.FlowStepType == FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP)
+                    Parents.Add(parent);
+
+                if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH)
+                    Parents.Add(parent);
+
+                if (parent.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
+                    Parents.Add(parent);
+
+                if (parent.FlowStepType == FlowStepTypesEnum.WAIT_FOR_TEMPLATE)
+                    Parents.Add(parent);
+
+                if (!parent.ParentFlowStepId.HasValue)
+                    return;
+
+                parent = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == parent.ParentFlowStepId.Value);
+            }
+        }
     }
 }

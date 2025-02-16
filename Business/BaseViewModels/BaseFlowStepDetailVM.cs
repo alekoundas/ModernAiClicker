@@ -23,9 +23,10 @@ namespace Business.BaseViewModels
                 FlowStep = flowStep;
         }
 
-        public void LoadNewFlowStep(FlowStep newFlowStep)
+        public virtual Task LoadNewFlowStep(FlowStep newFlowStep)
         {
             FlowStep = newFlowStep;
+            return Task.CompletedTask;
         }
 
     }

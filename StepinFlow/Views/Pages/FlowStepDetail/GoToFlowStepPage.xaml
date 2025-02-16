@@ -37,16 +37,7 @@
                                 <TextBlock Text="{Binding Path=Name}" />
                             </StackPanel>
                         </DataTemplate>
-
                     </ComboBox.ItemTemplate>
-                    <!--<i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="Loaded">
-                    <i:InvokeCommandAction Command="{Binding ViewModel.ComboBoxSelectionChangedCommand}" />
-                    </i:EventTrigger>
-                    </i:Interaction.Triggers>-->
                 </ComboBox>
 
             </StackPanel>
