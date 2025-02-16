@@ -1,6 +1,7 @@
 ﻿using Business.Helpers;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
 using Model.Enums;
 using Model.Models;
 using System.Linq.Expressions;
@@ -26,12 +27,11 @@ namespace Business.Factories.Workers
 
         public async override Task<FlowStep?> GetNextChildFlowStep(Execution execution)
         {
-            Expression<Func<FlowStep, bool>> firstFlowStepFilter =
-                (x) => x.FlowId == execution.FlowId
-                    && x.OrderingNum == 0
-                    && x.FlowStepType != FlowStepTypesEnum.IS_NEW;
-
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(firstFlowStepFilter);
+            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.Query
+                .Where(x=>x.FlowId == execution.FlowId)
+                .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                .OrderBy(x=>x.OrderingNum)
+                .FirstOrDefaultAsync();
 
             //TODO return error message 
             if (nextFlowStep == null)
