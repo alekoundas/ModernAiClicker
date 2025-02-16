@@ -3,26 +3,25 @@ using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
+using Business.BaseViewModels;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class SleepFlowStepViewModel : ObservableObject, IFlowStepViewModel
+    public partial class SleepFlowStepViewModel : BaseFlowStepDetailVM
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private FlowStep _flowStep = new FlowStep();
-
-        [ObservableProperty]
         private string _timeTotal;
-        public SleepFlowStepViewModel( FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public SleepFlowStepViewModel( FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
+
 
             int miliseconds = 0;
             miliseconds += FlowStep.SleepForMilliseconds;
@@ -31,18 +30,6 @@ namespace StepinFlow.ViewModels.Pages
             miliseconds += FlowStep.SleepForHours * 60 * 60 * 1000;
 
             TimeTotal = TimeSpan.FromMilliseconds(miliseconds).ToString(@"hh\:mm\:ss");
-        }
-
-        public async Task LoadFlowStepId(int flowStepId)
-        {
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
-            if (flowStep != null)
-                FlowStep = flowStep;
-        }
-
-        public void LoadNewFlowStep(FlowStep newFlowStep)
-        {
-            FlowStep = newFlowStep;
         }
 
         [RelayCommand]

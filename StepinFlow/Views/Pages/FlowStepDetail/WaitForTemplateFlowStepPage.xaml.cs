@@ -6,9 +6,9 @@ using System.Windows.Media.Imaging;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class WaitForTemplateFlowStepPage : Page, IPage
+    public partial class WaitForTemplateFlowStepPage : Page, IFlowStepDetailPage
     {
-        public IFlowStepViewModel ViewModel { get; set; }
+        public IFlowStepDetailVM ViewModel { get; set; }
 
         public WaitForTemplateFlowStepPage(WaitForTemplateFlowStepViewModel viewModel)
         {

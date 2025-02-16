@@ -5,9 +5,9 @@ using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class GoToFlowStepPage : Page,IPage
+    public partial class GoToFlowStepPage : Page,IFlowStepDetailPage
     {
-        public IFlowStepViewModel ViewModel { get; set; }
+        public IFlowStepDetailVM ViewModel { get; set; }
         public GoToFlowStepPage(GoToFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;

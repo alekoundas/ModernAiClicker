@@ -62,7 +62,8 @@
                 HorizontalAlignment="Stretch"
                 Fill="White" />
 
-            <Frame x:Name="UIFlowStepDetailFrame" Content="{Binding FramePage}" />
+            <Frame Content="{Binding FrameFlowStep}" />
+            <Frame Content="{Binding FrameFlow}" />
         </StackPanel>
     </Grid>
 </UserControl>

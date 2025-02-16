@@ -6,29 +6,29 @@ using DataAccess.Repository.Interface;
 using Model.Enums;
 using System.Collections.ObjectModel;
 using Business.Extensions;
+using Business.BaseViewModels;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class GoToFlowStepViewModel : ObservableObject, IFlowStepViewModel
+    public partial class GoToFlowStepViewModel : BaseFlowStepDetailVM
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private FlowStep _flowStep = new FlowStep();
-        [ObservableProperty]
         private ObservableCollection<FlowStep> _previousSteps = new ObservableCollection<FlowStep>();
 
 
-        public GoToFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public GoToFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
+
         }
 
-        public async Task LoadFlowStepId(int flowStepId)
+        public override async Task LoadFlowStepId(int flowStepId)
         {
             FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
             if (flowStep != null)
@@ -36,11 +36,6 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep = flowStep;
                 PreviousSteps = GetParents();
             }
-        }
-
-        public void LoadNewFlowStep(FlowStep newFlowStep)
-        {
-            FlowStep = newFlowStep;
         }
 
         private ObservableCollection<FlowStep> GetParents()

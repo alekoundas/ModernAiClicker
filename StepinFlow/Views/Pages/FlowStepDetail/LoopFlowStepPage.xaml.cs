@@ -4,10 +4,10 @@ using System.Windows.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class LoopFlowStepPage : Page, IPage
+    public partial class LoopFlowStepPage : Page, IFlowStepDetailPage
     {
 
-        public IFlowStepViewModel ViewModel { get; set; }
+        public IFlowStepDetailVM ViewModel { get; set; }
         public LoopFlowStepPage(LoopFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;

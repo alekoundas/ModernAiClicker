@@ -6,17 +6,15 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using Model.Enums;
 using Model.Structs;
+using Business.BaseViewModels;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class CursorMoveFlowStepViewModel : ObservableObject, IFlowStepViewModel
+    public partial class CursorMoveFlowStepViewModel : BaseFlowStepDetailVM
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
-
-        [ObservableProperty]
-        private FlowStep _flowStep = new FlowStep();
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
@@ -25,12 +23,11 @@ namespace StepinFlow.ViewModels.Pages
         private FlowStep? _selectedFlowStep = null;
 
 
-        public CursorMoveFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public CursorMoveFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
-            FlowStep = new FlowStep();
 
 
             if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
@@ -40,7 +37,7 @@ namespace StepinFlow.ViewModels.Pages
                 GetParents(FlowStep.ParentFlowStepId.Value);
         }
 
-        public async Task LoadFlowStepId(int flowStepId)
+        public override async Task LoadFlowStepId(int flowStepId)
         {
             FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
             if (flowStep != null)
@@ -55,12 +52,6 @@ namespace StepinFlow.ViewModels.Pages
                     GetParents(FlowStep.ParentFlowStepId.Value);
             }
         }
-
-        public void LoadNewFlowStep(FlowStep newFlowStep)
-        {
-            FlowStep = newFlowStep;
-        }
-
 
         [RelayCommand]
         private void OnButtonTestClick()

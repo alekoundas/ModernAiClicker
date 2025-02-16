@@ -4,9 +4,9 @@ using System.Windows.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class CursorScrollFlowStepPage : Page, IPage
+    public partial class CursorScrollFlowStepPage : Page, IFlowStepDetailPage
     {
-        public IFlowStepViewModel ViewModel { get; set; }
+        public IFlowStepDetailVM ViewModel { get; set; }
         public CursorScrollFlowStepPage(CursorScrollFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;

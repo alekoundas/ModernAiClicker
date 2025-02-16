@@ -12,9 +12,10 @@ using System.Drawing;
 using Rectangle = Model.Structs.Rectangle;
 using System.Windows.Input;
 using StepinFlow.Interfaces;
+using Business.BaseViewModels;
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class TemplateSearchLoopFlowStepViewModel : ObservableObject, IFlowStepViewModel
+    public partial class TemplateSearchLoopFlowStepViewModel : BaseFlowStepDetailVM
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
@@ -23,8 +24,6 @@ namespace StepinFlow.ViewModels.Pages
         private readonly FlowsViewModel _flowsViewModel;
         private string _previousTestResultImagePath = "";
 
-        [ObservableProperty]
-        private FlowStep _flowStep = new FlowStep();
         [ObservableProperty]
         private byte[] _resultImage = new byte[0];
         [ObservableProperty]
@@ -35,7 +34,7 @@ namespace StepinFlow.ViewModels.Pages
             ISystemService systemService,
             ITemplateSearchService templateMatchingService,
             IBaseDatawork baseDatawork,
-            IWindowService windowService)
+            IWindowService windowService) : base(baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
@@ -43,19 +42,7 @@ namespace StepinFlow.ViewModels.Pages
             _templateMatchingService = templateMatchingService;
             _flowsViewModel = flowsViewModel;
             _windowService = windowService;
-        }
 
-
-        public async Task LoadFlowStepId(int flowStepId)
-        {
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
-            if (flowStep != null)
-                FlowStep = flowStep;
-        }
-
-        public void LoadNewFlowStep(FlowStep newFlowStep)
-        {
-            FlowStep = newFlowStep;
         }
 
         [RelayCommand]

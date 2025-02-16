@@ -5,9 +5,9 @@ using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class SleepFlowStepPage : Page, IPage
+    public partial class SleepFlowStepPage : Page, IFlowStepDetailPage
     {
-        public IFlowStepViewModel ViewModel { get; set; }
+        public IFlowStepDetailVM ViewModel { get; set; }
         public SleepFlowStepPage(SleepFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;

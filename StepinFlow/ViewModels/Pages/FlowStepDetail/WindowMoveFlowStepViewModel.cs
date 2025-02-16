@@ -5,39 +5,24 @@ using Business.Interfaces;
 using Model.Structs;
 using Business.Helpers;
 using DataAccess.Repository.Interface;
+using Business.BaseViewModels;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class WindowMoveFlowStepViewModel : ObservableObject, IFlowStepViewModel
+    public partial class WindowMoveFlowStepViewModel : BaseFlowStepDetailVM
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private FlowStep _flowStep = new FlowStep();
-
-        [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
-        public WindowMoveFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork)
+        public WindowMoveFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _flowsViewModel = flowsViewModel;   
-        }
-
-
-        public async Task LoadFlowStepId(int flowStepId)
-        {
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
-            if (flowStep != null)
-                FlowStep = flowStep;
-        }
-
-        public void LoadNewFlowStep(FlowStep newFlowStep)
-        {
-            FlowStep = newFlowStep;
+            _flowsViewModel = flowsViewModel;
         }
 
 

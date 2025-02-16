@@ -23,6 +23,7 @@ using StepinFlow.ViewModels.UserControls;
 using StepinFlow.ViewModels.Windows;
 using StepinFlow.Views.Pages;
 using StepinFlow.Views.Pages.Executions;
+using StepinFlow.Views.Pages.FlowDetail;
 using StepinFlow.Views.Pages.FlowStepDetail;
 using StepinFlow.Views.UserControls;
 using StepinFlow.Views.Windows;
@@ -121,7 +122,11 @@ namespace StepinFlow
                 services.AddSingleton<SettingsPage>();
                 services.AddSingleton<SettingsViewModel>();
 
-                //Flow step detail
+                // Flow detail.
+                services.AddSingleton<FlowPage>();
+                services.AddSingleton<FlowViewModel>();
+
+                // Flow step detail.
                 services.AddSingleton<TemplateSearchFlowStepPage>();
                 services.AddSingleton<TemplateSearchFlowStepViewModel>();
 

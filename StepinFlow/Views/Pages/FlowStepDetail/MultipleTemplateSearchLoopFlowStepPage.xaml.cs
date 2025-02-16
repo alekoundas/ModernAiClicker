@@ -4,9 +4,9 @@ using System.Windows.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class MultipleTemplateSearchLoopFlowStepPage : Page, IPage
+    public partial class MultipleTemplateSearchLoopFlowStepPage : Page, IFlowStepDetailPage
     {
-        public IFlowStepViewModel ViewModel { get; set; }
+        public IFlowStepDetailVM ViewModel { get; set; }
         public MultipleTemplateSearchLoopFlowStepPage(MultipleTemplateSearchLoopFlowStepViewModel viewModel)
         {
             ViewModel = viewModel;

@@ -9,10 +9,11 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
+using Business.BaseViewModels;
 
 namespace StepinFlow.ViewModels.Pages
 {
-    public partial class WaitForTemplateFlowStepViewModel : ObservableObject, IFlowStepViewModel
+    public partial class WaitForTemplateFlowStepViewModel : BaseFlowStepDetailVM
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
@@ -22,13 +23,10 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
-        [ObservableProperty]
-        private FlowStep _flowStep = new FlowStep();
-
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
-        public WaitForTemplateFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork)
+        public WaitForTemplateFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
@@ -36,18 +34,7 @@ namespace StepinFlow.ViewModels.Pages
             _templateMatchingService = templateMatchingService;
             _flowsViewModel = flowsViewModel;
 
-        }
 
-        public async Task LoadFlowStepId(int flowStepId)
-        {
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
-            if (flowStep != null)
-                FlowStep = flowStep;
-        }
-
-        public void LoadNewFlowStep(FlowStep newFlowStep)
-        {
-            FlowStep = newFlowStep;
         }
 
         [RelayCommand]
