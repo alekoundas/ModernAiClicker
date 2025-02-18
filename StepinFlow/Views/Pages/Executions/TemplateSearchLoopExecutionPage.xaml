@@ -42,13 +42,13 @@
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding Execution.FlowStep.Name, Mode=TwoWay}" />
+                Text="{Binding ViewModel.Execution.FlowStep.Name, Mode=TwoWay}" />
 
             <Label>Process</Label>
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding Execution.FlowStep.ProcessName}" />
+                Text="{Binding ViewModel.Execution.FlowStep.ProcessName}" />
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <StackPanel>
@@ -56,14 +56,14 @@
                     <TextBox
                         Margin="0,0,0,20"
                         IsReadOnly="True"
-                        Text="{Binding Execution.FlowStep.Accuracy}" />
+                        Text="{Binding ViewModel.Execution.FlowStep.Accuracy}" />
                 </StackPanel>
                 <StackPanel>
                     <Label>Result accuracy</Label>
                     <TextBox
                         Margin="0,0,0,20"
                         IsReadOnly="True"
-                        Text="{Binding Execution.ResultAccuracy}" />
+                        Text="{Binding ViewModel.Execution.ResultAccuracy}" />
                 </StackPanel>
             </StackPanel>
 
@@ -72,26 +72,26 @@
             <Image
                 MaxWidth="100"
                 MaxHeight="100"
-                Source="{Binding Execution.FlowStep.TemplateImage}">
+                Source="{Binding ViewModel.Execution.FlowStep.TemplateImage}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ImageFailed">
-                        <i:InvokeCommandAction Command="{Binding ImageFailedCommand}" />
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ImageFailedCommand}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseDown">
-                        <i:InvokeCommandAction Command="{Binding TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                        <i:InvokeCommandAction Command="{Binding ViewModel.TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Image>
 
 
             <Label>Result image</Label>
-            <Image Source="{Binding ResultImage}">
+            <Image Source="{Binding ViewModel.ResultImage}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ImageFailed">
-                        <i:InvokeCommandAction Command="{Binding ImageFailedCommand}" />
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ImageFailedCommand}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseDown">
-                        <i:InvokeCommandAction Command="{Binding ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Image>

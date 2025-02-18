@@ -1,8 +1,5 @@
-﻿using Business.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using Model.Enums;
+﻿using Model.Models;
 using StepinFlow.ViewModels.UserControls;
-using StepinFlow.Views.Pages.FlowStepDetail;
 using System.Windows.Controls;
 
 
@@ -11,7 +8,6 @@ namespace StepinFlow.Views.UserControls
     public partial class FlowStepFrameUserControl : UserControl
     {
         public FlowStepFrameUserControlViewModel ViewModel { get; set; }
-
         public FlowStepFrameUserControl()
         {
             FlowStepFrameUserControlViewModel? viewModel = App.GetService<FlowStepFrameUserControlViewModel>();
@@ -24,5 +20,9 @@ namespace StepinFlow.Views.UserControls
             DataContext = ViewModel;
             InitializeComponent();
         }
+
+        public void NavigateToNewFlowStep(FlowStep flowStep) => ViewModel!.NavigateToNewFlowStep(flowStep);
+        public async Task NavigateToFlowStep(int id) => await ViewModel!.NavigateToFlowStep(id);
+        public async Task NavigateToFlow(int id) => await ViewModel!.NavigateToFlow(id);
     }
 }

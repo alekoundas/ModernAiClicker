@@ -40,17 +40,17 @@
             <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
 
             <Label>1. Set Name</Label>
-            <TextBox Text="{Binding Execution.FlowStep.ParentTemplateSearchFlowStep.Name, Mode=TwoWay}" />
+            <TextBox Text="{Binding ViewModel.Execution.FlowStep.ParentTemplateSearchFlowStep.Name, Mode=TwoWay}" />
 
             <Label>2. Select Process (leave empty for screen search)</Label>
             <ComboBox
                 VerticalAlignment="Center"
-                ItemsSource="{Binding ProcessList}"
-                SelectedItem="{Binding Execution.FlowStep.ParentTemplateSearchFlowStep.ProcessName, Mode=TwoWay}" />
+                ItemsSource="{Binding ViewModel.ProcessList}"
+                SelectedItem="{Binding ViewModel.Execution.FlowStep.ParentTemplateSearchFlowStep.ProcessName, Mode=TwoWay}" />
 
 
 
-            <ItemsControl ItemsSource="{Binding ChildrenTemplateSearchFlowSteps}">
+            <ItemsControl ItemsSource="{Binding ViewModel.ChildrenTemplateSearchFlowSteps}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <!--  Use a WrapPanel for a horizontal layout  -->
@@ -74,10 +74,10 @@
                                     Source="{Binding TemplateImage}">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="ImageFailed">
-                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchExecutionPage}}, Path=ButtonOpenFileClickCommand}" />
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchExecutionPage}}, Path=ViewModel.ButtonOpenFileClickCommand}" />
                                         </i:EventTrigger>
                                         <i:EventTrigger EventName="MouseDown">
-                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchExecutionPage}}, Path=TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchExecutionPage}}, Path=ViewModel.TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Image>
@@ -98,7 +98,7 @@
             <Image Source="{Binding ResultImage}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
-                        <i:InvokeCommandAction Command="{Binding ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Image>

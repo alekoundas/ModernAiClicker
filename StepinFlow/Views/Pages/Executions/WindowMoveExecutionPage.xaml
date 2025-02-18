@@ -42,7 +42,7 @@
             <StackPanel>
                 <Label>Change application window location.</Label>
                 <Label>Select application window to relocate:</Label>
-                <ComboBox ItemsSource="{Binding ProcessList}" SelectedItem="{Binding Execution.FlowStep.ProcessName}" />
+                <ComboBox ItemsSource="{Binding ViewModel.ProcessList}" SelectedItem="{Binding ViewModel.Execution.FlowStep.ProcessName}" />
             </StackPanel>
 
 
@@ -52,13 +52,13 @@
             <!--  X  -->
             <StackPanel Grid.Row="2">
                 <Label>X:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.LocationX, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.LocationX, Mode=TwoWay}" />
             </StackPanel>
 
             <!--  Y  -->
             <StackPanel Grid.Row="2" Grid.Column="3">
                 <Label>Y:</Label>
-                <TextBox Text="{Binding Execution.FlowStep.LocationY, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.Execution.FlowStep.LocationY, Mode=TwoWay}" />
             </StackPanel>
 
 

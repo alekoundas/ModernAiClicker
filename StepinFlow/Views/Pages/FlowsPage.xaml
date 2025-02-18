@@ -160,7 +160,7 @@
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
             <ScrollViewer>
-                <UserControls:FlowStepFrameUserControl Padding="20,20,20,20" />
+                <UserControls:FlowStepFrameUserControl x:Name="FlowStepFrameUserControl" Padding="20,20,20,20" />
             </ScrollViewer>
         </Border>
 
@@ -182,6 +182,8 @@
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
             <UserControls:TreeViewUserControl
+                x:Name="TreeViewControl"
+                IsLocked="{Binding ViewModel.IsLocked}"
                 OnAddFlowStepClick="OnAddFlowStepClick"
                 OnFlowStepClone="OnFlowStepClone"
                 OnSelectedFlowIdChange="OnSelectedFlowIdChange"

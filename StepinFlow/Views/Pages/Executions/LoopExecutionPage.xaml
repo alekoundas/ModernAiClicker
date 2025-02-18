@@ -40,7 +40,7 @@
             <TextBox
                 Margin="0,0,0,20"
                 IsReadOnly="True"
-                Text="{Binding Execution.FlowStep.Name}" />
+                Text="{Binding ViewModel.Execution.FlowStep.Name}" />
         </StackPanel>
 
     </Grid>

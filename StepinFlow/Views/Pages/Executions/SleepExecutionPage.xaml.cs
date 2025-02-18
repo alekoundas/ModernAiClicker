@@ -6,18 +6,12 @@ namespace StepinFlow.Views.Pages.Executions
 {
     public partial class SleepExecutionPage : Page, IExecutionPage
     {
-        public SleepExecutionViewModel ViewModel { get; set; }
+        public IExecutionViewModel ViewModel { get; set; }
         public SleepExecutionPage()
         {
             ViewModel = new SleepExecutionViewModel();
-            DataContext = ViewModel;
             InitializeComponent();
-        }
-
-        public void SetViewModel(IExecutionViewModel executionViewModel)
-        {
-            ViewModel = (SleepExecutionViewModel)executionViewModel;
-            DataContext = ViewModel;
+            DataContext = this;
         }
     }
 }

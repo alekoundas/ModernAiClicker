@@ -1,27 +1,27 @@
-﻿using Business.Interfaces;
-using DataAccess.Repository.Interface;
-using Model.Models;
+﻿using Model.Models;
 using StepinFlow.ViewModels.Pages;
 using Wpf.Ui.Controls;
-using StepinFlow.Views.Pages.FlowStepDetail;
-using StepinFlow.Interfaces;
+using StepinFlow.Views.UserControls;
 
 namespace StepinFlow.Views.Pages
 {
     public partial class FlowsPage : INavigableView<FlowsViewModel>
     {
         public FlowsViewModel ViewModel { get; }
-        private readonly ISystemService _systemService;
-        private readonly ITemplateSearchService _templateMatchingService;
-        private readonly IBaseDatawork _baseDatawork;
-        private readonly IWindowService _windowService;
 
-        public FlowsPage(FlowsViewModel viewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork, IWindowService windowService)
+        public FlowsPage(FlowsViewModel viewModel, TreeViewUserControl treeViewUserControl)
         {
-            _baseDatawork = baseDatawork;
-            _systemService = systemService;
-            _templateMatchingService = templateMatchingService;
-            _windowService = windowService;
+            viewModel.LoadFlows += InvokeLoadFlowsAction;
+            viewModel.ClearCopy += InvokeClearCopyAction;
+            viewModel.AddNewFlow += InvokeAddNewFlowAction;
+            viewModel.ExpandAll += InvokeExpandAllAction;
+            viewModel.CollapseAll += InvokeCollapseAllAction;
+
+            viewModel.NavigateToFlow += InvokeNavigateToFlowAction;
+            viewModel.NavigateToFlowStep += InvokeNavigateToFlowStepAction;
+            viewModel.NavigateToNewFlowStep += InvokeNavigateToNewFlowStepAction;
+            viewModel.NavigateToExecution += InvokeNavigateToExecutionAction;
+
 
             ViewModel = viewModel;
             DataContext = this;
@@ -47,6 +47,50 @@ namespace StepinFlow.Views.Pages
         private void OnSelectedFlowIdChange(object sender, int id)
         {
             ViewModel.OnTreeViewItemFlowSelected(id);
+        }
+
+        public async Task InvokeLoadFlowsAction(int? id = 0)
+        {
+            await TreeViewControl.ViewModel.LoadFlows(id);
+        }
+
+        public void InvokeClearCopyAction()
+        {
+            TreeViewControl.ViewModel.ClearCopy();
+        }
+
+        public async Task InvokeAddNewFlowAction()
+        {
+            await TreeViewControl.ViewModel.AddNewFlow();
+        }
+
+        public async Task InvokeExpandAllAction()
+        {
+            await TreeViewControl.ViewModel.ExpandAll();
+        }
+
+        public async Task InvokeCollapseAllAction()
+        {
+            await TreeViewControl.ViewModel.CollapseAll();
+        }
+
+        public async Task InvokeNavigateToFlowAction(int id)
+        {
+            await FlowStepFrameUserControl.ViewModel.NavigateToFlow(id);
+        }
+
+        public async Task InvokeNavigateToFlowStepAction(int id)
+        {
+            await FlowStepFrameUserControl.ViewModel.NavigateToFlowStep(id);
+        }
+
+        public void InvokeNavigateToExecutionAction(Execution execution)
+        {
+            FlowStepFrameUserControl.ViewModel.NavigateToExecution(execution);
+        }
+        public void InvokeNavigateToNewFlowStepAction(FlowStep flowStep)
+        {
+            FlowStepFrameUserControl.ViewModel.NavigateToNewFlowStep(flowStep);
         }
     }
 }

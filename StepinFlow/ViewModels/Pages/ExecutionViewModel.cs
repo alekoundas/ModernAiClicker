@@ -21,11 +21,14 @@ namespace StepinFlow.ViewModels.Pages
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
         private readonly IExecutionFactory _executionFactory;
-        private readonly TreeViewUserControlViewModel _treeViewUserControlViewModel;
 
+        public event LoadFlowsEvent? LoadFlows;
+        public delegate Task LoadFlowsEvent(int? id = 0);
 
-        public event NavigateToExecutionDetailEvent? NavigateToExecutionDetail;
-        public delegate void NavigateToExecutionDetailEvent(FlowStepTypesEnum flowStepTypes, Execution? execution);
+        public event NavigateToExecutionEvent? NavigateToExecution;
+        public delegate void NavigateToExecutionEvent(Execution execution);
+        public event ExpandAndSelectFlowStepEvent? ExpandAndSelectFlowStep;
+        public delegate Task ExpandAndSelectFlowStepEvent(Execution execution);
 
         // Combobox Flows
         [ObservableProperty]
@@ -75,29 +78,19 @@ namespace StepinFlow.ViewModels.Pages
         public ExecutionViewModel(
             IBaseDatawork baseDatawork,
             ISystemService systemService,
-            IExecutionFactory executionFactory,
-            TreeViewUserControlViewModel treeViewUserControlViewModel)
+            IExecutionFactory executionFactory)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _executionFactory = executionFactory;
-            _treeViewUserControlViewModel = treeViewUserControlViewModel;
 
-            _treeViewUserControlViewModel.IsLocked = true;
-            ComboBoxFlows = GetFlows();
+            ComboBoxFlows = new ObservableCollection<Flow>(_baseDatawork.Query.Flows.ToList());
 
             _executionFactory.SetCancellationToken(_cancellationToken);
 
             // Update every second
             _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         }
-
-        private ObservableCollection<Flow> GetFlows()
-        {
-            List<Flow> flows = _baseDatawork.Query.Flows.ToList();
-            return new ObservableCollection<Flow>(flows);
-        }
-
 
 
         [RelayCommand]
@@ -173,7 +166,8 @@ namespace StepinFlow.ViewModels.Pages
                     ListBoxExecutions.Add(flowStepExecution);
                 });
 
-                await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, _treeViewUserControlViewModel.FlowsList);
+                await ExpandAndSelectFlowStep?.Invoke(flowStepExecution);
+                //await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, _treeViewUserControlViewModel.FlowsList);
                 await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
                 await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
                 await factoryWorker.SetExecutionModelStateComplete(flowStepExecution);
@@ -211,8 +205,7 @@ namespace StepinFlow.ViewModels.Pages
                 .ToListAsync();
 
             ComboBoxExecutionHistories = new ObservableCollection<Execution>(executions);
-
-            await _treeViewUserControlViewModel.LoadFlows(ComboBoxSelectedFlow.Id);
+            await LoadFlows?.Invoke(ComboBoxSelectedFlow.Id);
         }
 
 
@@ -249,7 +242,7 @@ namespace StepinFlow.ViewModels.Pages
 
         }
 
-     
+
 
         [RelayCommand]
         private void OnListBoxSelectedItemChanged(SelectionChangedEventArgs routedPropertyChangedEventArgs)
@@ -271,7 +264,10 @@ namespace StepinFlow.ViewModels.Pages
                 if (selectedExecution.FlowStep != null)
                 {
                     selectedExecution.FlowStep.IsSelected = true;
-                    NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
+                    //_flowStepFrameUserControlViewModel.NavigateToExecution(selectedExecution);
+                    NavigateToExecution?.Invoke(selectedExecution);
+
+                    //NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
                 }
             }
         }

@@ -7,18 +7,12 @@ namespace StepinFlow.Views.Pages.Executions
 {
     public partial class GoToExecutionPage : Page, IExecutionPage
     {
-        public GoToExecutionViewModel ViewModel { get; set; }
+        public IExecutionViewModel ViewModel { get; set; }
         public GoToExecutionPage(IBaseDatawork baseDatawork)
         {
             ViewModel = new GoToExecutionViewModel(baseDatawork);
-            DataContext = ViewModel;
             InitializeComponent();
-        }
-
-        public void SetViewModel(IExecutionViewModel executionViewModel)
-        {
-            ViewModel = (GoToExecutionViewModel)executionViewModel;
-            DataContext = ViewModel;
+            DataContext = this;
         }
     }
 }

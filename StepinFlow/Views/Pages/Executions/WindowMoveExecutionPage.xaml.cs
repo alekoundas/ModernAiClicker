@@ -6,15 +6,12 @@ namespace StepinFlow.Views.Pages.Executions
 {
     public partial class WindowMoveExecutionPage : Page, IExecutionPage
     {
-        public WindowMoveExecutionPage()
+        public IExecutionViewModel ViewModel { get; set; }
+        public WindowMoveExecutionPage(WindowMoveExecutionViewModel viewModel)
         {
-            DataContext = new WindowMoveExecutionViewModel();
+            ViewModel = viewModel;
             InitializeComponent();
-        }
-
-        public void SetViewModel(IExecutionViewModel executionViewModel)
-        {
-            DataContext = (WindowMoveExecutionViewModel)executionViewModel;
+            DataContext = this;
         }
     }
 }

@@ -6,19 +6,12 @@ namespace StepinFlow.Views.Pages.Executions
 {
     public partial class MultipleTemplateSearchLoopExecutionPage : Page, IExecutionPage
     {
-        public MultipleTemplateSearchLoopExecutionViewModel ViewModel { get; set; }
-
+        public IExecutionViewModel ViewModel { get; set; }
         public MultipleTemplateSearchLoopExecutionPage(MultipleTemplateSearchLoopExecutionViewModel viewModel)
         {
             ViewModel = viewModel;
-            DataContext = ViewModel;
             InitializeComponent();
-        }
-
-        public void SetViewModel(IExecutionViewModel executionViewModel)
-        {
-            ViewModel = (MultipleTemplateSearchLoopExecutionViewModel)executionViewModel;
-            DataContext = ViewModel;
+            DataContext = this;
         }
     }
 }

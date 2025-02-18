@@ -6,10 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Enums;
 using Model.Models;
+using StepinFlow.Views.Pages.Executions;
 using StepinFlow.Views.Pages.FlowDetail;
 using StepinFlow.Views.Pages.FlowStepDetail;
-using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 
@@ -44,11 +43,13 @@ namespace StepinFlow.ViewModels.UserControls
 
         [ObservableProperty]
         private IFlowStepDetailPage? _frameFlowStep;
-
         [ObservableProperty]
         private IFlowDetailPage? _frameFlow;
+        [ObservableProperty]
+        private IExecutionPage? _frameExecution;
 
         private readonly Dictionary<FlowStepTypesEnum, Lazy<IFlowStepDetailPage>> _flowStepPageFactory;
+        private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>> _executionFlowStepPageFactory;
         private readonly Dictionary<FlowTypesEnum, Lazy<IFlowDetailPage>> _flowPageFactory;
         private FlowStep? _newFlowStep = null;
 
@@ -81,6 +82,31 @@ namespace StepinFlow.ViewModels.UserControls
                 { FlowTypesEnum.SUB_FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
                 { FlowTypesEnum.NO_SELECTION, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
             };
+
+            _executionFlowStepPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>>
+            {
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<TemplateSearchExecutionPage>()) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<TemplateSearchExecutionPage>()) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchLoopExecutionPage>()) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchExecutionPage>()) },
+                { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WaitForTemplateExecutionPage>()) },
+                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorMoveExecutionPage>()) },
+                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorClickExecutionPage>()) },
+                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorScrollExecutionPage>()) },
+                { FlowStepTypesEnum.SLEEP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<SleepExecutionPage>()) },
+                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<GoToExecutionPage>()) },
+                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WindowResizeExecutionPage>()) },
+                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WindowMoveExecutionPage>()) },
+                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<LoopExecutionPage>()) }
+            };
+
+            //_executionFlowPageFactory = new Dictionary<FlowTypesEnum, Lazy<IExecutionPage>>
+            //{
+            //    { FlowTypesEnum.FLOW, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<FlowExecutionPage>()) },
+            //    { FlowTypesEnum.SUB_FLOW, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
+            //    { FlowTypesEnum.NO_SELECTION, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
+            //};
+
         }
 
         public void NavigateToNewFlowStep(FlowStep newFlowStep)
@@ -92,6 +118,7 @@ namespace StepinFlow.ViewModels.UserControls
             SelectedFlowStepType = FlowStepTypesEnum.NO_SELECTION;
             _newFlowStep = newFlowStep;
             FrameFlowStep = null;
+            FrameExecution = null;
         }
 
         public async Task NavigateToFlowStep(int id)
@@ -113,7 +140,6 @@ namespace StepinFlow.ViewModels.UserControls
             }
 
         }
-
         public async Task NavigateToFlow(int id)
         {
             // Navigate to existing flow.
@@ -134,6 +160,31 @@ namespace StepinFlow.ViewModels.UserControls
 
         }
 
+        public void NavigateToExecution(Execution execution)
+        {
+            if (execution.FlowStep != null)
+            {
+                SelectedFlowStepType = execution.FlowStep.FlowStepType;
+                FlowStepTypeVisibility = Visibility.Visible;
+                FlowTypeVisibility = Visibility.Collapsed;
+                IsFlowStepTypeEnabled = false;
+                IsFlowTypeEnabled = false;
+                NavigateToExecutionDetailPage(execution);
+
+            }
+            else if (execution.Flow != null)
+            {
+                SelectedFlowType = execution.Flow.Type;
+                FlowStepTypeVisibility = Visibility.Collapsed;
+                FlowTypeVisibility = Visibility.Visible;
+                IsFlowStepTypeEnabled = false;
+                IsFlowTypeEnabled = false;
+                //NavigateToExecutionDetailPage(execution);
+            }
+        }
+
+       
+
 
 
         [RelayCommand]
@@ -151,6 +202,8 @@ namespace StepinFlow.ViewModels.UserControls
         private void OnFlowTypeSelectionChanged()
         {
         }
+
+
         private void NavigateToNewFlowStepDetailPage(FlowStep newFlowStep)
         {
             FrameFlow = null;
@@ -162,7 +215,11 @@ namespace StepinFlow.ViewModels.UserControls
                 FrameFlowStep = page;
             }
             else
+            {
+                FrameFlow = null;
                 FrameFlowStep = null;
+                FrameExecution = null;
+            }
         }
 
         private void NavigateToFlowStepDetailPage(int id)
@@ -176,7 +233,11 @@ namespace StepinFlow.ViewModels.UserControls
                 FrameFlowStep = page;
             }
             else
+            {
+                FrameFlow = null;
                 FrameFlowStep = null;
+                FrameExecution = null;
+            }
         }
 
         private void NavigateToFlowDetailPage(int id)
@@ -190,7 +251,29 @@ namespace StepinFlow.ViewModels.UserControls
                 FrameFlow = page;
             }
             else
+            {
                 FrameFlow = null;
+                FrameFlowStep = null;
+                FrameExecution = null;
+            }
+        }
+
+        private void NavigateToExecutionDetailPage(Execution execution)
+        {
+            FrameFlowStep = null;
+            IExecutionPage? page = _executionFlowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IExecutionPage>? lazzyPage) ? lazzyPage.Value : null;
+
+            if (page != null)
+            {
+                page.ViewModel.SetExecution(execution);
+                FrameExecution = page;
+            }
+            else
+            {
+                FrameFlow = null;
+                FrameFlowStep = null;
+                FrameExecution = null;
+            }
         }
 
     }

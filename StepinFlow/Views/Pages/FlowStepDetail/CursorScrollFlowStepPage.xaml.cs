@@ -13,6 +13,5 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
             InitializeComponent();
             DataContext = this;
         }
-
     }
 }

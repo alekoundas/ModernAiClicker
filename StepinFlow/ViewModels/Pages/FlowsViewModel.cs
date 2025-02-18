@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Wpf.Ui.Controls;
-using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,8 +15,35 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
-        private readonly TreeViewUserControlViewModel _treeViewUserControlViewModel;
-        private readonly FlowStepFrameUserControlViewModel _flowStepFrameUserControlViewModel;
+
+        public event LoadFlowsEvent? LoadFlows;
+        public delegate Task LoadFlowsEvent(int? id = 0);
+
+        public event ClearCopyEvent? ClearCopy;
+        public delegate void ClearCopyEvent();
+
+        public event AddNewFlowEvent? AddNewFlow;
+        public delegate Task AddNewFlowEvent();
+
+        public event ExpandAllEvent? ExpandAll;
+        public delegate Task ExpandAllEvent();
+
+        public event CollapseAllEvent? CollapseAll;
+        public delegate Task CollapseAllEvent();
+
+        public event NavigateToNewFlowStepEvent? NavigateToNewFlowStep;
+        public delegate void NavigateToNewFlowStepEvent(FlowStep flowStep);
+
+        public event NavigateToExecutionEvent? NavigateToExecution;
+        public delegate void NavigateToExecutionEvent(Execution execution);
+
+        public event NavigateToFlowStepEvent? NavigateToFlowStep;
+        public delegate Task NavigateToFlowStepEvent(int id);
+
+        public event NavigateToFlowEvent? NavigateToFlow;
+        public delegate Task NavigateToFlowEvent(int id);
+
+
 
         [ObservableProperty]
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
@@ -38,36 +64,36 @@ namespace StepinFlow.ViewModels.Pages
 
         public FlowsViewModel(
             IBaseDatawork baseDatawork,
-            ISystemService systemService,
-            TreeViewUserControlViewModel treeViewUserControlViewModel,
-            FlowStepFrameUserControlViewModel flowStepFrameUserControlViewModel)
+            ISystemService systemService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _treeViewUserControlViewModel = treeViewUserControlViewModel;
-            _flowStepFrameUserControlViewModel = flowStepFrameUserControlViewModel;
 
-            Task.Run(async () => await RefreshData());
+            //Task.Run(async () => await RefreshData());
         }
 
         public async Task RefreshData()
         {
-            await _treeViewUserControlViewModel.LoadFlows();
+            await LoadFlows?.Invoke();
+            //await _treeViewUserControlViewModel.LoadFlows();
         }
 
         public void OnAddFlowStepClick(FlowStep newFlowStep)
         {
-            _flowStepFrameUserControlViewModel.NavigateToNewFlowStep(newFlowStep);
+            //_flowStepFrameUserControlViewModel.NavigateToNewFlowStep(newFlowStep);
+            NavigateToNewFlowStep?.Invoke(newFlowStep);
         }
 
         public async Task OnTreeViewItemFlowStepSelected(int id)
         {
-            await _flowStepFrameUserControlViewModel.NavigateToFlowStep(id);
+            //await _flowStepFrameUserControlViewModel.NavigateToFlowStep(id);
+            await NavigateToFlowStep?.Invoke(id);
         }
 
         public async Task OnTreeViewItemFlowSelected(int id)
         {
-            await _flowStepFrameUserControlViewModel.NavigateToFlow(id);
+            //await _flowStepFrameUserControlViewModel.NavigateToFlow(id);
+            await NavigateToFlow?.Invoke(id);
         }
 
         public void OnFlowStepCopy(int id)
@@ -84,20 +110,21 @@ namespace StepinFlow.ViewModels.Pages
             CoppiedFlowStepId = null;
             CoppiedFlowId = null;
             Visible = Visibility.Collapsed;
-            _treeViewUserControlViewModel.ClearCopy();
+            //_treeViewUserControlViewModel.ClearCopy();
+            ClearCopy?.Invoke();
         }
 
         [RelayCommand]
         private async Task OnButtonAddFlowClick()
         {
-            await _treeViewUserControlViewModel.AddNewFlow();
+            await AddNewFlow?.Invoke();
         }
 
         [RelayCommand]
         private void OnButtonLockClick()
         {
             IsLocked = !IsLocked;
-            _treeViewUserControlViewModel.IsLocked = IsLocked;
+
             if (IsLocked)
                 VisibleAddFlow = Visibility.Collapsed;
             else
@@ -107,19 +134,22 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSyncClick()
         {
-            await _treeViewUserControlViewModel.LoadFlows();
+            //await _treeViewUserControlViewModel.LoadFlows();
+            await LoadFlows?.Invoke();
         }
 
         [RelayCommand]
         private async Task OnButtonExpandAllClick()
         {
-            await _treeViewUserControlViewModel.ExpandAll();
+            //await _treeViewUserControlViewModel.ExpandAll();
+            await ExpandAll?.Invoke();
         }
 
         [RelayCommand]
         private async Task OnButtonCollapseAllClick()
         {
-            await _treeViewUserControlViewModel.CollapseAll();
+            //await _treeViewUserControlViewModel.CollapseAll();
+            await CollapseAll?.Invoke();
         }
 
 

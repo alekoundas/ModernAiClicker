@@ -2,6 +2,7 @@
 {
     public interface IExecutionPage
     {
-        public void SetViewModel(IExecutionViewModel execution);
+        public IExecutionViewModel ViewModel { get; set; }
+        //public void SetViewModel(IExecutionViewModel execution);
     }
 }

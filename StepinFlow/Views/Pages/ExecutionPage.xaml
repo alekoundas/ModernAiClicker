@@ -239,10 +239,7 @@
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
             <ScrollViewer>
-                <Frame
-                    x:Name="UIExecutionDetailFrame"
-                    ScrollViewer.CanContentScroll="True"
-                    ScrollViewer.VerticalScrollBarVisibility="Visible" />
+                <UserControls:FlowStepFrameUserControl x:Name="FlowStepFrameUserControl" Padding="20,20,20,20" />
             </ScrollViewer>
         </Border>
 
@@ -259,7 +256,7 @@
             <Border.Effect>
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
-            <UserControls:TreeViewUserControl />
+            <UserControls:TreeViewUserControl x:Name="TreeViewControl" IsLocked="true" />
 
         </Border>
 

@@ -100,27 +100,27 @@ namespace StepinFlow
                 services.AddScoped<MultipleTemplateSearchLoopExecutionWorker>();
 
                 // User Controls
-                services.AddSingleton<TreeViewUserControl>();
-                services.AddSingleton<TreeViewUserControlViewModel>();
+                services.AddTransient<TreeViewUserControl>();
+                services.AddTransient<TreeViewUserControlViewModel>();
 
-                services.AddSingleton<FlowStepFrameUserControl>();
-                services.AddSingleton<FlowStepFrameUserControlViewModel>();
+                services.AddTransient<FlowStepFrameUserControl>();
+                services.AddTransient<FlowStepFrameUserControlViewModel>();
 
                 // Pages
-                services.AddSingleton<DashboardPage>();
-                services.AddSingleton<DashboardViewModel>();
+                services.AddTransient<DashboardPage>();
+                services.AddTransient<DashboardViewModel>();
 
-                services.AddSingleton<DataPage>();
-                services.AddSingleton<DataViewModel>();
+                services.AddTransient<DataPage>();
+                services.AddTransient<DataViewModel>();
 
-                services.AddSingleton<FlowsPage>();
-                services.AddSingleton<FlowsViewModel>();
+                services.AddTransient<FlowsPage>();
+                services.AddTransient<FlowsViewModel>();
 
-                services.AddSingleton<ExecutionPage>();
-                services.AddSingleton<ExecutionViewModel>();
+                services.AddTransient<ExecutionPage>();
+                services.AddTransient<ExecutionViewModel>();
 
-                services.AddSingleton<SettingsPage>();
-                services.AddSingleton<SettingsViewModel>();
+                services.AddTransient<SettingsPage>();
+                services.AddTransient<SettingsViewModel>();
 
                 // Flow detail.
                 services.AddSingleton<FlowPage>();

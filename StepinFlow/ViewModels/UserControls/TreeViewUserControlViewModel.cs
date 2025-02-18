@@ -16,6 +16,8 @@ namespace StepinFlow.ViewModels.UserControls
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
+
+
         public event OnSelectedFlowIdChanged? OnSelectedFlowIdChangedEvent;
         public delegate void OnSelectedFlowIdChanged(int Id);
 
@@ -51,7 +53,7 @@ namespace StepinFlow.ViewModels.UserControls
             _systemService = systemService;
         }
 
-        public async Task LoadFlows(int flowId = 0)
+        public async Task LoadFlows(int? flowId = 0)
         {
             List<Flow> flows = new List<Flow>();
 
@@ -109,7 +111,28 @@ namespace StepinFlow.ViewModels.UserControls
             await _baseDatawork.SaveChangesAsync();
             FlowsList = new ObservableCollection<Flow>(flows);
         }
+        public async Task ExpandAndSelectFlowStep(Execution execution)
+        {
+            if (execution.FlowStep == null)
+                return;
 
+            FlowStep? uiFlowStep = _baseDatawork.FlowSteps.Query.FirstOrDefault(x => x.Id == execution.FlowStepId);
+
+            if (uiFlowStep != null)
+            {
+                uiFlowStep.IsExpanded = true;
+                uiFlowStep.IsSelected = true;
+            }
+
+            if (uiFlowStep?.ParentFlowStep != null)
+                uiFlowStep.ParentFlowStep.IsExpanded = true;
+            if (uiFlowStep?.ParentFlowStep?.ParentFlowStep != null)
+                uiFlowStep.ParentFlowStep.ParentFlowStep.IsExpanded = true;
+            if (uiFlowStep?.Flow != null)
+                uiFlowStep.Flow.IsExpanded = true;
+
+            return;
+        }
 
 
 
