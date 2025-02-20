@@ -25,7 +25,7 @@ namespace StepinFlow.ViewModels.Pages
         private string _previousTestResultImagePath = "";
 
         [ObservableProperty]
-        private byte[] _resultImage = new byte[0];
+        private byte[]? _resultImage = null;
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
@@ -214,7 +214,7 @@ namespace StepinFlow.ViewModels.Pages
             }
 
             await _baseDatawork.SaveChangesAsync();
-            await _flowsViewModel.RefreshData();
+            _flowsViewModel.RefreshData();
         }
     }
 }

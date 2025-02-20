@@ -19,14 +19,8 @@
 
 
     <Page.Resources>
-        <ObjectDataProvider
-            x:Key="FlowStepTypesEnum"
-            MethodName="GetValues"
-            ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="enum:FlowStepTypesEnum" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+        <converters:ImageNullConverter x:Key="ImageNullConverter" />
+
     </Page.Resources>
 
     <Grid VerticalAlignment="Top">
@@ -161,11 +155,9 @@
                                 <Image
                                     MaxWidth="100"
                                     MaxHeight="100"
-                                    Source="{Binding TemplateImage}">
+                                    Source="{Binding TemplateImage, Converter={StaticResource ImageNullConverter}}">
                                     <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="ImageFailed">
-                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchLoopFlowStepPage}}, Path=ViewModel.ButtonOpenFileClickCommand}" />
-                                        </i:EventTrigger>
+
                                         <i:EventTrigger EventName="MouseDown">
                                             <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchLoopFlowStepPage}}, Path=ViewModel.TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                                         </i:EventTrigger>
@@ -221,7 +213,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Image Source="{Binding ViewModel.ResultImage}">
+            <Image Source="{Binding ViewModel.ResultImage, Converter={StaticResource ImageNullConverter}}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
                         <i:InvokeCommandAction Command="{Binding ViewModel.ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />

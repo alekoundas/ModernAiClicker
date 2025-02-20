@@ -24,7 +24,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private byte[] _resultImage = new byte[0];
+        private byte[]? _resultImage = null;
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
@@ -87,14 +87,15 @@ namespace StepinFlow.ViewModels.Pages
             if (screenshot == null)
                 return;
 
-            using (var ms = new MemoryStream(FlowStep.TemplateImage))
-            {
-                Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, false);
+            if (FlowStep.TemplateImage != null)
+                using (var ms = new MemoryStream(FlowStep.TemplateImage))
+                {
+                    Bitmap templateImage = new Bitmap(ms);
+                    TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, false);
 
-                if (result.ResultImagePath.Length > 1)
-                    ResultImage = File.ReadAllBytes(result.ResultImagePath);
-            }
+                    if (result.ResultImagePath.Length > 1)
+                        ResultImage = File.ReadAllBytes(result.ResultImagePath);
+                }
         }
 
         [RelayCommand]
@@ -114,7 +115,7 @@ namespace StepinFlow.ViewModels.Pages
         {
             // Check if it's a double-click.
             if (e.ClickCount == 2)
-                 await _windowService.OpenScreenshotSelectionWindow(ResultImage, false);
+                await _windowService.OpenScreenshotSelectionWindow(ResultImage, false);
         }
 
         [RelayCommand]
@@ -190,7 +191,7 @@ namespace StepinFlow.ViewModels.Pages
                 _baseDatawork.FlowSteps.Add(FlowStep);
 
                 await _baseDatawork.SaveChangesAsync();
-                await _flowsViewModel.RefreshData();
+                _flowsViewModel.RefreshData();
             }
         }
     }

@@ -28,6 +28,7 @@
 
     <!--  change tect color on hover?  -->
     <Page.Resources>
+        <converters:ImageNullConverter x:Key="ImageNullConverter" />
         <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
         <behavior:ScrollToSelectedListBoxItemBehavior x:Key="ListBoxOrdering" />
 
@@ -356,14 +357,7 @@
                                 <Image
                                     MaxWidth="100"
                                     MaxHeight="50"
-                                    Source="{Binding FlowStep.TemplateImage}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="ImageFailed">
-                                            <!--<i:InvokeCommandAction Command="{Binding ViewModel.ImageFailedCommand}" PassEventArgsToCommand="True" />-->
-                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ExecutionPage}}, Path=ViewModel.ImageFailedCommand}" PassEventArgsToCommand="True" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Image>
+                                    Source="{Binding FlowStep.TemplateImage, Converter={StaticResource ImageNullConverter}}" />
 
 
                             </StackPanel>

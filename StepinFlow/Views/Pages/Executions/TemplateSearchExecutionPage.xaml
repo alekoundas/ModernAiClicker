@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:converters="clr-namespace:StepinFlow.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -16,14 +17,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <ObjectDataProvider
-            x:Key="FlowStepTypesEnum"
-            MethodName="GetValues"
-            ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="enum:FlowStepTypesEnum" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+        <converters:ImageNullConverter x:Key="ImageNullConverter" />
+
     </Page.Resources>
 
     <Grid VerticalAlignment="Top">
@@ -71,11 +66,9 @@
             <Image
                 MaxWidth="100"
                 MaxHeight="100"
-                Source="{Binding ViewModel.Execution.FlowStep.TemplateImage}">
+                Source="{Binding ViewModel.Execution.FlowStep.TemplateImage, Converter={StaticResource ImageNullConverter}}">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="ImageFailed">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.ImageFailedCommand}" />
-                    </i:EventTrigger>
+
                     <i:EventTrigger EventName="MouseDown">
                         <i:InvokeCommandAction Command="{Binding ViewModel.TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
@@ -85,11 +78,9 @@
 
 
             <Label>Result image</Label>
-            <Image Source="{Binding ViewModel.ResultImage}">
+            <Image Source="{Binding ViewModel.ResultImage, Converter={StaticResource ImageNullConverter}}">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="ImageFailed">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.ImageFailedCommand}" PassEventArgsToCommand="False" />
-                    </i:EventTrigger>
+
                     <i:EventTrigger EventName="MouseDown">
                         <i:InvokeCommandAction Command="{Binding ViewModel.ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>

@@ -9,6 +9,7 @@ using Model.Enums;
 using Model.Models;
 using StepinFlow.ViewModels.UserControls;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -33,37 +34,27 @@ namespace StepinFlow.ViewModels.Pages
         // Combobox Flows
         [ObservableProperty]
         private Flow? _comboBoxSelectedFlow;
-
         [ObservableProperty]
         private ObservableCollection<Flow> _comboBoxFlows = new ObservableCollection<Flow>();
-
 
         // Combobox Execution history
         [ObservableProperty]
         private Execution? _comboBoxSelectedExecutionHistory;
-
         [ObservableProperty]
         private ObservableCollection<Execution> _comboBoxExecutionHistories = new ObservableCollection<Execution>();
-
 
         // Listbox executions
         [ObservableProperty]
         private Execution? _listboxSelectedExecution;
-
         [ObservableProperty]
         public ObservableCollection<Execution> _listBoxExecutions = new ObservableCollection<Execution>();
 
-
-
         [ObservableProperty]
         public string _status = "-";
-
         [ObservableProperty]
         public string _runFor = "";
-
         [ObservableProperty]
         public string _currentStep = "";
-
         [ObservableProperty]
         public bool _isLocked = true;
 
@@ -249,7 +240,6 @@ namespace StepinFlow.ViewModels.Pages
         {
             if (routedPropertyChangedEventArgs?.AddedItems.Count > 0)
             {
-
                 object? selectedItem = routedPropertyChangedEventArgs.AddedItems[0];
                 if (selectedItem is not Execution)
                     return;
@@ -257,17 +247,13 @@ namespace StepinFlow.ViewModels.Pages
                 Execution selectedExecution = (Execution)selectedItem;
                 ListboxSelectedExecution = selectedExecution;
 
-
                 if (selectedExecution.Flow != null)
                     selectedExecution.Flow.IsSelected = true;
 
                 if (selectedExecution.FlowStep != null)
                 {
                     selectedExecution.FlowStep.IsSelected = true;
-                    //_flowStepFrameUserControlViewModel.NavigateToExecution(selectedExecution);
                     NavigateToExecution?.Invoke(selectedExecution);
-
-                    //NavigateToExecutionDetail?.Invoke(selectedExecution.FlowStep.FlowStepType, ListboxSelectedExecution);
                 }
             }
         }
@@ -298,20 +284,14 @@ namespace StepinFlow.ViewModels.Pages
             ListBoxExecutions = new ObservableCollection<Execution>(executions);
         }
         [RelayCommand]
-        private void OnImageFailed(object sender)
+        private void OnImageFailed(ExceptionRoutedEventArgs e)
         {
-            //if (sender is Image img)
-            //{
-            //    img.Source = null; // This prevents the error
-            //}
+            Debug.WriteLine("Image failed to load: " + e.ErrorException?.Message);
         }
-
-
 
 
         public void OnNavigatedTo() { }
 
         public void OnNavigatedFrom() { }
-
     }
 }

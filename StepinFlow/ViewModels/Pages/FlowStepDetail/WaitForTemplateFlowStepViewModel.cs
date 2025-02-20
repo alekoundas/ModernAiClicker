@@ -155,7 +155,7 @@ namespace StepinFlow.ViewModels.Pages
                 _baseDatawork.FlowSteps.Add(FlowStep);
 
                 await _baseDatawork.SaveChangesAsync();
-                await _flowsViewModel.RefreshData();
+                _flowsViewModel.RefreshData();
             }
         }
     }

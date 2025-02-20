@@ -79,7 +79,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
             await _baseDatawork.SaveChangesAsync();
-            await _flowsViewModel.RefreshData();
+            _flowsViewModel.RefreshData();
         }
     }
 }

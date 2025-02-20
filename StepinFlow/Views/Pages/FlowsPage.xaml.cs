@@ -20,7 +20,6 @@ namespace StepinFlow.Views.Pages
             viewModel.NavigateToFlow += InvokeNavigateToFlowAction;
             viewModel.NavigateToFlowStep += InvokeNavigateToFlowStepAction;
             viewModel.NavigateToNewFlowStep += InvokeNavigateToNewFlowStepAction;
-            viewModel.NavigateToExecution += InvokeNavigateToExecutionAction;
 
 
             ViewModel = viewModel;
@@ -84,10 +83,6 @@ namespace StepinFlow.Views.Pages
             await FlowStepFrameUserControl.ViewModel.NavigateToFlowStep(id);
         }
 
-        public void InvokeNavigateToExecutionAction(Execution execution)
-        {
-            FlowStepFrameUserControl.ViewModel.NavigateToExecution(execution);
-        }
         public void InvokeNavigateToNewFlowStepAction(FlowStep flowStep)
         {
             FlowStepFrameUserControl.ViewModel.NavigateToNewFlowStep(flowStep);

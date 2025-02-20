@@ -24,8 +24,8 @@ namespace StepinFlow.ViewModels.Pages.Executions
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
         [ObservableProperty]
-        private byte[] _resultImage = new byte[0];
-        [ObservableProperty]
+        private byte[]? _resultImage = null;
+        [ObservableProperty] 
         private ObservableCollection<FlowStep>? _childrenTemplateSearchFlowSteps;
 
 

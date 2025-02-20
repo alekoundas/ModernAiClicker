@@ -3,9 +3,7 @@
 // Copyright (C) Leszek Pomianowski and WPF UI Contributors.
 // All Rights Reserved.
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using StepinFlow.Views.Pages;
 using StepinFlow.Views.Windows;
 using System.Windows;
 using Wpf.Ui;

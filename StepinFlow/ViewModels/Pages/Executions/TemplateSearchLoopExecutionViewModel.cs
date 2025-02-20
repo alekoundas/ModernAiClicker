@@ -18,7 +18,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
         [ObservableProperty]
         private Execution _execution;
         [ObservableProperty]
-        private byte[] _resultImage = new byte[0];
+        private byte[]? _resultImage = null;
 
         public TemplateSearchLoopExecutionViewModel(IWindowService windowService)
         {

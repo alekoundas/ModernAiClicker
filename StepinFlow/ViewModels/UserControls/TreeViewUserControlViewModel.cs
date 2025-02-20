@@ -116,7 +116,7 @@ namespace StepinFlow.ViewModels.UserControls
             if (execution.FlowStep == null)
                 return;
 
-            FlowStep? uiFlowStep = _baseDatawork.FlowSteps.Query.FirstOrDefault(x => x.Id == execution.FlowStepId);
+            FlowStep? uiFlowStep = await _baseDatawork.FlowSteps.Query.FirstOrDefaultAsync(x => x.Id == execution.FlowStepId);
 
             if (uiFlowStep != null)
             {

@@ -11,21 +11,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MultipleTemplateSearchExecutionPage"
     d:DataContext="{d:DesignInstance local:MultipleTemplateSearchExecutionPage,
-                                     IsDesignTimeCreatable=False}"
+    IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
 
     <Page.Resources>
-        <ObjectDataProvider
-            x:Key="FlowStepTypesEnum"
-            MethodName="GetValues"
-            ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="enum:FlowStepTypesEnum" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+        <converters:ImageNullConverter x:Key="ImageNullConverter" />
     </Page.Resources>
 
     <Grid VerticalAlignment="Top">
@@ -37,7 +30,6 @@
 
 
         <StackPanel Grid.Column="1">
-            <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
 
             <Label>1. Set Name</Label>
             <TextBox Text="{Binding ViewModel.Execution.FlowStep.ParentTemplateSearchFlowStep.Name, Mode=TwoWay}" />
@@ -71,11 +63,9 @@
                                 <Image
                                     MaxWidth="100"
                                     MaxHeight="100"
-                                    Source="{Binding TemplateImage}">
+                                    Source="{Binding TemplateImage, Converter={StaticResource ImageNullConverter}}">
                                     <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="ImageFailed">
-                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchExecutionPage}}, Path=ViewModel.ButtonOpenFileClickCommand}" />
-                                        </i:EventTrigger>
+
                                         <i:EventTrigger EventName="MouseDown">
                                             <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchExecutionPage}}, Path=ViewModel.TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                                         </i:EventTrigger>
@@ -95,7 +85,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Image Source="{Binding ResultImage}">
+            <Image Source="{Binding ViewModel.ResultImage, Converter={StaticResource ImageNullConverter}}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
                         <i:InvokeCommandAction Command="{Binding ViewModel.ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />

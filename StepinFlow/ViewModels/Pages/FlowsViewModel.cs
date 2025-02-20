@@ -34,9 +34,6 @@ namespace StepinFlow.ViewModels.Pages
         public event NavigateToNewFlowStepEvent? NavigateToNewFlowStep;
         public delegate void NavigateToNewFlowStepEvent(FlowStep flowStep);
 
-        public event NavigateToExecutionEvent? NavigateToExecution;
-        public delegate void NavigateToExecutionEvent(Execution execution);
-
         public event NavigateToFlowStepEvent? NavigateToFlowStep;
         public delegate Task NavigateToFlowStepEvent(int id);
 
@@ -72,9 +69,9 @@ namespace StepinFlow.ViewModels.Pages
             //Task.Run(async () => await RefreshData());
         }
 
-        public async Task RefreshData()
+        public void RefreshData()
         {
-            await LoadFlows?.Invoke();
+            LoadFlows?.Invoke();
             //await _treeViewUserControlViewModel.LoadFlows();
         }
 

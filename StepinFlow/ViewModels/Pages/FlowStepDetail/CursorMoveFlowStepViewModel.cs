@@ -104,7 +104,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
-            await _flowsViewModel.RefreshData();
+            _flowsViewModel.RefreshData();
         }
 
         private void GetParents(int? flowStepId)

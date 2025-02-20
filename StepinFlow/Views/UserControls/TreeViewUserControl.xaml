@@ -79,14 +79,14 @@
             </Setter>
         </Style>
 
-        <Style x:Key="TreeViewItemStyle1" TargetType="{x:Type TreeViewItem}">
+        <!--  TreeViewItem style  -->
+        <Style x:Key="TreeViewItemStyle" TargetType="{x:Type TreeViewItem}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
             <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
             <Setter Property="Padding" Value="1,0,0,0" />
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
             <Setter Property="behavior:ScrollToSelectedTreeviewItemBehavior.IsBroughtIntoViewWhenSelected" Value="True" />
-            <!--<Setter Property="Width" Value="1000" />-->
 
             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
             <Setter Property="Template">
@@ -114,9 +114,6 @@
                                             </i:InvokeCommandAction.CommandParameter>
                                         </i:InvokeCommandAction>
                                     </i:EventTrigger>
-                                    <!--<i:EventTrigger EventName="Unchecked">
-                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.TreeViewItemExpandedCommand}" />
-                                    </i:EventTrigger>-->
                                 </i:Interaction.Triggers>
                             </ToggleButton>
                             <Border
@@ -140,10 +137,6 @@
 
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <!--<Trigger Property="IsExpanded" Value="false">
-                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ItemsHost" Property="Width" Value="50" />
-                            </Trigger>-->
                             <Trigger Property="HasItems" Value="false">
                                 <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                             </Trigger>
@@ -202,7 +195,7 @@
             x:Name="FlowsTreeview"
             HorizontalContentAlignment="Stretch"
             AllowDrop="True"
-            ItemContainerStyle="{StaticResource TreeViewItemStyle1}"
+            ItemContainerStyle="{StaticResource TreeViewItemStyle}"
             ItemsSource="{Binding ViewModel.FlowsList}">
             <!--  Set SelectedItem on change  -->
             <i:Interaction.Triggers>
