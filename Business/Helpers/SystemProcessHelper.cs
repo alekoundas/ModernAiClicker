@@ -17,7 +17,7 @@ namespace Business.Helpers
             return Process
                 .GetProcesses()
                 .Where(process => !String.IsNullOrEmpty(process.MainWindowTitle))
-                .Select(x => x.MainWindowTitle)
+                .Select(x => x.ProcessName)
                 .ToList();
         }
 

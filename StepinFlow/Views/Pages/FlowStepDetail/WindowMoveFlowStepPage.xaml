@@ -39,7 +39,16 @@
             <StackPanel>
                 <Label>Change application window location.</Label>
                 <Label>Select application window to relocate:</Label>
+                <StackPanel Orientation="Horizontal">
                 <ComboBox ItemsSource="{Binding ViewModel.ProcessList}" SelectedItem="{Binding ViewModel.FlowStep.ProcessName}" />
+                    <Button Grid.Column="2" Content="Refresh">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonRefreshClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                </StackPanel>
             </StackPanel>
 
             <Button Grid.Column="2" Content="Record">

@@ -39,6 +39,12 @@ namespace StepinFlow.ViewModels.Pages
         }
 
         [RelayCommand]
+        private void OnButtonRefreshClick()
+        {
+            ProcessList = SystemProcessHelper.GetProcessWindowTitles();
+        }
+
+        [RelayCommand]
         private void OnButtonTestClick()
         {
             if (FlowStep.ProcessName.Length <= 1)
@@ -73,7 +79,7 @@ namespace StepinFlow.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.LocationY= FlowStep.LocationY;
+                updateFlowStep.LocationY = FlowStep.LocationY;
                 updateFlowStep.LocationX = FlowStep.LocationX;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
                 updateFlowStep.FlowStepType = FlowStep.FlowStepType;
