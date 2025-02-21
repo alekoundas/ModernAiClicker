@@ -2,10 +2,10 @@ name: Auto Increment Version
 env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual triggering of the workflow.
   push:
     branches:
-      - master
+      - "**"  # Triggers the workflow on push to any branch.
 
 jobs:
   update_version:
