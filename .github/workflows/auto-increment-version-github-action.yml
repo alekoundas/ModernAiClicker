@@ -1,5 +1,6 @@
 name: Auto Increment Version
-
+env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 on:
   push:
     branches:
@@ -10,17 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout code.
         uses: actions/checkout@v4
 
-      - name: Get current version
+      - name: Get current version of .csproj.
         id: get_version
         run: |
           set -e
           VERSION=$(grep -oP '(?<=<Version>).*?(?=</Version>)' StepinFlow/StepinFlow.csproj || echo "1.0.0")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Increment patch version
+      - name: Increment build version.
         id: increment_version
         run: |
           IFS='.' read -r -a VERSION_ARRAY <<< "$VERSION"
@@ -39,5 +40,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add StepinFlow/StepinFlow.csproj
-          git commit -m "Auto-increment version to ${{ env.NEW_VERSION }}" || echo "No changes to commit"
+          git commit -m "Auto-increment version to ${{ env.NEW_VERSION }}" || exit 0
           git push || echo "No changes to push"
