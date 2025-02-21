@@ -2,6 +2,7 @@ name: Auto Increment Version
 env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
