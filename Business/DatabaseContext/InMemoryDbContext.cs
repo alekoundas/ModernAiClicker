@@ -13,11 +13,9 @@ namespace Business.DatabaseContext
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var dataSource = Path.Combine(PathHelper.GetAppDataPath(), "AutoFlowClicker.db");
+            var dataSource = Path.Combine(PathHelper.GetDatabaseDataPath(), "StepinFlowDatabase.db");
             optionsBuilder.UseSqlite($"Data Source={dataSource};");
 
-
-            //optionsBuilder.UseInMemoryDatabase(databaseName: "FlowAutoClicker");
             optionsBuilder.EnableSensitiveDataLogging();
             optionsBuilder.EnableDetailedErrors();
         }

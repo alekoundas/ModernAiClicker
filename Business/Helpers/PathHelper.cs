@@ -5,12 +5,23 @@
         public static string GetAppDataPath()
         {
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string appDataFolder = Path.Combine(localAppData, "ModernAiClicker");
+            string appDataFolder = Path.Combine(localAppData, "StepinFlow");
 
             if (!Directory.Exists(appDataFolder))
                 Directory.CreateDirectory(appDataFolder);
 
             return appDataFolder;
+        }
+
+        public static string GetDatabaseDataPath()
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string exportPath = Path.Combine(localAppData, "StepinFlow", "Database");
+
+            if (!Directory.Exists(exportPath))
+                Directory.CreateDirectory(exportPath);
+
+            return exportPath;
         }
 
         public static string GetExportDataPath()

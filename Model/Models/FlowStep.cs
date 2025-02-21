@@ -50,9 +50,6 @@ namespace Model.Models
         [ObservableProperty]
         public bool _removeTemplateFromResult;
 
-        [ObservableProperty]
-        public string _loopResultImagePath = ""; // Only used for test action in MultipleTemplateSeaarchLoop vm.   TODO Check if needed!
-
         // Mouse
         [ObservableProperty]
         public MouseActionsEnum _mouseAction;
