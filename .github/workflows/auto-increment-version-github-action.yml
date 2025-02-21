@@ -41,4 +41,4 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add StepinFlow/StepinFlow.csproj
           git commit -m "Auto-increment version to ${{ env.NEW_VERSION }}" || exit 0
-          git push || echo "No changes to push"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/alekoundas/StepinFlow.git HEAD:${{ github.ref }}
