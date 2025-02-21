@@ -30,11 +30,11 @@
     <Page.Resources>
         <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
         <ObjectDataProvider
-            x:Key="TypesEnum"
+            x:Key="FlowStepTypesEnum"
             MethodName="GetValues"
             ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="enum:TypesEnum" />
+                <x:Type TypeName="enum:FlowStepTypesEnum" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Page.Resources>

@@ -21,9 +21,9 @@ namespace StepinFlow.ViewModels.UserControls
 
         // FlowStep Type
         [ObservableProperty]
-        private TypesEnum _selectedType = TypesEnum.NO_SELECTION;
+        private FlowStepTypesEnum _selectedType = FlowStepTypesEnum.NO_SELECTION;
         [ObservableProperty]
-        private List<TypesEnum> _Types = Enum.GetValues(typeof(TypesEnum)).Cast<TypesEnum>().ToList();
+        private List<FlowStepTypesEnum> _Types = Enum.GetValues(typeof(FlowStepTypesEnum)).Cast<FlowStepTypesEnum>().ToList();
         [ObservableProperty]
         private bool _isTypeEnabled = false;
         [ObservableProperty]
@@ -32,9 +32,9 @@ namespace StepinFlow.ViewModels.UserControls
 
         // Flow Type
         [ObservableProperty]
-        private FlowTypesEnum _selectedFlowType = FlowTypesEnum.NO_SELECTION;
+        private FlowStepTypesEnum _selectedFlowType = FlowStepTypesEnum.NO_SELECTION;
         [ObservableProperty]
-        private List<FlowTypesEnum> _flowTypes = Enum.GetValues(typeof(FlowTypesEnum)).Cast<FlowTypesEnum>().ToList();
+        private List<FlowStepTypesEnum> _flowTypes = Enum.GetValues(typeof(FlowStepTypesEnum)).Cast<FlowStepTypesEnum>().ToList();
         [ObservableProperty]
         private bool _isFlowTypeEnabled = false;
         [ObservableProperty]
@@ -48,9 +48,9 @@ namespace StepinFlow.ViewModels.UserControls
         [ObservableProperty]
         private IExecutionPage? _frameExecution;
 
-        private readonly Dictionary<TypesEnum, Lazy<IFlowStepDetailPage>> _flowStepPageFactory;
-        private readonly Dictionary<TypesEnum, Lazy<IExecutionPage>> _executionFlowStepPageFactory;
-        private readonly Dictionary<FlowTypesEnum, Lazy<IFlowDetailPage>> _flowPageFactory;
+        private readonly Dictionary<FlowStepTypesEnum, Lazy<IFlowStepDetailPage>> _flowStepPageFactory;
+        private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>> _executionFlowStepPageFactory;
+        private readonly Dictionary<FlowStepTypesEnum, Lazy<IFlowDetailPage>> _flowPageFactory;
         private FlowStep? _newFlowStep = null;
 
         public FlowStepFrameUserControlViewModel(IBaseDatawork baseDatawork, IServiceProvider serviceProvider)
@@ -59,45 +59,45 @@ namespace StepinFlow.ViewModels.UserControls
             _serviceProvider = serviceProvider;
 
             // Lazy load the instances needed and not all at once.
-            _flowStepPageFactory = new Dictionary<TypesEnum, Lazy<IFlowStepDetailPage>>
+            _flowStepPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IFlowStepDetailPage>>
             {
-                { TypesEnum.TEMPLATE_SEARCH, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<TemplateSearchFlowStepPage>()) },
-                { TypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<TemplateSearchLoopFlowStepPage>()) },
-                { TypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchLoopFlowStepPage>()) },
-                { TypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchFlowStepPage>()) },
-                { TypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WaitForTemplateFlowStepPage>()) },
-                { TypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<CursorMoveFlowStepPage>()) },
-                { TypesEnum.MOUSE_CLICK, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<CursorClickFlowStepPage>()) },
-                { TypesEnum.MOUSE_SCROLL, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<CursorScrollFlowStepPage>()) },
-                { TypesEnum.SLEEP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<SleepFlowStepPage>()) },
-                { TypesEnum.GO_TO, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<GoToFlowStepPage>()) },
-                { TypesEnum.WINDOW_RESIZE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WindowResizeFlowStepPage>()) },
-                { TypesEnum.WINDOW_MOVE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WindowMoveFlowStepPage>()) },
-                { TypesEnum.LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<LoopFlowStepPage>()) }
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<TemplateSearchFlowStepPage>()) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<TemplateSearchLoopFlowStepPage>()) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchLoopFlowStepPage>()) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchFlowStepPage>()) },
+                { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WaitForTemplateFlowStepPage>()) },
+                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<CursorMoveFlowStepPage>()) },
+                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<CursorClickFlowStepPage>()) },
+                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<CursorScrollFlowStepPage>()) },
+                { FlowStepTypesEnum.WAIT, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<SleepFlowStepPage>()) },
+                { FlowStepTypesEnum.GO_TO, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<GoToFlowStepPage>()) },
+                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WindowResizeFlowStepPage>()) },
+                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WindowMoveFlowStepPage>()) },
+                { FlowStepTypesEnum.LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<LoopFlowStepPage>()) }
             };
 
-            _flowPageFactory = new Dictionary<FlowTypesEnum, Lazy<IFlowDetailPage>>
+            _flowPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IFlowDetailPage>>
             {
-                { FlowTypesEnum.FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
-                { FlowTypesEnum.SUB_FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
-                { FlowTypesEnum.NO_SELECTION, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
+                { FlowStepTypesEnum.FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
+                { FlowStepTypesEnum.SUB_FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
+                { FlowStepTypesEnum.NO_SELECTION, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
             };
 
-            _executionFlowStepPageFactory = new Dictionary<TypesEnum, Lazy<IExecutionPage>>
+            _executionFlowStepPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>>
             {
-                { TypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<TemplateSearchExecutionPage>()) },
-                { TypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<TemplateSearchExecutionPage>()) },
-                { TypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchLoopExecutionPage>()) },
-                { TypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchExecutionPage>()) },
-                { TypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WaitForTemplateExecutionPage>()) },
-                { TypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorMoveExecutionPage>()) },
-                { TypesEnum.MOUSE_CLICK, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorClickExecutionPage>()) },
-                { TypesEnum.MOUSE_SCROLL, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorScrollExecutionPage>()) },
-                { TypesEnum.SLEEP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<SleepExecutionPage>()) },
-                { TypesEnum.GO_TO, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<GoToExecutionPage>()) },
-                { TypesEnum.WINDOW_RESIZE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WindowResizeExecutionPage>()) },
-                { TypesEnum.WINDOW_MOVE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WindowMoveExecutionPage>()) },
-                { TypesEnum.LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<LoopExecutionPage>()) }
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<TemplateSearchExecutionPage>()) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<TemplateSearchExecutionPage>()) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchLoopExecutionPage>()) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchExecutionPage>()) },
+                { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WaitForTemplateExecutionPage>()) },
+                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorMoveExecutionPage>()) },
+                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorClickExecutionPage>()) },
+                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorScrollExecutionPage>()) },
+                { FlowStepTypesEnum.WAIT, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<SleepExecutionPage>()) },
+                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<GoToExecutionPage>()) },
+                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WindowResizeExecutionPage>()) },
+                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WindowMoveExecutionPage>()) },
+                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<LoopExecutionPage>()) }
             };
 
             //_executionFlowPageFactory = new Dictionary<FlowTypesEnum, Lazy<IExecutionPage>>
@@ -115,7 +115,7 @@ namespace StepinFlow.ViewModels.UserControls
             IsTypeEnabled = true;
             TypeVisibility = Visibility.Visible;
             FlowTypeVisibility = Visibility.Collapsed;
-            SelectedType = TypesEnum.NO_SELECTION;
+            SelectedType = FlowStepTypesEnum.NO_SELECTION;
             _newFlowStep = newFlowStep;
             FrameFlowStep = null;
             FrameExecution = null;
@@ -124,7 +124,7 @@ namespace StepinFlow.ViewModels.UserControls
         public async Task NavigateToFlowStep(int id)
         {
             // Navigate to existing flow step.
-            TypesEnum? Type = await _baseDatawork.FlowSteps.Query
+            FlowStepTypesEnum? Type = await _baseDatawork.FlowSteps.Query
                 .AsNoTracking()
                 .Where(x => x.Id == id)
                 .Select(x => x.Type)
@@ -143,7 +143,7 @@ namespace StepinFlow.ViewModels.UserControls
         public async Task NavigateToFlow(int id)
         {
             // Navigate to existing flow.
-            FlowTypesEnum? flowType = await _baseDatawork.Flows.Query
+            FlowStepTypesEnum? flowType = await _baseDatawork.Flows.Query
                 .AsNoTracking()
                 .Where(x => x.Id == id)
                 .Select(x => x.Type)

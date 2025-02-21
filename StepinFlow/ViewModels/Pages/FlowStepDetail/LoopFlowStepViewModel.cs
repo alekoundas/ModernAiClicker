@@ -64,7 +64,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 // "Add" Flow step
                 FlowStep newFlowStep = new FlowStep();
-                newFlowStep.Type = TypesEnum.IS_NEW;
+                newFlowStep.Type = FlowStepTypesEnum.NEW;
 
                 FlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep> { newFlowStep };
 

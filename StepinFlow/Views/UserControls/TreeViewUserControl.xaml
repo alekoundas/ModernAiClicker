@@ -149,14 +149,14 @@
                                 </MultiTrigger.Conditions>
                                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}" />
                             </MultiTrigger>
-                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:TypesEnum.IS_NEW}">
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.NEW}">
                                 <Setter TargetName="FlowStepBorder" Property="HorizontalAlignment" Value="Center" />
                                 <Setter Property="Padding" Value="0,0,0,10" />
                                 <Setter Property="Focusable" Value="False" />
                             </DataTrigger>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Type}" Value="{x:Static enum:TypesEnum.IS_NEW}" />
+                                    <Condition Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.NEW}" />
                                     <Condition Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.IsLocked}" Value="true" />
                                 </MultiDataTrigger.Conditions>
                                 <Setter TargetName="FlowStepBorder" Property="Visibility" Value="Collapsed" />
@@ -179,11 +179,11 @@
 
         <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
         <ObjectDataProvider
-            x:Key="TypesEnum"
+            x:Key="FlowStepTypesEnum"
             MethodName="GetValues"
             ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="enum:TypesEnum" />
+                <x:Type TypeName="enum:FlowStepTypesEnum" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </UserControl.Resources>
@@ -688,22 +688,22 @@
                                     <!--  Default  -->
                                     <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExisting}" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:TypesEnum.IS_NEW}">
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.NEW}">
                                             <Setter Property="ContentTemplate" Value="{StaticResource FlowStepNew}" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:TypesEnum.IS_FAILURE}">
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.FAILURE}">
                                             <Setter Property="ContentTemplate" Value="{StaticResource FlowStepSuccessFail}" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:TypesEnum.IS_SUCCESS}">
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.SUCCESS}">
                                             <Setter Property="ContentTemplate" Value="{StaticResource FlowStepSuccessFail}" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:TypesEnum.TEMPLATE_SEARCH}">
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.TEMPLATE_SEARCH}">
                                             <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExistingTemplateSearch}" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:TypesEnum.TEMPLATE_SEARCH_LOOP}">
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP}">
                                             <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExistingTemplateSearch}" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:TypesEnum.WAIT_FOR_TEMPLATE}">
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.WAIT_FOR_TEMPLATE}">
                                             <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExistingTemplateSearch}" />
                                         </DataTrigger>
                                     </Style.Triggers>

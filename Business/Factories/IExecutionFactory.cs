@@ -4,7 +4,7 @@ namespace Business.Factories
 {
     public interface IExecutionFactory
     {
-        IExecutionWorker GetWorker(TypesEnum? flowStep);
+        IExecutionWorker GetWorker(FlowStepTypesEnum? flowStep);
         void SetCancellationToken(CancellationTokenSource cancellationToken);
         void DestroyWorkers();
     }

@@ -130,13 +130,13 @@ namespace StepinFlow.ViewModels.Pages
 
                 // "Add" Flow steps
                 FlowStep newFlowStep = new FlowStep();
-                newFlowStep.Type = TypesEnum.IS_NEW;
+                newFlowStep.Type = FlowStepTypesEnum.NEW;
 
                 // "Success" Flow step
                 FlowStep successFlowStep = new FlowStep();
                 successFlowStep.Name = "Success";
                 successFlowStep.IsExpanded = false;
-                successFlowStep.Type = TypesEnum.IS_SUCCESS;
+                successFlowStep.Type = FlowStepTypesEnum.SUCCESS;
                 successFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
                 {
                     newFlowStep

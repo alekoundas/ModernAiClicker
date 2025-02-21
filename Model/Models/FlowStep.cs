@@ -25,7 +25,7 @@ namespace Model.Models
         public int _orderingNum;
 
         [ObservableProperty]
-        public TypesEnum _type;
+        public FlowStepTypesEnum _type;
 
 
 

@@ -24,7 +24,7 @@ namespace Business.Repository.Entities
             return await InMemoryDbContext.FlowSteps
                         .Include(x => x.ChildrenFlowSteps)
                         .Where(x => x.Id == flowStepId)
-                        .Select(x => x.ChildrenFlowSteps.First(y => y.Type == TypesEnum.IS_NEW))
+                        .Select(x => x.ChildrenFlowSteps.First(y => y.Type == FlowStepTypesEnum.NEW))
                         .FirstAsync();
         }
 
@@ -67,7 +67,7 @@ namespace Business.Repository.Entities
 
             if (simplings != null)
                 nextSimpling = await simplings
-                   .Where(x => x.Type != TypesEnum.IS_NEW)
+                   .Where(x => x.Type != FlowStepTypesEnum.NEW)
                    .Where(x => x.OrderingNum > flowStep.OrderingNum)
                    .OrderBy(x => x.OrderingNum)
                    .FirstOrDefaultAsync();
@@ -86,16 +86,16 @@ namespace Business.Repository.Entities
             {
                 if (resultEnum == ExecutionResultEnum.SUCCESS)
                     childrenFlowSteps = childrenFlowSteps
-                        .Where(x => x.Type == TypesEnum.IS_SUCCESS) // Equals to .First() since only one child will be available.
+                        .Where(x => x.Type == FlowStepTypesEnum.SUCCESS) // Equals to .First() since only one child will be available.
                         .SelectMany(x => x.ChildrenFlowSteps);
                 else
                     childrenFlowSteps = childrenFlowSteps
-                        .Where(x => x.Type == TypesEnum.IS_FAILURE) // Equals to .First() since only one child will be available.
+                        .Where(x => x.Type == FlowStepTypesEnum.FAILURE) // Equals to .First() since only one child will be available.
                         .SelectMany(x => x.ChildrenFlowSteps);
             }
 
             FlowStep? nextChild = await childrenFlowSteps
-                .Where(x => x.Type != TypesEnum.IS_NEW)
+                .Where(x => x.Type != FlowStepTypesEnum.NEW)
                 .OrderBy(x => x.OrderingNum)
                 .FirstOrDefaultAsync();
 

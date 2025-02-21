@@ -180,10 +180,10 @@ namespace StepinFlow.ViewModels.Pages
                 {
                     Name = "Success",
                     IsExpanded = false,
-                    Type = TypesEnum.IS_SUCCESS,
+                    Type = FlowStepTypesEnum.SUCCESS,
                     ChildrenFlowSteps = new ObservableCollection<FlowStep>
                     {
-                        new FlowStep(){Type = TypesEnum.IS_NEW}
+                        new FlowStep(){Type = FlowStepTypesEnum.NEW}
                     }
                 };
 
@@ -192,10 +192,10 @@ namespace StepinFlow.ViewModels.Pages
                 {
                     Name = "Fail",
                     IsExpanded = false,
-                    Type = TypesEnum.IS_FAILURE,
+                    Type = FlowStepTypesEnum.FAILURE,
                     ChildrenFlowSteps = new ObservableCollection<FlowStep>
                     {
-                        new FlowStep(){Type = TypesEnum.IS_NEW}
+                        new FlowStep(){Type = FlowStepTypesEnum.NEW}
                     }
                 };
 

@@ -84,7 +84,7 @@ namespace StepinFlow.ViewModels.UserControls
         public async Task AddNewFlow()
         {
             FlowStep newFlowStep = new FlowStep();
-            newFlowStep.Type = TypesEnum.IS_NEW;
+            newFlowStep.Type = FlowStepTypesEnum.NEW;
 
             Flow flow = new Flow();
             flow.Name = "Flow";
@@ -236,7 +236,7 @@ namespace StepinFlow.ViewModels.UserControls
             List<FlowStep> simplings = await _baseDatawork.FlowSteps.GetSiblings(flowStep.Id);
             List<FlowStep> simplingsAbove = simplings
                 .Where(x => x.OrderingNum < flowStep.OrderingNum)
-                .Where(x => x.Type != TypesEnum.IS_NEW)
+                .Where(x => x.Type != FlowStepTypesEnum.NEW)
                 .ToList();
 
             if (simplingsAbove.Any())
@@ -258,7 +258,7 @@ namespace StepinFlow.ViewModels.UserControls
             List<FlowStep> simplings = await _baseDatawork.FlowSteps.GetSiblings(flowStep.Id);
             List<FlowStep> simplingsBellow = simplings
                 .Where(x => x.OrderingNum > flowStep.OrderingNum)
-                .Where(x => x.Type != TypesEnum.IS_NEW)
+                .Where(x => x.Type != FlowStepTypesEnum.NEW)
                 .ToList();
 
             if (simplingsBellow.Any())

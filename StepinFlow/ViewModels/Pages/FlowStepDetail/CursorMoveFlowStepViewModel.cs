@@ -116,19 +116,19 @@ namespace StepinFlow.ViewModels.Pages
 
             while (parent != null)
             {
-                if (parent.Type == TypesEnum.TEMPLATE_SEARCH)
+                if (parent.Type == FlowStepTypesEnum.TEMPLATE_SEARCH)
                     Parents.Add(parent);
 
-                if (parent.Type == TypesEnum.TEMPLATE_SEARCH_LOOP)
+                if (parent.Type == FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP)
                     Parents.Add(parent);
 
-                if (parent.Type == TypesEnum.MULTIPLE_TEMPLATE_SEARCH)
+                if (parent.Type == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH)
                     Parents.Add(parent);
 
-                if (parent.Type == TypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
+                if (parent.Type == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP)
                     Parents.Add(parent);
 
-                if (parent.Type == TypesEnum.WAIT_FOR_TEMPLATE)
+                if (parent.Type == FlowStepTypesEnum.WAIT_FOR_TEMPLATE)
                     Parents.Add(parent);
 
                 if (!parent.ParentFlowStepId.HasValue)

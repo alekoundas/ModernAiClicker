@@ -61,7 +61,7 @@ namespace StepinFlow.ViewModels.Pages
             if (flowStep != null)
             {
                 FlowStep = flowStep;
-                List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.Type == TypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD).ToList();
+                List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.Type == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD).ToList();
                 ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
             }
         }
@@ -224,7 +224,7 @@ namespace StepinFlow.ViewModels.Pages
                 ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
 
             foreach (var templateFlowStep in ChildrenTemplateSearchFlowSteps)
-                templateFlowStep.Type = TypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD;
+                templateFlowStep.Type = FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD;
 
             // Edit mode
             if (FlowStep.Id > 0)
@@ -260,10 +260,10 @@ namespace StepinFlow.ViewModels.Pages
                 {
                     Name = "Success",
                     IsExpanded = false,
-                    Type = TypesEnum.IS_SUCCESS,
+                    Type = FlowStepTypesEnum.SUCCESS,
                     ChildrenFlowSteps = new ObservableCollection<FlowStep>
                     {
-                        new FlowStep(){Type = TypesEnum.IS_NEW}
+                        new FlowStep(){Type = FlowStepTypesEnum.NEW}
                     }
                 };
 
@@ -272,10 +272,10 @@ namespace StepinFlow.ViewModels.Pages
                 {
                     Name = "Fail",
                     IsExpanded = false,
-                    Type = TypesEnum.IS_FAILURE,
+                    Type = FlowStepTypesEnum.FAILURE,
                     ChildrenFlowSteps = new ObservableCollection<FlowStep>
                     {
-                        new FlowStep(){Type = TypesEnum.IS_NEW}
+                        new FlowStep(){Type = FlowStepTypesEnum.NEW}
                     }
                 };
 
@@ -301,7 +301,7 @@ namespace StepinFlow.ViewModels.Pages
             List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.Query
                 .AsNoTracking()
                 .Where(x => x.ParentTemplateSearchFlowStepId == FlowStep.Id)
-                .Where(x => x.Type == TypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)
+                .Where(x => x.Type == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)
                 .ToListAsync();
             ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
         }
