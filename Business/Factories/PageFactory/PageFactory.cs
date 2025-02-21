@@ -17,13 +17,13 @@ namespace Business.Factories.PageFactory
             _serviceProvider = serviceProvider;
         }
 
-        //public BaseViewModel CreatePage(FlowStepTypesEnum flowStepType)
+        //public BaseViewModel CreatePage(TypesEnum Type)
         //{
-        //    return flowStepType switch
+        //    return Type switch
         //    {
-        //        FlowStepTypesEnum.LOOP => _serviceProvider.GetRequiredService<LoopFlowStepPage>(),
-        //        FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH=> _serviceProvider.GetRequiredService<SettingsViewModel>(),
-        //        FlowStepTypesEnum.MOUSE_SCROLL=> _serviceProvider.GetRequiredService<ProfileViewModel>(),
+        //        TypesEnum.LOOP => _serviceProvider.GetRequiredService<LoopFlowStepPage>(),
+        //        TypesEnum.MULTIPLE_TEMPLATE_SEARCH=> _serviceProvider.GetRequiredService<SettingsViewModel>(),
+        //        TypesEnum.MOUSE_SCROLL=> _serviceProvider.GetRequiredService<ProfileViewModel>(),
         //        _ => throw new ArgumentException("Invalid ViewModel Type", nameof(viewModelType))
         //    };
         //}

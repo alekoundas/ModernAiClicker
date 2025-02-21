@@ -24,7 +24,7 @@ namespace Business.Repository.Entities
             return await InMemoryDbContext.FlowSteps
                         .Include(x => x.ChildrenFlowSteps)
                         .Where(x => x.Id == flowStepId)
-                        .Select(x => x.ChildrenFlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW))
+                        .Select(x => x.ChildrenFlowSteps.First(y => y.Type == TypesEnum.IS_NEW))
                         .FirstAsync();
         }
 
@@ -67,7 +67,7 @@ namespace Business.Repository.Entities
 
             if (simplings != null)
                 nextSimpling = await simplings
-                   .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                   .Where(x => x.Type != TypesEnum.IS_NEW)
                    .Where(x => x.OrderingNum > flowStep.OrderingNum)
                    .OrderBy(x => x.OrderingNum)
                    .FirstOrDefaultAsync();
@@ -86,16 +86,16 @@ namespace Business.Repository.Entities
             {
                 if (resultEnum == ExecutionResultEnum.SUCCESS)
                     childrenFlowSteps = childrenFlowSteps
-                        .Where(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS) // Equals to .First() since only one child will be available.
+                        .Where(x => x.Type == TypesEnum.IS_SUCCESS) // Equals to .First() since only one child will be available.
                         .SelectMany(x => x.ChildrenFlowSteps);
                 else
                     childrenFlowSteps = childrenFlowSteps
-                        .Where(x => x.FlowStepType == FlowStepTypesEnum.IS_FAILURE) // Equals to .First() since only one child will be available.
+                        .Where(x => x.Type == TypesEnum.IS_FAILURE) // Equals to .First() since only one child will be available.
                         .SelectMany(x => x.ChildrenFlowSteps);
             }
 
             FlowStep? nextChild = await childrenFlowSteps
-                .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                .Where(x => x.Type != TypesEnum.IS_NEW)
                 .OrderBy(x => x.OrderingNum)
                 .FirstOrDefaultAsync();
 
@@ -217,17 +217,15 @@ namespace Business.Repository.Entities
                 Name = flowStep.Name,
                 ProcessName = flowStep.ProcessName,
                 IsExpanded = flowStep.IsExpanded,
-                Disabled = flowStep.Disabled,
                 IsSelected = false,
                 OrderingNum = flowStep.OrderingNum,
-                FlowStepType = flowStep.FlowStepType,
+                Type = flowStep.Type,
                 TemplateImage = flowStep.TemplateImage,
                 Accuracy = flowStep.Accuracy,
                 LocationX = flowStep.LocationX,
                 LocationY = flowStep.LocationY,
                 MaxLoopCount = flowStep.MaxLoopCount,
                 RemoveTemplateFromResult = flowStep.RemoveTemplateFromResult,
-                LoopResultImagePath = flowStep.LoopResultImagePath,
                 MouseAction = flowStep.MouseAction,
                 MouseButton = flowStep.MouseButton,
                 MouseScrollDirectionEnum = flowStep.MouseScrollDirectionEnum,
@@ -235,12 +233,12 @@ namespace Business.Repository.Entities
                 MouseLoopTimes = flowStep.MouseLoopTimes,
                 MouseLoopDebounceTime = flowStep.MouseLoopDebounceTime,
                 MouseLoopTime = flowStep.MouseLoopTime,
-                SleepForHours = flowStep.SleepForHours,
-                SleepForMinutes = flowStep.SleepForMinutes,
-                SleepForSeconds = flowStep.SleepForSeconds,
-                SleepForMilliseconds = flowStep.SleepForMilliseconds,
-                WindowHeight = flowStep.WindowHeight,
-                WindowWidth = flowStep.WindowWidth,
+                WaitForHours = flowStep.WaitForHours,
+                WaitForMinutes = flowStep.WaitForMinutes,
+                WaitForSeconds = flowStep.WaitForSeconds,
+                WaitForMilliseconds = flowStep.WaitForMilliseconds,
+                Height = flowStep.Height,
+                Width = flowStep.Width,
             };
         }
     }

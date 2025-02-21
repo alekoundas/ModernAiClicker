@@ -104,10 +104,10 @@ namespace StepinFlow.ViewModels.Pages
                 updateFlowStep.Accuracy = FlowStep.Accuracy;
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.SleepForHours = FlowStep.SleepForHours;
-                updateFlowStep.SleepForMinutes = FlowStep.SleepForMinutes;
-                updateFlowStep.SleepForSeconds = FlowStep.SleepForSeconds;
-                updateFlowStep.SleepForMilliseconds = FlowStep.SleepForMilliseconds;
+                updateFlowStep.WaitForHours = FlowStep.WaitForHours;
+                updateFlowStep.WaitForMinutes = FlowStep.WaitForMinutes;
+                updateFlowStep.WaitForSeconds = FlowStep.WaitForSeconds;
+                updateFlowStep.WaitForMilliseconds = FlowStep.WaitForMilliseconds;
             }
 
             /// Add mode
@@ -130,13 +130,13 @@ namespace StepinFlow.ViewModels.Pages
 
                 // "Add" Flow steps
                 FlowStep newFlowStep = new FlowStep();
-                newFlowStep.FlowStepType = FlowStepTypesEnum.IS_NEW;
+                newFlowStep.Type = TypesEnum.IS_NEW;
 
                 // "Success" Flow step
                 FlowStep successFlowStep = new FlowStep();
                 successFlowStep.Name = "Success";
                 successFlowStep.IsExpanded = false;
-                successFlowStep.FlowStepType = FlowStepTypesEnum.IS_SUCCESS;
+                successFlowStep.Type = TypesEnum.IS_SUCCESS;
                 successFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>
                 {
                     newFlowStep

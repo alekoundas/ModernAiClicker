@@ -22,18 +22,18 @@
         <StackPanel>
 
             <!--  Display either this combobox for flow steps.  -->
-            <Label Visibility="{Binding FlowStepTypeVisibility}">Flow step type:</Label>
+            <Label Visibility="{Binding TypeVisibility}">Flow step type:</Label>
             <ComboBox
-                IsEnabled="{Binding IsFlowStepTypeEnabled}"
-                ItemsSource="{Binding FlowStepTypes}"
-                SelectedItem="{Binding SelectedFlowStepType, Mode=TwoWay}"
-                Visibility="{Binding FlowStepTypeVisibility}">
+                IsEnabled="{Binding IsTypeEnabled}"
+                ItemsSource="{Binding Types}"
+                SelectedItem="{Binding SelectedType, Mode=TwoWay}"
+                Visibility="{Binding TypeVisibility}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding FlowStepTypeSelectionChangedCommand}" />
+                        <i:InvokeCommandAction Command="{Binding TypeSelectionChangedCommand}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="Loaded">
-                        <i:InvokeCommandAction Command="{Binding FlowStepTypeSelectionChangedCommand}" />
+                        <i:InvokeCommandAction Command="{Binding TypeSelectionChangedCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>

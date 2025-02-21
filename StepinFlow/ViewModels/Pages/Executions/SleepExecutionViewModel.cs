@@ -35,10 +35,10 @@ namespace StepinFlow.ViewModels.Pages.Executions
             {
 
                 int miliseconds = 0;
-                miliseconds += Execution.FlowStep.SleepForMilliseconds;
-                miliseconds += Execution.FlowStep.SleepForSeconds * 1000;
-                miliseconds += Execution.FlowStep.SleepForMinutes * 60 * 1000;
-                miliseconds += Execution.FlowStep.SleepForHours * 60 * 60 * 1000;
+                miliseconds += Execution.FlowStep.WaitForMilliseconds;
+                miliseconds += Execution.FlowStep.WaitForSeconds * 1000;
+                miliseconds += Execution.FlowStep.WaitForMinutes * 60 * 1000;
+                miliseconds += Execution.FlowStep.WaitForHours * 60 * 60 * 1000;
 
                 TimeTotal = TimeSpan.FromMilliseconds(miliseconds).ToString(@"hh\:mm\:ss");
 

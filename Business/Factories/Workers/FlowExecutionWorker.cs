@@ -29,7 +29,7 @@ namespace Business.Factories.Workers
         {
             FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.Query
                 .Where(x=>x.FlowId == execution.FlowId)
-                .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
+                .Where(x => x.Type != TypesEnum.IS_NEW)
                 .OrderBy(x=>x.OrderingNum)
                 .FirstOrDefaultAsync();
 

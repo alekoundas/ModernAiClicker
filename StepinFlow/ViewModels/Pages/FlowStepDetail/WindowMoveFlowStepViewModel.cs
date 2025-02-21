@@ -82,7 +82,7 @@ namespace StepinFlow.ViewModels.Pages
                 updateFlowStep.LocationY = FlowStep.LocationY;
                 updateFlowStep.LocationX = FlowStep.LocationX;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.FlowStepType = FlowStep.FlowStepType;
+                updateFlowStep.Type = FlowStep.Type;
             }
 
             /// Add mode

@@ -167,7 +167,7 @@ namespace Business.Factories.Workers
             List<FlowStep> children = await _baseDatawork.Query.FlowSteps
                 .AsNoTracking()
                 .Where(x => x.ParentTemplateSearchFlowStepId == flowStepId)
-                .Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)
+                .Where(x => x.Type == TypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)
                 .ToListAsync();
 
             // Get first child template search flow step that isnt completed.

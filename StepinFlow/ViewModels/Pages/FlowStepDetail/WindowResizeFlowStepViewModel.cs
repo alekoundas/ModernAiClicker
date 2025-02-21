@@ -35,8 +35,8 @@ namespace StepinFlow.ViewModels.Pages
 
             Rectangle windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
 
-            FlowStep.WindowHeight = Math.Abs(windowRect.Bottom - windowRect.Top);
-            FlowStep.WindowWidth = Math.Abs(windowRect.Left - windowRect.Right);
+            FlowStep.Height = Math.Abs(windowRect.Bottom - windowRect.Top);
+            FlowStep.Width = Math.Abs(windowRect.Left - windowRect.Right);
         }
 
         [RelayCommand]
@@ -50,8 +50,8 @@ namespace StepinFlow.ViewModels.Pages
 
             newWindowRect.Left = windowRect.Left;
             newWindowRect.Top = windowRect.Top;
-            newWindowRect.Right = windowRect.Left + FlowStep.WindowWidth;
-            newWindowRect.Bottom = windowRect.Top + FlowStep.WindowHeight;
+            newWindowRect.Right = windowRect.Left + FlowStep.Width;
+            newWindowRect.Bottom = windowRect.Top + FlowStep.Height;
 
             _systemService.MoveWindow(FlowStep.ProcessName, newWindowRect);
         }
@@ -70,10 +70,10 @@ namespace StepinFlow.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.WindowHeight = FlowStep.WindowHeight;
-                updateFlowStep.WindowWidth = FlowStep.WindowWidth;
+                updateFlowStep.Height = FlowStep.Height;
+                updateFlowStep.Width = FlowStep.Width;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.FlowStepType = FlowStep.FlowStepType;
+                updateFlowStep.Type = FlowStep.Type;
             }
 
             /// Add mode

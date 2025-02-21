@@ -131,10 +131,10 @@ namespace StepinFlow.ViewModels.Pages
             }
 
             List<FlowStep> previousStepsFiltered = previousSteps
-           .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_SUCCESS)
-           .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_FAILURE)
-           .Where(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW)
-           .Where(x => x.FlowStepType != FlowStepTypesEnum.GO_TO)
+           .Where(x => x.Type != TypesEnum.IS_SUCCESS)
+           .Where(x => x.Type != TypesEnum.IS_FAILURE)
+           .Where(x => x.Type != TypesEnum.IS_NEW)
+           .Where(x => x.Type != TypesEnum.GO_TO)
            .Distinct() // TODO: Fix query and remove this.
            .ToList();
 

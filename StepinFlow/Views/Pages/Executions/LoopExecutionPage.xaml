@@ -17,11 +17,11 @@
 
     <Page.Resources>
         <ObjectDataProvider
-            x:Key="FlowStepTypesEnum"
+            x:Key="TypesEnum"
             MethodName="GetValues"
             ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="enum:FlowStepTypesEnum" />
+                <x:Type TypeName="enum:TypesEnum" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Page.Resources>

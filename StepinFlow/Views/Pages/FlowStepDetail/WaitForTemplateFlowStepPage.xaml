@@ -30,7 +30,7 @@
 
 
         <StackPanel Grid.Column="1">
-            <!--<ComboBox ItemsSource="{Binding Source={StaticResource FlowStepTypesEnum}}" />-->
+            <!--<ComboBox ItemsSource="{Binding Source={StaticResource TypesEnum}}" />-->
 
             <Label>1. Set Name</Label>
             <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
@@ -67,16 +67,16 @@
             <Label>4. Retry search after:</Label>
             <StackPanel>
                 <Label>Set hours:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForHours, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.WaitForHours, Mode=TwoWay}" />
 
                 <Label>Set minutes:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForMinutes, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.WaitForMinutes, Mode=TwoWay}" />
 
                 <Label>Set seconds:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForSeconds, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.WaitForSeconds, Mode=TwoWay}" />
 
                 <Label>Set milliseconds:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.SleepForMilliseconds, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.WaitForMilliseconds, Mode=TwoWay}" />
             </StackPanel>
 
             <Label>5. Select minimum accuracy</Label>

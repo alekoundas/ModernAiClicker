@@ -145,7 +145,7 @@ namespace StepinFlow.ViewModels.Pages
                 if (flowStep == null || _stopExecution == true)
                     return;
 
-                IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.FlowStepType);
+                IExecutionWorker factoryWorker = _executionFactory.GetWorker(flowStep.Type);
                 factoryWorker.ClearEntityFrameworkChangeTracker();
                 Execution flowStepExecution = await factoryWorker.CreateExecutionModel(flowStep, parentExecution, latestParentExecution);
                 parentExecution.ResultImage = null;// TODO test if needed.
@@ -153,7 +153,7 @@ namespace StepinFlow.ViewModels.Pages
                 // Add execution to history listbox.
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    CurrentStep = flowStep.FlowStepType.ToString();
+                    CurrentStep = flowStep.Type.ToString();
                     ListBoxExecutions.Add(flowStepExecution);
                 });
 

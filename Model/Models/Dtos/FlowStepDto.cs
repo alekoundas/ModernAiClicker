@@ -10,7 +10,7 @@ namespace Model.Models
         public string ProcessName = string.Empty;
         public bool IsExpanded;
         public int OrderingNum;
-        public FlowStepTypesEnum FlowStepType;
+        public TypesEnum Type;
         public bool Disabled { get; set; }
 
         // Template search
@@ -33,10 +33,10 @@ namespace Model.Models
 
 
         //System
-        public int? SleepForHours;
-        public int? SleepForMinutes;
-        public int? SleepForSeconds;
-        public int? SleepForMilliseconds;
+        public int? WaitForHours;
+        public int? WaitForMinutes;
+        public int? WaitForSeconds;
+        public int? WaitForMilliseconds;
 
         // Window
         public int WindowHeight;

@@ -93,10 +93,10 @@ namespace Business.Factories.Workers
 
                     int miliseconds = 0;
 
-                    miliseconds += execution.FlowStep.SleepForMilliseconds;
-                    miliseconds += execution.FlowStep.SleepForSeconds * 1000;
-                    miliseconds += execution.FlowStep.SleepForMinutes * 60 * 1000;
-                    miliseconds += execution.FlowStep.SleepForHours * 60 * 60 * 1000;
+                    miliseconds += execution.FlowStep.WaitForMilliseconds;
+                    miliseconds += execution.FlowStep.WaitForSeconds * 1000;
+                    miliseconds += execution.FlowStep.WaitForMinutes * 60 * 1000;
+                    miliseconds += execution.FlowStep.WaitForHours * 60 * 60 * 1000;
 
                     Thread.Sleep(miliseconds);
                 }

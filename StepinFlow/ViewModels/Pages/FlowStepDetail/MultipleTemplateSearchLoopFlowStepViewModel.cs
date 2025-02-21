@@ -61,7 +61,7 @@ namespace StepinFlow.ViewModels.Pages
             if (flowStep != null)
             {
                 FlowStep = flowStep;
-                List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD).ToList();
+                List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.Type == TypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD).ToList();
                 ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
             }
         }
@@ -139,8 +139,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private void OnButtonClearTestClick(FlowStep flowStep)
         {
-            flowStep.LoopResultImagePath = "";
-            ResultImage = new byte[0];
+            ResultImage = null;
         }
 
         [RelayCommand]
@@ -160,9 +159,6 @@ namespace StepinFlow.ViewModels.Pages
             // New if not previous exists.
             // Get previous one if exists.
             Bitmap? screenshot;
-            if (flowStep.LoopResultImagePath.Length > 0)
-                screenshot = (Bitmap)Image.FromFile(flowStep.LoopResultImagePath);
-            else
                 screenshot = _systemService.TakeScreenShot(searchRectangle);
 
             if (screenshot == null)
@@ -175,7 +171,6 @@ namespace StepinFlow.ViewModels.Pages
 
                 if (result.ResultImagePath.Length > 0)
                 {
-                    flowStep.LoopResultImagePath = result.ResultImagePath;
                     ResultImage = File.ReadAllBytes(result.ResultImagePath);
                 }
             }
@@ -235,7 +230,7 @@ namespace StepinFlow.ViewModels.Pages
                 ChildrenTemplateSearchFlowSteps.Remove(templateFlowStep);
 
             foreach (var templateFlowStep in ChildrenTemplateSearchFlowSteps)
-                templateFlowStep.FlowStepType = FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD;
+                templateFlowStep.Type = TypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD;
 
 
             // Edit mode
@@ -271,10 +266,10 @@ namespace StepinFlow.ViewModels.Pages
                 {
                     Name = "Success",
                     IsExpanded = false,
-                    FlowStepType = FlowStepTypesEnum.IS_SUCCESS,
+                    Type = TypesEnum.IS_SUCCESS,
                     ChildrenFlowSteps = new ObservableCollection<FlowStep>
                     {
-                        new FlowStep(){FlowStepType = FlowStepTypesEnum.IS_NEW}
+                        new FlowStep(){Type = TypesEnum.IS_NEW}
                     }
                 };
 
@@ -283,10 +278,10 @@ namespace StepinFlow.ViewModels.Pages
                 {
                     Name = "Fail",
                     IsExpanded = false,
-                    FlowStepType = FlowStepTypesEnum.IS_FAILURE,
+                    Type = TypesEnum.IS_FAILURE,
                     ChildrenFlowSteps = new ObservableCollection<FlowStep>
                     {
-                        new FlowStep(){FlowStepType = FlowStepTypesEnum.IS_NEW}
+                        new FlowStep(){Type = TypesEnum.IS_NEW}
                     }
                 };
 
@@ -312,7 +307,7 @@ namespace StepinFlow.ViewModels.Pages
             List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.Query
                 .AsNoTracking()
                 .Where(x => x.ParentTemplateSearchFlowStepId == FlowStep.Id)
-                .Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD)
+                .Where(x => x.Type == TypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD)
                 .ToListAsync();
             ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
         }

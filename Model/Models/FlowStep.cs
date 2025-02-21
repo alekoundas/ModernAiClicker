@@ -19,15 +19,13 @@ namespace Model.Models
         public bool _isExpanded;
 
         [ObservableProperty]
-        public bool _isSelected = true;
+        public bool _isSelected;
 
         [ObservableProperty]
         public int _orderingNum;
 
         [ObservableProperty]
-        public FlowStepTypesEnum _flowStepType;
-
-        public bool Disabled { get; set; }
+        public TypesEnum _type;
 
 
 
@@ -50,7 +48,7 @@ namespace Model.Models
         [ObservableProperty]
         public bool _removeTemplateFromResult;
 
-        // Mouse
+        // Cursor
         [ObservableProperty]
         public MouseActionsEnum _mouseAction;
 
@@ -74,23 +72,23 @@ namespace Model.Models
 
         //System
         [ObservableProperty]
-        public int _sleepForHours;
+        public int _waitForHours;
 
         [ObservableProperty]
-        public int _sleepForMinutes;
+        public int _waitForMinutes;
 
         [ObservableProperty]
-        public int _sleepForSeconds;
+        public int _waitForSeconds;
 
         [ObservableProperty]
-        public int _sleepForMilliseconds;
+        public int _waitForMilliseconds;
 
         // Window
         [ObservableProperty]
-        public int _windowHeight;
+        public int _height;
 
         [ObservableProperty]
-        public int _windowWidth;
+        public int _width;
 
 
         public int? FlowId { get; set; }
@@ -99,10 +97,14 @@ namespace Model.Models
         public int? ParentFlowStepId { get; set; }
         public virtual FlowStep? ParentFlowStep { get; set; }
 
+        public int? SearchAreaParameterFlowStepId { get; set; }
+        public virtual FlowStep? SearchAreaParameterFlowStep { get; set; }
+
         public int? ParentTemplateSearchFlowStepId { get; set; } // Used by GoTo, CursorMove, MultipleTemplateSearch, MultipleTemplateSearchLoop
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
 
 
+        public virtual ObservableCollection<FlowStep> ChildrenSearchAreaParameterFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<Execution> Executions { get; set; }  = new ObservableCollection<Execution>();

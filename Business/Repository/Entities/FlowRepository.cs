@@ -23,7 +23,7 @@ namespace Business.Repository.Entities
             return await InMemoryDbContext.Flows
                         .Include(x => x.FlowSteps)
                         .Where(x => x.Id == id)
-                        .Select(x => x.FlowSteps.First(y => y.FlowStepType == FlowStepTypesEnum.IS_NEW))
+                        .Select(x => x.FlowSteps.First(y => y.Type == TypesEnum.IS_NEW))
                         .FirstAsync();
         }
 

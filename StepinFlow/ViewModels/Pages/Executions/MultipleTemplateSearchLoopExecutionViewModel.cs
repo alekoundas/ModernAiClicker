@@ -47,7 +47,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
             Execution = execution;
 
             List<FlowStep> flowSteps = execution.FlowStep!.ParentTemplateSearchFlowStep!.ChildrenTemplateSearchFlowSteps
-                .Where(x => x.FlowStepType == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD)
+                .Where(x => x.Type == TypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD)
                 .ToList();
 
             ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);

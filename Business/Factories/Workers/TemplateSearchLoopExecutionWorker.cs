@@ -113,16 +113,16 @@ namespace Business.Factories.Workers
 
             if (execution.ExecutionResultEnum == ExecutionResultEnum.SUCCESS)
                 nextFlowStep = nextFlowStep?.ChildrenFlowSteps
-                    .FirstOrDefault(x => x.FlowStepType == FlowStepTypesEnum.IS_SUCCESS)
+                    .FirstOrDefault(x => x.Type == TypesEnum.IS_SUCCESS)
                     ?.ChildrenFlowSteps
                     .OrderBy(x => x.OrderingNum)
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
+                    .FirstOrDefault(x => x.Type != TypesEnum.IS_NEW);
             else
                 nextFlowStep = nextFlowStep?.ChildrenFlowSteps
-                    .First(x => x.FlowStepType == FlowStepTypesEnum.IS_FAILURE)
+                    .First(x => x.Type == TypesEnum.IS_FAILURE)
                     .ChildrenFlowSteps
                     .OrderBy(x => x.OrderingNum)
-                    .FirstOrDefault(x => x.FlowStepType != FlowStepTypesEnum.IS_NEW);
+                    .FirstOrDefault(x => x.Type != TypesEnum.IS_NEW);
 
             nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.ExecutionResultEnum);
             return nextFlowStep;

@@ -24,10 +24,10 @@ namespace StepinFlow.ViewModels.Pages
 
 
             int miliseconds = 0;
-            miliseconds += FlowStep.SleepForMilliseconds;
-            miliseconds += FlowStep.SleepForSeconds * 1000;
-            miliseconds += FlowStep.SleepForMinutes * 60 * 1000;
-            miliseconds += FlowStep.SleepForHours * 60 * 60 * 1000;
+            miliseconds += FlowStep.WaitForMilliseconds;
+            miliseconds += FlowStep.WaitForSeconds * 1000;
+            miliseconds += FlowStep.WaitForMinutes * 60 * 1000;
+            miliseconds += FlowStep.WaitForHours * 60 * 60 * 1000;
 
             TimeTotal = TimeSpan.FromMilliseconds(miliseconds).ToString(@"hh\:mm\:ss");
         }
@@ -46,10 +46,10 @@ namespace StepinFlow.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.SleepForHours = FlowStep.SleepForHours;
-                updateFlowStep.SleepForMinutes = FlowStep.SleepForMinutes;
-                updateFlowStep.SleepForSeconds = FlowStep.SleepForSeconds;
-                updateFlowStep.SleepForMilliseconds = FlowStep.SleepForMilliseconds;
+                updateFlowStep.WaitForHours = FlowStep.WaitForHours;
+                updateFlowStep.WaitForMinutes = FlowStep.WaitForMinutes;
+                updateFlowStep.WaitForSeconds = FlowStep.WaitForSeconds;
+                updateFlowStep.WaitForMilliseconds = FlowStep.WaitForMilliseconds;
 
             }
 

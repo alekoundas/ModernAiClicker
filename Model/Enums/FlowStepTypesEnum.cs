@@ -1,7 +1,7 @@
 ﻿
 namespace Model.Enums
 {
-    public enum FlowStepTypesEnum
+    public enum TypesEnum
     {
         NO_SELECTION,
         TEMPLATE_SEARCH,
