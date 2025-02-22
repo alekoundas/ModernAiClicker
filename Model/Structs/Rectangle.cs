@@ -5,8 +5,8 @@ namespace Model.Structs
    [StructLayout(LayoutKind.Sequential)]
     public struct Rectangle
     {
-        public int Left;
-        public int Top;
+        public int Left; //X
+        public int Top; //Y
         public int Right;
         public int Bottom;
     }

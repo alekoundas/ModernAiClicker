@@ -19,17 +19,32 @@ namespace Model.Models
         public bool _isSelected;
 
         [ObservableProperty]
-        public int _orderingNum = 0;
+        public int _orderingNum;
 
         [ObservableProperty]
         public FlowParameterTypesEnum _type;
 
+        [ObservableProperty]
+        public TemplateSearchAreaTypesEnum? _templateSearchAreaType;
 
         [ObservableProperty]
-        public int _locationX;
+        public string _processName = string.Empty;
 
         [ObservableProperty]
-        public int _locationY;
+        public string _systemMonitorDeviceName = string.Empty;
+
+
+        [ObservableProperty]
+        public int _locationTop;
+
+        [ObservableProperty]
+        public int _locationLeft;
+
+        [ObservableProperty]
+        public int _locationRight;
+
+        [ObservableProperty]
+        public int _locationBottom;
 
 
 

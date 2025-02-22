@@ -203,7 +203,7 @@ namespace StepinFlow.ViewModels.UserControls
                 FlowStepVisibility = Visibility.Collapsed;
                 FlowParameterVisibility = Visibility.Visible;
                 FlowVisibility = Visibility.Collapsed;
-                NavigateToFlowStepDetailPage(id);
+                NavigateToFlowParameterDetailPage(id);
             }
 
         }
@@ -284,6 +284,9 @@ namespace StepinFlow.ViewModels.UserControls
                 _newFlowParameter.Type = SelectedFlowParameterType;
                 NavigateToNewFlowParameterDetailPage(_newFlowParameter);
             }
+
+            _newFlowStep = null;
+            _newFlowParameter = null;
         }
 
 
@@ -303,6 +306,15 @@ namespace StepinFlow.ViewModels.UserControls
             if (page != null)
             {
                 page.ViewModel.LoadNewFlowParameter(newflowParameter);
+                FrameFlowParameter = page;
+            }
+        }
+        private void NavigateToFlowParameterDetailPage(int id)
+        {
+            IFlowParameterDetailPage? page = _flowParameterPageFactory.TryGetValue(SelectedFlowParameterType, out Lazy<IFlowParameterDetailPage>? lazzyPage) ? lazzyPage.Value : null;
+            if (page != null)
+            {
+                page.ViewModel.LoadFlowParameterId(id);
                 FrameFlowParameter = page;
             }
         }

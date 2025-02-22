@@ -228,6 +228,27 @@ namespace Business.Services
             return windowRectangle;
         }
 
+        public List<SystemMonitor> GetAllSystemMonitors()
+        {
+            List<SystemMonitor> systemMonitors = new List<SystemMonitor>();
+
+            foreach (var screen in System.Windows.Forms.Screen.AllScreens)
+            {
+                SystemMonitor systemMonitor = new SystemMonitor
+                {
+                    DeviceName = screen.DeviceName,
+                    Top = screen.Bounds.Top,
+                    Bottom = screen.Bounds.Bottom,
+                    Left = screen.Bounds.Left,
+                    Right = screen.Bounds.Right
+                };
+
+                systemMonitors.Add(systemMonitor);
+            }
+
+            return systemMonitors;
+        }
+
         public ImageSizeResult GetImageSize(byte[] imageArray)
         {
             ImageSizeResult imageSizeResult = new ImageSizeResult();

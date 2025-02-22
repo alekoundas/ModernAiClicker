@@ -8,19 +8,32 @@ namespace Business.Interfaces
 {
     public interface ISystemService
     {
-        Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot");
 
+        // Screen.
         Model.Structs.Rectangle GetWindowSize(string processName);
         Model.Structs.Rectangle GetScreenSize();
-        bool MoveWindow(string processName, Model.Structs.Rectangle newWindowSize);
-        void SetCursorPossition(Model.Structs.Point point);
-        void CursorClick(MouseButtonsEnum mouseButtonEnum);
+        List<SystemMonitor> GetAllSystemMonitors();
+        
+
+        List<string> GetProcessWindowTitles();
+        
+        
+        // JSON.
         Task ExportFlowsJSON(List<Flow> flows, string exportFilePath);
         List<Flow>? ImportFlowsJSON(string importFilePath);
+
+        // Image.
         ImageSizeResult GetImageSize(byte[] imagePath);
-        List<string> GetProcessWindowTitles();
         Task SaveImageToDisk(string filePath, byte[] image);
         void CopyImageToDisk(string sourceFilePath, string destinationFilePath);
+        Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot");
+
+        // Window.
+        bool MoveWindow(string processName, Model.Structs.Rectangle newWindowSize);
+
+        // Cursor.
+        void SetCursorPossition(Model.Structs.Point point);
+        void CursorClick(MouseButtonsEnum mouseButtonEnum);
         void CursorScroll(MouseScrollDirectionEnum scrollDirection, int steps);
 
     }
