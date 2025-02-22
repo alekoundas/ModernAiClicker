@@ -184,9 +184,11 @@
             <UserControls:TreeViewUserControl
                 x:Name="TreeViewControl"
                 IsLocked="{Binding ViewModel.IsLocked}"
+                OnAddFlowParameterClick="OnAddFlowParameterClick"
                 OnAddFlowStepClick="OnAddFlowStepClick"
                 OnFlowStepClone="OnFlowStepClone"
                 OnSelectedFlowIdChange="OnSelectedFlowIdChange"
+                OnSelectedFlowParameterIdChange="OnSelectedFlowParameterIdChange"
                 OnSelectedFlowStepIdChange="OnSelectedFlowStepIdChange" />
         </Border>
 

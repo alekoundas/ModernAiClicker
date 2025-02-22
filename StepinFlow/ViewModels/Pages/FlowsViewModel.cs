@@ -35,11 +35,17 @@ namespace StepinFlow.ViewModels.Pages
         public event NavigateToNewFlowStepEvent? NavigateToNewFlowStep;
         public delegate void NavigateToNewFlowStepEvent(FlowStep flowStep);
 
+        public event NavigateToNewFlowParameterEvent? NavigateToNewFlowParameter;
+        public delegate void NavigateToNewFlowParameterEvent(FlowParameter flowParameter);
+
         public event NavigateToFlowStepEvent? NavigateToFlowStep;
         public delegate Task NavigateToFlowStepEvent(int id);
 
         public event NavigateToFlowEvent? NavigateToFlow;
         public delegate Task NavigateToFlowEvent(int id);
+
+        public event NavigateToFlowParameterEvent? NavigateToFlowParameter;
+        public delegate Task NavigateToFlowParameterEvent(int id);
 
 
 
@@ -76,6 +82,10 @@ namespace StepinFlow.ViewModels.Pages
         {
             NavigateToNewFlowStep?.Invoke(newFlowStep);
         }
+        public void OnAddFlowParameterClick(FlowParameter newFlowParameter)
+        {
+            NavigateToNewFlowParameter?.Invoke(newFlowParameter);
+        }
 
         public async Task OnTreeViewItemFlowStepSelected(int id)
         {
@@ -85,6 +95,10 @@ namespace StepinFlow.ViewModels.Pages
         public async Task OnTreeViewItemFlowSelected(int id)
         {
             await NavigateToFlow?.Invoke(id);
+        }
+        public async Task OnTreeViewItemFlowParameterSelected(int id)
+        {
+            await NavigateToFlowParameter?.Invoke(id);
         }
 
         public void OnFlowStepCopy(int id)

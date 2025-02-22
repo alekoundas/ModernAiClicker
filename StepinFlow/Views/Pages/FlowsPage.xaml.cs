@@ -18,7 +18,9 @@ namespace StepinFlow.Views.Pages
 
             viewModel.NavigateToFlow += InvokeNavigateToFlowAction;
             viewModel.NavigateToFlowStep += InvokeNavigateToFlowStepAction;
+            viewModel.NavigateToFlowParameter += InvokeNavigateToFlowParameterAction;
             viewModel.NavigateToNewFlowStep += InvokeNavigateToNewFlowStepAction;
+            viewModel.NavigateToNewFlowParameter += InvokeNavigateToNewFlowParameter;
 
 
             ViewModel = viewModel;
@@ -30,6 +32,11 @@ namespace StepinFlow.Views.Pages
         private void OnAddFlowStepClick(object sender, FlowStep newFlowStep)
         {
             ViewModel.OnAddFlowStepClick(newFlowStep);
+        }
+        private void OnAddFlowParameterClick(object sender, FlowParameter newFlowParameter)
+        {
+            ViewModel.OnAddFlowParameterClick(newFlowParameter);
+
         }
 
         private void OnFlowStepClone(object sender, int id)
@@ -45,6 +52,10 @@ namespace StepinFlow.Views.Pages
         private void OnSelectedFlowIdChange(object sender, int id)
         {
             ViewModel.OnTreeViewItemFlowSelected(id);
+        }
+        private void OnSelectedFlowParameterIdChange(object sender, int id)
+        {
+            ViewModel.OnTreeViewItemFlowParameterSelected(id);
         }
 
         public async Task InvokeLoadFlowsAction(int? id = 0)
@@ -77,10 +88,20 @@ namespace StepinFlow.Views.Pages
         {
             await FlowStepFrameUserControl.ViewModel.NavigateToFlowStep(id);
         }
+        public async Task InvokeNavigateToFlowParameterAction(int id)
+        {
+            await FlowStepFrameUserControl.ViewModel.NavigateToFlowParameter(id);
+        }
 
         public void InvokeNavigateToNewFlowStepAction(FlowStep flowStep)
         {
             FlowStepFrameUserControl.ViewModel.NavigateToNewFlowStep(flowStep);
         }
+
+        public void InvokeNavigateToNewFlowParameter(FlowParameter flowParameter)
+        {
+            FlowStepFrameUserControl.ViewModel.NavigateToNewFlowParameter(flowParameter);
+        }
+
     }
 }

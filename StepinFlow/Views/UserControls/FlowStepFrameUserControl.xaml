@@ -21,13 +21,14 @@
 
         <StackPanel>
 
+
             <!--  Display either this combobox for flow steps.  -->
-            <Label Visibility="{Binding TypeVisibility}">Flow step type:</Label>
+            <Label Visibility="{Binding FlowStepVisibility}">Flow step type:</Label>
             <ComboBox
-                IsEnabled="{Binding IsTypeEnabled}"
-                ItemsSource="{Binding Types}"
-                SelectedItem="{Binding SelectedType, Mode=TwoWay}"
-                Visibility="{Binding TypeVisibility}">
+                IsEnabled="{Binding IsEnabled}"
+                ItemsSource="{Binding FlowStepTypes}"
+                SelectedItem="{Binding SelectedFlowStepType, Mode=TwoWay}"
+                Visibility="{Binding FlowStepVisibility}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding TypeSelectionChangedCommand}" />
@@ -39,13 +40,31 @@
             </ComboBox>
 
 
-            <!--  Or this combobox for flows.  -->
-            <Label Visibility="{Binding FlowTypeVisibility}">Flow type</Label>
+            <!--  Or this combobox for flow parameters.  -->
+            <Label Visibility="{Binding FlowParameterVisibility}">Flow parameter</Label>
             <ComboBox
-                IsEnabled="{Binding IsFlowTypeEnabled}"
+                IsEnabled="{Binding IsEnabled}"
+                ItemsSource="{Binding FlowParameterTypes}"
+                SelectedItem="{Binding SelectedFlowParameterType, Mode=TwoWay}"
+                Visibility="{Binding FlowParameterVisibility}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding FlowTypeSelectionChangedCommand}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="Loaded">
+                        <i:InvokeCommandAction Command="{Binding FlowTypeSelectionChangedCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+
+
+            <!--  Or this combobox for flows.  -->
+            <Label Visibility="{Binding FlowVisibility}">Flow type</Label>
+            <ComboBox
+                IsEnabled="{Binding IsEnabled}"
                 ItemsSource="{Binding FlowTypes}"
                 SelectedItem="{Binding SelectedFlowType, Mode=TwoWay}"
-                Visibility="{Binding FlowTypeVisibility}">
+                Visibility="{Binding FlowVisibility}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding FlowTypeSelectionChangedCommand}" />
@@ -62,8 +81,9 @@
                 HorizontalAlignment="Stretch"
                 Fill="White" />
 
-            <Frame Content="{Binding FrameFlowStep}" />
             <Frame Content="{Binding FrameFlow}" />
+            <Frame Content="{Binding FrameFlowStep}" />
+            <Frame Content="{Binding FrameFlowParameter}" />
             <Frame Content="{Binding FrameExecution}" />
         </StackPanel>
     </Grid>

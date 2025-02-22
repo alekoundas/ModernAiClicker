@@ -23,6 +23,9 @@ namespace StepinFlow.ViewModels.UserControls
         public event OnSelectedFlowIdChanged? OnSelectedFlowIdChangedEvent;
         public delegate void OnSelectedFlowIdChanged(int Id);
 
+        public event OnSelectedFlowParameterIdChanged? OnSelectedFlowParameterIdChangedEvent;
+        public delegate void OnSelectedFlowParameterIdChanged(int Id);
+
         public event OnSelectedFlowStepIdChanged? OnSelectedFlowStepIdChangedEvent;
         public delegate void OnSelectedFlowStepIdChanged(int Id);
 
@@ -313,6 +316,8 @@ namespace StepinFlow.ViewModels.UserControls
                 _selectedFlow = null;
                 _selectedFlowStep = null;
                 _selectedFlowParameter = flowParameter;
+                OnSelectedFlowParameterIdChangedEvent?.Invoke(flowParameter.Id);
+
             }
         }
 

@@ -2,6 +2,7 @@
 using StepinFlow.ViewModels.UserControls;
 using System.Windows;
 using System.Windows.Controls;
+using static StepinFlow.ViewModels.UserControls.TreeViewUserControlViewModel;
 
 namespace StepinFlow.Views.UserControls
 {
@@ -23,6 +24,7 @@ namespace StepinFlow.Views.UserControls
 
         public event EventHandler<int>? OnSelectedFlowStepIdChange;
         public event EventHandler<int>? OnSelectedFlowIdChange;
+        public event EventHandler<int>? OnSelectedFlowParameterIdChange;
         public event EventHandler<int>? OnFlowStepClone;
         public event EventHandler<FlowStep>? OnAddFlowStepClick;
         public event EventHandler<FlowParameter>? OnAddFlowParameterClick;
@@ -42,8 +44,10 @@ namespace StepinFlow.Views.UserControls
             InitializeComponent();
             ViewModel.OnSelectedFlowStepIdChangedEvent += OnSelectedFlowStepIdChangedEvent;
             ViewModel.OnSelectedFlowIdChangedEvent += OnSelectedFlowIdChangedEvent;
+            ViewModel.OnSelectedFlowParameterIdChangedEvent += OnSelectedFlowParameterIdChangedEvent;
             ViewModel.OnFlowStepCloneEvent += OnFlowStepCloneEvent;
             ViewModel.OnAddFlowStepClickEvent += OnAddFlowStepClickEvent;
+            ViewModel.OnAddFlowParameterClickEvent += OnAddFlowParameterClickEvent;
 
         }
 
@@ -60,6 +64,10 @@ namespace StepinFlow.Views.UserControls
         public void OnSelectedFlowIdChangedEvent(int id)
         {
             OnSelectedFlowIdChange?.Invoke(this, id);
+        }
+        public void OnSelectedFlowParameterIdChangedEvent(int id)
+        {
+            OnSelectedFlowParameterIdChange?.Invoke(this, id);
         }
 
         public void OnFlowStepCloneEvent(int id)
