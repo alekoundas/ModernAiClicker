@@ -44,6 +44,9 @@ namespace Business.Services
                 Bottom = maxLoc.Y + matTemplate.Height,
             };
 
+            // Convert to %
+            maxConfidence *= 100d;
+
             // Draws rectangle in result image.
             DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle, removeTemplateFromResult);
 
