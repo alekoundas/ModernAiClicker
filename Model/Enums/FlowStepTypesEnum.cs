@@ -27,8 +27,8 @@ namespace Model.Enums
         NEW,     // Hidden. Not available for user selection.
         SUCCESS, // Hidden. Not available for user selection.
         FAILURE, // Hidden. Not available for user selection.
-        PARAMETERS, // Hidden. Not available for user selection.
         FLOW_STEPS, // Hidden. Not available for user selection.
+        FLOW_PARAMETERS, // Hidden. Not available for user selection.
 
         MULTIPLE_TEMPLATE_SEARCH_LOOP_CHILD, // Hidden. Not available for user selection.
         MULTIPLE_TEMPLATE_SEARCH_CHILD,      // Hidden. Not available for user selection.

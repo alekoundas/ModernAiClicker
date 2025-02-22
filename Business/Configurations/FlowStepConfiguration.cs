@@ -16,11 +16,13 @@ namespace DataAccess.Configurations
             // Store Enum value as string instead of int.
             builder.Property(x => x.Type).HasConversion<string>();
 
+
+            // 1-1
             builder.HasOne(x => x.Flow)
-                .WithMany(x => x.FlowSteps)
-                .HasForeignKey(x => x.FlowId)
+                .WithOne(x => x.FlowStep)
+                .HasForeignKey< Flow>(x => x.FlowStepId)
                 .IsRequired(false)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.ParentFlowStep)
                 .WithMany(x => x.ChildrenFlowSteps)
@@ -34,12 +36,11 @@ namespace DataAccess.Configurations
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            builder.HasOne(x => x.SearchAreaParameterFlowStep)
-                .WithMany(x => x.ChildrenSearchAreaParameterFlowSteps)
-                .HasForeignKey(x => x.SearchAreaParameterFlowStepId)
+            builder.HasOne(x => x.FlowParameter)
+                .WithMany(x => x.FlowSteps)
+                .HasForeignKey(x => x.FlowParameterId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
-
         }
     }
 }

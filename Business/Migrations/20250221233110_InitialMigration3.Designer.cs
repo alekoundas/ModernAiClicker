@@ -3,6 +3,7 @@ using System;
 using Business.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    partial class InMemoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250221233110_InitialMigration3")]
+    partial class InitialMigration3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.12");
@@ -105,12 +108,6 @@ namespace Business.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("FlowParameterId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("FlowStepId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsExpanded")
                         .HasColumnType("INTEGER");
 
@@ -129,12 +126,6 @@ namespace Business.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FlowParameterId")
-                        .IsUnique();
-
-                    b.HasIndex("FlowStepId")
-                        .IsUnique();
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -332,42 +323,29 @@ namespace Business.Migrations
                     b.Navigation("FlowStep");
                 });
 
-            modelBuilder.Entity("Model.Models.Flow", b =>
-                {
-                    b.HasOne("Model.Models.FlowParameter", "FlowParameter")
-                        .WithOne("Flow")
-                        .HasForeignKey("Model.Models.Flow", "FlowParameterId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Model.Models.FlowStep", "FlowStep")
-                        .WithOne("Flow")
-                        .HasForeignKey("Model.Models.Flow", "FlowStepId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("FlowParameter");
-
-                    b.Navigation("FlowStep");
-                });
-
             modelBuilder.Entity("Model.Models.FlowParameter", b =>
                 {
-                    b.HasOne("Model.Models.Flow", null)
+                    b.HasOne("Model.Models.Flow", "Flow")
                         .WithMany("FlowParameters")
-                        .HasForeignKey("FlowId");
+                        .HasForeignKey("FlowId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Model.Models.FlowParameter", "ParentFlowParameter")
                         .WithMany("ChildrenFlowParameters")
                         .HasForeignKey("ParentFlowParameterId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.Navigation("Flow");
+
                     b.Navigation("ParentFlowParameter");
                 });
 
             modelBuilder.Entity("Model.Models.FlowStep", b =>
                 {
-                    b.HasOne("Model.Models.Flow", null)
+                    b.HasOne("Model.Models.Flow", "Flow")
                         .WithMany("FlowSteps")
-                        .HasForeignKey("FlowId");
+                        .HasForeignKey("FlowId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Model.Models.FlowParameter", "FlowParameter")
                         .WithMany("FlowSteps")
@@ -383,6 +361,8 @@ namespace Business.Migrations
                         .WithMany("ChildrenTemplateSearchFlowSteps")
                         .HasForeignKey("ParentTemplateSearchFlowStepId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Flow");
 
                     b.Navigation("FlowParameter");
 
@@ -411,8 +391,6 @@ namespace Business.Migrations
                 {
                     b.Navigation("ChildrenFlowParameters");
 
-                    b.Navigation("Flow");
-
                     b.Navigation("FlowSteps");
                 });
 
@@ -423,8 +401,6 @@ namespace Business.Migrations
                     b.Navigation("ChildrenTemplateSearchFlowSteps");
 
                     b.Navigation("Executions");
-
-                    b.Navigation("Flow");
                 });
 #pragma warning restore 612, 618
         }

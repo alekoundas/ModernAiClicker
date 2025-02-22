@@ -13,7 +13,6 @@ namespace StepinFlow.Views.Pages
         {
             viewModel.LoadFlows += InvokeLoadFlowsAction;
             viewModel.ClearCopy += InvokeClearCopyAction;
-            viewModel.AddNewFlow += InvokeAddNewFlowAction;
             viewModel.ExpandAll += InvokeExpandAllAction;
             viewModel.CollapseAll += InvokeCollapseAllAction;
 
@@ -58,10 +57,6 @@ namespace StepinFlow.Views.Pages
             TreeViewControl.ViewModel.ClearCopy();
         }
 
-        public async Task InvokeAddNewFlowAction()
-        {
-            await TreeViewControl.ViewModel.AddNewFlow();
-        }
 
         public async Task InvokeExpandAllAction()
         {

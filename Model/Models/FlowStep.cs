@@ -97,14 +97,13 @@ namespace Model.Models
         public int? ParentFlowStepId { get; set; }
         public virtual FlowStep? ParentFlowStep { get; set; }
 
-        public int? SearchAreaParameterFlowStepId { get; set; }
-        public virtual FlowStep? SearchAreaParameterFlowStep { get; set; }
+        public int? FlowParameterId { get; set; }
+        public virtual FlowParameter? FlowParameter { get; set; }
 
         public int? ParentTemplateSearchFlowStepId { get; set; } // Used by GoTo, CursorMove, MultipleTemplateSearch, MultipleTemplateSearchLoop
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
 
 
-        public virtual ObservableCollection<FlowStep> ChildrenSearchAreaParameterFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<Execution> Executions { get; set; }  = new ObservableCollection<Execution>();

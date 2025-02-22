@@ -48,7 +48,6 @@ namespace StepinFlow.Views.UserControls
 
         public async Task LoadFlows(int? id = 0) => await ViewModel!.LoadFlows(id);
         public void ClearCopy() => ViewModel!.ClearCopy();
-        public async Task AddNewFlow() => await ViewModel!.AddNewFlow();
         public async Task ExpandAll() => await ViewModel!.ExpandAll();
         public async Task CollapseAll() => await ViewModel!.CollapseAll();
 

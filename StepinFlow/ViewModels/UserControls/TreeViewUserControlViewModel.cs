@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using StepinFlow.Converters;
+using System.Reflection.Metadata;
 
 namespace StepinFlow.ViewModels.UserControls
 {
@@ -30,8 +32,9 @@ namespace StepinFlow.ViewModels.UserControls
         public event OnAddFlowStepClick? OnAddFlowStepClickEvent;
         public delegate void OnAddFlowStepClick(FlowStep newFlowStep);
 
-        private FlowStep? _selectedFlowStep = null;
         private Flow? _selectedFlow = null;
+        private FlowStep? _selectedFlowStep = null;
+        private FlowParameter? _selectedFlowParameter = null;
 
 
         [ObservableProperty]
@@ -59,12 +62,18 @@ namespace StepinFlow.ViewModels.UserControls
 
             if (flowId > 0)
                 flows = await _baseDatawork.Query.Flows
-                    .Include(x => x.FlowSteps)
+                    .Include(x => x.FlowStep)
+                    .ThenInclude(x => x.ChildrenFlowSteps)
+                    .Include(x => x.FlowParameter)
+                    .ThenInclude(x => x.ChildrenFlowParameters)
                     .Where(x => x.Id == flowId)
                     .ToListAsync();
             else
                 flows = await _baseDatawork.Query.Flows
-                    .Include(x => x.FlowSteps)
+                    .Include(x => x.FlowStep)
+                    .ThenInclude(x => x.ChildrenFlowSteps)
+                    .Include(x => x.FlowParameter)
+                    .ThenInclude(x => x.ChildrenFlowParameters)
                     .ToListAsync();
 
             foreach (Flow flow in flows)
@@ -79,22 +88,6 @@ namespace StepinFlow.ViewModels.UserControls
         {
             CoppiedFlowStepId = null;
             PasteVisibility = Visibility.Collapsed;
-        }
-
-        public async Task AddNewFlow()
-        {
-            FlowStep newFlowStep = new FlowStep();
-            newFlowStep.Type = FlowStepTypesEnum.NEW;
-
-            Flow flow = new Flow();
-            flow.Name = "Flow";
-            flow.IsSelected = true;
-            flow.FlowSteps.Add(newFlowStep);
-
-            _baseDatawork.Flows.Add(flow);
-            await _baseDatawork.SaveChangesAsync();
-
-            FlowsList.Add(flow);
         }
 
         public async Task ExpandAll()
@@ -281,15 +274,23 @@ namespace StepinFlow.ViewModels.UserControls
             object selectedItem = routedPropertyChangedEventArgs.NewValue;
             if (selectedItem is FlowStep flowStep)
             {
-                _selectedFlowStep = flowStep;
                 _selectedFlow = null;
+                _selectedFlowStep = flowStep;
+                _selectedFlowParameter = null;
                 OnSelectedFlowStepIdChangedEvent?.Invoke(flowStep.Id);
             }
             else if (selectedItem is Flow flow)
             {
-                _selectedFlowStep = null;
                 _selectedFlow = flow;
+                _selectedFlowStep = null;
+                _selectedFlowParameter = null;
                 OnSelectedFlowIdChangedEvent?.Invoke(flow.Id);
+            }
+            else if (selectedItem is FlowParameter flowParameter)
+            {
+                _selectedFlow = null;
+                _selectedFlowStep = null;
+                _selectedFlowParameter = flowParameter;
             }
         }
 
@@ -302,23 +303,20 @@ namespace StepinFlow.ViewModels.UserControls
 
             if (_selectedFlow != null)
                 _selectedFlow.IsExpanded = !_selectedFlow.IsExpanded;
+
+            if (_selectedFlowParameter != null)
+                _selectedFlowParameter.IsExpanded = !_selectedFlowParameter.IsExpanded;
         }
 
         [RelayCommand]
         private async Task OnExpanded(object eventParameter)
         {
-            if (eventParameter is FlowStep)
-            {
-                FlowStep flowStep = (FlowStep)eventParameter;
+            if (eventParameter is FlowStep flowStep)
                 await _baseDatawork.FlowSteps.LoadAllExpandedChildren(flowStep);
-            }
-            else if (eventParameter is Flow)
-            {
-                Flow flow = (Flow)eventParameter;
 
+            else if (eventParameter is Flow flow)
                 foreach (var childFlowStep in flow.FlowSteps)
                     await _baseDatawork.FlowSteps.LoadAllExpandedChildren(childFlowStep);
-            }
         }
     }
 }

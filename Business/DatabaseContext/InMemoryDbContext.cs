@@ -28,6 +28,7 @@ namespace Business.DatabaseContext
             builder.ApplyConfiguration(new FlowConfiguration());
             builder.ApplyConfiguration(new FlowStepConfiguration());
             builder.ApplyConfiguration(new ExecutionConfiguration());
+            builder.ApplyConfiguration(new FlowParameterConfiguration());
         }
     }
 }

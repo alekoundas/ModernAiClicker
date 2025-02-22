@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using StepinFlow.ViewModels.UserControls;
 using System.Windows;
+using Model.Enums;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -43,9 +44,6 @@ namespace StepinFlow.ViewModels.Pages
 
 
         [ObservableProperty]
-        private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
-
-        [ObservableProperty]
         private bool _isLocked;
         [ObservableProperty]
         private Visibility _visibleAddFlow = Visibility.Collapsed;
@@ -66,30 +64,26 @@ namespace StepinFlow.ViewModels.Pages
             _baseDatawork = baseDatawork;
             _systemService = systemService;
 
-            //Task.Run(async () => await RefreshData());
+            LoadFlows?.Invoke();
         }
 
         public void RefreshData()
         {
             LoadFlows?.Invoke();
-            //await _treeViewUserControlViewModel.LoadFlows();
         }
 
         public void OnAddFlowStepClick(FlowStep newFlowStep)
         {
-            //_flowStepFrameUserControlViewModel.NavigateToNewFlowStep(newFlowStep);
             NavigateToNewFlowStep?.Invoke(newFlowStep);
         }
 
         public async Task OnTreeViewItemFlowStepSelected(int id)
         {
-            //await _flowStepFrameUserControlViewModel.NavigateToFlowStep(id);
             await NavigateToFlowStep?.Invoke(id);
         }
 
         public async Task OnTreeViewItemFlowSelected(int id)
         {
-            //await _flowStepFrameUserControlViewModel.NavigateToFlow(id);
             await NavigateToFlow?.Invoke(id);
         }
 
@@ -107,15 +101,40 @@ namespace StepinFlow.ViewModels.Pages
             CoppiedFlowStepId = null;
             CoppiedFlowId = null;
             Visible = Visibility.Collapsed;
-            //_treeViewUserControlViewModel.ClearCopy();
             ClearCopy?.Invoke();
         }
 
         [RelayCommand]
         private async Task OnButtonAddFlowClick()
         {
-            await AddNewFlow?.Invoke();
+            FlowParameter flowRarameter = new FlowParameter
+            {
+                Name = "Flow parameters.",
+                Type = FlowParameterTypesEnum.FLOW_PARAMETERS,
+                ChildrenFlowParameters = new ObservableCollection<FlowParameter>() { new FlowParameter { Type = FlowParameterTypesEnum.NEW } }
+            };
+
+            FlowStep flowSteps = new FlowStep
+            {
+                Name = "Flow steps.",
+                Type = FlowStepTypesEnum.FLOW_STEPS,
+                ChildrenFlowSteps = new ObservableCollection<FlowStep>() { new FlowStep { Type = FlowStepTypesEnum.NEW } }
+            };
+
+            Flow flow = new Flow
+            {
+                Name = "Flow",
+                IsSelected = true,
+                FlowStep = flowSteps,
+                FlowParameter = flowRarameter,
+            };
+
+            _baseDatawork.Flows.Add(flow);
+            await _baseDatawork.SaveChangesAsync();
+            LoadFlows?.Invoke();
+
         }
+
 
         [RelayCommand]
         private void OnButtonLockClick()
@@ -131,21 +150,18 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSyncClick()
         {
-            //await _treeViewUserControlViewModel.LoadFlows();
             await LoadFlows?.Invoke();
         }
 
         [RelayCommand]
         private async Task OnButtonExpandAllClick()
         {
-            //await _treeViewUserControlViewModel.ExpandAll();
             await ExpandAll?.Invoke();
         }
 
         [RelayCommand]
         private async Task OnButtonCollapseAllClick()
         {
-            //await _treeViewUserControlViewModel.CollapseAll();
             await CollapseAll?.Invoke();
         }
 

@@ -17,6 +17,26 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <converters:GroupedCollectionConverter x:Key="GroupedCollectionConverter" />
+        <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
+        <ObjectDataProvider
+            x:Key="FlowStepTypesEnum"
+            MethodName="GetValues"
+            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:FlowStepTypesEnum" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider
+            x:Key="FlowParameterTypesEnum"
+            MethodName="GetValues"
+            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enum:FlowParameterTypesEnum" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Fill" Color="#FF595959" />
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.Static.Checked.Stroke" Color="#FF262626" />
         <SolidColorBrush x:Key="TreeViewItem.TreeArrow.MouseOver.Stroke" Color="#FF27C7F7" />
@@ -177,15 +197,7 @@
             </Style.Resources>
         </Style>
 
-        <converters:TreeviewOrdering x:Key="TreeviewOrdering" />
-        <ObjectDataProvider
-            x:Key="FlowStepTypesEnum"
-            MethodName="GetValues"
-            ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="enum:FlowStepTypesEnum" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+
     </UserControl.Resources>
 
 
@@ -215,7 +227,8 @@
             <TreeView.Resources>
 
                 <!--  Parent TreeViewItem  -->
-                <HierarchicalDataTemplate DataType="{x:Type models:Flow}" ItemsSource="{Binding FlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">
+                <!--<HierarchicalDataTemplate DataType="{x:Type models:Flow}" ItemsSource="{Binding FlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">-->
+                <HierarchicalDataTemplate DataType="{x:Type models:Flow}">
                     <Border
                         BorderBrush="White"
                         BorderThickness="1"
@@ -285,13 +298,101 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </ui:Button>
-
                         </Grid>
                     </Border>
+
+
+                    <HierarchicalDataTemplate.ItemsSource>
+                        <MultiBinding Converter="{StaticResource GroupedCollectionConverter}">
+                            <Binding Path="FlowParameter" />
+                            <Binding Path="FlowStep" />
+                        </MultiBinding>
+                    </HierarchicalDataTemplate.ItemsSource>
+
 
                 </HierarchicalDataTemplate>
 
 
+                <!--  Template for FlowParameters  -->
+                <HierarchicalDataTemplate DataType="{x:Type models:FlowParameter}" ItemsSource="{Binding ChildrenFlowParameters, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">
+                    <!--  TreeViewItem ContentPresenter Presentations  -->
+                    <ContentPresenter Content="{Binding}">
+                        <ContentPresenter.Resources>
+
+
+                            <!--  Child TreeViewItem Existing ContentPresenter (Existing Flow Step)  -->
+                            <DataTemplate x:Key="FLOW_PARAMETERS">
+                                <Border
+                                    BorderBrush="White"
+                                    BorderThickness="1"
+                                    CornerRadius="5">
+                                    <ui:TextBlock
+                                        Padding="10"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"
+                                        Text="{Binding Name}" />
+                                </Border>
+
+                            </DataTemplate>
+
+                            <DataTemplate x:Key="NEW">
+                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <ui:Button
+                                        Padding="10"
+                                        HorizontalAlignment="Center"
+                                        Content="Add">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonNewClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <Binding Path="" />
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </ui:Button>
+
+                                    <ui:Button
+                                        Padding="10"
+                                        HorizontalAlignment="Center"
+                                        Content="Paste"
+                                        Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.PasteVisibility}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Click">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:TreeViewUserControl}}, Path=ViewModel.ButtonPasteClickCommand}">
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <Binding Path="" />
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </ui:Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ContentPresenter.Resources>
+
+
+
+                        <!--  ContentPresenter Triggers  -->
+                        <ContentPresenter.Style>
+                            <Style TargetType="{x:Type ContentPresenter}">
+                                <!--  Default  -->
+                                <Setter Property="ContentTemplate" Value="{StaticResource FLOW_PARAMETERS}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowParameterTypesEnum.FLOW_PARAMETERS}">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource FLOW_PARAMETERS}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowParameterTypesEnum.NEW}">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource NEW}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentPresenter.Style>
+
+                    </ContentPresenter>
+                </HierarchicalDataTemplate>
+
+                <!--  Template for FlowSteps  -->
                 <HierarchicalDataTemplate DataType="{x:Type models:FlowStep}" ItemsSource="{Binding ChildrenFlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">
                     <Border
                         BorderBrush="White"
@@ -383,7 +484,6 @@
 
                                         <!--  Arrows Up/Down  -->
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonUp"
                                             Grid.Column="2"
                                             Margin="5"
                                             HorizontalAlignment="Right">
@@ -399,7 +499,6 @@
                                             </i:Interaction.Triggers>
                                         </ui:Button>
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonDown"
                                             Grid.Row="1"
                                             Grid.Column="2"
                                             Margin="5"
@@ -418,7 +517,6 @@
 
                                         <!--  Copy  -->
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonCopy"
                                             Grid.Row="0"
                                             Grid.RowSpan="2"
                                             Grid.Column="4"
@@ -439,7 +537,6 @@
 
                                         <!--  Delete  -->
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonDelete"
                                             Grid.Row="0"
                                             Grid.RowSpan="2"
                                             Grid.Column="3"
@@ -549,7 +646,6 @@
 
                                         <!--  Arrows Up/Down  -->
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonUp"
                                             Grid.Column="2"
                                             Margin="5"
                                             HorizontalAlignment="Right">
@@ -565,7 +661,6 @@
                                             </i:Interaction.Triggers>
                                         </ui:Button>
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonDown"
                                             Grid.Row="1"
                                             Grid.Column="2"
                                             Margin="5"
@@ -584,7 +679,6 @@
 
                                         <!--  Copy  -->
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonCopy"
                                             Grid.Row="0"
                                             Grid.RowSpan="2"
                                             Grid.Column="4"
@@ -604,7 +698,6 @@
                                         </ui:Button>
                                         <!--  Delete  -->
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonDelete"
                                             Grid.Row="0"
                                             Grid.RowSpan="2"
                                             Grid.Column="3"
@@ -633,7 +726,6 @@
                                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonNew"
                                             Padding="10"
                                             HorizontalAlignment="Center"
                                             Content="Add">
@@ -649,7 +741,6 @@
                                         </ui:Button>
 
                                         <ui:Button
-                                            x:Name="TreeViewItemButtonPaste"
                                             Padding="10"
                                             HorizontalAlignment="Center"
                                             Content="Paste"
@@ -688,6 +779,9 @@
                                     <!--  Default  -->
                                     <Setter Property="ContentTemplate" Value="{StaticResource FlowStepExisting}" />
                                     <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.FLOW_STEPS}">
+                                            <Setter Property="ContentTemplate" Value="{StaticResource FlowStepSuccessFail}" />
+                                        </DataTrigger>
                                         <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:FlowStepTypesEnum.NEW}">
                                             <Setter Property="ContentTemplate" Value="{StaticResource FlowStepNew}" />
                                         </DataTrigger>
