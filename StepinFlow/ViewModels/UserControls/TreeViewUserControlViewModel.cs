@@ -228,7 +228,7 @@ namespace StepinFlow.ViewModels.UserControls
         [RelayCommand]
         private async Task OnFlowParameterButtonDeleteClick(FlowParameter flowParameter)
         {
-            //_baseDatawork.FlowSteps.Remove(flowParameter);
+            _baseDatawork.FlowParameters.Remove(flowParameter);
 
             await _baseDatawork.SaveChangesAsync();
             await LoadFlows();

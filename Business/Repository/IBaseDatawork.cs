@@ -9,6 +9,7 @@ namespace DataAccess.Repository.Interface
 
         IFlowRepository Flows { get; set; }
         IFlowStepRepository FlowSteps { get; set; }
+        IFlowParameterRepository FlowParameters { get; set; }
         IExecutionRepository Executions { get; set; }
 
         Task<int> SaveChangesAsync();

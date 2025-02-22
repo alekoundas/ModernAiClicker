@@ -13,6 +13,7 @@ namespace Business.Repository
 
         public IFlowRepository Flows { get; set; }
         public IFlowStepRepository FlowSteps { get; set; }
+        public IFlowParameterRepository FlowParameters { get; set; }
         public IExecutionRepository Executions { get; set; }
 
         public BaseDatawork(InMemoryDbContext baseDbContext)
@@ -21,6 +22,7 @@ namespace Business.Repository
             _dbContext = baseDbContext;
             Flows = new FlowRepository(_dbContext);
             FlowSteps = new FlowStepRepository(_dbContext);
+            FlowParameters = new FlowParameterRepository(_dbContext);
             Executions = new ExecutionRepository(_dbContext);
         }
 
