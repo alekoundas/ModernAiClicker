@@ -49,10 +49,10 @@
                 Visibility="{Binding FlowParameterVisibility}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding FlowTypeSelectionChangedCommand}" />
+                        <i:InvokeCommandAction Command="{Binding TypeSelectionChangedCommand}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="Loaded">
-                        <i:InvokeCommandAction Command="{Binding FlowTypeSelectionChangedCommand}" />
+                        <i:InvokeCommandAction Command="{Binding TypeSelectionChangedCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
@@ -65,14 +65,6 @@
                 ItemsSource="{Binding FlowTypes}"
                 SelectedItem="{Binding SelectedFlowType, Mode=TwoWay}"
                 Visibility="{Binding FlowVisibility}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding FlowTypeSelectionChangedCommand}" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="Loaded">
-                        <i:InvokeCommandAction Command="{Binding FlowTypeSelectionChangedCommand}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
             </ComboBox>
 
             <Rectangle

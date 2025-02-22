@@ -96,6 +96,9 @@
     <Compile Update="Views\Pages\Executions\TemplateSearchExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\FlowParameterDetail\TemplateSearchAreaFlowParameterPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\FlowDetail\FlowPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

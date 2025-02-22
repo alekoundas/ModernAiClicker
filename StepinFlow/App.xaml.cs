@@ -19,11 +19,13 @@ using StepinFlow.Interfaces;
 using StepinFlow.Services;
 using StepinFlow.ViewModels.Pages;
 using StepinFlow.ViewModels.Pages.Executions;
+using StepinFlow.ViewModels.Pages.FlowParameterDetail;
 using StepinFlow.ViewModels.UserControls;
 using StepinFlow.ViewModels.Windows;
 using StepinFlow.Views.Pages;
 using StepinFlow.Views.Pages.Executions;
 using StepinFlow.Views.Pages.FlowDetail;
+using StepinFlow.Views.Pages.FlowParameterDetail;
 using StepinFlow.Views.Pages.FlowStepDetail;
 using StepinFlow.Views.UserControls;
 using StepinFlow.Views.Windows;
@@ -80,6 +82,7 @@ namespace StepinFlow
                 // Repository
                 services.AddScoped<IFlowRepository, FlowRepository>();
                 services.AddScoped<IFlowStepRepository, FlowStepRepository>();
+                services.AddScoped<IFlowParameterRepository, FlowParameterRepository>();
                 services.AddScoped<IExecutionRepository, ExecutionRepository>();
 
                 // DB context
@@ -106,6 +109,8 @@ namespace StepinFlow
                 services.AddTransient<FlowStepFrameUserControl>();
                 services.AddTransient<FlowStepFrameUserControlViewModel>();
 
+
+
                 // Pages
                 services.AddTransient<DashboardPage>();
                 services.AddTransient<DashboardViewModel>();
@@ -125,6 +130,10 @@ namespace StepinFlow
                 // Flow detail.
                 services.AddSingleton<FlowPage>();
                 services.AddSingleton<FlowViewModel>();
+
+                // Flow parameter detail.
+                services.AddSingleton<TemplateSearchAreaFlowParameterPage>();
+                services.AddSingleton<TemplateSearchAreaFlowParameterVM>();
 
                 // Flow step detail.
                 services.AddSingleton<TemplateSearchFlowStepPage>();

@@ -8,6 +8,7 @@ using Model.Enums;
 using Model.Models;
 using StepinFlow.Views.Pages.Executions;
 using StepinFlow.Views.Pages.FlowDetail;
+using StepinFlow.Views.Pages.FlowParameterDetail;
 using StepinFlow.Views.Pages.FlowStepDetail;
 using System.ComponentModel;
 using System.Windows;
@@ -112,6 +113,7 @@ namespace StepinFlow.ViewModels.UserControls
 
             _flowParameterPageFactory = new Dictionary<FlowParameterTypesEnum, Lazy<IFlowParameterDetailPage>>
             {
+                { FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA, new Lazy<IFlowParameterDetailPage>(() => serviceProvider.GetRequiredService<TemplateSearchAreaFlowParameterPage>()) },
             };
 
             //_executionFlowPageFactory = new Dictionary<FlowTypesEnum, Lazy<IExecutionPage>>
@@ -284,33 +286,20 @@ namespace StepinFlow.ViewModels.UserControls
             }
         }
 
-        [RelayCommand]
-        private void OnFlowTypeSelectionChanged()
-        {
-        }
 
 
         private void NavigateToNewFlowStepDetailPage(FlowStep newFlowStep)
         {
             IFlowStepDetailPage? page = _flowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IFlowStepDetailPage>? lazzyPage) ? lazzyPage.Value : null;
-
             if (page != null)
             {
                 page.ViewModel.LoadNewFlowStep(newFlowStep);
                 FrameFlowStep = page;
             }
-            else
-            {
-                FrameFlow = null;
-                FrameFlowStep = null;
-                FrameExecution = null;
-                FrameFlowParameter = null;
-            }
         }
         private void NavigateToNewFlowParameterDetailPage(FlowParameter newflowParameter)
         {
             IFlowParameterDetailPage? page = _flowParameterPageFactory.TryGetValue(SelectedFlowParameterType, out Lazy<IFlowParameterDetailPage>? lazzyPage) ? lazzyPage.Value : null;
-
             if (page != null)
             {
                 page.ViewModel.LoadNewFlowParameter(newflowParameter);
@@ -321,7 +310,6 @@ namespace StepinFlow.ViewModels.UserControls
         private void NavigateToFlowStepDetailPage(int id)
         {
             IFlowStepDetailPage? page = _flowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IFlowStepDetailPage>? lazzyPage) ? lazzyPage.Value : null;
-
             if (page != null)
             {
                 page.ViewModel.LoadFlowStepId(id);
@@ -332,7 +320,6 @@ namespace StepinFlow.ViewModels.UserControls
         private void NavigateToFlowDetailPage(int id)
         {
             IFlowDetailPage? page = _flowPageFactory.TryGetValue(SelectedFlowType, out Lazy<IFlowDetailPage>? lazzyPage) ? lazzyPage.Value : null;
-
             if (page != null)
             {
                 page.ViewModel.LoadFlowId(id);
@@ -343,7 +330,6 @@ namespace StepinFlow.ViewModels.UserControls
         private void NavigateToExecutionDetailPage(Execution execution)
         {
             IExecutionPage? page = _executionFlowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IExecutionPage>? lazzyPage) ? lazzyPage.Value : null;
-
             if (page != null)
             {
                 page.ViewModel.SetExecution(execution);
