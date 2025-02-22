@@ -77,7 +77,7 @@ namespace StepinFlow.ViewModels.UserControls
                     .ToListAsync();
 
             foreach (Flow flow in flows)
-                foreach (FlowStep flowStep in flow.FlowSteps)
+                foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
                     await _baseDatawork.FlowSteps.LoadAllExpandedChildren(flowStep);
 
             //FlowsList = null;
@@ -183,7 +183,7 @@ namespace StepinFlow.ViewModels.UserControls
             {
                 //  Load the target parent.
                 Flow? targetParent = await _baseDatawork.Flows.Query
-                .Include(fs => fs.FlowSteps)
+                .Include(fs => fs.FlowStep.ChildrenFlowSteps)
                 .FirstOrDefaultAsync(fs => fs.Id == flowStep.FlowId.Value);
 
                 if (targetParent == null)
@@ -195,7 +195,7 @@ namespace StepinFlow.ViewModels.UserControls
                 isNewSimpling.OrderingNum++;
 
                 // Attach the cloned root to the target parent.
-                targetParent.FlowSteps.Add(clonedFlowStep);
+                targetParent.FlowStep.ChildrenFlowSteps.Add(clonedFlowStep);
             }
 
             // Save changes.
@@ -315,7 +315,7 @@ namespace StepinFlow.ViewModels.UserControls
                 await _baseDatawork.FlowSteps.LoadAllExpandedChildren(flowStep);
 
             else if (eventParameter is Flow flow)
-                foreach (var childFlowStep in flow.FlowSteps)
+                foreach (var childFlowStep in flow.FlowStep.ChildrenFlowSteps)
                     await _baseDatawork.FlowSteps.LoadAllExpandedChildren(childFlowStep);
         }
     }

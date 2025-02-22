@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Model.Models;
 
-namespace DataAccess.Configurations
+namespace Business.Configurations
 {
     public class ExecutionConfiguration : IEntityTypeConfiguration<Execution>
     {

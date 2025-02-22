@@ -133,12 +133,12 @@ namespace StepinFlow.ViewModels.Pages
                 OrderingNum = flow.OrderingNum,
             };
 
-            foreach (FlowStep flowStep in flow.FlowSteps)
+            foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
             {
                 FlowStep clonedFlowStep = CreateFlowStepClone(flowStep);
                 queue.Enqueue((flowStep, clonedFlowStep));
                 clonedFlowSteps.Add(flowStep.Id, clonedFlowStep);
-                clonedFlow.FlowSteps.Add(clonedFlowStep);
+                clonedFlow.FlowStep.ChildrenFlowSteps.Add(clonedFlowStep);
             }
 
             while (queue.Count > 0)

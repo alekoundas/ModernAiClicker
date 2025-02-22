@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Model.Models;
 
-namespace DataAccess.Configurations
+namespace Business.Configurations
 {
     public class FlowStepConfiguration : IEntityTypeConfiguration<FlowStep>
     {
@@ -16,13 +16,6 @@ namespace DataAccess.Configurations
             // Store Enum value as string instead of int.
             builder.Property(x => x.Type).HasConversion<string>();
 
-
-            // 1-1
-            builder.HasOne(x => x.Flow)
-                .WithOne(x => x.FlowStep)
-                .HasForeignKey< Flow>(x => x.FlowStepId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.ParentFlowStep)
                 .WithMany(x => x.ChildrenFlowSteps)

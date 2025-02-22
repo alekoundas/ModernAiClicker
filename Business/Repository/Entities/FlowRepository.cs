@@ -21,23 +21,23 @@ namespace Business.Repository.Entities
         public async Task<FlowStep> GetIsNewSibling(int id)
         {
             return await InMemoryDbContext.Flows
-                        .Include(x => x.FlowSteps)
+                        .Include(x => x.FlowStep.ChildrenFlowSteps)
                         .Where(x => x.Id == id)
-                        .Select(x => x.FlowSteps.First(y => y.Type == FlowStepTypesEnum.NEW))
+                        .Select(x => x.FlowStep.ChildrenFlowSteps.First(y => y.Type == FlowStepTypesEnum.NEW))
                         .FirstAsync();
         }
 
         public async Task<List<Flow>> LoadAllExpanded()
         {
             List<Flow> flows= await InMemoryDbContext.Flows
-                .Include(x => x.FlowSteps)
+                .Include(x => x.FlowStep.ChildrenFlowSteps)
                 .ToListAsync();
 
             foreach (Flow flow in flows)
             {
                 flow.IsExpanded = true;
 
-                foreach (FlowStep flowStep in flow.FlowSteps)
+                foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
                     await LoadAllChildren(flowStep,true);
             }
 
@@ -47,14 +47,14 @@ namespace Business.Repository.Entities
         public async Task<List<Flow>> LoadAllCollapsed()
         {
             List<Flow> flows = await InMemoryDbContext.Flows
-                .Include(x => x.FlowSteps)
+                .Include(x => x.FlowStep.ChildrenFlowSteps)
                 .ToListAsync();
 
             foreach (Flow flow in flows)
             {
                 flow.IsExpanded = false;
 
-                foreach (FlowStep flowStep in flow.FlowSteps)
+                foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
                     await LoadAllChildren(flowStep,false);
             }
 
@@ -67,16 +67,16 @@ namespace Business.Repository.Entities
 
             if(flowId.HasValue)
                 flows = await InMemoryDbContext.Flows
-                    .Include(x => x.FlowSteps)
+                    .Include(x => x.FlowStep.ChildrenFlowSteps)
                     .Where(x => x.Id == flowId)
                     .ToListAsync();
             else
                 flows = await InMemoryDbContext.Flows
-                .Include(x => x.FlowSteps)
+                .Include(x => x.FlowStep.ChildrenFlowSteps)
                 .ToListAsync();
 
             foreach (Flow flow in flows)
-                foreach (FlowStep flowStep in flow.FlowSteps)
+                foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
                     await LoadAllChildren(flowStep, false);
 
             return flows;

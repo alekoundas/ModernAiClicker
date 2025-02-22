@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Model.Models;
 
-namespace DataAccess.Configurations
+namespace Business.Configurations
 {
     public class FlowConfiguration : IEntityTypeConfiguration<Flow>
     {
@@ -16,18 +16,18 @@ namespace DataAccess.Configurations
             builder.Property(x => x.Type).HasConversion<string>();
 
             // 1-1
-            builder.HasOne(x => x.FlowStep)
-                .WithOne(x => x.Flow)
-                .HasForeignKey<FlowStep>(x => x.FlowId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.FlowStep)           
+               .WithOne(x => x.Flow)           
+               .HasForeignKey<FlowStep>(x => x.FlowId)
+               .IsRequired(false)
+               .OnDelete(DeleteBehavior.Cascade); // Deleting Flow deletes FlowStep.
 
             // 1-1
             builder.HasOne(x => x.FlowParameter)
                .WithOne(x => x.Flow)
                .HasForeignKey<FlowParameter>(x => x.FlowId)
                .IsRequired(false)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.Cascade); // Deleting Flow deletes FlowStep.
         }
     }
 }

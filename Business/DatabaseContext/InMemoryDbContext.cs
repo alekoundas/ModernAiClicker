@@ -1,5 +1,5 @@
 ﻿using Business.Helpers;
-using DataAccess.Configurations;
+using Business.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Model.Models;
 

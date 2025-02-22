@@ -41,7 +41,7 @@ namespace Business.Repository.Entities
             else if (flowStep.FlowId.HasValue)
                 simplings = await InMemoryDbContext.Flows
                     .Where(x => x.Id == flowStep.FlowId.Value)
-                    .SelectMany(x => x.FlowSteps)
+                    .SelectMany(x => x.FlowStep.ChildrenFlowSteps)
                     .ToListAsync();
 
             return simplings;
@@ -63,7 +63,7 @@ namespace Business.Repository.Entities
                 simplings = InMemoryDbContext.Flows
                     .AsNoTracking()
                     .Where(x => x.Id == flowStep.FlowId.Value)
-                    .SelectMany(x => x.FlowSteps);
+                    .SelectMany(x => x.FlowStep.ChildrenFlowSteps);
 
             if (simplings != null)
                 nextSimpling = await simplings

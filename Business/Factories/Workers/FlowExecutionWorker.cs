@@ -29,9 +29,13 @@ namespace Business.Factories.Workers
         {
             FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.Query
                 .Where(x=>x.FlowId == execution.FlowId)
+                .SelectMany(x=>x.ChildrenFlowSteps)
                 .Where(x => x.Type != FlowStepTypesEnum.NEW)
                 .OrderBy(x=>x.OrderingNum)
                 .FirstOrDefaultAsync();
+
+            var nextFlowStep2 = await _baseDatawork.FlowSteps.Query
+              .Where(x => x.FlowId == execution.FlowId).ToListAsync();
 
             //TODO return error message 
             if (nextFlowStep == null)

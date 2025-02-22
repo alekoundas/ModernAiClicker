@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    [Migration("20250221205650_InitialMigration")]
+    [Migration("20250222151345_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -108,6 +108,12 @@ namespace Business.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("FlowParameterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FlowStepId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsExpanded")
                         .HasColumnType("INTEGER");
 
@@ -133,6 +139,54 @@ namespace Business.Migrations
                     b.ToTable("Flows");
                 });
 
+            modelBuilder.Entity("Model.Models.FlowParameter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("FlowId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsExpanded")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LocationX")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LocationY")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("OrderingNum")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ParentFlowParameterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FlowId")
+                        .IsUnique();
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ParentFlowParameterId");
+
+                    b.ToTable("FlowParameter");
+                });
+
             modelBuilder.Entity("Model.Models.FlowStep", b =>
                 {
                     b.Property<int>("Id")
@@ -143,6 +197,9 @@ namespace Business.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("FlowId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("FlowParameterId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Height")
@@ -204,9 +261,6 @@ namespace Business.Migrations
                     b.Property<bool>("RemoveTemplateFromResult")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("SearchAreaParameterFlowStepId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<byte[]>("TemplateImage")
                         .HasColumnType("BLOB");
 
@@ -231,7 +285,10 @@ namespace Business.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FlowId");
+                    b.HasIndex("FlowId")
+                        .IsUnique();
+
+                    b.HasIndex("FlowParameterId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -239,8 +296,6 @@ namespace Business.Migrations
                     b.HasIndex("ParentFlowStepId");
 
                     b.HasIndex("ParentTemplateSearchFlowStepId");
-
-                    b.HasIndex("SearchAreaParameterFlowStepId");
 
                     b.ToTable("FlowSteps");
                 });
@@ -276,35 +331,52 @@ namespace Business.Migrations
                     b.Navigation("FlowStep");
                 });
 
+            modelBuilder.Entity("Model.Models.FlowParameter", b =>
+                {
+                    b.HasOne("Model.Models.Flow", "Flow")
+                        .WithOne("FlowParameter")
+                        .HasForeignKey("Model.Models.FlowParameter", "FlowId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Model.Models.FlowParameter", "ParentFlowParameter")
+                        .WithMany("ChildrenFlowParameters")
+                        .HasForeignKey("ParentFlowParameterId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Flow");
+
+                    b.Navigation("ParentFlowParameter");
+                });
+
             modelBuilder.Entity("Model.Models.FlowStep", b =>
                 {
                     b.HasOne("Model.Models.Flow", "Flow")
-                        .WithMany("FlowSteps")
-                        .HasForeignKey("FlowId")
+                        .WithOne("FlowStep")
+                        .HasForeignKey("Model.Models.FlowStep", "FlowId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Model.Models.FlowParameter", "FlowParameter")
+                        .WithMany("FlowSteps")
+                        .HasForeignKey("FlowParameterId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Model.Models.FlowStep", "ParentFlowStep")
                         .WithMany("ChildrenFlowSteps")
                         .HasForeignKey("ParentFlowStepId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Model.Models.FlowStep", "ParentTemplateSearchFlowStep")
                         .WithMany("ChildrenTemplateSearchFlowSteps")
                         .HasForeignKey("ParentTemplateSearchFlowStepId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Model.Models.FlowStep", "SearchAreaParameterFlowStep")
-                        .WithMany("ChildrenSearchAreaParameterFlowSteps")
-                        .HasForeignKey("SearchAreaParameterFlowStepId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Flow");
+
+                    b.Navigation("FlowParameter");
 
                     b.Navigation("ParentFlowStep");
 
                     b.Navigation("ParentTemplateSearchFlowStep");
-
-                    b.Navigation("SearchAreaParameterFlowStep");
                 });
 
             modelBuilder.Entity("Model.Models.Execution", b =>
@@ -318,14 +390,23 @@ namespace Business.Migrations
                 {
                     b.Navigation("Executions");
 
+                    b.Navigation("FlowParameter")
+                        .IsRequired();
+
+                    b.Navigation("FlowStep")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Model.Models.FlowParameter", b =>
+                {
+                    b.Navigation("ChildrenFlowParameters");
+
                     b.Navigation("FlowSteps");
                 });
 
             modelBuilder.Entity("Model.Models.FlowStep", b =>
                 {
                     b.Navigation("ChildrenFlowSteps");
-
-                    b.Navigation("ChildrenSearchAreaParameterFlowSteps");
 
                     b.Navigation("ChildrenTemplateSearchFlowSteps");
 

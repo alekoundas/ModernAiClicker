@@ -7,7 +7,7 @@ namespace Business.Extensions
 
         public static IEnumerable<FlowStep> Descendants(this Flow root)
         {
-            var nodes = new Stack<FlowStep>(root.FlowSteps.ToArray());
+            var nodes = new Stack<FlowStep>(root.FlowStep.ChildrenFlowSteps.ToArray());
             while (nodes.Any())
             {
                 FlowStep node = nodes.Pop();

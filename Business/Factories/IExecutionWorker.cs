@@ -1,6 +1,4 @@
-﻿using Model.Enums;
-using Model.Models;
-using System.Collections.ObjectModel;
+﻿using Model.Models;
 
 namespace Business.Factories
 {
@@ -13,11 +11,7 @@ namespace Business.Factories
         Task<FlowStep?> GetNextSiblingFlowStep(Execution execution);
         Task SetExecutionModelStateRunning(Execution execution);
         Task SetExecutionModelStateComplete(Execution execution);
-        Task ExpandAndSelectFlowStep(Execution execution, ObservableCollection<Flow> treeviewFlows);
-        //Task SaveToJson();
-        //void RefreshUI();
         Task SaveToDisk(Execution execution);
         void ClearEntityFrameworkChangeTracker();
-
     }
 }

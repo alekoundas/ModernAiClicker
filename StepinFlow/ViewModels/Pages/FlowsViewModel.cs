@@ -131,8 +131,12 @@ namespace StepinFlow.ViewModels.Pages
 
             _baseDatawork.Flows.Add(flow);
             await _baseDatawork.SaveChangesAsync();
-            LoadFlows?.Invoke();
 
+            flow.FlowStepId = flowSteps.Id;
+            flow.FlowParameterId = flowRarameter.Id;
+            await _baseDatawork.SaveChangesAsync();
+
+            LoadFlows?.Invoke();
         }
 
 

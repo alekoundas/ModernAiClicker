@@ -24,15 +24,13 @@ namespace Model.Models
         public int _orderingNum;
 
 
-        public int? FlowStepId { get; set; }
-        public virtual FlowStep? FlowStep { get; set; }
+        public int FlowStepId { get; set; }
+        public virtual FlowStep FlowStep { get; set; } = new FlowStep();
 
-        public int? FlowParameterId { get; set; }
-        public virtual FlowParameter? FlowParameter { get; set; }
+        public int FlowParameterId { get; set; }
+        public virtual FlowParameter FlowParameter { get; set; } = new FlowParameter();
 
 
-        public virtual ObservableCollection<FlowStep> FlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<Execution> Executions { get; set; } = new ObservableCollection<Execution>();
-        public virtual ObservableCollection<FlowParameter> FlowParameters { get; set; } = new ObservableCollection<FlowParameter>();
     }
 }

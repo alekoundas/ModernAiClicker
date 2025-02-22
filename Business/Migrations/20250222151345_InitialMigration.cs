@@ -17,6 +17,8 @@ namespace Business.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    FlowStepId = table.Column<int>(type: "INTEGER", nullable: false),
+                    FlowParameterId = table.Column<int>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Type = table.Column<string>(type: "TEXT", nullable: false),
                     IsSelected = table.Column<bool>(type: "INTEGER", nullable: false),
@@ -29,6 +31,39 @@ namespace Business.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FlowParameter",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FlowId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ParentFlowParameterId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsExpanded = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsSelected = table.Column<bool>(type: "INTEGER", nullable: false),
+                    OrderingNum = table.Column<int>(type: "INTEGER", nullable: false),
+                    Type = table.Column<string>(type: "TEXT", nullable: false),
+                    LocationX = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationY = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FlowParameter", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FlowParameter_FlowParameter_ParentFlowParameterId",
+                        column: x => x.ParentFlowParameterId,
+                        principalTable: "FlowParameter",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FlowParameter_Flows_FlowId",
+                        column: x => x.FlowId,
+                        principalTable: "Flows",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FlowSteps",
                 columns: table => new
                 {
@@ -36,7 +71,7 @@ namespace Business.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     FlowId = table.Column<int>(type: "INTEGER", nullable: true),
                     ParentFlowStepId = table.Column<int>(type: "INTEGER", nullable: true),
-                    SearchAreaParameterFlowStepId = table.Column<int>(type: "INTEGER", nullable: true),
+                    FlowParameterId = table.Column<int>(type: "INTEGER", nullable: true),
                     ParentTemplateSearchFlowStepId = table.Column<int>(type: "INTEGER", nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     ProcessName = table.Column<string>(type: "TEXT", nullable: false),
@@ -68,20 +103,20 @@ namespace Business.Migrations
                 {
                     table.PrimaryKey("PK_FlowSteps", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_FlowSteps_FlowParameter_FlowParameterId",
+                        column: x => x.FlowParameterId,
+                        principalTable: "FlowParameter",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
                         name: "FK_FlowSteps_FlowSteps_ParentFlowStepId",
                         column: x => x.ParentFlowStepId,
                         principalTable: "FlowSteps",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_FlowSteps_FlowSteps_ParentTemplateSearchFlowStepId",
                         column: x => x.ParentTemplateSearchFlowStepId,
-                        principalTable: "FlowSteps",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "FK_FlowSteps_FlowSteps_SearchAreaParameterFlowStepId",
-                        column: x => x.SearchAreaParameterFlowStepId,
                         principalTable: "FlowSteps",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
@@ -177,6 +212,23 @@ namespace Business.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_FlowParameter_FlowId",
+                table: "FlowParameter",
+                column: "FlowId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FlowParameter_Id",
+                table: "FlowParameter",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FlowParameter_ParentFlowParameterId",
+                table: "FlowParameter",
+                column: "ParentFlowParameterId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Flows_Id",
                 table: "Flows",
                 column: "Id",
@@ -185,7 +237,13 @@ namespace Business.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_FlowSteps_FlowId",
                 table: "FlowSteps",
-                column: "FlowId");
+                column: "FlowId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FlowSteps_FlowParameterId",
+                table: "FlowSteps",
+                column: "FlowParameterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FlowSteps_Id",
@@ -202,11 +260,6 @@ namespace Business.Migrations
                 name: "IX_FlowSteps_ParentTemplateSearchFlowStepId",
                 table: "FlowSteps",
                 column: "ParentTemplateSearchFlowStepId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FlowSteps_SearchAreaParameterFlowStepId",
-                table: "FlowSteps",
-                column: "SearchAreaParameterFlowStepId");
         }
 
         /// <inheritdoc />
@@ -217,6 +270,9 @@ namespace Business.Migrations
 
             migrationBuilder.DropTable(
                 name: "FlowSteps");
+
+            migrationBuilder.DropTable(
+                name: "FlowParameter");
 
             migrationBuilder.DropTable(
                 name: "Flows");
