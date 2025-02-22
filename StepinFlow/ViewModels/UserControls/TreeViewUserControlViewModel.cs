@@ -32,6 +32,9 @@ namespace StepinFlow.ViewModels.UserControls
         public event OnAddFlowStepClick? OnAddFlowStepClickEvent;
         public delegate void OnAddFlowStepClick(FlowStep newFlowStep);
 
+        public event OnAddFlowParameterClick? OnAddFlowParameterClickEvent;
+        public delegate void OnAddFlowParameterClick(FlowParameter newFlowParameter);
+
         private Flow? _selectedFlow = null;
         private FlowStep? _selectedFlowStep = null;
         private FlowParameter? _selectedFlowParameter = null;
@@ -152,6 +155,16 @@ namespace StepinFlow.ViewModels.UserControls
 
             OnAddFlowStepClickEvent?.Invoke(newFlowStep);
         }
+        [RelayCommand]
+        private void OnButtonNewParameterClick(FlowParameter flowParameter)
+        {
+            FlowParameter newFlowParameter = new FlowParameter();
+
+            newFlowParameter.ParentFlowParameterId = flowParameter.ParentFlowParameterId;
+
+
+            OnAddFlowParameterClickEvent?.Invoke(newFlowParameter);
+        }
 
         [RelayCommand]
         private async Task OnButtonPasteClick(FlowStep flowStep)
@@ -212,6 +225,15 @@ namespace StepinFlow.ViewModels.UserControls
             await _baseDatawork.SaveChangesAsync();
             await LoadFlows();
         }
+        [RelayCommand]
+        private async Task OnFlowParameterButtonDeleteClick(FlowParameter flowParameter)
+        {
+            //_baseDatawork.FlowSteps.Remove(flowParameter);
+
+            await _baseDatawork.SaveChangesAsync();
+            await LoadFlows();
+        }
+        
 
         [RelayCommand]
         private async Task OnFlowButtonDeleteClick(Flow flow)

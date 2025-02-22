@@ -25,6 +25,7 @@ namespace StepinFlow.Views.UserControls
         public event EventHandler<int>? OnSelectedFlowIdChange;
         public event EventHandler<int>? OnFlowStepClone;
         public event EventHandler<FlowStep>? OnAddFlowStepClick;
+        public event EventHandler<FlowParameter>? OnAddFlowParameterClick;
         public TreeViewUserControlViewModel? ViewModel { get; set; }
 
         public TreeViewUserControl()
@@ -69,6 +70,10 @@ namespace StepinFlow.Views.UserControls
         public void OnAddFlowStepClickEvent(FlowStep adddFlowSttep)
         {
             OnAddFlowStepClick?.Invoke(this, adddFlowSttep);
+        }
+        public void OnAddFlowParameterClickEvent(FlowParameter addFlowParameter)
+        {
+            OnAddFlowParameterClick?.Invoke(this, addFlowParameter);
         }
 
 
