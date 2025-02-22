@@ -47,7 +47,7 @@ namespace StepinFlow.ViewModels.UserControls
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
 
         [ObservableProperty]
-        private bool _isLocked;
+        private bool _isLocked= true;
 
         [ObservableProperty]
         private int? _coppiedFlowStepId;

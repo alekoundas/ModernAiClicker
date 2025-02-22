@@ -2,24 +2,28 @@
 using StepinFlow.ViewModels.UserControls;
 using System.Windows;
 using System.Windows.Controls;
-using static StepinFlow.ViewModels.UserControls.TreeViewUserControlViewModel;
+using static StepinFlow.ViewModels.Pages.FlowsViewModel;
 
 namespace StepinFlow.Views.UserControls
 {
     public partial class TreeViewUserControl : UserControl
     {
-        public static readonly DependencyProperty IsLockedProperty = DependencyProperty.Register(
-            nameof(IsLocked),
-            typeof(bool),
-            typeof(TreeViewUserControl),
-            new PropertyMetadata(false, OnIsLockedChanged)
-        );
+        // Define the IsLocked Dependency Property
+        //public static readonly DependencyProperty IsLockedProperty =
+        //    DependencyProperty.Register(
+        //        nameof(IsLocked),              // Property name
+        //        typeof(bool),                  // Property type
+        //        typeof(TreeViewUserControl),   // Owner type
+        //        new PropertyMetadata(
+        //            defaultValue: false,       // Default value
+        //            propertyChangedCallback: OnIsLockedChanged)); // Callback
 
-        public bool IsLocked
-        {
-            get => (bool)GetValue(IsLockedProperty);
-            set => SetValue(IsLockedProperty, value);
-        }
+        //// CLR wrapper for the Dependency Property
+        //public bool IsLocked
+        //{
+        //    get => (bool)GetValue(IsLockedProperty);
+        //    set => SetValue(IsLockedProperty, value);
+        //}
 
 
         public event EventHandler<int>? OnSelectedFlowStepIdChange;
@@ -57,6 +61,7 @@ namespace StepinFlow.Views.UserControls
         public async Task CollapseAll() => await ViewModel!.CollapseAll();
 
 
+       
         public void OnSelectedFlowStepIdChangedEvent(int id)
         {
             OnSelectedFlowStepIdChange?.Invoke(this, id);
@@ -85,13 +90,10 @@ namespace StepinFlow.Views.UserControls
         }
 
 
-        private static void OnIsLockedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = (TreeViewUserControl)d;
-            var viewModel = control.DataContext as TreeViewUserControlViewModel;
-
-            if (viewModel != null)
-                viewModel.IsLocked = (bool)e.NewValue;
-        }
+        //private static void OnIsLockedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    var control = (TreeViewUserControl)d;
+        //    control.ViewModel.IsLocked = (bool)e.NewValue; // Sync with ObservableProperty
+        //}
     }
 }

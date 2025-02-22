@@ -17,6 +17,9 @@ namespace StepinFlow.ViewModels.Pages
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
 
+        public event IsLockedChangedEvent? IsLockedChanged;
+        public delegate void IsLockedChangedEvent(bool isLocked);
+
         public event LoadFlowsEvent? LoadFlows;
         public delegate Task LoadFlowsEvent(int? id = 0);
 
@@ -50,7 +53,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
         [ObservableProperty]
-        private bool _isLocked;
+        private bool _isLocked = true;
         [ObservableProperty]
         private Visibility _visibleAddFlow = Visibility.Collapsed;
 
@@ -163,6 +166,8 @@ namespace StepinFlow.ViewModels.Pages
                 VisibleAddFlow = Visibility.Collapsed;
             else
                 VisibleAddFlow = Visibility.Visible;
+
+            IsLockedChanged?.Invoke(IsLocked);
         }
 
         [RelayCommand]

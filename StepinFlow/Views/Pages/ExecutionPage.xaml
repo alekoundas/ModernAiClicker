@@ -257,7 +257,7 @@
             <Border.Effect>
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
-            <UserControls:TreeViewUserControl x:Name="TreeViewControl" IsLocked="true" />
+            <UserControls:TreeViewUserControl x:Name="TreeViewControl" />
 
         </Border>
 

@@ -2,6 +2,7 @@
 using StepinFlow.ViewModels.Pages;
 using Wpf.Ui.Controls;
 using StepinFlow.Views.UserControls;
+using static StepinFlow.ViewModels.Pages.FlowsViewModel;
 
 namespace StepinFlow.Views.Pages
 {
@@ -11,6 +12,8 @@ namespace StepinFlow.Views.Pages
 
         public FlowsPage(FlowsViewModel viewModel, TreeViewUserControl treeViewUserControl)
         {
+            viewModel.IsLockedChanged += OnIsLockedChangedEvent;
+
             viewModel.LoadFlows += InvokeLoadFlowsAction;
             viewModel.ClearCopy += InvokeClearCopyAction;
             viewModel.ExpandAll += InvokeExpandAllAction;
@@ -28,6 +31,10 @@ namespace StepinFlow.Views.Pages
             InitializeComponent();
         }
 
+        private void OnIsLockedChangedEvent(bool isLocked)
+        {
+            TreeViewControl.ViewModel.IsLocked = isLocked;     
+        }
 
         private void OnAddFlowStepClick(object sender, FlowStep newFlowStep)
         {

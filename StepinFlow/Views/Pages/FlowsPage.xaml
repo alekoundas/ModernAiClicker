@@ -181,9 +181,9 @@
             <Border.Effect>
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
+                <!--IsLocked="{Binding ViewModel.IsLocked}"-->
             <UserControls:TreeViewUserControl
                 x:Name="TreeViewControl"
-                IsLocked="{Binding ViewModel.IsLocked}"
                 OnAddFlowParameterClick="OnAddFlowParameterClick"
                 OnAddFlowStepClick="OnAddFlowStepClick"
                 OnFlowStepClone="OnFlowStepClone"
