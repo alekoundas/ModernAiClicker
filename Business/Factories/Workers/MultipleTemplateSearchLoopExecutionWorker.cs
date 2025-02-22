@@ -28,7 +28,7 @@ namespace Business.Factories.Workers
         }
 
 
-        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution, Execution latestParent )
+        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution, Execution latestParent)
         {
             if (parentExecution == null)
                 throw new ArgumentNullException(nameof(parentExecution));
@@ -66,7 +66,7 @@ namespace Business.Factories.Workers
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
-            if (execution.FlowStep?.ParentTemplateSearchFlowStep == null)
+            if (execution.FlowStep?.ParentTemplateSearchFlowStep == null || execution.FlowStep.TemplateMatchMode == null)
                 return;
 
 
@@ -82,7 +82,7 @@ namespace Business.Factories.Workers
             // Get previous one if exists.
             Bitmap? screenshot = null;
             Execution parentLoopExecution = await _baseDatawork.Executions.FirstAsync(x => x.Id == execution.ParentLoopExecutionId);
-            bool canUseParentResult = 
+            bool canUseParentResult =
                 parentLoopExecution?.FlowStepId == execution.FlowStepId &&
                 parentLoopExecution?.ResultImagePath?.Length > 0 &&
                 execution.FlowStep.RemoveTemplateFromResult; // Refresh image if parent is not the same step or remove template from result is false.
@@ -98,7 +98,7 @@ namespace Business.Factories.Workers
             using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
+                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.TemplateMatchMode.Value, execution.FlowStep.RemoveTemplateFromResult);
                 ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
 
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
@@ -167,8 +167,8 @@ namespace Business.Factories.Workers
 
             // Get all completed children template flow steps.
             List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
-                .Where(x => 
-                    x.ExecutionResultEnum == ExecutionResultEnum.FAIL || 
+                .Where(x =>
+                    x.ExecutionResultEnum == ExecutionResultEnum.FAIL ||
                     (x?.FlowStep?.ParentTemplateSearchFlowStep?.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.ParentTemplateSearchFlowStep.MaxLoopCount))
                 .Select(x => x.FlowStepId ?? 0)
                 .Where(x => x != 0)

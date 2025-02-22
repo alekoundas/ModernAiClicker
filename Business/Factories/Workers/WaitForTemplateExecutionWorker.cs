@@ -75,7 +75,7 @@ namespace Business.Factories.Workers
                         return;
 
                     Bitmap templateImage = new Bitmap(ms);
-                    TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
+                    TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.TemplateMatchMode, execution.FlowStep.RemoveTemplateFromResult);
 
                     int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
                     int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);

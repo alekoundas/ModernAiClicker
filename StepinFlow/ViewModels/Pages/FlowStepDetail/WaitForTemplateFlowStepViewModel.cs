@@ -26,6 +26,9 @@ namespace StepinFlow.ViewModels.Pages
         public event ShowResultImageEvent? ShowResultImage;
         public delegate void ShowResultImageEvent(string filePath);
 
+        [ObservableProperty]
+        private IEnumerable<TemplateMatchModesEnum> _matchModes;
+
         public WaitForTemplateFlowStepViewModel(FlowsViewModel flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
 
@@ -34,6 +37,7 @@ namespace StepinFlow.ViewModels.Pages
             _templateMatchingService = templateMatchingService;
             _flowsViewModel = flowsViewModel;
 
+            MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
 
         }
 
@@ -71,9 +75,7 @@ namespace StepinFlow.ViewModels.Pages
             using (var ms = new MemoryStream(FlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-
-                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, false);
-
+                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, FlowStep.TemplateMatchMode, false);
 
                 int x = searchRectangle.Left;
                 int y = searchRectangle.Top;

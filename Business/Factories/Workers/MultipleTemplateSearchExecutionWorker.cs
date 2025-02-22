@@ -65,7 +65,7 @@ namespace Business.Factories.Workers
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
-            if (execution.FlowStep?.ParentTemplateSearchFlowStep == null)
+            if (execution.FlowStep?.ParentTemplateSearchFlowStep == null || execution.FlowStep.TemplateMatchMode == null)
                 return;
 
             // Find search area.
@@ -91,7 +91,7 @@ namespace Business.Factories.Workers
             using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.RemoveTemplateFromResult);
+                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.TemplateMatchMode.Value, execution.FlowStep.RemoveTemplateFromResult);
                 ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
 
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);

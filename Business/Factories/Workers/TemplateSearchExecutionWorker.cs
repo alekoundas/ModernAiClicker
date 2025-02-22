@@ -30,7 +30,7 @@ namespace Business.Factories.Workers
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
-            if (execution.FlowStep == null)
+            if (execution.FlowStep == null || execution.FlowStep.TemplateMatchMode == null)
                 return;
 
             // Find search area.
@@ -49,7 +49,7 @@ namespace Business.Factories.Workers
             using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, false);
+                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.TemplateMatchMode.Value, false);
 
                 int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
                 int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);

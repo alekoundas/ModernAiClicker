@@ -117,8 +117,18 @@
                                         </i:Interaction.Triggers>
                                     </Button>
                                 </StackPanel>
+
                                 <Label>Ordering:</Label>
                                 <Label Content="{Binding OrderingNum}" />
+
+
+
+                                <Label>Select match mode:</Label>
+                                <ComboBox
+                                    VerticalAlignment="Center"
+                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultipleTemplateSearchFlowStepPage}}, Path=ViewModel.MatchModes}"
+                                    SelectedItem="{Binding TemplateMatchMode, Mode=TwoWay}" />
+
 
                                 <Label>Select template image to search:</Label>
                                 <StackPanel Margin="0,0,0,15" Orientation="Horizontal">

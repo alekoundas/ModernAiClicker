@@ -36,6 +36,9 @@ namespace StepinFlow.ViewModels.Pages
         private readonly List<FlowStep> _childrenTemplateSearchFlowStepsToRemove = new List<FlowStep>();
 
 
+        [ObservableProperty]
+        private IEnumerable<TemplateMatchModesEnum> _matchModes;
+
         public MultipleTemplateSearchLoopFlowStepViewModel(
             FlowsViewModel flowsViewModel,
             ISystemService systemService,
@@ -50,6 +53,7 @@ namespace StepinFlow.ViewModels.Pages
             _windowService = windowService;
             _flowsViewModel = flowsViewModel;
 
+            MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
         }
 
 
@@ -167,7 +171,7 @@ namespace StepinFlow.ViewModels.Pages
             using (var ms = new MemoryStream(flowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, flowStep.RemoveTemplateFromResult);
+                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, flowStep.TemplateMatchMode, flowStep.RemoveTemplateFromResult);
 
                 if (result.ResultImagePath.Length > 0)
                 {

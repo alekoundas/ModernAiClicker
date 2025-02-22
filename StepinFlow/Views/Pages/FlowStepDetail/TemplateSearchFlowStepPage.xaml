@@ -42,6 +42,12 @@
                 SelectedItem="{Binding ViewModel.FlowStep.ProcessName, Mode=TwoWay}" />
 
 
+            <Label>Select match mode:</Label>
+            <ComboBox
+                VerticalAlignment="Center"
+                ItemsSource="{Binding ViewModel.MatchModes}"
+                SelectedItem="{Binding ViewModel.FlowStep.TemplateMatchMode, Mode=TwoWay}" />
+
 
             <Label>3. Select image for search</Label>
             <StackPanel Orientation="Horizontal">

@@ -17,11 +17,11 @@ namespace Business.Factories.Workers
 
         public Task ExecuteFlowStepAction(Execution execution)
         {
-            if (execution.FlowStep == null)
+            if (execution.FlowStep.MouseScrollDirectionEnum == null)
                 return Task.CompletedTask;
 
 
-            _systemService.CursorScroll(execution.FlowStep.MouseScrollDirectionEnum, execution.FlowStep.MouseLoopTimes);
+            _systemService.CursorScroll(execution.FlowStep.MouseScrollDirectionEnum.Value, execution.FlowStep.MouseLoopTimes);
 
             return Task.CompletedTask;
         }

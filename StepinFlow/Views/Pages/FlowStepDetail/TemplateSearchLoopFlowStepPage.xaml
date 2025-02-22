@@ -3,11 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:converters="clr-namespace:StepinFlow.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:StepinFlow.Views.Pages.FlowStepDetail"
-    xmlns:converters="clr-namespace:StepinFlow.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="TemplateSearchLoopFlowStepPage"
     d:DataContext="{d:DesignInstance local:TemplateSearchLoopFlowStepPage,
@@ -39,6 +39,12 @@
                 ItemsSource="{Binding ViewModel.ProcessList}"
                 SelectedItem="{Binding ViewModel.FlowStep.ProcessName, Mode=TwoWay}" />
 
+
+            <Label>Select match mode:</Label>
+            <ComboBox
+                VerticalAlignment="Center"
+                ItemsSource="{Binding ViewModel.MatchModes}"
+                SelectedItem="{Binding ViewModel.FlowStep.TemplateMatchMode, Mode=TwoWay}" />
 
 
             <Label>3. Select image for search</Label>

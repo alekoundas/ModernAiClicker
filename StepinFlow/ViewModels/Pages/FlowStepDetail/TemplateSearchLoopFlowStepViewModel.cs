@@ -29,6 +29,9 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
+        [ObservableProperty]
+        private IEnumerable<TemplateMatchModesEnum> _matchModes;
+
         public TemplateSearchLoopFlowStepViewModel(
             FlowsViewModel flowsViewModel,
             ISystemService systemService,
@@ -43,6 +46,7 @@ namespace StepinFlow.ViewModels.Pages
             _flowsViewModel = flowsViewModel;
             _windowService = windowService;
 
+            MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
         }
 
         [RelayCommand]
@@ -107,7 +111,7 @@ namespace StepinFlow.ViewModels.Pages
             using (var ms = new MemoryStream(FlowStep.TemplateImage))
             {
                 Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, FlowStep.RemoveTemplateFromResult);
+                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, FlowStep.TemplateMatchMode, FlowStep.RemoveTemplateFromResult);
 
                 if (result.ResultImagePath.Length > 0)
                 {

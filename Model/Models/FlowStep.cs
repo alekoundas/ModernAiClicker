@@ -27,6 +27,9 @@ namespace Model.Models
         [ObservableProperty]
         public FlowStepTypesEnum _type;
 
+        [ObservableProperty]
+        public TemplateMatchModesEnum? _templateMatchMode;
+
 
 
         // Template search
@@ -50,13 +53,13 @@ namespace Model.Models
 
         // Cursor
         [ObservableProperty]
-        public MouseActionsEnum _mouseAction;
+        public MouseActionsEnum? _mouseAction;
 
         [ObservableProperty]
-        public MouseButtonsEnum _mouseButton;
+        public MouseButtonsEnum? _mouseButton;
 
         [ObservableProperty]
-        public MouseScrollDirectionEnum _mouseScrollDirectionEnum;
+        public MouseScrollDirectionEnum? _mouseScrollDirectionEnum;
 
         [ObservableProperty]
         public bool _mouseLoopInfinite;
