@@ -11,6 +11,11 @@ namespace Business.Configurations
             builder.HasIndex(x => x.Id).IsUnique();
             builder.HasKey(x => x.Id);
 
+            // Store Enum value as string instead of int.
+            builder.Property(x => x.Status).HasConversion<string>();
+            builder.Property(x => x.Result).HasConversion<string>();
+
+
             builder.HasOne(x => x.Flow)
                 .WithMany(x => x.Executions)
                 .HasForeignKey(x => x.FlowId)

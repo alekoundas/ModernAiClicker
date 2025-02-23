@@ -1,4 +1,6 @@
-﻿using Business.Interfaces;
+﻿using Business.Extensions;
+using Business.Helpers;
+using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Business;
@@ -57,32 +59,41 @@ namespace Business.Factories.Workers
                 searchRectangle = _systemService.GetScreenSize();
 
             // Get screenshot.
-            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value, null);
+            // New if previous doenst exists.
+            // Get previous one if exists and is loop with RemoveTemplateFromResult = true.
+            byte[]? screenshot = null;
+            Execution? parentLoopExecution = await _baseDatawork.Executions.Query
+                .Include(x => x.FlowStep)
+                .FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
+
+            if (parentLoopExecution?.FlowStep?.IsLoop == true && execution.FlowStep.RemoveTemplateFromResult && parentLoopExecution.TempResultImagePath?.Length > 0)
+                screenshot = Image.FromFile(parentLoopExecution.TempResultImagePath).ToByteArray();
+            else
+                screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+
             if (screenshot == null)
                 return;
 
+
+
+            TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImage, screenshot, execution.FlowStep.TemplateMatchMode, execution.FlowStep.RemoveTemplateFromResult);
             ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
-            using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
-            {
-                Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.TemplateMatchMode.Value, false);
 
-                int x = searchRectangle.Value.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
-                int y = searchRectangle.Value.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
+            int x = searchRectangle.Value.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
+            int y = searchRectangle.Value.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
-                bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
-                execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
+            bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
 
-                execution.ResultLocationX = x;
-                execution.ResultLocationY = y;
-                //execution.ResultImage = result.ResultImage;
-                //execution.ResultImagePath = result.ResultImagePath;
-                execution.ResultAccuracy = result.Confidence;
+            execution.Result = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
+            execution.ResultLocationX = x;
+            execution.ResultLocationY = y;
+            //execution.ResultImage = result.ResultImage;
+            //execution.ResultImagePath = result.ResultImagePath;
+            execution.ResultAccuracy = result.Confidence;
 
-                await _baseDatawork.SaveChangesAsync();
+            await _baseDatawork.SaveChangesAsync();
 
-                _resultImage = result.ResultImage;
-            }
+            _resultImage = result.ResultImage;
         }
 
         public async override Task<FlowStep?> GetNextChildFlowStep(Execution execution)
@@ -90,7 +101,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStepId == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.ExecutionResultEnum);
+            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.Result);
             return nextFlowStep;
         }
 
@@ -100,11 +111,15 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            // Get next sibling flow step. 
+            // If execution was successfull and (MaxLoopCount is 0 or CurrentLoopCount < MaxLoopCount), return te same flow step.
+            if (execution.Result == ExecutionResultEnum.SUCCESS)
+                if (execution.FlowStep.IsLoop && execution.FlowStep.LoopMaxCount == 0 || execution.LoopCount < execution.FlowStep.LoopMaxCount)
+                    return execution.FlowStep;
+
+            // If not, get next sibling flow step. 
             FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
-
 
         public async override Task SaveToDisk(Execution execution)
         {
@@ -112,13 +127,23 @@ namespace Business.Factories.Workers
                 return;
 
             string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
-            string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
+            string newFilePath = Path.Combine(execution.ExecutionFolderDirectory, fileDate + ".png");
 
-            //_systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);_resultImage
             if (_resultImage != null)
                 await _systemService.SaveImageToDisk(newFilePath, _resultImage);
+
+            if (execution.Result == ExecutionResultEnum.SUCCESS)
+            {
+                string tempFilePath = Path.Combine(PathHelper.GetTempDataPath(), fileDate + ".png");
+                if (_resultImage != null)
+                    await _systemService.SaveImageToDisk(tempFilePath, _resultImage);
+
+                execution.TempResultImagePath = tempFilePath;
+            }
+
             execution.ResultImagePath = newFilePath;
-                await _baseDatawork.SaveChangesAsync();
+
+            await _baseDatawork.SaveChangesAsync();
         }
     }
 }

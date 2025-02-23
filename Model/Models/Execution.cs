@@ -14,7 +14,7 @@ namespace Model.Models
         public ExecutionStatusEnum _status = ExecutionStatusEnum.DASH;
 
         [ObservableProperty]
-        public ExecutionResultEnum _executionResultEnum = ExecutionResultEnum.NO_RESULT;
+        public ExecutionResultEnum _result = ExecutionResultEnum.NO_RESULT;
 
         [ObservableProperty]
         public string _runFor = "";
@@ -45,6 +45,9 @@ namespace Model.Models
 
         [ObservableProperty]
         public string? _resultImagePath;
+
+        [ObservableProperty]
+        public string? _tempResultImagePath;
 
         [ObservableProperty]
         public decimal _resultAccuracy = 0.00m;

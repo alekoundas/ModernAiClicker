@@ -18,23 +18,23 @@ namespace Business.Factories.Workers
 
         public Task ExecuteFlowStepAction(Execution execution)
         {
-            if (execution.FlowStep.MouseButton == null)
+            if (execution.FlowStep.CursorButton == null)
             return Task.CompletedTask;
 
-            switch (execution.FlowStep?.MouseAction)
+            switch (execution.FlowStep?.CursorAction)
             {
                 case MouseActionsEnum.SINGLE_CLICK:
-                    _systemService.CursorClick(execution.FlowStep.MouseButton.Value);
+                    _systemService.CursorClick(execution.FlowStep.CursorButton.Value);
                     break;
                 case MouseActionsEnum.DOUBLE_CLICK:
-                    _systemService.CursorClick(execution.FlowStep.MouseButton.Value);
-                    _systemService.CursorClick(execution.FlowStep.MouseButton.Value);
+                    _systemService.CursorClick(execution.FlowStep.CursorButton.Value);
+                    _systemService.CursorClick(execution.FlowStep.CursorButton.Value);
                     break;
                 // TODO
                 case MouseActionsEnum.LOOP_CLICK:
                     do
                     {
-                        _systemService.CursorClick(execution.FlowStep.MouseButton.Value);
+                        _systemService.CursorClick(execution.FlowStep.CursorButton.Value);
                     } while (true);
                 default:
                     break;

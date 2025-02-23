@@ -86,11 +86,11 @@ namespace Business.Repository.Entities
             {
                 if (resultEnum == ExecutionResultEnum.SUCCESS)
                     childrenFlowSteps = childrenFlowSteps
-                        .Where(x => x.Type == FlowStepTypesEnum.SUCCESS) // Equals to .First() since only one child will be available.
+                        .Where(x => x.Type == FlowStepTypesEnum.SUCCESS) 
                         .SelectMany(x => x.ChildrenFlowSteps);
                 else
                     childrenFlowSteps = childrenFlowSteps
-                        .Where(x => x.Type == FlowStepTypesEnum.FAILURE) // Equals to .First() since only one child will be available.
+                        .Where(x => x.Type == FlowStepTypesEnum.FAILURE) 
                         .SelectMany(x => x.ChildrenFlowSteps);
             }
 
@@ -226,9 +226,9 @@ namespace Business.Repository.Entities
                 LocationY = flowStep.LocationY,
                 LoopMaxCount = flowStep.LoopMaxCount,
                 RemoveTemplateFromResult = flowStep.RemoveTemplateFromResult,
-                MouseAction = flowStep.MouseAction,
-                MouseButton = flowStep.MouseButton,
-                MouseScrollDirectionEnum = flowStep.MouseScrollDirectionEnum,
+                CursorAction = flowStep.CursorAction,
+                CursorButton = flowStep.CursorButton,
+                CursorScrollDirection = flowStep.CursorScrollDirection,
                 IsLoopInfinite = flowStep.IsLoopInfinite,
                 LoopCount = flowStep.LoopCount,
                 LoopTime = flowStep.LoopTime,

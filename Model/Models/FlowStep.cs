@@ -44,13 +44,13 @@ namespace Model.Models
 
         // Cursor
         [ObservableProperty]
-        public MouseActionsEnum? _mouseAction;
+        public MouseActionsEnum? _cursorAction;
 
         [ObservableProperty]
-        public MouseButtonsEnum? _mouseButton;
+        public MouseButtonsEnum? _cursorButton;
 
         [ObservableProperty]
-        public MouseScrollDirectionEnum? _mouseScrollDirectionEnum;
+        public MouseScrollDirectionEnum? _cursorScrollDirection;
 
         //System
         [ObservableProperty]

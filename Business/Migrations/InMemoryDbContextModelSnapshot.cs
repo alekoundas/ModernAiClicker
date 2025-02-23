@@ -32,9 +32,6 @@ namespace Business.Migrations
                     b.Property<DateTime?>("EndedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ExecutionResultEnum")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("FlowId")
                         .HasColumnType("INTEGER");
 
@@ -55,6 +52,10 @@ namespace Business.Migrations
 
                     b.Property<int?>("ParentLoopExecutionId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("ResultAccuracy")
                         .HasColumnType("TEXT");
@@ -78,8 +79,12 @@ namespace Business.Migrations
                     b.Property<DateTime?>("StartedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TempResultImagePath")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -210,6 +215,15 @@ namespace Business.Migrations
                     b.Property<decimal>("Accuracy")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CursorAction")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CursorButton")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CursorScrollDirection")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("FlowId")
                         .HasColumnType("INTEGER");
 
@@ -245,15 +259,6 @@ namespace Business.Migrations
 
                     b.Property<TimeOnly?>("LoopTime")
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("MouseAction")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("MouseButton")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("MouseScrollDirectionEnum")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -45,8 +45,8 @@ namespace StepinFlow.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.MouseAction = FlowStep.MouseAction;
-                updateFlowStep.MouseButton = FlowStep.MouseButton;
+                updateFlowStep.CursorAction = FlowStep.CursorAction;
+                updateFlowStep.CursorButton = FlowStep.CursorButton;
             }
 
             /// Add mode

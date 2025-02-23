@@ -23,6 +23,16 @@
 
             return exportPath;
         }
+        public static string GetTempDataPath()
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string exportPath = Path.Combine(localAppData, "StepinFlow", "Temp");
+
+            if (!Directory.Exists(exportPath))
+                Directory.CreateDirectory(exportPath);
+
+            return exportPath;
+        }
 
         public static string GetExportDataPath()
         {

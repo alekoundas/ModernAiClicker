@@ -97,7 +97,7 @@ namespace Business.Factories.Workers
                     int y = searchRectangle.Value.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
                     isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
-                    execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
+                    execution.Result = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
                     execution.ResultLocationX = x;
                     execution.ResultLocationY = y;
                     execution.ResultImagePath = result.ResultImagePath;
@@ -124,7 +124,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStepId == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.ExecutionResultEnum);
+            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.Result);
             return nextFlowStep;
         }
 

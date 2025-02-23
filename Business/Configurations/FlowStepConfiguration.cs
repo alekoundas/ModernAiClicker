@@ -16,6 +16,9 @@ namespace Business.Configurations
             // Store Enum value as string instead of int.
             builder.Property(x => x.Type).HasConversion<string>();
             builder.Property(x => x.TemplateMatchMode).HasConversion<string>();
+            builder.Property(x => x.CursorScrollDirection).HasConversion<string>();
+            builder.Property(x => x.CursorButton).HasConversion<string>();
+            builder.Property(x => x.CursorAction).HasConversion<string>();
 
 
             builder.HasOne(x => x.ParentFlowStep)

@@ -1,4 +1,6 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Media.Imaging;
 
 namespace Business.Extensions
 {
@@ -19,6 +21,16 @@ namespace Business.Extensions
                 bitmap.Freeze(); // Allows cross-thread access
                 return bitmap;
             }
+        }
+
+        public static byte[] ToByteArray(this Image image)
+        {
+            if (image == null)
+                throw new ArgumentNullException(nameof(image));
+
+            using MemoryStream ms = new MemoryStream();
+            image.Save(ms, ImageFormat.Png);
+            return ms.ToArray();
         }
     }
 }
