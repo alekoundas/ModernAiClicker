@@ -8,7 +8,6 @@ using Model.Enums;
 using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Drawing;
 using StepinFlow.Interfaces;
 using System.Windows.Input;
 using Business.BaseViewModels;
@@ -25,7 +24,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private byte[]? _resultImage = null;
+        private byte[]? _testResultImage = null;
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
@@ -53,7 +52,6 @@ namespace StepinFlow.ViewModels.Pages
             _flowsViewModel = flowsViewModel;
 
             MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
-
         }
 
         public override async Task LoadFlowStepId(int flowStepId)
@@ -140,8 +138,8 @@ namespace StepinFlow.ViewModels.Pages
             // New if not previous exists.
             // Get previous one if exists.
             byte[]? screenshot;
-            if (_previousTestResultImage != null)
-                screenshot = _previousTestResultImage;
+            if (TestResultImage != null)
+                screenshot = TestResultImage;
             else
                 screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
 
@@ -149,7 +147,7 @@ namespace StepinFlow.ViewModels.Pages
                 return;
 
             TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(FlowStep.TemplateImage, screenshot, FlowStep.TemplateMatchMode, FlowStep.RemoveTemplateFromResult);
-            ResultImage = result.ResultImage;
+            TestResultImage = result.ResultImage;
         }
 
         [RelayCommand]
@@ -169,7 +167,7 @@ namespace StepinFlow.ViewModels.Pages
         {
             // Check if it's a double-click.
             if (e.ClickCount == 2)
-                await _windowService.OpenScreenshotSelectionWindow(ResultImage, false);
+                await _windowService.OpenScreenshotSelectionWindow(TestResultImage, false);
         }
 
         [RelayCommand]

@@ -9,13 +9,11 @@ using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
-using Rectangle = Model.Structs.Rectangle;
 using Microsoft.EntityFrameworkCore;
 using StepinFlow.Interfaces;
 using System.Windows.Media.Imaging;
 using System.Windows.Input;
 using Business.BaseViewModels;
-using Business.Services;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -28,7 +26,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly FlowsViewModel _flowsViewModel;
 
         [ObservableProperty]
-        private byte[]? _resultImage = null;
+        private byte[]? _testResultImage = null;
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
@@ -38,8 +36,10 @@ namespace StepinFlow.ViewModels.Pages
 
         [ObservableProperty]
         private IEnumerable<TemplateMatchModesEnum> _matchModes;
-        //[ObservableProperty]
-        //private TemplateMatchModesEnum? _selectedSystemMonitor;
+        [ObservableProperty]
+        private IEnumerable<FlowParameter> _flowParameters;
+        [ObservableProperty]
+        private FlowParameter? _selectedFlowParameter = null;
 
         public MultipleTemplateSearchFlowStepViewModel(
             FlowsViewModel flowsViewModel,
@@ -69,22 +69,38 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep = flowStep;
                 List<FlowStep> flowSteps = flowStep.ChildrenTemplateSearchFlowSteps.Where(x => x.Type == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD).ToList();
                 ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
+
+                FlowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(flowStepId);
+                FlowParameters = FlowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+                SelectedFlowParameter = FlowStep.FlowParameter;
             }
         }
+
+        public override async Task LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
+
+            FlowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(newFlowStep.ParentFlowStepId.Value);
+            FlowParameters = FlowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+
+            return;
+        }
+
 
         [RelayCommand]
-        private void OnButtonOpenFileClick(FlowStep flowStep)
+        private void OnButtonOpenFileClick()
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.InitialDirectory = PathHelper.GetAppDataPath();
-            openFileDialog.Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*";
-            openFileDialog.RestoreDirectory = true;
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                InitialDirectory = PathHelper.GetAppDataPath(),
+                Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*",
+                RestoreDirectory = true
+            };
 
             if (openFileDialog.ShowDialog() == true)
-            {
-                flowStep.TemplateImage = File.ReadAllBytes(openFileDialog.FileName);
-            }
+                FlowStep.TemplateImage = File.ReadAllBytes(openFileDialog.FileName);
         }
+
         [RelayCommand]
         private async Task OnButtonTakeScreenshotClick(FlowStep flowStep)
         {
@@ -143,13 +159,13 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private void OnButtonClearTestClick(FlowStep flowStep)
         {
-            ResultImage = null;
+            TestResultImage = null;
         }
 
         [RelayCommand]
         private void OnButtonTestClick(FlowStep flowStep)
         {
-            if (flowStep.TemplateImage == null)
+            if (FlowStep.TemplateImage == null)
                 return;
 
             // Find search area.
@@ -175,22 +191,22 @@ namespace StepinFlow.ViewModels.Pages
             if (searchRectangle == null)
                 searchRectangle = _systemService.GetScreenSize();
 
+
             // Get screenshot.
-            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value,null);
+            // New if not previous exists.
+            // Get previous one if exists.
+            byte[]? screenshot;
+            if (TestResultImage != null)
+                screenshot = TestResultImage;
+            else
+                screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+
             if (screenshot == null)
                 return;
 
-            using (var ms = new MemoryStream(flowStep.TemplateImage))
-            {
-                Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, flowStep.TemplateMatchMode, flowStep.RemoveTemplateFromResult);
 
-                if (result.ResultImagePath.Length > 0)
-                {
-                    ResultImage = File.ReadAllBytes(result.ResultImagePath);
-                }
-
-            }
+            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(flowStep.TemplateImage, screenshot, flowStep.TemplateMatchMode, flowStep.RemoveTemplateFromResult);
+            TestResultImage = result.ResultImage;
         }
 
         [RelayCommand]
@@ -225,7 +241,7 @@ namespace StepinFlow.ViewModels.Pages
         {
             // Check if it's a double-click.
             if (e.ClickCount == 2)
-                await _windowService.OpenScreenshotSelectionWindow(ResultImage, false);
+                await _windowService.OpenScreenshotSelectionWindow(TestResultImage, false);
         }
 
         [RelayCommand]
@@ -253,7 +269,9 @@ namespace StepinFlow.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.ProcessName = FlowStep.ProcessName;
+                updateFlowStep.TemplateMatchMode = FlowStep.TemplateMatchMode;
+                if (SelectedFlowParameter != null)
+                    updateFlowStep.FlowParameterId = SelectedFlowParameter.Id;
 
                 _baseDatawork.UpdateRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id > 0).ToList());
                 _baseDatawork.FlowSteps.AddRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id == 0).ToList());
@@ -312,6 +330,8 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.IsExpanded = true;
                 FlowStep.ChildrenTemplateSearchFlowSteps = ChildrenTemplateSearchFlowSteps;
+                if (SelectedFlowParameter != null)
+                    FlowStep.FlowParameterId = SelectedFlowParameter.Id;
 
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }

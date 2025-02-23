@@ -104,7 +104,7 @@
                 </StackPanel>
             </StackPanel>
 
-
+            <!--  Template Image  -->
             <Image
                 MaxWidth="100"
                 MaxHeight="100"
