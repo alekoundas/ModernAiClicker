@@ -10,10 +10,11 @@ namespace Business.Interfaces
     {
 
         // Screen.
-        Model.Structs.Rectangle GetWindowSize(string processName);
+        Model.Structs.Rectangle? GetWindowSize(string processName);
         Model.Structs.Rectangle GetScreenSize();
         List<SystemMonitor> GetAllSystemMonitors();
-        
+        Model.Structs.Rectangle? GetMonitorArea(string deviceName);
+
 
         List<string> GetProcessWindowTitles();
         

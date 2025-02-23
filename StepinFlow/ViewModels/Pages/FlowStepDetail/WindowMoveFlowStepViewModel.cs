@@ -32,10 +32,10 @@ namespace StepinFlow.ViewModels.Pages
             if (FlowStep.ProcessName.Length <= 1)
                 return;
 
-            Rectangle windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
+            Rectangle? windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
 
-            FlowStep.LocationX = windowRect.Left;
-            FlowStep.LocationY = windowRect.Top;
+            FlowStep.LocationX = windowRect.Value.Left;
+            FlowStep.LocationY = windowRect.Value.Top;
         }
 
         [RelayCommand]
@@ -50,11 +50,11 @@ namespace StepinFlow.ViewModels.Pages
             if (FlowStep.ProcessName.Length <= 1)
                 return;
 
-            Rectangle windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
+            Rectangle? windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
             Rectangle newWindowRect = new Rectangle();
 
-            int height = Math.Abs(windowRect.Bottom - windowRect.Top);
-            int width = Math.Abs(windowRect.Left - windowRect.Right);
+            int height = Math.Abs(windowRect.Value.Bottom - windowRect.Value.Top);
+            int width = Math.Abs(windowRect.Value.Left - windowRect.Value.Right);
 
             newWindowRect.Left = FlowStep.LocationX;
             newWindowRect.Top = FlowStep.LocationY;

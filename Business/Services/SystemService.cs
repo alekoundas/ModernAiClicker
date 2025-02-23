@@ -122,6 +122,7 @@ namespace Business.Services
             }
         }
 
+
         public Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot")
         {
             string filePath = Path.Combine(PathHelper.GetAppDataPath(), filename + ".png");
@@ -185,7 +186,7 @@ namespace Business.Services
             }
         }
 
-        public Model.Structs.Rectangle GetWindowSize(string processName)
+        public Model.Structs.Rectangle? GetWindowSize(string processName)
         {
             var applicationProcess = Process.GetProcessesByName(processName).FirstOrDefault();
             if (applicationProcess != null)
@@ -195,7 +196,7 @@ namespace Business.Services
                 return windowRectangle;
             }
 
-            return new Model.Structs.Rectangle();
+            return null;
         }
 
         public bool MoveWindow(string processName, Model.Structs.Rectangle newWindowSize)
@@ -247,6 +248,24 @@ namespace Business.Services
             }
 
             return systemMonitors;
+        }
+
+        public Model.Structs.Rectangle? GetMonitorArea(string deviceName)
+        {
+            System.Windows.Forms.Screen? screen = System.Windows.Forms.Screen.AllScreens.Where(x => x.DeviceName == deviceName).FirstOrDefault();
+
+            if (screen == null)
+                return null;
+
+            Model.Structs.Rectangle rectangle = new Model.Structs.Rectangle
+            {
+                Top = screen.Bounds.Top,
+                Bottom = screen.Bounds.Bottom,
+                Left = screen.Bounds.Left,
+                Right = screen.Bounds.Right
+            };
+
+            return rectangle;
         }
 
         public ImageSizeResult GetImageSize(byte[] imageArray)

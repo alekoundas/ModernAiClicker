@@ -61,14 +61,30 @@ namespace StepinFlow.ViewModels.Pages
         private void OnButtonTestClick()
         {
             // Find search area.
-            Model.Structs.Rectangle searchRectangle;
-            if (FlowStep.ProcessName.Length > 0 )
-                searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
-            else
+            Model.Structs.Rectangle? searchRectangle = null;
+            switch (FlowStep.FlowParameter?.TemplateSearchAreaType)
+            {
+                case TemplateSearchAreaTypesEnum.SELECT_EVERY_MONITOR:
+                    searchRectangle = _systemService.GetScreenSize();
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_MONITOR:
+                    searchRectangle = _systemService.GetMonitorArea(FlowStep.FlowParameter.SystemMonitorDeviceName);
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_APPLICATION_WINDOW:
+                    searchRectangle = _systemService.GetWindowSize(FlowStep.FlowParameter.ProcessName);
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_CUSTOM_AREA:
+                    break;
+                default:
+                    searchRectangle = _systemService.GetScreenSize();
+                    break;
+            }
+
+            if (searchRectangle == null)
                 searchRectangle = _systemService.GetScreenSize();
 
             // Get screenshot.
-            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle);
+            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
             if (screenshot == null)
                 return;
 
@@ -76,12 +92,6 @@ namespace StepinFlow.ViewModels.Pages
             {
                 Bitmap templateImage = new Bitmap(ms);
                 TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, FlowStep.TemplateMatchMode, false);
-
-                int x = searchRectangle.Left;
-                int y = searchRectangle.Top;
-
-                x += result.ResultRectangle.Top;
-                y += result.ResultRectangle.Left;
 
 
                 if (result.ResultImagePath.Length > 1)

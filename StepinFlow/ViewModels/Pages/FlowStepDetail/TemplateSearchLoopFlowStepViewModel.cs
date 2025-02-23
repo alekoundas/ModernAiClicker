@@ -32,6 +32,9 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private IEnumerable<TemplateMatchModesEnum> _matchModes;
 
+        [ObservableProperty]
+        private IEnumerable<FlowParameter> _flowParameters;
+
         public TemplateSearchLoopFlowStepViewModel(
             FlowsViewModel flowsViewModel,
             ISystemService systemService,
@@ -48,6 +51,29 @@ namespace StepinFlow.ViewModels.Pages
 
             MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
         }
+
+        public override async Task LoadFlowStepId(int flowStepId)
+        {
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            if (flowStep != null)
+                FlowStep = flowStep;
+
+            FlowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(flowStepId);
+            FlowParameters = FlowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+        }
+
+        public override async Task LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
+
+            FlowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(newFlowStep.ParentFlowStepId.Value);
+            FlowParameters = FlowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+
+            return;
+        }
+
+
+
 
         [RelayCommand]
         private void OnButtonOpenFileClick()
@@ -90,10 +116,26 @@ namespace StepinFlow.ViewModels.Pages
                 return;
 
             // Find search area.
-            Rectangle searchRectangle;
-            if (FlowStep.ProcessName.Length > 0 )
-                searchRectangle = _systemService.GetWindowSize(FlowStep.ProcessName);
-            else
+            Model.Structs.Rectangle? searchRectangle = null;
+            switch (FlowStep.FlowParameter?.TemplateSearchAreaType)
+            {
+                case TemplateSearchAreaTypesEnum.SELECT_EVERY_MONITOR:
+                    searchRectangle = _systemService.GetScreenSize();
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_MONITOR:
+                    searchRectangle = _systemService.GetMonitorArea(FlowStep.FlowParameter.SystemMonitorDeviceName);
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_APPLICATION_WINDOW:
+                    searchRectangle = _systemService.GetWindowSize(FlowStep.FlowParameter.ProcessName);
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_CUSTOM_AREA:
+                    break;
+                default:
+                    searchRectangle = _systemService.GetScreenSize();
+                    break;
+            }
+
+            if (searchRectangle == null)
                 searchRectangle = _systemService.GetScreenSize();
 
             // Get screenshot.
@@ -103,7 +145,7 @@ namespace StepinFlow.ViewModels.Pages
             if (_previousTestResultImagePath.Length > 0)
                 screenshot = (Bitmap)Image.FromFile(_previousTestResultImagePath);
             else
-                screenshot = _systemService.TakeScreenShot(searchRectangle);
+                screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
 
             if (screenshot == null)
                 return;

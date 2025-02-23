@@ -35,11 +35,22 @@
             <Label>1. Set Name</Label>
             <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
 
-            <Label>2. Select Process (leave empty for screen search)</Label>
+            <Label>Select search area from parameters(leave empty for all monitor search)</Label>
             <ComboBox
                 VerticalAlignment="Center"
-                ItemsSource="{Binding ViewModel.ProcessList}"
-                SelectedItem="{Binding ViewModel.FlowStep.ProcessName, Mode=TwoWay}" />
+                ItemsSource="{Binding ViewModel.FlowParameters}"
+                SelectedItem="{Binding ViewModel.FlowStep.FlowParameter, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Path=Name}" />
+                            <TextBlock Text=" - " />
+                            <TextBlock Text="{Binding Path=TemplateSearchAreaType}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
 
 
             <Label>Select match mode:</Label>

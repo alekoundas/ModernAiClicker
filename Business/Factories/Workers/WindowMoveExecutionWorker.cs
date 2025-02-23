@@ -23,13 +23,16 @@ namespace Business.Factories.Workers
             if (execution.FlowStep?.ProcessName.Length <= 1 || execution.FlowStep == null)
                 return Task.CompletedTask;
 
-            Rectangle windowRect = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
+            Rectangle? windowRect = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
             Rectangle newWindowRect = new Rectangle();
+
+            if (windowRect == null)
+                return Task.CompletedTask;
 
             int x = execution.FlowStep.LocationX;
             int y = execution.FlowStep.LocationY;
-            int height = Math.Abs(windowRect.Bottom - windowRect.Top);
-            int width = Math.Abs(windowRect.Left - windowRect.Right);
+            int height = Math.Abs(windowRect.Value.Bottom - windowRect.Value.Top);
+            int width = Math.Abs(windowRect.Value.Left - windowRect.Value.Right);
 
             newWindowRect.Left = x;
             newWindowRect.Top = y;

@@ -33,10 +33,10 @@ namespace StepinFlow.ViewModels.Pages
             if (FlowStep.ProcessName.Length <= 1)
                 return;
 
-            Rectangle windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
+            Rectangle? windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
 
-            FlowStep.Height = Math.Abs(windowRect.Bottom - windowRect.Top);
-            FlowStep.Width = Math.Abs(windowRect.Left - windowRect.Right);
+            FlowStep.Height = Math.Abs(windowRect.Value.Bottom - windowRect.Value.Top);
+            FlowStep.Width = Math.Abs(windowRect.Value.Left - windowRect.Value.Right);
         }
 
         [RelayCommand]
@@ -45,13 +45,13 @@ namespace StepinFlow.ViewModels.Pages
             if (FlowStep.ProcessName.Length <= 1)
                 return;
 
-            Rectangle windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
+            Rectangle? windowRect = _systemService.GetWindowSize(FlowStep.ProcessName);
             Rectangle newWindowRect = new Rectangle();
 
-            newWindowRect.Left = windowRect.Left;
-            newWindowRect.Top = windowRect.Top;
-            newWindowRect.Right = windowRect.Left + FlowStep.Width;
-            newWindowRect.Bottom = windowRect.Top + FlowStep.Height;
+            newWindowRect.Left = windowRect.Value.Left;
+            newWindowRect.Top = windowRect.Value.Top;
+            newWindowRect.Right = windowRect.Value.Left + FlowStep.Width;
+            newWindowRect.Bottom = windowRect.Value.Top + FlowStep.Height;
 
             _systemService.MoveWindow(FlowStep.ProcessName, newWindowRect);
         }

@@ -34,14 +34,30 @@ namespace Business.Factories.Workers
                 return;
 
             // Find search area.
-            Model.Structs.Rectangle searchRectangle;
-            if (execution.FlowStep.ProcessName.Length > 0)
-                searchRectangle = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
-            else
+            Model.Structs.Rectangle? searchRectangle = null;
+            switch (execution.FlowStep.FlowParameter?.TemplateSearchAreaType)
+            {
+                case TemplateSearchAreaTypesEnum.SELECT_EVERY_MONITOR:
+                    searchRectangle = _systemService.GetScreenSize();
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_MONITOR:
+                    searchRectangle = _systemService.GetMonitorArea(execution.FlowStep.FlowParameter.SystemMonitorDeviceName);
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_APPLICATION_WINDOW:
+                    searchRectangle = _systemService.GetWindowSize(execution.FlowStep.FlowParameter.ProcessName);
+                    break;
+                case TemplateSearchAreaTypesEnum.SELECT_CUSTOM_AREA:
+                    break;
+                default:
+                    searchRectangle = _systemService.GetScreenSize();
+                    break;
+            }
+
+            if (searchRectangle == null)
                 searchRectangle = _systemService.GetScreenSize();
 
             // Get screenshot.
-            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle);
+            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
             if (screenshot == null)
                 return;
 
@@ -51,8 +67,8 @@ namespace Business.Factories.Workers
                 Bitmap templateImage = new Bitmap(ms);
                 TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.TemplateMatchMode.Value, false);
 
-                int x = searchRectangle.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
-                int y = searchRectangle.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
+                int x = searchRectangle.Value.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
+                int y = searchRectangle.Value.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
                 bool isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
                 execution.ExecutionResultEnum = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;

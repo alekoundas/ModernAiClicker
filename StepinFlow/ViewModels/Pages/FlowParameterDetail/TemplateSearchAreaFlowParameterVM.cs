@@ -93,12 +93,14 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
             SearchAreaRectangle = new SystemMonitor();
             if (SelectedProcess != null)
             {
-                Rectangle rect = _systemService.GetWindowSize(SelectedProcess);
+                Rectangle? windowRect = _systemService.GetWindowSize(SelectedProcess);
+                if (windowRect == null)
+                    return ;
 
-                SearchAreaRectangle.Top = rect.Top;
-                SearchAreaRectangle.Left = rect.Left;
-                SearchAreaRectangle.Right = rect.Right;
-                SearchAreaRectangle.Bottom = rect.Bottom;
+                SearchAreaRectangle.Top = windowRect.Value.Top;
+                SearchAreaRectangle.Left = windowRect.Value.Left;
+                SearchAreaRectangle.Right = windowRect.Value.Right;
+                SearchAreaRectangle.Bottom = windowRect.Value.Bottom;
             }
         }
 

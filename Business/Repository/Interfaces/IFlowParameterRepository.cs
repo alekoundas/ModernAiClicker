@@ -6,6 +6,8 @@ namespace Business.Repository.Interfaces
     public interface IFlowParameterRepository : IBaseRepository<FlowParameter>
     {
         Task<FlowParameter> GetIsNewSibling(int flowParameterId);
+        Task<List<FlowParameter>> FindParametersFromFlowStep(int flowStepId);
+
         //Task<List<FlowStep>> GetSiblings(int flowStepId);
         //Task<FlowStep?> GetNextSibling(int flowStepId);
         //Task<FlowStep?> GetNextChild(int flowStepId, ExecutionResultEnum? resultEnum);

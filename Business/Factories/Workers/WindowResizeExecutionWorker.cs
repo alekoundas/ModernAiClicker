@@ -23,13 +23,15 @@ namespace Business.Factories.Workers
             if (execution.FlowStep?.ProcessName.Length <= 1 || execution.FlowStep == null)
                 return Task.CompletedTask;
 
-            Rectangle windowRect = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
+            Rectangle? windowRect = _systemService.GetWindowSize(execution.FlowStep.ProcessName);
             Rectangle newWindowRect = new Rectangle();
+            if (windowRect == null)
+                return Task.CompletedTask;
 
-            newWindowRect.Left = windowRect.Left;
-            newWindowRect.Top = windowRect.Top;
-            newWindowRect.Right = windowRect.Left + execution.FlowStep.Height;
-            newWindowRect.Bottom = windowRect.Top + execution.FlowStep.Width;
+            newWindowRect.Left = windowRect.Value.Left;
+            newWindowRect.Top = windowRect.Value.Top;
+            newWindowRect.Right = windowRect.Value.Left + execution.FlowStep.Height;
+            newWindowRect.Bottom = windowRect.Value.Top + execution.FlowStep.Width;
 
             bool result = _systemService.MoveWindow(execution.FlowStep.ProcessName, newWindowRect);
 
