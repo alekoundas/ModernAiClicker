@@ -53,9 +53,9 @@ namespace Business.Factories
             {
                 { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionWorker>(() => new WindowMoveExecutionWorker(_baseDatawork, _systemService)) },
                 { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionWorker>(() => new WindowResizeExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionWorker>(() => new CursorRelocateExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionWorker>(() => new CursorClickExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionWorker>(() => new CursorScrollExecutionWorker(_baseDatawork, _systemService)) },
+                { FlowStepTypesEnum.CURSOR_RELOCATE, new Lazy<IExecutionWorker>(() => new CursorRelocateExecutionWorker(_baseDatawork, _systemService)) },
+                { FlowStepTypesEnum.CURSOR_CLICK, new Lazy<IExecutionWorker>(() => new CursorClickExecutionWorker(_baseDatawork, _systemService)) },
+                { FlowStepTypesEnum.CURSOR_SCROLL, new Lazy<IExecutionWorker>(() => new CursorScrollExecutionWorker(_baseDatawork, _systemService)) },
                 { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionWorker>(() => new WaitForTemplateExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },
                 { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new TemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new MultipleTemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },

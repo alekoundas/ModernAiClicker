@@ -74,16 +74,6 @@
 
 
 
-        <!--  TypesEnum  -->
-        <ObjectDataProvider
-            x:Key="TypesEnum"
-            MethodName="GetValues"
-            ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="enum:TypesEnum" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-
         <!--  ExecutionResultEnum  -->
         <ObjectDataProvider
             x:Key="ExecutionResultEnum"

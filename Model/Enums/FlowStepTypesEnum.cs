@@ -11,9 +11,9 @@ namespace Model.Enums
         WINDOW_MOVE,
         WINDOW_RESIZE,
 
-        MOUSE_SCROLL,
-        MOUSE_CLICK,
-        MOUSE_MOVE_COORDINATES,
+        CURSOR_SCROLL,
+        CURSOR_CLICK,
+        CURSOR_RELOCATE,
 
         TEMPLATE_SEARCH,
         MULTIPLE_TEMPLATE_SEARCH,
