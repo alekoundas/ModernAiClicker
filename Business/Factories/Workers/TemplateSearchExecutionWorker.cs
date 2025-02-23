@@ -29,24 +29,52 @@ namespace Business.Factories.Workers
             _systemService = systemService;
         }
 
+        public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution, Execution latestParentExecution)
+        {
+            if (parentExecution == null)
+                throw new ArgumentNullException(nameof(parentExecution));
+
+            Execution execution = new Execution
+            {
+                FlowStepId = flowStep.Id,
+                ParentExecutionId = latestParentExecution.Id,
+                ParentLoopExecutionId = parentExecution.Id,
+                ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory,
+                LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1
+            };
+
+            _baseDatawork.Executions.Add(execution);
+            await _baseDatawork.SaveChangesAsync();
+
+            parentExecution.ChildExecutionId = execution.Id;
+            await _baseDatawork.SaveChangesAsync();
+
+            execution.FlowStep = flowStep;
+            return execution;
+        }
+
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
             if (execution.FlowStep == null || execution.FlowStep.TemplateMatchMode == null)
                 return;
+            
+            FlowParameter? flowParameter = await _baseDatawork.FlowParameters.Query
+                .Where(x => x.Id == execution.FlowStep.FlowParameterId)
+                .FirstOrDefaultAsync();
 
             // Find search area.
             Model.Structs.Rectangle? searchRectangle = null;
-            switch (execution.FlowStep.FlowParameter?.TemplateSearchAreaType)
+            switch (flowParameter?.TemplateSearchAreaType)
             {
                 case TemplateSearchAreaTypesEnum.SELECT_EVERY_MONITOR:
                     searchRectangle = _systemService.GetScreenSize();
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_MONITOR:
-                    searchRectangle = _systemService.GetMonitorArea(execution.FlowStep.FlowParameter.SystemMonitorDeviceName);
+                    searchRectangle = _systemService.GetMonitorArea(flowParameter.SystemMonitorDeviceName);
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_APPLICATION_WINDOW:
-                    searchRectangle = _systemService.GetWindowSize(execution.FlowStep.FlowParameter.ProcessName);
+                    searchRectangle = _systemService.GetWindowSize(flowParameter.ProcessName);
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_CUSTOM_AREA:
                     break;

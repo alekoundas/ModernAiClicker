@@ -316,7 +316,7 @@
             </ItemsControl>
 
             <!--  Result image  -->
-            <Image Source="{Binding ViewModel.ResultImage, Converter={StaticResource ImageNullConverter}}">
+            <Image Source="{Binding ViewModel.TestResultImage, Converter={StaticResource ImageNullConverter}}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
                         <i:InvokeCommandAction Command="{Binding ViewModel.ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />

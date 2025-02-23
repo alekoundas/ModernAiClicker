@@ -68,13 +68,13 @@
             <!--  Width  -->
             <StackPanel Grid.Row="2">
                 <Label>Width:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.WindowWidth, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.Width, Mode=TwoWay}" />
             </StackPanel>
 
             <!--  Height  -->
             <StackPanel Grid.Row="2" Grid.Column="3">
                 <Label>Height:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.WindowHeight, Mode=TwoWay}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.Height, Mode=TwoWay}" />
             </StackPanel>
 
 

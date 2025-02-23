@@ -30,8 +30,8 @@ namespace Business.Factories.Workers
 
             newWindowRect.Left = windowRect.Value.Left;
             newWindowRect.Top = windowRect.Value.Top;
-            newWindowRect.Right = windowRect.Value.Left + execution.FlowStep.Height;
-            newWindowRect.Bottom = windowRect.Value.Top + execution.FlowStep.Width;
+            newWindowRect.Right = windowRect.Value.Left + execution.FlowStep.Width;
+            newWindowRect.Bottom = windowRect.Value.Top + execution.FlowStep.Height;
 
             bool result = _systemService.MoveWindow(execution.FlowStep.ProcessName, newWindowRect);
 

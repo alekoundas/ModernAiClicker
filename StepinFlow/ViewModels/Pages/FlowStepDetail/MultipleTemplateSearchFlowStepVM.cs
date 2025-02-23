@@ -86,9 +86,8 @@ namespace StepinFlow.ViewModels.Pages
             return;
         }
 
-
         [RelayCommand]
-        private void OnButtonOpenFileClick()
+        private void OnButtonOpenFileClick(FlowStep flowStep)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
@@ -98,7 +97,7 @@ namespace StepinFlow.ViewModels.Pages
             };
 
             if (openFileDialog.ShowDialog() == true)
-                FlowStep.TemplateImage = File.ReadAllBytes(openFileDialog.FileName);
+                flowStep.TemplateImage = File.ReadAllBytes(openFileDialog.FileName);
         }
 
         [RelayCommand]

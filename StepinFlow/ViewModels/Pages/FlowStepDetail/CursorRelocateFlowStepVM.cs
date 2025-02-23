@@ -112,6 +112,9 @@ namespace StepinFlow.ViewModels.Pages
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Set cursor possition.";
 
+                if (SelectedFlowStep != null)
+                    FlowStep.ParentTemplateSearchFlowStepId = SelectedFlowStep.Id;
+
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }
 

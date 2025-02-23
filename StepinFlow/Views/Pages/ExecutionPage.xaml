@@ -56,12 +56,12 @@
                                 <Setter TargetName="_Border" Property="Background" Value="#303236" />
                             </Trigger>
 
-                            <DataTrigger Binding="{Binding ExecutionResultEnum}" Value="{x:Static enum:ExecutionResultEnum.FAIL}">
+                            <DataTrigger Binding="{Binding Result}" Value="{x:Static enum:ExecutionResultEnum.FAIL}">
                                 <!--<Setter TargetName="_Border" Property="Visibility" Value="Collapsed" />-->
                                 <Setter TargetName="_Border" Property="Background" Value="#802426" />
                             </DataTrigger>
 
-                            <DataTrigger Binding="{Binding ExecutionResultEnum}" Value="{x:Static enum:ExecutionResultEnum.SUCCESS}">
+                            <DataTrigger Binding="{Binding Result}" Value="{x:Static enum:ExecutionResultEnum.SUCCESS}">
                                 <!--<Setter TargetName="_Border" Property="Visibility" Value="Collapsed" />-->
                                 <Setter TargetName="_Border" Property="Background" Value="#1a5b1f" />
                             </DataTrigger>

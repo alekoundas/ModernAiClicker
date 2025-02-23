@@ -58,7 +58,7 @@
             <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
 
             <Label>Exit after X times.(0 = Dont exit.)</Label>
-            <TextBox Text="{Binding ViewModel.FlowStep.MaxLoopCount, Mode=TwoWay}" />
+            <TextBox Text="{Binding ViewModel.FlowStep.LoopMaxCount, Mode=TwoWay}" />
 
 
 

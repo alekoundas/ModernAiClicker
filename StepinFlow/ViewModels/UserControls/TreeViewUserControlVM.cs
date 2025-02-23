@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using StepinFlow.Converters;
-using System.Reflection.Metadata;
 
 namespace StepinFlow.ViewModels.UserControls
 {
@@ -64,6 +62,7 @@ namespace StepinFlow.ViewModels.UserControls
 
         public async Task LoadFlows(int? flowId = 0)
         {
+            _baseDatawork.Query.ChangeTracker.Clear();
             List<Flow> flows = new List<Flow>();
 
             if (flowId > 0)
