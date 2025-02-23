@@ -53,6 +53,19 @@ namespace StepinFlow.ViewModels.Pages
             }
         }
 
+        public override async Task LoadNewFlowStep(FlowStep newFlowStep)
+        {
+            FlowStep = newFlowStep;
+
+            if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
+                GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);
+
+            if (FlowStep.ParentFlowStepId.HasValue)
+                GetParents(FlowStep.ParentFlowStepId.Value);
+
+            return;
+        }
+
         [RelayCommand]
         private void OnButtonTestClick()
         {
@@ -75,8 +88,8 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
 
-                if (FlowStep.ParentTemplateSearchFlowStep != null)
-                    updateFlowStep.ParentTemplateSearchFlowStepId = FlowStep.ParentTemplateSearchFlowStep.Id;
+                if (SelectedFlowStep != null)
+                    updateFlowStep.ParentTemplateSearchFlowStepId = SelectedFlowStep.Id;
             }
 
             /// Add mode
