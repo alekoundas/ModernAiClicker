@@ -222,6 +222,12 @@ namespace Business.Migrations
                     b.Property<bool>("IsExpanded")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsLoop")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsLoopInfinite")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsSelected")
                         .HasColumnType("INTEGER");
 
@@ -232,9 +238,6 @@ namespace Business.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("LoopCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("LoopInfinite")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("LoopMaxCount")

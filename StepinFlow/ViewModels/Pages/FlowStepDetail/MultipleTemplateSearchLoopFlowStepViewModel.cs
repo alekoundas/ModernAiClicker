@@ -179,7 +179,7 @@ namespace StepinFlow.ViewModels.Pages
             // New if not previous exists.
             // Get previous one if exists.
             Bitmap? screenshot;
-                screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+                screenshot = _systemService.TakeScreenShot(searchRectangle.Value, null);
 
             if (screenshot == null)
                 return;

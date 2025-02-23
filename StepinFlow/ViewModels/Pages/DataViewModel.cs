@@ -196,7 +196,7 @@ namespace StepinFlow.ViewModels.Pages
                 MouseAction = flowStep.MouseAction,
                 MouseButton = flowStep.MouseButton,
                 MouseScrollDirectionEnum = flowStep.MouseScrollDirectionEnum,
-                LoopInfinite = flowStep.LoopInfinite,
+                IsLoopInfinite = flowStep.IsLoopInfinite,
                 LoopTime = flowStep.LoopTime,
                 WaitForHours = flowStep.WaitForHours,
                 WaitForMinutes = flowStep.WaitForMinutes,

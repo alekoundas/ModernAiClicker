@@ -86,7 +86,7 @@ namespace Business.Factories.Workers
                 using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
                 {
                     // Get screenshot.
-                    Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+                    Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value, null);
                     if (screenshot == null)
                         return;
 

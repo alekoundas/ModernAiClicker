@@ -122,6 +122,29 @@ namespace Business.Services
             }
         }
 
+        public byte[]? TakeScreenShot(Model.Structs.Rectangle rectangle)
+        {
+            int width = rectangle.Right - rectangle.Left;
+            int height = rectangle.Bottom - rectangle.Top;
+
+            if (width <= 0 || height <= 0)
+                return null;
+
+            using (Bitmap bmp = new Bitmap(Math.Abs(width), height, PixelFormat.Format32bppArgb))
+            {
+                using (Graphics graphics = Graphics.FromImage(bmp))
+                {
+                    graphics.CopyFromScreen(rectangle.Left, rectangle.Top, 0, 0, new System.Drawing.Size(width, height));
+                }
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    bmp.Save(ms, ImageFormat.Png);
+                    return ms.ToArray();
+                }
+            }
+        }
+
 
         public Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot")
         {
@@ -318,5 +341,7 @@ namespace Business.Services
 
             return null;
         }
+
+    
     }
 }

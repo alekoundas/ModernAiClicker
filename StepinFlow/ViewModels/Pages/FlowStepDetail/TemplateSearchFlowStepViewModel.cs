@@ -12,6 +12,7 @@ using System.Drawing;
 using StepinFlow.Interfaces;
 using System.Windows.Input;
 using Business.BaseViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -32,6 +33,10 @@ namespace StepinFlow.ViewModels.Pages
         private IEnumerable<TemplateMatchModesEnum> _matchModes;
         [ObservableProperty]
         private IEnumerable<FlowParameter> _flowParameters;
+        [ObservableProperty]
+        private FlowParameter? _selectedFlowParameter = null;
+
+        private byte[]? _previousTestResultImage = null;
 
         public TemplateSearchFlowStepViewModel(
             FlowsViewModel flowsViewModel,
@@ -53,12 +58,17 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadFlowStepId(int flowStepId)
         {
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            FlowStep? flowStep = await _baseDatawork.FlowSteps.Query
+                .AsNoTracking()
+                .Include(x => x.FlowParameter)
+                .FirstOrDefaultAsync(x => x.Id == flowStepId);
+
             if (flowStep != null)
                 FlowStep = flowStep;
 
             FlowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(flowStepId);
             FlowParameters = FlowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+            SelectedFlowParameter = FlowStep.FlowParameter;
         }
 
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)
@@ -74,15 +84,15 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private void OnButtonOpenFileClick()
         {
-            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.InitialDirectory = PathHelper.GetAppDataPath();
-            openFileDialog.Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*";
-            openFileDialog.RestoreDirectory = true;
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                InitialDirectory = PathHelper.GetAppDataPath(),
+                Filter = "Image files (*.png)|*.png|All Files (*.*)|*.*",
+                RestoreDirectory = true
+            };
 
             if (openFileDialog.ShowDialog() == true)
-            {
                 FlowStep.TemplateImage = File.ReadAllBytes(openFileDialog.FileName);
-            }
         }
 
         [RelayCommand]
@@ -99,6 +109,9 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private void OnButtonTestClick()
         {
+            if (FlowStep.TemplateImage == null)
+                return;
+
             // Find search area.
             Model.Structs.Rectangle? searchRectangle = null;
             switch (FlowStep.FlowParameter?.TemplateSearchAreaType)
@@ -124,19 +137,19 @@ namespace StepinFlow.ViewModels.Pages
 
 
             // Get screenshot.
-            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+            // New if not previous exists.
+            // Get previous one if exists.
+            byte[]? screenshot;
+            if (_previousTestResultImage != null)
+                screenshot = _previousTestResultImage;
+            else
+                screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+
             if (screenshot == null)
                 return;
 
-            if (FlowStep.TemplateImage != null)
-                using (var ms = new MemoryStream(FlowStep.TemplateImage))
-                {
-                    Bitmap templateImage = new Bitmap(ms);
-                    TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, FlowStep.TemplateMatchMode, false);
-
-                    if (result.ResultImagePath.Length > 1)
-                        ResultImage = File.ReadAllBytes(result.ResultImagePath);
-                }
+            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(FlowStep.TemplateImage, screenshot, FlowStep.TemplateMatchMode, FlowStep.RemoveTemplateFromResult);
+            ResultImage = result.ResultImage;
         }
 
         [RelayCommand]
@@ -172,9 +185,17 @@ namespace StepinFlow.ViewModels.Pages
             if (FlowStep.Id > 0)
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
-                updateFlowStep.Accuracy = FlowStep.Accuracy;
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.ProcessName = FlowStep.ProcessName;
+                updateFlowStep.TemplateMatchMode = FlowStep.TemplateMatchMode;
+                updateFlowStep.TemplateImage = FlowStep.TemplateImage;
+                updateFlowStep.Accuracy = FlowStep.Accuracy;
+                updateFlowStep.IsLoop = FlowStep.IsLoop;
+                updateFlowStep.RemoveTemplateFromResult = FlowStep.RemoveTemplateFromResult;
+                updateFlowStep.LoopMaxCount = FlowStep.LoopMaxCount;
+                updateFlowStep.LoopMaxCount = FlowStep.LoopMaxCount;
+
+                if (SelectedFlowParameter != null)
+                    updateFlowStep.FlowParameterId = SelectedFlowParameter.Id;
             }
 
             // Add mode.
@@ -229,11 +250,14 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.IsExpanded = true;
 
+                if (SelectedFlowParameter != null)
+                    FlowStep.FlowParameterId = SelectedFlowParameter.Id;
+
                 _baseDatawork.FlowSteps.Add(FlowStep);
 
-                await _baseDatawork.SaveChangesAsync();
-                _flowsViewModel.RefreshData();
             }
+            await _baseDatawork.SaveChangesAsync();
+            _flowsViewModel.RefreshData();
         }
     }
 }

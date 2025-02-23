@@ -74,10 +74,13 @@ namespace Model.Models
 
         // Reusable
         [ObservableProperty]
+        public bool _isLoop;
+
+        [ObservableProperty]
         public int _loopCount;
 
         [ObservableProperty]
-        public bool _loopInfinite;
+        public bool _isLoopInfinite;
 
         [ObservableProperty]
         public int _loopMaxCount;

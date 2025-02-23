@@ -105,7 +105,7 @@ namespace Business.Factories.Workers
             if (canUseParentResult)
                 screenshot = (Bitmap)Image.FromFile(parentLoopExecution.ResultImagePath);
             else
-                screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+                screenshot = _systemService.TakeScreenShot(searchRectangle.Value, null);
 
             if (screenshot == null)
                 return;

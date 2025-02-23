@@ -145,7 +145,7 @@ namespace StepinFlow.ViewModels.Pages
             if (_previousTestResultImagePath.Length > 0)
                 screenshot = (Bitmap)Image.FromFile(_previousTestResultImagePath);
             else
-                screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+                screenshot = _systemService.TakeScreenShot(searchRectangle.Value,null);
 
             if (screenshot == null)
                 return;

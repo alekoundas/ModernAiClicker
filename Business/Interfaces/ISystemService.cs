@@ -28,6 +28,7 @@ namespace Business.Interfaces
         Task SaveImageToDisk(string filePath, byte[] image);
         void CopyImageToDisk(string sourceFilePath, string destinationFilePath);
         Bitmap? TakeScreenShot(Model.Structs.Rectangle rectangle, string filename = "Screenshot");
+        byte[]? TakeScreenShot(Model.Structs.Rectangle rectangle);
 
         // Window.
         bool MoveWindow(string processName, Model.Structs.Rectangle newWindowSize);

@@ -31,54 +31,80 @@
 
 
 
-        <StackPanel Grid.Column="1">
-            <Label>1. Set Name</Label>
-            <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
+        <StackPanel>
 
-            <Label>Select search area from parameters(leave empty for all monitor search)</Label>
-            <ComboBox
-                VerticalAlignment="Center"
-                ItemsSource="{Binding ViewModel.FlowParameters}"
-                SelectedItem="{Binding ViewModel.FlowStep.FlowParameter, Mode=TwoWay}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Name}" />
-                            <TextBlock Text=" - " />
-                            <TextBlock Text="{Binding Path=TemplateSearchAreaType}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-
-
-
-            <Label>Select match mode:</Label>
-            <ComboBox
-                VerticalAlignment="Center"
-                ItemsSource="{Binding ViewModel.MatchModes}"
-                SelectedItem="{Binding ViewModel.FlowStep.TemplateMatchMode, Mode=TwoWay}" />
-
-
-            <Label>3. Select image for search</Label>
-            <StackPanel Orientation="Horizontal">
-
-                <Button Content="Open file">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-
-                <Button Content="Take screenshot">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTakeScreenshotClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
+            <!--  Name  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Set Name:</Label>
+                <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
             </StackPanel>
+
+            <!--  FlowParameter  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Select search area from parameters(leave empty for all monitor search)</Label>
+                <ComboBox
+                    VerticalAlignment="Center"
+                    IsSynchronizedWithCurrentItem="True"
+                    ItemsSource="{Binding ViewModel.FlowParameters}"
+                    SelectedItem="{Binding ViewModel.SelectedFlowParameter, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Name}" />
+                                <TextBlock Text=" - " />
+                                <TextBlock Text="{Binding Path=TemplateSearchAreaType}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+
+
+            <!--  TemplateSearchAreaTypesEnum  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Select match mode:</Label>
+                <ComboBox
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding ViewModel.MatchModes}"
+                    SelectedItem="{Binding ViewModel.FlowStep.TemplateMatchMode, Mode=TwoWay}" />
+            </StackPanel>
+
+            <!--  Image import  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Select image for search:</Label>
+                <StackPanel Orientation="Horizontal">
+
+                    <Button Content="Open file">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <Button Content="Take screenshot">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTakeScreenshotClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
+
+
             <Image
                 MaxWidth="100"
                 MaxHeight="100"
@@ -91,12 +117,58 @@
             </Image>
 
 
+            <!--  Accuracy  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Select minimum accuracy:</Label>
+                <TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay}" />
+            </StackPanel>
 
+            <!--  IsLoop  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,0"
+                Orientation="Horizontal">
+                <Label VerticalAlignment="Center">Is loop:</Label>
+                <CheckBox IsChecked="{Binding ViewModel.FlowStep.IsLoop, Mode=TwoWay}" />
+            </StackPanel>
 
-            <Label>4. Select minimum accuracy</Label>
-            <TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay}" />
+            <Border>
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ViewModel.FlowStep.IsLoop}" Value="true">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel>
+                    <!--  Remove Template From Result  -->
+                    <StackPanel MinWidth="200" Margin="0,0,0,20">
+                        <StackPanel Orientation="Horizontal">
+                            <Label VerticalAlignment="Bottom">Remove template from result image:</Label>
+                            <CheckBox IsChecked="{Binding ViewModel.FlowStep.RemoveTemplateFromResult, Mode=TwoWay}" />
+                        </StackPanel>
+                        <TextBlock Text="(Avoid finding the same location multiple times.)" />
+                    </StackPanel>
 
-            <Label>4. Test</Label>
+                    <!--  Loop Max Count  -->
+                    <StackPanel
+                        MinWidth="200"
+                        Margin="0,0,0,20"
+                        HorizontalAlignment="Left">
+                        <Label>Force loop exit after loop count: (0 = Dont exit.)</Label>
+                        <TextBox Text="{Binding ViewModel.FlowStep.LoopMaxCount, Mode=TwoWay}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!--  Test  -->
+            <Label>Test:</Label>
             <Button Content="Test">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
@@ -104,6 +176,7 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
+            <!--  Result image  -->
             <Image Source="{Binding ViewModel.ResultImage, Converter={StaticResource ImageNullConverter}}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">

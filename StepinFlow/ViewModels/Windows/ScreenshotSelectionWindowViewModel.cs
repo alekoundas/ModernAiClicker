@@ -66,7 +66,7 @@ namespace StepinFlow.ViewModels.Windows
             else
             {
                 Model.Structs.Rectangle searchRectangle = _systemService.GetScreenSize();
-                Bitmap? bitmapScreenshot = _systemService.TakeScreenShot(searchRectangle);
+                Bitmap? bitmapScreenshot = _systemService.TakeScreenShot(searchRectangle, null);
                 if (bitmapScreenshot != null)
                     Screenshot = ConvertBitmapToBitmapSource(bitmapScreenshot);
             }

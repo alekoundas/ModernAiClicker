@@ -57,7 +57,7 @@ namespace Business.Factories.Workers
                 searchRectangle = _systemService.GetScreenSize();
 
             // Get screenshot.
-            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value, null);
             if (screenshot == null)
                 return;
 

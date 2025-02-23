@@ -229,7 +229,7 @@ namespace Business.Repository.Entities
                 MouseAction = flowStep.MouseAction,
                 MouseButton = flowStep.MouseButton,
                 MouseScrollDirectionEnum = flowStep.MouseScrollDirectionEnum,
-                LoopInfinite = flowStep.LoopInfinite,
+                IsLoopInfinite = flowStep.IsLoopInfinite,
                 LoopCount = flowStep.LoopCount,
                 LoopTime = flowStep.LoopTime,
                 WaitForHours = flowStep.WaitForHours,

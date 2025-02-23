@@ -1,4 +1,5 @@
-﻿using Business.Helpers;
+﻿using Business.Extensions;
+using Business.Helpers;
 using Business.Interfaces;
 using Model.Business;
 using Model.Enums;
@@ -18,6 +19,74 @@ namespace Business.Services
         public TemplateSearchService(ISystemService systemService)
         {
             SystemService = systemService;
+        }
+
+        public TemplateMatchingResult SearchForTemplate(byte[] template, byte[] screenshot, TemplateMatchModesEnum? templateMatchModesEnum, bool removeTemplateFromResult)
+        {
+            //Bitmap template = (Bitmap)Image.FromFile(templatePath);
+            //Bitmap? screenshot = SystemService.TakeScreenShot(windowRectangle);
+            OpenCvSharp.TemplateMatchModes matchMode;
+            switch (templateMatchModesEnum)
+            {
+                case TemplateMatchModesEnum.SqDiff:
+                    matchMode = TemplateMatchModes.SqDiff;
+                    break;
+                case TemplateMatchModesEnum.SqDiffNormed:
+                    matchMode = TemplateMatchModes.SqDiffNormed;
+                    break;
+                case TemplateMatchModesEnum.CCorr:
+                    matchMode = TemplateMatchModes.CCorr;
+                    break;
+                case TemplateMatchModesEnum.CCorrNormed:
+                    matchMode = TemplateMatchModes.CCorrNormed;
+                    break;
+                case TemplateMatchModesEnum.CCoeff:
+                    matchMode = TemplateMatchModes.CCoeff;
+                    break;
+                case TemplateMatchModesEnum.CCoeffNormed:
+                    matchMode = TemplateMatchModes.CCoeffNormed;
+                    break;
+                default:
+                    matchMode = TemplateMatchModes.CCoeffNormed;
+                    break;
+            }
+
+            Mat matTemplate = OpenCvSharp.WpfExtensions.BitmapSourceConverter.ToMat(template.ToBitmapSource());
+            Mat matScreenshot = OpenCvSharp.WpfExtensions.BitmapSourceConverter.ToMat(screenshot.ToBitmapSource());
+            Mat result = matScreenshot.MatchTemplate(matTemplate, matchMode);
+
+            // Execute search.
+            result.MinMaxLoc(out double minConfidence,
+                             out double maxConfidence,
+                             out OpenCvSharp.Point minLoc,
+                             out OpenCvSharp.Point maxLoc);
+
+            // Get center possition of template image.
+            Rectangle resultRectangle = new Rectangle()
+            {
+                Top = maxLoc.Y,
+                Left = maxLoc.X,
+                Right = maxLoc.X + matTemplate.Width,
+                Bottom = maxLoc.Y + matTemplate.Height,
+            };
+
+            // Convert to %
+            maxConfidence *= 100d;
+
+            // Draws rectangle in result image.
+            DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle, removeTemplateFromResult);
+
+            //Save result image to drive for debugging.
+            string resultFilePath = Path.Combine(PathHelper.GetAppDataPath(), "Result.png");
+            matScreenshot.SaveImage(resultFilePath);
+
+            return new TemplateMatchingResult()
+            {
+                ResultRectangle = resultRectangle,
+                Confidence = (decimal)maxConfidence,
+                ResultImagePath = resultFilePath,
+                ResultImage = matScreenshot.ToBytes()
+            };
         }
 
 
