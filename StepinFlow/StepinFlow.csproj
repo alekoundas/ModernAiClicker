@@ -108,16 +108,10 @@
     <Compile Update="Views\Pages\FlowStepDetail\MultipleTemplateSearchFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\FlowStepDetail\MultipleTemplateSearchLoopFlowStepPage.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\LoopFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\WaitForTemplateFlowStepPage.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\Pages\FlowStepDetail\TemplateSearchLoopFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\WindowMoveFlowStepPage.xaml.cs">

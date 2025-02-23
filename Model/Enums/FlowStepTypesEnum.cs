@@ -8,9 +8,6 @@ namespace Model.Enums
         GO_TO,
         LOOP,
 
-        FLOW,
-        SUB_FLOW,
-
         WINDOW_MOVE,
         WINDOW_RESIZE,
 
@@ -19,8 +16,6 @@ namespace Model.Enums
         MOUSE_MOVE_COORDINATES,
 
         TEMPLATE_SEARCH,
-        TEMPLATE_SEARCH_LOOP,
-        MULTIPLE_TEMPLATE_SEARCH_LOOP,
         MULTIPLE_TEMPLATE_SEARCH,
         WAIT_FOR_TEMPLATE,
 

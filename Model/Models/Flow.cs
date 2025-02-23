@@ -12,7 +12,7 @@ namespace Model.Models
         public string _name = "";
 
         [ObservableProperty]
-        public FlowStepTypesEnum _type = FlowStepTypesEnum.NO_SELECTION;
+        public FlowTypesEnum _type = FlowTypesEnum.NO_SELECTION;
 
         [ObservableProperty]
         public bool _isSelected = true;

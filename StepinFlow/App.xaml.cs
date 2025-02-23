@@ -98,9 +98,7 @@ namespace StepinFlow
                 services.AddScoped<MouseScrollExecutionWorker>();
                 services.AddScoped<WindowResizeExecutionWorker>();
                 services.AddScoped<TemplateSearchExecutionWorker>();
-                services.AddScoped<TemplateSearchLoopExecutionWorker>();
                 services.AddScoped<MultipleTemplateSearchExecutionWorker>();
-                services.AddScoped<MultipleTemplateSearchLoopExecutionWorker>();
 
                 // User Controls
                 services.AddTransient<TreeViewUserControl>();
@@ -138,12 +136,6 @@ namespace StepinFlow
                 // Flow step detail.
                 services.AddSingleton<TemplateSearchFlowStepPage>();
                 services.AddSingleton<TemplateSearchFlowStepViewModel>();
-
-                services.AddSingleton<TemplateSearchLoopFlowStepPage>();
-                services.AddSingleton<TemplateSearchLoopFlowStepViewModel>();
-
-                services.AddSingleton<MultipleTemplateSearchLoopFlowStepPage>();
-                services.AddSingleton<MultipleTemplateSearchLoopFlowStepViewModel>();
 
                 services.AddSingleton<MultipleTemplateSearchFlowStepPage>();
                 services.AddSingleton<MultipleTemplateSearchFlowStepViewModel>();

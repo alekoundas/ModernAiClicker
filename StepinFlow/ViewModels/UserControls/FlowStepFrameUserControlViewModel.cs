@@ -39,9 +39,9 @@ namespace StepinFlow.ViewModels.UserControls
 
         // Flow Type
         [ObservableProperty]
-        private FlowStepTypesEnum _selectedFlowType = FlowStepTypesEnum.NO_SELECTION;
+        private FlowTypesEnum _selectedFlowType = FlowTypesEnum.NO_SELECTION;
         [ObservableProperty]
-        private List<FlowStepTypesEnum> _flowTypes = Enum.GetValues(typeof(FlowStepTypesEnum)).Cast<FlowStepTypesEnum>().ToList();
+        private List<FlowTypesEnum> _flowTypes = Enum.GetValues(typeof(FlowTypesEnum)).Cast<FlowTypesEnum>().ToList();
         [ObservableProperty]
         private Visibility _flowVisibility = Visibility.Collapsed;
 
@@ -60,7 +60,7 @@ namespace StepinFlow.ViewModels.UserControls
         private readonly Dictionary<FlowStepTypesEnum, Lazy<IFlowStepDetailPage>> _flowStepPageFactory;
         private readonly Dictionary<FlowParameterTypesEnum, Lazy<IFlowParameterDetailPage>> _flowParameterPageFactory;
         private readonly Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>> _executionFlowStepPageFactory;
-        private readonly Dictionary<FlowStepTypesEnum, Lazy<IFlowDetailPage>> _flowPageFactory;
+        private readonly Dictionary<FlowTypesEnum, Lazy<IFlowDetailPage>> _flowPageFactory;
         private FlowStep? _newFlowStep = null;
         private FlowParameter? _newFlowParameter = null;
 
@@ -73,8 +73,6 @@ namespace StepinFlow.ViewModels.UserControls
             _flowStepPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IFlowStepDetailPage>>
             {
                 { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<TemplateSearchFlowStepPage>()) },
-                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<TemplateSearchLoopFlowStepPage>()) },
-                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchLoopFlowStepPage>()) },
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchFlowStepPage>()) },
                 { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WaitForTemplateFlowStepPage>()) },
                 { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<CursorMoveFlowStepPage>()) },
@@ -87,18 +85,16 @@ namespace StepinFlow.ViewModels.UserControls
                 { FlowStepTypesEnum.LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<LoopFlowStepPage>()) }
             };
 
-            _flowPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IFlowDetailPage>>
+            _flowPageFactory = new Dictionary<FlowTypesEnum, Lazy<IFlowDetailPage>>
             {
-                { FlowStepTypesEnum.FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
-                { FlowStepTypesEnum.SUB_FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
-                { FlowStepTypesEnum.NO_SELECTION, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
+                { FlowTypesEnum.FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
+                { FlowTypesEnum.SUB_FLOW, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
+                { FlowTypesEnum.NO_SELECTION, new Lazy<IFlowDetailPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
             };
 
             _executionFlowStepPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IExecutionPage>>
             {
                 { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<TemplateSearchExecutionPage>()) },
-                { FlowStepTypesEnum.TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<TemplateSearchExecutionPage>()) },
-                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchLoopExecutionPage>()) },
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<MultipleTemplateSearchExecutionPage>()) },
                 { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WaitForTemplateExecutionPage>()) },
                 { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<CursorMoveExecutionPage>()) },
@@ -214,7 +210,7 @@ namespace StepinFlow.ViewModels.UserControls
             FrameFlowParameter = null;
             FrameExecution = null;
             // Navigate to existing flow.
-            FlowStepTypesEnum? flowType = await _baseDatawork.Flows.Query
+            FlowTypesEnum? flowType = await _baseDatawork.Flows.Query
                 .AsNoTracking()
                 .Where(x => x.Id == id)
                 .Select(x => x.Type)
@@ -240,7 +236,7 @@ namespace StepinFlow.ViewModels.UserControls
             FrameExecution = null;
             if (execution.FlowStep != null)
             {
-                SelectedFlowType = execution.FlowStep.Type;
+                SelectedFlowStepType = execution.FlowStep.Type;
                 FlowStepVisibility = Visibility.Visible;
                 FlowVisibility = Visibility.Collapsed;
                 FlowParameterVisibility = Visibility.Collapsed;

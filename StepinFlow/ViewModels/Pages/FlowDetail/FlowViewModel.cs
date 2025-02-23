@@ -46,7 +46,7 @@ namespace StepinFlow.ViewModels.Pages
                 if (Flow.Name.Length == 0)
                     Flow.Name = "Flow";
 
-                    Flow.Type = FlowStepTypesEnum.FLOW;
+                    Flow.Type = FlowTypesEnum.FLOW;
                 _baseDatawork.Flows.Add(Flow);
             }
 
