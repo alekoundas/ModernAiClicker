@@ -184,7 +184,7 @@ namespace Business.Factories.Workers
             List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
                 .Where(x =>
                     x.ExecutionResultEnum == ExecutionResultEnum.FAIL ||
-                    (x?.FlowStep?.ParentTemplateSearchFlowStep?.MaxLoopCount > 0 && x.LoopCount >= x.FlowStep.ParentTemplateSearchFlowStep.MaxLoopCount))
+                    (x?.FlowStep?.ParentTemplateSearchFlowStep?.LoopMaxCount > 0 && x.LoopCount >= x.FlowStep.ParentTemplateSearchFlowStep.LoopMaxCount))
                 .Select(x => x.FlowStepId ?? 0)
                 .Where(x => x != 0)
                 .ToList();

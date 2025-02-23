@@ -194,14 +194,13 @@ namespace StepinFlow.ViewModels.Pages
         private async Task OnButtonSaveClick()
         {
             // Edit mode
-            // Edit mode
             if (FlowStep.Id > 0)
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Accuracy = FlowStep.Accuracy;
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.ProcessName = FlowStep.ProcessName;
-                updateFlowStep.MaxLoopCount = FlowStep.MaxLoopCount;
+                updateFlowStep.LoopMaxCount = FlowStep.LoopMaxCount;
             }
 
             /// Add mode

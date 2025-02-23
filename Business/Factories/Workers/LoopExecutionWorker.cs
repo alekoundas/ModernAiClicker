@@ -61,7 +61,7 @@ namespace Business.Factories.Workers
                 return await Task.FromResult<FlowStep?>(null);
 
             // If MaxLoopCount is 0 or CurrentLoopCount < MaxLoopCount, return te same flow step.
-            if (execution.FlowStep.MaxLoopCount == 0 || execution.LoopCount <= execution.FlowStep.MaxLoopCount)
+            if (execution.FlowStep.LoopMaxCount == 0 || execution.LoopCount <= execution.FlowStep.LoopMaxCount)
                 return execution.FlowStep;
 
 

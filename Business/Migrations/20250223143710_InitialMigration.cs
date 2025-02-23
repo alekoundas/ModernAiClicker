@@ -31,7 +31,7 @@ namespace Business.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FlowParameter",
+                name: "FlowParameters",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -43,20 +43,25 @@ namespace Business.Migrations
                     IsSelected = table.Column<bool>(type: "INTEGER", nullable: false),
                     OrderingNum = table.Column<int>(type: "INTEGER", nullable: false),
                     Type = table.Column<string>(type: "TEXT", nullable: false),
-                    LocationX = table.Column<int>(type: "INTEGER", nullable: false),
-                    LocationY = table.Column<int>(type: "INTEGER", nullable: false)
+                    TemplateSearchAreaType = table.Column<string>(type: "TEXT", nullable: true),
+                    ProcessName = table.Column<string>(type: "TEXT", nullable: false),
+                    SystemMonitorDeviceName = table.Column<string>(type: "TEXT", nullable: false),
+                    LocationTop = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationLeft = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationRight = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationBottom = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FlowParameter", x => x.Id);
+                    table.PrimaryKey("PK_FlowParameters", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FlowParameter_FlowParameter_ParentFlowParameterId",
+                        name: "FK_FlowParameters_FlowParameters_ParentFlowParameterId",
                         column: x => x.ParentFlowParameterId,
-                        principalTable: "FlowParameter",
+                        principalTable: "FlowParameters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FlowParameter_Flows_FlowId",
+                        name: "FK_FlowParameters_Flows_FlowId",
                         column: x => x.FlowId,
                         principalTable: "Flows",
                         principalColumn: "Id",
@@ -79,33 +84,33 @@ namespace Business.Migrations
                     IsSelected = table.Column<bool>(type: "INTEGER", nullable: false),
                     OrderingNum = table.Column<int>(type: "INTEGER", nullable: false),
                     Type = table.Column<string>(type: "TEXT", nullable: false),
+                    TemplateMatchMode = table.Column<string>(type: "TEXT", nullable: true),
                     TemplateImage = table.Column<byte[]>(type: "BLOB", nullable: true),
                     Accuracy = table.Column<decimal>(type: "TEXT", nullable: false),
-                    LocationX = table.Column<int>(type: "INTEGER", nullable: false),
-                    LocationY = table.Column<int>(type: "INTEGER", nullable: false),
-                    MaxLoopCount = table.Column<int>(type: "INTEGER", nullable: false),
                     RemoveTemplateFromResult = table.Column<bool>(type: "INTEGER", nullable: false),
-                    MouseAction = table.Column<int>(type: "INTEGER", nullable: false),
-                    MouseButton = table.Column<int>(type: "INTEGER", nullable: false),
-                    MouseScrollDirectionEnum = table.Column<int>(type: "INTEGER", nullable: false),
-                    MouseLoopInfinite = table.Column<bool>(type: "INTEGER", nullable: false),
-                    MouseLoopTimes = table.Column<int>(type: "INTEGER", nullable: false),
-                    MouseLoopDebounceTime = table.Column<int>(type: "INTEGER", nullable: false),
-                    MouseLoopTime = table.Column<TimeOnly>(type: "TEXT", nullable: true),
+                    MouseAction = table.Column<int>(type: "INTEGER", nullable: true),
+                    MouseButton = table.Column<int>(type: "INTEGER", nullable: true),
+                    MouseScrollDirectionEnum = table.Column<int>(type: "INTEGER", nullable: true),
                     WaitForHours = table.Column<int>(type: "INTEGER", nullable: false),
                     WaitForMinutes = table.Column<int>(type: "INTEGER", nullable: false),
                     WaitForSeconds = table.Column<int>(type: "INTEGER", nullable: false),
                     WaitForMilliseconds = table.Column<int>(type: "INTEGER", nullable: false),
                     Height = table.Column<int>(type: "INTEGER", nullable: false),
-                    Width = table.Column<int>(type: "INTEGER", nullable: false)
+                    Width = table.Column<int>(type: "INTEGER", nullable: false),
+                    LoopCount = table.Column<int>(type: "INTEGER", nullable: false),
+                    LoopInfinite = table.Column<bool>(type: "INTEGER", nullable: false),
+                    LoopMaxCount = table.Column<int>(type: "INTEGER", nullable: false),
+                    LoopTime = table.Column<TimeOnly>(type: "TEXT", nullable: true),
+                    LocationX = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationY = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FlowSteps", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FlowSteps_FlowParameter_FlowParameterId",
+                        name: "FK_FlowSteps_FlowParameters_FlowParameterId",
                         column: x => x.FlowParameterId,
-                        principalTable: "FlowParameter",
+                        principalTable: "FlowParameters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
@@ -113,7 +118,7 @@ namespace Business.Migrations
                         column: x => x.ParentFlowStepId,
                         principalTable: "FlowSteps",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_FlowSteps_FlowSteps_ParentTemplateSearchFlowStepId",
                         column: x => x.ParentTemplateSearchFlowStepId,
@@ -212,20 +217,20 @@ namespace Business.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlowParameter_FlowId",
-                table: "FlowParameter",
+                name: "IX_FlowParameters_FlowId",
+                table: "FlowParameters",
                 column: "FlowId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlowParameter_Id",
-                table: "FlowParameter",
+                name: "IX_FlowParameters_Id",
+                table: "FlowParameters",
                 column: "Id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlowParameter_ParentFlowParameterId",
-                table: "FlowParameter",
+                name: "IX_FlowParameters_ParentFlowParameterId",
+                table: "FlowParameters",
                 column: "ParentFlowParameterId");
 
             migrationBuilder.CreateIndex(
@@ -272,7 +277,7 @@ namespace Business.Migrations
                 name: "FlowSteps");
 
             migrationBuilder.DropTable(
-                name: "FlowParameter");
+                name: "FlowParameters");
 
             migrationBuilder.DropTable(
                 name: "Flows");

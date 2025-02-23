@@ -40,15 +40,6 @@ namespace Model.Models
         public decimal _accuracy = 0.00m;
 
         [ObservableProperty]
-        public int _locationX;
-
-        [ObservableProperty]
-        public int _locationY;
-
-        [ObservableProperty]
-        public int _maxLoopCount;
-
-        [ObservableProperty]
         public bool _removeTemplateFromResult;
 
         // Cursor
@@ -60,18 +51,6 @@ namespace Model.Models
 
         [ObservableProperty]
         public MouseScrollDirectionEnum? _mouseScrollDirectionEnum;
-
-        [ObservableProperty]
-        public bool _mouseLoopInfinite;
-
-        [ObservableProperty]
-        public int _mouseLoopTimes;
-
-        [ObservableProperty]
-        public int _mouseLoopDebounceTime;
-
-        [ObservableProperty]
-        public TimeOnly? _mouseLoopTime;
 
         //System
         [ObservableProperty]
@@ -92,6 +71,27 @@ namespace Model.Models
 
         [ObservableProperty]
         public int _width;
+
+        // Reusable
+        [ObservableProperty]
+        public int _loopCount;
+
+        [ObservableProperty]
+        public bool _loopInfinite;
+
+        [ObservableProperty]
+        public int _loopMaxCount;
+
+        [ObservableProperty]
+        public TimeOnly? _loopTime;
+
+        [ObservableProperty]
+        public int _locationX;
+
+        [ObservableProperty]
+        public int _locationY;
+
+
 
 
         public int? FlowId { get; set; }

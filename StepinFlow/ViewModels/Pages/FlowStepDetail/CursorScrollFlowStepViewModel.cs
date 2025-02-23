@@ -45,7 +45,7 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.MouseScrollDirectionEnum = FlowStep.MouseScrollDirectionEnum;
-                updateFlowStep.MouseLoopTimes = FlowStep.MouseLoopTimes;
+                updateFlowStep.LoopCount = FlowStep.LoopCount;
 
             }
 

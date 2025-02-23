@@ -21,7 +21,7 @@ namespace Business.Factories.Workers
                 return Task.CompletedTask;
 
 
-            _systemService.CursorScroll(execution.FlowStep.MouseScrollDirectionEnum.Value, execution.FlowStep.MouseLoopTimes);
+            _systemService.CursorScroll(execution.FlowStep.MouseScrollDirectionEnum.Value, execution.FlowStep.LoopCount);
 
             return Task.CompletedTask;
         }

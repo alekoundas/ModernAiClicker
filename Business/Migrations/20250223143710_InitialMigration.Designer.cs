@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    [Migration("20250222213658_InitialMigration3")]
-    partial class InitialMigration3
+    [Migration("20250223143710_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -184,8 +184,8 @@ namespace Business.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("TemplateSearchAreaTypesEnum")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("TemplateSearchAreaType")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -234,28 +234,25 @@ namespace Business.Migrations
                     b.Property<int>("LocationY")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MaxLoopCount")
+                    b.Property<int>("LoopCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MouseAction")
+                    b.Property<bool>("LoopInfinite")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MouseButton")
+                    b.Property<int>("LoopMaxCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MouseLoopDebounceTime")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("MouseLoopInfinite")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeOnly?>("MouseLoopTime")
+                    b.Property<TimeOnly?>("LoopTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("MouseLoopTimes")
+                    b.Property<int?>("MouseAction")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MouseScrollDirectionEnum")
+                    b.Property<int?>("MouseButton")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MouseScrollDirectionEnum")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -280,6 +277,9 @@ namespace Business.Migrations
 
                     b.Property<byte[]>("TemplateImage")
                         .HasColumnType("BLOB");
+
+                    b.Property<string>("TemplateMatchMode")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
                         .IsRequired()

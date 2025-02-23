@@ -231,25 +231,22 @@ namespace Business.Migrations
                     b.Property<int>("LocationY")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MaxLoopCount")
+                    b.Property<int>("LoopCount")
                         .HasColumnType("INTEGER");
+
+                    b.Property<bool>("LoopInfinite")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LoopMaxCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeOnly?>("LoopTime")
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("MouseAction")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("MouseButton")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MouseLoopDebounceTime")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("MouseLoopInfinite")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeOnly?>("MouseLoopTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MouseLoopTimes")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("MouseScrollDirectionEnum")

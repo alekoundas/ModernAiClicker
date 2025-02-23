@@ -44,7 +44,7 @@ namespace StepinFlow.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.MaxLoopCount = FlowStep.MaxLoopCount;
+                updateFlowStep.LoopMaxCount = FlowStep.LoopMaxCount;
             }
 
             /// Add mode
