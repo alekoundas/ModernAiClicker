@@ -7,7 +7,7 @@ namespace StepinFlow.Views.Pages.Executions
     public partial class WaitForTemplateExecutionPage : Page, IExecutionPage
     {
         public IExecutionViewModel ViewModel { get; set; }
-        public WaitForTemplateExecutionPage(WaitForTemplateExecutionViewModel viewModel)
+        public WaitForTemplateExecutionPage(WaitForTemplateExecutionVM viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();

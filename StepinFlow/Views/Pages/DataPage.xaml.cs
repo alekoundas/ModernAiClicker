@@ -3,11 +3,11 @@ using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages
 {
-    public partial class DataPage : INavigableView<DataViewModel>
+    public partial class DataPage : INavigableView<DataVM>
     {
-        public DataViewModel ViewModel { get; }
+        public DataVM ViewModel { get; }
 
-        public DataPage(DataViewModel viewModel)
+        public DataPage(DataVM viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

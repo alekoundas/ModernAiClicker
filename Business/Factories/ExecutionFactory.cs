@@ -53,13 +53,13 @@ namespace Business.Factories
             {
                 { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionWorker>(() => new WindowMoveExecutionWorker(_baseDatawork, _systemService)) },
                 { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionWorker>(() => new WindowResizeExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionWorker>(() => new MouseMoveExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionWorker>(() => new MouseClickExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionWorker>(() => new MouseScrollExecutionWorker(_baseDatawork, _systemService)) },
+                { FlowStepTypesEnum.MOUSE_MOVE_COORDINATES, new Lazy<IExecutionWorker>(() => new CursorRelocateExecutionWorker(_baseDatawork, _systemService)) },
+                { FlowStepTypesEnum.MOUSE_CLICK, new Lazy<IExecutionWorker>(() => new CursorClickExecutionWorker(_baseDatawork, _systemService)) },
+                { FlowStepTypesEnum.MOUSE_SCROLL, new Lazy<IExecutionWorker>(() => new CursorScrollExecutionWorker(_baseDatawork, _systemService)) },
                 { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionWorker>(() => new WaitForTemplateExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },
                 { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new TemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new MultipleTemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },
-                { FlowStepTypesEnum.WAIT, new Lazy<IExecutionWorker>(() => new SleepExecutionWorker(_baseDatawork, _systemService,_cancellationToken)) },
+                { FlowStepTypesEnum.WAIT, new Lazy<IExecutionWorker>(() => new WaitExecutionWorker(_baseDatawork, _systemService,_cancellationToken)) },
                 { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionWorker>(() => new GoToExecutionWorker(_baseDatawork, _systemService)) },
                 { FlowStepTypesEnum.LOOP, new Lazy<IExecutionWorker>(() => new LoopExecutionWorker(_baseDatawork, _systemService)) }
             };

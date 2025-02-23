@@ -7,7 +7,7 @@ namespace StepinFlow.Views.Pages.Executions
     public partial class WindowResizeExecutionPage : Page, IExecutionPage
     {
         public IExecutionViewModel ViewModel { get; set; }
-        public WindowResizeExecutionPage(WindowResizeExecutionViewModel viewModel)
+        public WindowResizeExecutionPage(WindowResizeExecutionVM viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();

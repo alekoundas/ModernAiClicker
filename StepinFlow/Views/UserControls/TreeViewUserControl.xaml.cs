@@ -2,7 +2,7 @@
 using StepinFlow.ViewModels.UserControls;
 using System.Windows;
 using System.Windows.Controls;
-using static StepinFlow.ViewModels.Pages.FlowsViewModel;
+using static StepinFlow.ViewModels.Pages.FlowsVM;
 
 namespace StepinFlow.Views.UserControls
 {
@@ -32,12 +32,12 @@ namespace StepinFlow.Views.UserControls
         public event EventHandler<int>? OnFlowStepClone;
         public event EventHandler<FlowStep>? OnAddFlowStepClick;
         public event EventHandler<FlowParameter>? OnAddFlowParameterClick;
-        public TreeViewUserControlViewModel? ViewModel { get; set; }
+        public TreeViewUserControlVM? ViewModel { get; set; }
 
         public TreeViewUserControl()
         {
             // Resolve the ViewModel from the DI container.
-            ViewModel = App.GetService<TreeViewUserControlViewModel>();
+            ViewModel = App.GetService<TreeViewUserControlVM>();
 
             if (ViewModel == null)
             {

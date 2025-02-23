@@ -7,7 +7,7 @@ namespace StepinFlow.Views.Pages.Executions
     public partial class TemplateSearchExecutionPage : Page, IExecutionPage
     {
         public IExecutionViewModel ViewModel { get; set; }
-        public TemplateSearchExecutionPage(TemplateSearchExecutionViewModel viewModel)
+        public TemplateSearchExecutionPage(TemplateSearchExecutionVM viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();

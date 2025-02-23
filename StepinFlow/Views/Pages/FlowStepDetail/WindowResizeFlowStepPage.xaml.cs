@@ -7,7 +7,7 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
     public partial class WindowResizeFlowStepPage : Page, IFlowStepDetailPage
     {
         public IFlowStepDetailVM ViewModel { get; set; }
-        public WindowResizeFlowStepPage(WindowResizeFlowStepViewModel viewModel)
+        public WindowResizeFlowStepPage(WindowResizeFlowStepVM viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();

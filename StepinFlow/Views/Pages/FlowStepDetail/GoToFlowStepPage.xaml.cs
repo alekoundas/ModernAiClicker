@@ -7,7 +7,7 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
     public partial class GoToFlowStepPage : Page, IFlowStepDetailPage
     {
         public IFlowStepDetailVM ViewModel { get; set; }
-        public GoToFlowStepPage(GoToFlowStepViewModel viewModel)
+        public GoToFlowStepPage(GoToFlowStepVM viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();

@@ -9,7 +9,7 @@ namespace StepinFlow.Views.Pages.Executions
         public IExecutionViewModel ViewModel { get; set; }
         public LoopExecutionPage()
         {
-            ViewModel = new LoopExecutionViewModel();
+            ViewModel = new LoopExecutionVM();
             InitializeComponent();
             DataContext = this;
         }

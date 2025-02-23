@@ -8,7 +8,7 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
     {
         public IFlowStepDetailVM ViewModel { get; set; }
 
-        public TemplateSearchFlowStepPage(TemplateSearchFlowStepViewModel viewModel)
+        public TemplateSearchFlowStepPage(TemplateSearchFlowStepVM viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

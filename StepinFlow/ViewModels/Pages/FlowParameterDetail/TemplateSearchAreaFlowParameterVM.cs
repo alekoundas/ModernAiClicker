@@ -15,7 +15,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
-        private readonly FlowsViewModel _flowsViewModel;
+        private readonly FlowsVM _flowsViewModel;
 
         [ObservableProperty]
         private SystemMonitor _searchAreaRectangle = new SystemMonitor();
@@ -37,7 +37,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
         private TemplateSearchAreaTypesEnum _selectedTemplateSearchAreaTypesEnum = TemplateSearchAreaTypesEnum.SELECT_EVERY_MONITOR;
 
         public TemplateSearchAreaFlowParameterVM(
-            FlowsViewModel flowsViewModel,
+            FlowsVM flowsViewModel,
             IBaseDatawork baseDatawork,
             ISystemService systemService) : base(baseDatawork)
         {

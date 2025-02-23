@@ -5,10 +5,10 @@ using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages
 {
-    public partial class ExecutionPage : INavigableView<ExecutionViewModel>
+    public partial class ExecutionPage : INavigableView<ExecutionVM>
     {
-        public ExecutionViewModel ViewModel { get; }
-        public ExecutionPage(ExecutionViewModel viewModel)
+        public ExecutionVM ViewModel { get; }
+        public ExecutionPage(ExecutionVM viewModel)
         {
             viewModel.LoadFlows += InvokeLoadFlowsAction;
             viewModel.ExpandAndSelectFlowStep += InvokeExpandAndSelectFlowStepAction;
@@ -25,7 +25,7 @@ namespace StepinFlow.Views.Pages
         }
         public void InvokeNavigateToExecutionAction(Execution execution)
         {
-            FlowStepFrameUserControl.ViewModel.NavigateToExecution(execution);
+            FrameDetailUserControl.ViewModel.NavigateToExecution(execution);
         }
 
         public async Task InvokeExpandAndSelectFlowStepAction(Execution execution)

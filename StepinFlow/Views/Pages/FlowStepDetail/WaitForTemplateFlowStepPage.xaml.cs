@@ -10,7 +10,7 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
     {
         public IFlowStepDetailVM ViewModel { get; set; }
 
-        public WaitForTemplateFlowStepPage(WaitForTemplateFlowStepViewModel viewModel)
+        public WaitForTemplateFlowStepPage(WaitForTemplateFlowStepVM viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

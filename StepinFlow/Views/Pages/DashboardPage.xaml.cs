@@ -3,11 +3,11 @@ using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages
 {
-    public partial class DashboardPage : INavigableView<DashboardViewModel>
+    public partial class DashboardPage : INavigableView<DashboardVM>
     {
-        public DashboardViewModel ViewModel { get; }
+        public DashboardVM ViewModel { get; }
 
-        public DashboardPage(DashboardViewModel viewModel)
+        public DashboardPage(DashboardVM viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

@@ -5,9 +5,9 @@ namespace StepinFlow.Views.Windows
 {
     public partial class ScreenshotSelectionWindow : Window
     {
-        public ScreenshotSelectionWindowViewModel ViewModel { get; }
+        public ScreenshotSelectionWindowVM ViewModel { get; }
 
-        public ScreenshotSelectionWindow(ScreenshotSelectionWindowViewModel viewModel)
+        public ScreenshotSelectionWindow(ScreenshotSelectionWindowVM viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

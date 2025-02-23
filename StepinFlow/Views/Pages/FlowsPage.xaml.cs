@@ -2,15 +2,15 @@
 using StepinFlow.ViewModels.Pages;
 using Wpf.Ui.Controls;
 using StepinFlow.Views.UserControls;
-using static StepinFlow.ViewModels.Pages.FlowsViewModel;
+using static StepinFlow.ViewModels.Pages.FlowsVM;
 
 namespace StepinFlow.Views.Pages
 {
-    public partial class FlowsPage : INavigableView<FlowsViewModel>
+    public partial class FlowsPage : INavigableView<FlowsVM>
     {
-        public FlowsViewModel ViewModel { get; }
+        public FlowsVM ViewModel { get; }
 
-        public FlowsPage(FlowsViewModel viewModel, TreeViewUserControl treeViewUserControl)
+        public FlowsPage(FlowsVM viewModel, TreeViewUserControl treeViewUserControl)
         {
             viewModel.IsLockedChanged += OnIsLockedChangedEvent;
 
@@ -88,26 +88,26 @@ namespace StepinFlow.Views.Pages
 
         public async Task InvokeNavigateToFlowAction(int id)
         {
-            await FlowStepFrameUserControl.ViewModel.NavigateToFlow(id);
+            await FrameDetailUserControl.ViewModel.NavigateToFlow(id);
         }
 
         public async Task InvokeNavigateToFlowStepAction(int id)
         {
-            await FlowStepFrameUserControl.ViewModel.NavigateToFlowStep(id);
+            await FrameDetailUserControl.ViewModel.NavigateToFlowStep(id);
         }
         public async Task InvokeNavigateToFlowParameterAction(int id)
         {
-            await FlowStepFrameUserControl.ViewModel.NavigateToFlowParameter(id);
+            await FrameDetailUserControl.ViewModel.NavigateToFlowParameter(id);
         }
 
         public void InvokeNavigateToNewFlowStepAction(FlowStep flowStep)
         {
-            FlowStepFrameUserControl.ViewModel.NavigateToNewFlowStep(flowStep);
+            FrameDetailUserControl.ViewModel.NavigateToNewFlowStep(flowStep);
         }
 
         public void InvokeNavigateToNewFlowParameter(FlowParameter flowParameter)
         {
-            FlowStepFrameUserControl.ViewModel.NavigateToNewFlowParameter(flowParameter);
+            FrameDetailUserControl.ViewModel.NavigateToNewFlowParameter(flowParameter);
         }
 
     }

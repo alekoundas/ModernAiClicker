@@ -8,7 +8,7 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
     {
 
         public IFlowStepDetailVM ViewModel { get; set; }
-        public LoopFlowStepPage(LoopFlowStepViewModel viewModel)
+        public LoopFlowStepPage(LoopFlowStepVM viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

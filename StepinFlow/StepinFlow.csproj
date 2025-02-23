@@ -69,9 +69,6 @@
     <Compile Update="Views\Pages\Executions\MultipleTemplateSearchExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Executions\MultipleTemplateSearchLoopExecutionPage.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Views\Pages\Executions\WaitForTemplateExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -84,13 +81,13 @@
     <Compile Update="Views\Pages\Executions\CursorClickExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Executions\CursorMoveExecutionPage.xaml.cs">
+    <Compile Update="Views\Pages\Executions\CursorRelocateExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\Executions\GoToExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\Executions\SleepExecutionPage.xaml.cs">
+    <Compile Update="Views\Pages\Executions\WaitExecutionPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\Executions\TemplateSearchExecutionPage.xaml.cs">
@@ -123,7 +120,7 @@
     <Compile Update="Views\Pages\FlowStepDetail\GoToFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Pages\FlowStepDetail\SleepFlowStepPage.xaml.cs">
+    <Compile Update="Views\Pages\FlowStepDetail\WaitFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\CursorClickFlowStepPage.xaml.cs">

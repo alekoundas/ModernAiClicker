@@ -9,7 +9,7 @@ namespace StepinFlow.Views.Pages.Executions
         public IExecutionViewModel ViewModel { get; set; }
         public CursorClickExecutionPage()
         {
-            ViewModel = new CursorClickExecutionViewModel();
+            ViewModel = new CursorClickExecutionVM();
             InitializeComponent();
             DataContext = this;
         }

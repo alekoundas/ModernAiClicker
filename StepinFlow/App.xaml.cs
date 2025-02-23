@@ -64,10 +64,10 @@ namespace StepinFlow
 
                 // Windows.
                 services.AddTransient<ScreenshotSelectionWindow>();
-                services.AddTransient<ScreenshotSelectionWindowViewModel>();
+                services.AddTransient<ScreenshotSelectionWindowVM>();
 
                 services.AddSingleton<INavigationWindow, MainWindow>();
-                services.AddSingleton<MainWindowViewModel>();
+                services.AddSingleton<MainWindowVM>();
 
                 // Services.
                 services.AddSingleton<ISnackbarService, SnackbarService>();
@@ -91,43 +91,43 @@ namespace StepinFlow
                 // Factory.
                 services.AddScoped<IExecutionFactory, ExecutionFactory>();
                 services.AddScoped<GoToExecutionWorker>();
-                services.AddScoped<SleepExecutionWorker>();
-                services.AddScoped<MouseMoveExecutionWorker>();
+                services.AddScoped<WaitExecutionWorker>();
+                services.AddScoped<CursorRelocateExecutionWorker>();
                 services.AddScoped<WindowMoveExecutionWorker>();
-                services.AddScoped<MouseClickExecutionWorker>();
-                services.AddScoped<MouseScrollExecutionWorker>();
+                services.AddScoped<CursorClickExecutionWorker>();
+                services.AddScoped<CursorScrollExecutionWorker>();
                 services.AddScoped<WindowResizeExecutionWorker>();
                 services.AddScoped<TemplateSearchExecutionWorker>();
                 services.AddScoped<MultipleTemplateSearchExecutionWorker>();
 
                 // User Controls
                 services.AddTransient<TreeViewUserControl>();
-                services.AddTransient<TreeViewUserControlViewModel>();
+                services.AddTransient<TreeViewUserControlVM>();
 
-                services.AddTransient<FlowStepFrameUserControl>();
-                services.AddTransient<FlowStepFrameUserControlViewModel>();
+                services.AddTransient<FrameDetailUserControl>();
+                services.AddTransient<FrameDetailUserControlVM>();
 
 
 
                 // Pages
                 services.AddTransient<DashboardPage>();
-                services.AddTransient<DashboardViewModel>();
+                services.AddTransient<DashboardVM>();
 
                 services.AddTransient<DataPage>();
-                services.AddTransient<DataViewModel>();
+                services.AddTransient<DataVM>();
 
                 services.AddTransient<FlowsPage>();
-                services.AddTransient<FlowsViewModel>();
+                services.AddTransient<FlowsVM>();
 
                 services.AddTransient<ExecutionPage>();
-                services.AddTransient<ExecutionViewModel>();
+                services.AddTransient<ExecutionVM>();
 
                 services.AddTransient<SettingsPage>();
-                services.AddTransient<SettingsViewModel>();
+                services.AddTransient<SettingsVM>();
 
                 // Flow detail.
                 services.AddSingleton<FlowPage>();
-                services.AddSingleton<FlowViewModel>();
+                services.AddSingleton<FlowVM>();
 
                 // Flow parameter detail.
                 services.AddSingleton<TemplateSearchAreaFlowParameterPage>();
@@ -135,76 +135,70 @@ namespace StepinFlow
 
                 // Flow step detail.
                 services.AddSingleton<TemplateSearchFlowStepPage>();
-                services.AddSingleton<TemplateSearchFlowStepViewModel>();
+                services.AddSingleton<TemplateSearchFlowStepVM>();
 
                 services.AddSingleton<MultipleTemplateSearchFlowStepPage>();
-                services.AddSingleton<MultipleTemplateSearchFlowStepViewModel>();
+                services.AddSingleton<MultipleTemplateSearchFlowStepVM>();
 
                 services.AddSingleton<WaitForTemplateFlowStepPage>();
-                services.AddSingleton<WaitForTemplateFlowStepViewModel>();
+                services.AddSingleton<WaitForTemplateFlowStepVM>();
 
                 services.AddSingleton<CursorClickFlowStepPage>();
-                services.AddSingleton<CursorClickFlowStepViewModel>();
+                services.AddSingleton<CursorClickFlowStepVM>();
 
-                services.AddSingleton<CursorMoveFlowStepPage>();
-                services.AddSingleton<CursorMoveFlowStepViewModel>();
+                services.AddSingleton<CursorRelocateFlowStepPage>();
+                services.AddSingleton<CursorRelocateFlowStepVM>();
 
                 services.AddSingleton<CursorScrollFlowStepPage>();
-                services.AddSingleton<CursorScrollFlowStepViewModel>();
+                services.AddSingleton<CursorScrollFlowStepVM>();
 
-                services.AddSingleton<SleepFlowStepPage>();
-                services.AddSingleton<SleepFlowStepViewModel>();
+                services.AddSingleton<WaitFlowStepPage>();
+                services.AddSingleton<WaitFlowStepVM>();
 
                 services.AddSingleton<GoToFlowStepPage>();
-                services.AddSingleton<GoToFlowStepViewModel>();
+                services.AddSingleton<GoToFlowStepVM>();
 
                 services.AddSingleton<WindowResizeFlowStepPage>();
-                services.AddSingleton<WindowResizeFlowStepViewModel>();
+                services.AddSingleton<WindowResizeFlowStepVM>();
 
                 services.AddSingleton<WindowMoveFlowStepPage>();
-                services.AddSingleton<WindowMoveFlowStepViewModel>();
+                services.AddSingleton<WindowMoveFlowStepVM>();
 
                 services.AddSingleton<LoopFlowStepPage>();
-                services.AddSingleton<LoopFlowStepViewModel>();
+                services.AddSingleton<LoopFlowStepVM>();
 
                 //Flow execution step detail
                 services.AddSingleton<TemplateSearchExecutionPage>();
-                services.AddSingleton<TemplateSearchExecutionViewModel>();
-
-                services.AddSingleton<TemplateSearchLoopExecutionPage>();
-                services.AddSingleton<TemplateSearchLoopExecutionViewModel>();
-
-                services.AddSingleton<MultipleTemplateSearchLoopExecutionPage>();
-                services.AddSingleton<MultipleTemplateSearchLoopExecutionViewModel>();
+                services.AddSingleton<TemplateSearchExecutionVM>();
 
                 services.AddSingleton<MultipleTemplateSearchExecutionPage>();
-                services.AddSingleton<MultipleTemplateSearchExecutionViewModel>();
+                services.AddSingleton<MultipleTemplateSearchExecutionVM>();
 
                 services.AddSingleton<WaitForTemplateExecutionPage>();
-                services.AddSingleton<WaitForTemplateExecutionViewModel>();
+                services.AddSingleton<WaitForTemplateExecutionVM>();
 
                 services.AddSingleton<CursorClickExecutionPage>();
-                services.AddSingleton<CursorClickExecutionViewModel>();
+                services.AddSingleton<CursorClickExecutionVM>();
 
-                services.AddSingleton<CursorMoveExecutionPage>();
-                services.AddSingleton<CursorMoveExecutionViewModel>();
+                services.AddSingleton<CursorRelocateExecutionPage>();
+                services.AddSingleton<CursorRelocateExecutionVM>();
 
                 services.AddSingleton<CursorScrollExecutionPage>();
-                services.AddSingleton<CursorScrollExecutionViewModel>();
+                services.AddSingleton<CursorScrollExecutionVM>();
 
-                services.AddSingleton<SleepExecutionPage>();
-                services.AddSingleton<SleepExecutionViewModel>();
+                services.AddSingleton<WaitExecutionPage>();
+                services.AddSingleton<WaitExecutionVM>();
 
                 services.AddSingleton<GoToExecutionPage>();
-                services.AddSingleton<GoToExecutionViewModel>();
+                services.AddSingleton<GoToExecutionVM>();
 
-                services.AddSingleton<WindowResizeExecutionViewModel>();
+                services.AddSingleton<WindowResizeExecutionVM>();
                 services.AddSingleton<WindowResizeExecutionPage>();
 
-                services.AddSingleton<WindowMoveExecutionViewModel>();
+                services.AddSingleton<WindowMoveExecutionVM>();
                 services.AddSingleton<WindowMoveExecutionPage>();
 
-                services.AddSingleton<LoopExecutionViewModel>();
+                services.AddSingleton<LoopExecutionVM>();
                 services.AddSingleton<LoopExecutionPage>();
 
             }).Build();

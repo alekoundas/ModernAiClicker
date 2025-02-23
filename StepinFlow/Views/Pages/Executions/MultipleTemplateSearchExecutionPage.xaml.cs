@@ -7,7 +7,7 @@ namespace StepinFlow.Views.Pages.Executions
     public partial class MultipleTemplateSearchExecutionPage : Page, IExecutionPage
     {
         public IExecutionViewModel ViewModel { get; set; }
-        public MultipleTemplateSearchExecutionPage(MultipleTemplateSearchExecutionViewModel viewModel)
+        public MultipleTemplateSearchExecutionPage(MultipleTemplateSearchExecutionVM viewModel)
         {
             ViewModel = viewModel;
             DataContext = ViewModel;

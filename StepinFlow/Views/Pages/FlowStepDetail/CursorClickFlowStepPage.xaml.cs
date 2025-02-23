@@ -7,7 +7,7 @@ namespace StepinFlow.Views.Pages.FlowStepDetail
     public partial class CursorClickFlowStepPage : Page, IFlowStepDetailPage
     {
         public IFlowStepDetailVM ViewModel { get; set; }
-        public CursorClickFlowStepPage(CursorClickFlowStepViewModel viewModel)
+        public CursorClickFlowStepPage(CursorClickFlowStepVM viewModel)
         {
             ViewModel = viewModel;
             InitializeComponent();

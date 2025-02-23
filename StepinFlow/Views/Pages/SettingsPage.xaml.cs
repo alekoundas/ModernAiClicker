@@ -3,11 +3,11 @@ using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages
 {
-    public partial class SettingsPage : INavigableView<SettingsViewModel>
+    public partial class SettingsPage : INavigableView<SettingsVM>
     {
-        public SettingsViewModel ViewModel { get; }
+        public SettingsVM ViewModel { get; }
 
-        public SettingsPage(SettingsViewModel viewModel)
+        public SettingsPage(SettingsVM viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

@@ -8,10 +8,10 @@ namespace StepinFlow.Views.Windows
 {
     public partial class MainWindow : INavigationWindow
     {
-        public MainWindowViewModel ViewModel { get; }
+        public MainWindowVM ViewModel { get; }
 
         public MainWindow(
-            MainWindowViewModel viewModel,
+            MainWindowVM viewModel,
             IPageService pageService,
             INavigationService navigationService
         )
