@@ -28,13 +28,6 @@ namespace StepinFlow.ViewModels.Pages
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
-
-
-            if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
-                GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);
-
-            if (FlowStep.ParentFlowStepId.HasValue)
-                GetParents(FlowStep.ParentFlowStepId.Value);
         }
 
         public override async Task LoadFlowStepId(int flowStepId)
@@ -125,6 +118,7 @@ namespace StepinFlow.ViewModels.Pages
 
         private void GetParents(int? flowStepId)
         {
+            Parents = new ObservableCollection<FlowStep>();
             if (!flowStepId.HasValue)
                 return;
 

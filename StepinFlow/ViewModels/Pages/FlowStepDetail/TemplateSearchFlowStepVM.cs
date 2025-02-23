@@ -26,12 +26,12 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private byte[]? _testResultImage = null;
         [ObservableProperty]
-        private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
+        private IEnumerable<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
         [ObservableProperty]
         private IEnumerable<TemplateMatchModesEnum> _matchModes;
         [ObservableProperty]
-        private IEnumerable<FlowParameter> _flowParameters;
+        private ObservableCollection<FlowParameter> _flowParameters = new ObservableCollection<FlowParameter>();
         [ObservableProperty]
         private FlowParameter? _selectedFlowParameter = null;
 
@@ -64,8 +64,10 @@ namespace StepinFlow.ViewModels.Pages
             if (flowStep != null)
                 FlowStep = flowStep;
 
-            FlowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(flowStepId);
-            FlowParameters = FlowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+            List<FlowParameter> flowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(flowStepId);
+            flowParameters = flowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+            FlowParameters = new ObservableCollection<FlowParameter>(flowParameters);
+
             SelectedFlowParameter = FlowStep.FlowParameter;
         }
 
@@ -73,8 +75,9 @@ namespace StepinFlow.ViewModels.Pages
         {
             FlowStep = newFlowStep;
 
-            FlowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(newFlowStep.ParentFlowStepId.Value);
-            FlowParameters = FlowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+            List<FlowParameter> flowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(newFlowStep.ParentFlowStepId.Value);
+            flowParameters = flowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
+            FlowParameters = new ObservableCollection<FlowParameter>(flowParameters);
 
             return;
         }

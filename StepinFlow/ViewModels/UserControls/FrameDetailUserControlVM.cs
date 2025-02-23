@@ -132,7 +132,6 @@ namespace StepinFlow.ViewModels.UserControls
             _newFlowStep = newFlowStep;
             _newFlowParameter = null;
             FrameFlow = null;
-            FrameFlowStep = null;
             FrameFlowParameter = null;
             FrameExecution = null;
         }
@@ -150,14 +149,12 @@ namespace StepinFlow.ViewModels.UserControls
             _newFlowParameter = newFlowParameter;
             FrameFlow = null;
             FrameFlowStep = null;
-            FrameFlowParameter = null;
             FrameExecution = null;
         }
 
         public async Task NavigateToFlowStep(int id)
         {
             FrameFlow = null;
-            FrameFlowStep = null;
             FrameFlowParameter = null;
             FrameExecution = null;
             // Navigate to existing flow step.
@@ -183,7 +180,6 @@ namespace StepinFlow.ViewModels.UserControls
         {
             FrameFlow = null;
             FrameFlowStep = null;
-            FrameFlowParameter = null;
             FrameExecution = null;
             // Navigate to existing flow step.
             FlowParameterTypesEnum? type = await _baseDatawork.FlowParameters.Query
@@ -205,7 +201,6 @@ namespace StepinFlow.ViewModels.UserControls
         }
         public async Task NavigateToFlow(int id)
         {
-            FrameFlow = null;
             FrameFlowStep = null;
             FrameFlowParameter = null;
             FrameExecution = null;
@@ -233,7 +228,6 @@ namespace StepinFlow.ViewModels.UserControls
             FrameFlow = null;
             FrameFlowStep = null;
             FrameFlowParameter = null;
-            FrameExecution = null;
             if (execution.FlowStep != null)
             {
                 SelectedFlowStepType = execution.FlowStep.Type;
@@ -265,7 +259,6 @@ namespace StepinFlow.ViewModels.UserControls
             if (_newFlowStep != null)
             {
                 FrameFlow = null;
-                FrameFlowStep = null;
                 FrameFlowParameter = null;
                 FrameExecution= null;
                 _newFlowStep.Type = SelectedFlowStepType;
@@ -275,14 +268,10 @@ namespace StepinFlow.ViewModels.UserControls
             {
                 FrameFlow = null;
                 FrameFlowStep = null;
-                FrameFlowParameter = null;
                 FrameExecution= null;
                 _newFlowParameter.Type = SelectedFlowParameterType;
                 NavigateToNewFlowParameterDetailPage(_newFlowParameter);
             }
-
-            _newFlowStep = null;
-            _newFlowParameter = null;
         }
 
 

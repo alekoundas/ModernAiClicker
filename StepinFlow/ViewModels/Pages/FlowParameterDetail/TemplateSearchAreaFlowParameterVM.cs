@@ -49,6 +49,16 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
             _systemMonitors = _systemService.GetAllSystemMonitors();
         }
 
+        public override async Task LoadFlowParameterId(int flowParameterId)
+        {
+            FlowParameter? flowParameter = await _baseDatawork.FlowParameters.FirstOrDefaultAsync(x => x.Id == flowParameterId);
+            if (flowParameter != null)
+                FlowParameter = flowParameter;
+
+            SelectedTemplateSearchAreaTypesEnum = flowParameter.TemplateSearchAreaType.Value;
+        }
+
+
         [RelayCommand]
         private void OnTemplateSearchAreaType()
         {
