@@ -116,6 +116,9 @@ namespace StepinFlow
                 services.AddTransient<DataPage>();
                 services.AddTransient<DataVM>();
 
+                services.AddTransient<SubFlowsPage>();
+                services.AddTransient<SubFlowsVM>();
+
                 services.AddTransient<FlowsPage>();
                 services.AddTransient<FlowsVM>();
 

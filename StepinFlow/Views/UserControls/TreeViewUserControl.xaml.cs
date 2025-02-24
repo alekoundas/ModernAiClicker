@@ -21,11 +21,10 @@ namespace StepinFlow.Views.UserControls
             // Resolve the ViewModel from the DI container.
             TreeViewUserControlVM? viewModel = App.GetService<TreeViewUserControlVM>();
 
-            if (ViewModel == null)
+            if (viewModel == null)
                 throw new InvalidOperationException("Failed to resolve TreeViewUserControlViewModel from DI container.");
 
             DataContext = this;
-            InitializeComponent();
             viewModel.OnSelectedFlowStepIdChangedEvent += OnSelectedFlowStepIdChangedEvent;
             viewModel.OnSelectedFlowIdChangedEvent += OnSelectedFlowIdChangedEvent;
             viewModel.OnSelectedFlowParameterIdChangedEvent += OnSelectedFlowParameterIdChangedEvent;
@@ -34,6 +33,7 @@ namespace StepinFlow.Views.UserControls
             viewModel.OnAddFlowParameterClickEvent += OnAddFlowParameterClickEvent;
 
             ViewModel = viewModel;
+            InitializeComponent();
         }
 
 
