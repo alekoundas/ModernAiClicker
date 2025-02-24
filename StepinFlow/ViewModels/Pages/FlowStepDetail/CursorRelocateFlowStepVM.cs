@@ -14,7 +14,8 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
-        private readonly FlowsVM _flowsViewModel;
+        public override event Action<int> OnSave;
+
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
@@ -23,11 +24,10 @@ namespace StepinFlow.ViewModels.Pages
         private FlowStep? _selectedFlowStep = null;
 
 
-        public CursorRelocateFlowStepVM(FlowsVM flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
+        public CursorRelocateFlowStepVM(ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _flowsViewModel = flowsViewModel;
         }
 
         public override async Task LoadFlowStepId(int flowStepId)
@@ -113,7 +113,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
-            _flowsViewModel.RefreshData();
+            OnSave?.Invoke(FlowStep.Id);
         }
 
         private void GetParents(int? flowStepId)

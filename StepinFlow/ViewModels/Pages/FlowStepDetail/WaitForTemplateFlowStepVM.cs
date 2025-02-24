@@ -18,7 +18,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
-        private readonly FlowsVM _flowsViewModel;
+        public override event Action<int> OnSave;
 
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
@@ -29,13 +29,12 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private IEnumerable<TemplateMatchModesEnum> _matchModes;
 
-        public WaitForTemplateFlowStepVM(FlowsVM flowsViewModel, ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork) : base(baseDatawork)
+        public WaitForTemplateFlowStepVM(ISystemService systemService, ITemplateSearchService templateMatchingService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
 
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
-            _flowsViewModel = flowsViewModel;
 
             MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
 
@@ -167,7 +166,7 @@ namespace StepinFlow.ViewModels.Pages
                 _baseDatawork.FlowSteps.Add(FlowStep);
 
                 await _baseDatawork.SaveChangesAsync();
-                _flowsViewModel.RefreshData();
+                OnSave?.Invoke(FlowStep.Id);
             }
         }
     }

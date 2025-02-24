@@ -23,7 +23,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly IWindowService _windowService;
-        private readonly FlowsVM _flowsViewModel;
+        public override event Action<int> OnSave;
 
         [ObservableProperty]
         private byte[]? _testResultImage = null;
@@ -42,7 +42,6 @@ namespace StepinFlow.ViewModels.Pages
         private FlowParameter? _selectedFlowParameter = null;
 
         public MultipleTemplateSearchFlowStepVM(
-            FlowsVM flowsViewModel,
             ISystemService systemService,
             ITemplateSearchService templateMatchingService,
             IBaseDatawork baseDatawork,
@@ -53,7 +52,6 @@ namespace StepinFlow.ViewModels.Pages
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
             _windowService = windowService;
-            _flowsViewModel = flowsViewModel;
 
             MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
         }
@@ -342,7 +340,8 @@ namespace StepinFlow.ViewModels.Pages
 
 
             await _baseDatawork.SaveChangesAsync();
-            _flowsViewModel.RefreshData();
+            OnSave?.Invoke(FlowStep.Id);
+
             List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.Query
                 .AsNoTracking()
                 .Where(x => x.ParentTemplateSearchFlowStepId == FlowStep.Id)

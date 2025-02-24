@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using Business.BaseViewModels;
@@ -10,10 +9,7 @@ namespace StepinFlow.ViewModels.Pages
 {
     public partial class CursorClickFlowStepVM : BaseFlowStepDetailVM
     {
-        private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
-        private readonly FlowsVM _flowsViewModel;
-
         public override event Action<int> OnSave;
 
         [ObservableProperty]
@@ -22,12 +18,9 @@ namespace StepinFlow.ViewModels.Pages
         private IEnumerable<MouseActionsEnum> _mouseActionsEnum;
 
 
-        public CursorClickFlowStepVM(FlowsVM flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
+        public CursorClickFlowStepVM(IBaseDatawork baseDatawork) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
-            _systemService = systemService;
-            _flowsViewModel = flowsViewModel;
-
 
             MouseButtonsEnum = Enum.GetValues(typeof(MouseButtonsEnum)).Cast<MouseButtonsEnum>();
             MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
@@ -77,8 +70,6 @@ namespace StepinFlow.ViewModels.Pages
 
             _baseDatawork.SaveChanges();
             OnSave?.Invoke(FlowStep.Id);
-
-            //_flowsViewModel.RefreshData();
         }
     }
 }

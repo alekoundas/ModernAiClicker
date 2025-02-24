@@ -13,17 +13,15 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
-        private readonly FlowsVM _flowsViewModel;
+        public override event Action<int> OnSave;
 
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
 
-        public WindowResizeFlowStepVM(FlowsVM flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
+        public WindowResizeFlowStepVM(ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-            _flowsViewModel = flowsViewModel;
-
         }
 
 
@@ -101,7 +99,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
-            _flowsViewModel.RefreshData();
+            OnSave?.Invoke(FlowStep.Id);
         }
     }
 }

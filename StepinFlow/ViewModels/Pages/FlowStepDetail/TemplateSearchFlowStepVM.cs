@@ -21,7 +21,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly IWindowService _windowService;
-        private readonly FlowsVM _flowsViewModel;
+        public override event Action<int> OnSave;
 
         [ObservableProperty]
         private byte[]? _testResultImage = null;
@@ -38,18 +38,15 @@ namespace StepinFlow.ViewModels.Pages
         private byte[]? _previousTestResultImage = null;
 
         public TemplateSearchFlowStepVM(
-            FlowsVM flowsViewModel,
             ISystemService systemService,
             ITemplateSearchService templateMatchingService,
             IBaseDatawork baseDatawork,
             IWindowService windowService) : base(baseDatawork)
         {
-
             _baseDatawork = baseDatawork;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
             _windowService = windowService;
-            _flowsViewModel = flowsViewModel;
 
             MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
         }
@@ -258,7 +255,7 @@ namespace StepinFlow.ViewModels.Pages
 
             }
             await _baseDatawork.SaveChangesAsync();
-            _flowsViewModel.RefreshData();
+            OnSave?.Invoke(FlowStep.Id);
         }
     }
 }

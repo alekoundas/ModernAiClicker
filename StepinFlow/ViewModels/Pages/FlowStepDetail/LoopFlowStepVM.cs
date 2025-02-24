@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using Business.Interfaces;
 using Business.Helpers;
 using Model.Enums;
 using DataAccess.Repository.Interface;
@@ -11,9 +10,8 @@ namespace StepinFlow.ViewModels.Pages
 {
     public partial class LoopFlowStepVM : BaseFlowStepDetailVM
     {
-        private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
-        private readonly FlowsVM _flowsViewModel;
+        public override event Action<int> OnSave;
 
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
@@ -22,12 +20,9 @@ namespace StepinFlow.ViewModels.Pages
         private string _templateImgPath = "";
 
 
-        public LoopFlowStepVM(FlowsVM flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
+        public LoopFlowStepVM(IBaseDatawork baseDatawork) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
-            _systemService = systemService;
-            _flowsViewModel = flowsViewModel;
-
         }
 
         [RelayCommand]
@@ -79,7 +74,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
             await _baseDatawork.SaveChangesAsync();
-            _flowsViewModel.RefreshData();
+            OnSave?.Invoke(FlowStep.Id);
         }
     }
 }
