@@ -14,25 +14,26 @@ namespace StepinFlow.Views.UserControls
         public event EventHandler<FlowParameter>? OnAddFlowParameterClick;
 
 
-        public TreeViewUserControlVM? ViewModel { get; set; }
+        public TreeViewUserControlVM ViewModel { get; set; }
 
         public TreeViewUserControl()
         {
             // Resolve the ViewModel from the DI container.
-            ViewModel = App.GetService<TreeViewUserControlVM>();
+            TreeViewUserControlVM? viewModel = App.GetService<TreeViewUserControlVM>();
 
             if (ViewModel == null)
                 throw new InvalidOperationException("Failed to resolve TreeViewUserControlViewModel from DI container.");
 
             DataContext = this;
             InitializeComponent();
-            ViewModel.OnSelectedFlowStepIdChangedEvent += OnSelectedFlowStepIdChangedEvent;
-            ViewModel.OnSelectedFlowIdChangedEvent += OnSelectedFlowIdChangedEvent;
-            ViewModel.OnSelectedFlowParameterIdChangedEvent += OnSelectedFlowParameterIdChangedEvent;
-            ViewModel.OnFlowStepCloneEvent += OnFlowStepCloneEvent;
-            ViewModel.OnAddFlowStepClickEvent += OnAddFlowStepClickEvent;
-            ViewModel.OnAddFlowParameterClickEvent += OnAddFlowParameterClickEvent;
+            viewModel.OnSelectedFlowStepIdChangedEvent += OnSelectedFlowStepIdChangedEvent;
+            viewModel.OnSelectedFlowIdChangedEvent += OnSelectedFlowIdChangedEvent;
+            viewModel.OnSelectedFlowParameterIdChangedEvent += OnSelectedFlowParameterIdChangedEvent;
+            viewModel.OnFlowStepCloneEvent += OnFlowStepCloneEvent;
+            viewModel.OnAddFlowStepClickEvent += OnAddFlowStepClickEvent;
+            viewModel.OnAddFlowParameterClickEvent += OnAddFlowParameterClickEvent;
 
+            ViewModel = viewModel;
         }
 
 
