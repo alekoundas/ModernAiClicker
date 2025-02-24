@@ -1,24 +1,19 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Business.BaseViewModels;
-using Model.Enums;
 
 namespace StepinFlow.ViewModels.Pages
 {
     public partial class FlowVM : BaseFlowDetailVM
     {
-        private readonly ISystemService _systemService;
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsVM _flowsViewModel;
 
 
-        public FlowVM(FlowsVM flowsViewModel, ISystemService systemService, IBaseDatawork baseDatawork) : base(baseDatawork)
+        public FlowVM(FlowsVM flowsViewModel, IBaseDatawork baseDatawork) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
-            _systemService = systemService;
             _flowsViewModel = flowsViewModel;
 
         }
@@ -42,17 +37,15 @@ namespace StepinFlow.ViewModels.Pages
             /// Add mode
             else
             {
-
                 if (Flow.Name.Length == 0)
                     Flow.Name = "Flow";
 
-                    Flow.Type = FlowTypesEnum.FLOW;
                 _baseDatawork.Flows.Add(Flow);
             }
 
 
             _baseDatawork.SaveChanges();
-             _flowsViewModel.RefreshData();
+            _flowsViewModel.RefreshData();
         }
     }
 }

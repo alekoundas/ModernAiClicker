@@ -19,7 +19,7 @@ namespace StepinFlow.Views.Pages
         }
 
 
-        public async Task InvokeLoadFlowsAction(int? id = 0)
+        public async Task InvokeLoadFlowsAction(int id = 0)
         {
             await TreeViewControl.ViewModel.LoadFlows(id);
         }

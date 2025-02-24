@@ -61,7 +61,7 @@ namespace StepinFlow.Views.Pages
         public async Task InvokeExpandAllAction() => await TreeViewControl.ViewModel.ExpandAll();
         public async Task InvokeCollapseAllAction() => await TreeViewControl.ViewModel.CollapseAll();
         public async Task InvokeLoadFlowsAndSelectFlowStepAction(int id) => await TreeViewControl.ViewModel.LoadFlowsAndSelectFlowStep(id);
-        public async Task InvokeLoadFlowsAction(int? id = 0) => await TreeViewControl.ViewModel.LoadFlows(id);
+        public async Task InvokeLoadFlowsAction(int flowId = 0, bool isSubFlow = false) => await TreeViewControl.ViewModel.LoadFlows(flowId, isSubFlow);
         public async Task InvokeNavigateToFlowAction(int id) => await FrameDetailUserControl.ViewModel.NavigateToFlow(id);
         public async Task InvokeNavigateToFlowStepAction(int id) => await FrameDetailUserControl.ViewModel.NavigateToFlowStep(id);
         public async Task InvokeNavigateToFlowParameterAction(int id) => await FrameDetailUserControl.ViewModel.NavigateToFlowParameter(id);

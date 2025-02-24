@@ -78,6 +78,7 @@ namespace StepinFlow
                 services.AddScoped<IWindowService, WindowService>();
                 services.AddScoped<ITemplateSearchService, TemplateSearchService>();
                 services.AddTransient<IBaseDatawork, BaseDatawork>();
+                services.AddTransient<IFlowPagesService, FlowPagesService>();
 
                 // Repository
                 services.AddScoped<IFlowRepository, FlowRepository>();

@@ -64,8 +64,7 @@
                 IsEnabled="{Binding IsEnabled}"
                 ItemsSource="{Binding FlowTypes}"
                 SelectedItem="{Binding SelectedFlowType, Mode=TwoWay}"
-                Visibility="{Binding FlowVisibility}">
-            </ComboBox>
+                Visibility="{Binding FlowVisibility}" />
 
             <Rectangle
                 Height="1"

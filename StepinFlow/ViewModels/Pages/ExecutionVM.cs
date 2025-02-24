@@ -24,7 +24,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly IExecutionFactory _executionFactory;
 
         public event LoadFlowsEvent? LoadFlows;
-        public delegate Task LoadFlowsEvent(int? id = 0);
+        public delegate Task LoadFlowsEvent(int id = 0);
 
         public event NavigateToExecutionEvent? NavigateToExecution;
         public delegate void NavigateToExecutionEvent(Execution execution);

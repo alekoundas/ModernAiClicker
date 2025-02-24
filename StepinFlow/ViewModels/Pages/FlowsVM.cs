@@ -6,7 +6,6 @@ using Wpf.Ui.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using StepinFlow.ViewModels.UserControls;
 using System.Windows;
 using Model.Enums;
 
@@ -24,7 +23,7 @@ namespace StepinFlow.ViewModels.Pages
         public delegate Task LoadFlowsAndSelectFlowStepEvent(int id);
 
         public event LoadFlowsEvent? LoadFlows;
-        public delegate Task LoadFlowsEvent(int? id = 0);
+        public delegate Task LoadFlowsEvent(int flowId = 0, bool isSubFlow = false);
 
         public event ClearCopyEvent? ClearCopy;
         public delegate void ClearCopyEvent();
@@ -75,8 +74,6 @@ namespace StepinFlow.ViewModels.Pages
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
-
-            LoadFlows?.Invoke();
         }
 
         public void RefreshData()
@@ -151,6 +148,7 @@ namespace StepinFlow.ViewModels.Pages
                 IsSelected = true,
                 FlowStep = flowSteps,
                 FlowParameter = flowRarameter,
+                Type = FlowTypesEnum.FLOW
             };
 
             _baseDatawork.Flows.Add(flow);
@@ -196,7 +194,7 @@ namespace StepinFlow.ViewModels.Pages
         }
 
 
-        public void OnNavigatedTo() { }
+        public void OnNavigatedTo() { LoadFlows?.Invoke(); }
 
         public void OnNavigatedFrom() { }
     }

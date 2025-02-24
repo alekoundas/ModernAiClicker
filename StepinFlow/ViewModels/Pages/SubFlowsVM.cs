@@ -24,7 +24,7 @@ namespace StepinFlow.ViewModels.Pages
         public delegate Task LoadFlowsAndSelectFlowStepEvent(int id);
 
         public event LoadFlowsEvent? LoadFlows;
-        public delegate Task LoadFlowsEvent(int? id = 0);
+        public delegate Task LoadFlowsEvent(int flowId = 0, bool isSubFlow = false);
 
         public event ClearCopyEvent? ClearCopy;
         public delegate void ClearCopyEvent();
@@ -76,12 +76,12 @@ namespace StepinFlow.ViewModels.Pages
             _baseDatawork = baseDatawork;
             _systemService = systemService;
 
-            LoadFlows?.Invoke();
+
         }
 
         public void RefreshData()
         {
-            LoadFlows?.Invoke();
+            LoadFlows?.Invoke(-1, true);
         }
         public void OnSaveFlowStep(int id)
         {
@@ -147,10 +147,11 @@ namespace StepinFlow.ViewModels.Pages
 
             Flow flow = new Flow
             {
-                Name = "Flow",
+                Name = "Sub-Flow",
                 IsSelected = true,
                 FlowStep = flowSteps,
                 FlowParameter = flowRarameter,
+                Type = FlowTypesEnum.SUB_FLOW
             };
 
             _baseDatawork.Flows.Add(flow);
@@ -160,7 +161,7 @@ namespace StepinFlow.ViewModels.Pages
             flow.FlowParameterId = flowRarameter.Id;
             await _baseDatawork.SaveChangesAsync();
 
-            LoadFlows?.Invoke();
+            LoadFlows?.Invoke(-1, true);
         }
 
 
@@ -180,7 +181,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSyncClick()
         {
-            await LoadFlows?.Invoke();
+            await LoadFlows?.Invoke(-1, true);
         }
 
         [RelayCommand]
@@ -196,7 +197,8 @@ namespace StepinFlow.ViewModels.Pages
         }
 
 
-        public void OnNavigatedTo() { }
+            
+        public void OnNavigatedTo() { LoadFlows?.Invoke(-1, true); }
 
         public void OnNavigatedFrom() { }
     }

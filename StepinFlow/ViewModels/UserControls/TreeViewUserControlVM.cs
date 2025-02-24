@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq.Expressions;
 
 namespace StepinFlow.ViewModels.UserControls
 {
@@ -60,36 +61,40 @@ namespace StepinFlow.ViewModels.UserControls
             _systemService = systemService;
         }
 
-        public async Task LoadFlows(int? flowId = 0)
+        public async Task LoadFlows(int flowId = 0, bool isSubFlow = false)
         {
-            _baseDatawork.Query.ChangeTracker.Clear();
-            List<Flow> flows = new List<Flow>();
+            List<Expression<Func<Flow, bool>>>? filters = new List<Expression<Func<Flow, bool>>>();
+
+            if (isSubFlow)
+                filters.Add(x => x.Type == FlowTypesEnum.SUB_FLOW);
 
             if (flowId > 0)
-                flows = await _baseDatawork.Query.Flows
-                    .Include(x => x.FlowStep)
-                    .ThenInclude(x => x.ChildrenFlowSteps)
-                    .Include(x => x.FlowParameter)
-                    .ThenInclude(x => x.ChildrenFlowParameters)
-                    .Where(x => x.Id == flowId)
-                    .ToListAsync();
-            else
-                flows = await _baseDatawork.Query.Flows
-                    .Include(x => x.FlowStep)
-                    .ThenInclude(x => x.ChildrenFlowSteps)
-                    .Include(x => x.FlowParameter)
-                    .ThenInclude(x => x.ChildrenFlowParameters)
-                    .ToListAsync();
+                filters.Add(x => x.Id == flowId);
 
+            IQueryable<Flow> query = _baseDatawork.Query.Flows
+                .Include(x => x.FlowStep)
+                .ThenInclude(x => x.ChildrenFlowSteps)
+                .Include(x => x.FlowParameter)
+                .ThenInclude(x => x.ChildrenFlowParameters);
+
+            foreach (var filter in filters)
+                query = query.Where(filter);
+
+
+            // Clear trackers from dbcontext and execute query.
+            _baseDatawork.Query.ChangeTracker.Clear();
+            List<Flow> flows = await query.ToListAsync();
+
+            // Load children.
             foreach (Flow flow in flows)
                 foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
                     await _baseDatawork.FlowSteps.LoadAllExpandedChildren(flowStep);
 
-            //FlowsList = null;
             FlowsList = new ObservableCollection<Flow>(flows);
         }
         public async Task LoadFlowsAndSelectFlowStep(int id)
         {
+            await _baseDatawork.SaveChangesAsync();
             await LoadFlows();
             await ExpandAndSelectFlowStep(id);
         }
