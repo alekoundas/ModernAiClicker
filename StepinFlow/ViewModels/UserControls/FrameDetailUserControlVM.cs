@@ -86,7 +86,8 @@ namespace StepinFlow.ViewModels.UserControls
                 { FlowStepTypesEnum.GO_TO, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<GoToFlowStepPage>()) },
                 { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WindowResizeFlowStepPage>()) },
                 { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<WindowMoveFlowStepPage>()) },
-                { FlowStepTypesEnum.LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<LoopFlowStepPage>()) }
+                { FlowStepTypesEnum.LOOP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<LoopFlowStepPage>()) },
+                { FlowStepTypesEnum.SUB_FLOW_STEP, new Lazy<IFlowStepDetailPage>(() => serviceProvider.GetRequiredService<SubFlowStepPage>()) }
             };
 
             _flowPageFactory = new Dictionary<FlowTypesEnum, Lazy<IFlowDetailPage>>

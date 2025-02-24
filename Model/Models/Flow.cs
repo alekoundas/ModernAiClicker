@@ -31,6 +31,7 @@ namespace Model.Models
         public virtual FlowParameter FlowParameter { get; set; } = new FlowParameter();
 
 
+        public virtual ObservableCollection<FlowStep> SubFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
         public virtual ObservableCollection<Execution> Executions { get; set; } = new ObservableCollection<Execution>();
     }
 }

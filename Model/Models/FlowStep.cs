@@ -31,6 +31,9 @@ namespace Model.Models
         public TemplateMatchModesEnum? _templateMatchMode;
 
 
+        // SubFlow
+        [ObservableProperty]
+        public bool _isSubFlowReferenced;
 
         // Template search
         [ObservableProperty]
@@ -99,6 +102,9 @@ namespace Model.Models
 
         public int? FlowId { get; set; }
         public virtual Flow? Flow { get; set; }
+
+        public int? SubFlowId { get; set; }
+        public virtual Flow? SubFlow { get; set; }
 
         public int? ParentFlowStepId { get; set; }
         public virtual FlowStep? ParentFlowStep { get; set; }

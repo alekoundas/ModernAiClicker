@@ -1,4 +1,5 @@
 ﻿using Model.Models;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -10,23 +11,22 @@ namespace StepinFlow.Converters
         {
             var result = new List<object>();
 
-            // Handle the single FlowParameter instance
-            //if (values[0] is FlowParameter flowParameter && flowParameter != null)
-            //{
-            //    result.Add(new GroupNode { Name = flowParameter.Name, FlowParameter = flowParameter, Items = new List<FlowParameter> { flowParameter. } });
-            //}
-
-            //// Handle the single FlowStep instance
-            //if (values[1] is FlowStep flowStep && flowStep != null)
-            //{
-            //    result.Add(new GroupNode { Name = flowStep.Name, FlowStep = flowStep, Items = new List<FlowStep> { flowStep }});
-            //}
-            if (values[0] is FlowParameter flowParameter && flowParameter != null)
-                result.Add(flowParameter);
-
-            if (values[1] is FlowStep flowStep && flowStep != null)
-                result.Add(flowStep);
-
+            foreach (var value in values)
+            {
+                // If the value is a collection, add all items from the collection to the result
+                if (value is System.Collections.IEnumerable enumerable)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        result.Add(item);
+                    }
+                }
+                // If the value is a single item (and not null), add it to the result
+                else if (value != null)
+                {
+                    result.Add(value);
+                }
+            }
 
             return result;
         }

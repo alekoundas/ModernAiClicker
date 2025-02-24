@@ -7,6 +7,7 @@ namespace Model.Enums
         WAIT,
         GO_TO,
         LOOP,
+        SUB_FLOW_STEP,
 
         WINDOW_MOVE,
         WINDOW_RESIZE,

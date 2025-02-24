@@ -38,6 +38,12 @@ namespace Business.Configurations
                 .HasForeignKey(x => x.FlowParameterId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(x => x.SubFlow)
+                .WithMany(x => x.SubFlowSteps)
+                .HasForeignKey(x => x.SubFlowId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

@@ -86,11 +86,11 @@ namespace Business.Repository.Entities
             {
                 if (resultEnum == ExecutionResultEnum.SUCCESS)
                     childrenFlowSteps = childrenFlowSteps
-                        .Where(x => x.Type == FlowStepTypesEnum.SUCCESS) 
+                        .Where(x => x.Type == FlowStepTypesEnum.SUCCESS)
                         .SelectMany(x => x.ChildrenFlowSteps);
                 else
                     childrenFlowSteps = childrenFlowSteps
-                        .Where(x => x.Type == FlowStepTypesEnum.FAILURE) 
+                        .Where(x => x.Type == FlowStepTypesEnum.FAILURE)
                         .SelectMany(x => x.ChildrenFlowSteps);
             }
 
@@ -115,11 +115,21 @@ namespace Business.Repository.Entities
 
                 // Load its children from the database.
                 List<FlowStep> childFlowSteps = await InMemoryDbContext.FlowSteps
+                    .Include(x => x.SubFlow)
                     .Where(x => x.Id == currentFlowStep.Id)
                     .SelectMany(x => x.ChildrenFlowSteps)
                     .ToListAsync();
 
                 currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);
+
+
+                Flow? subFlow = await InMemoryDbContext.Flows
+                    .Include(x=>x.FlowStep).ThenInclude(x=>x.ChildrenFlowSteps)
+                    .Include(x=>x.FlowParameter).ThenInclude(x => x.ChildrenFlowParameters)
+                    .Where(x => x.Id == currentFlowStep.SubFlowId)
+                    .FirstOrDefaultAsync();
+
+                currentFlowStep.SubFlow = subFlow;
 
                 // Push only the expanded children onto the stack for further processing.
                 foreach (var childFlowStep in childFlowSteps)

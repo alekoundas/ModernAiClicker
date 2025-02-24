@@ -67,6 +67,8 @@ namespace StepinFlow.ViewModels.UserControls
 
             if (isSubFlow)
                 filters.Add(x => x.Type == FlowTypesEnum.SUB_FLOW);
+            else
+                filters.Add(x => x.Type == FlowTypesEnum.FLOW);
 
             if (flowId > 0)
                 filters.Add(x => x.Id == flowId);
@@ -74,6 +76,7 @@ namespace StepinFlow.ViewModels.UserControls
             IQueryable<Flow> query = _baseDatawork.Query.Flows
                 .Include(x => x.FlowStep)
                 .ThenInclude(x => x.ChildrenFlowSteps)
+                .ThenInclude(x => x.SubFlow)
                 .Include(x => x.FlowParameter)
                 .ThenInclude(x => x.ChildrenFlowParameters);
 

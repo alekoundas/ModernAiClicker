@@ -579,12 +579,25 @@
                     </ContentPresenter>
                 </HierarchicalDataTemplate>
 
+
+
+
                 <!--  ********************************  -->
                 <!--  ***                          ***  -->
                 <!--  ***        Flow Steps        ***  -->
                 <!--  ***                          ***  -->
                 <!--  ********************************  -->
-                <HierarchicalDataTemplate DataType="{x:Type models:FlowStep}" ItemsSource="{Binding ChildrenFlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">
+                <!--<HierarchicalDataTemplate DataType="{x:Type models:FlowStep}" ItemsSource="{Binding ChildrenFlowSteps, Converter={StaticResource TreeviewOrdering}, ConverterParameter=OrderingNum}">-->
+                <HierarchicalDataTemplate DataType="{x:Type models:FlowStep}">
+                    <HierarchicalDataTemplate.ItemsSource>
+                        <MultiBinding Converter="{StaticResource GroupedCollectionConverter}">
+                            <Binding
+                                Converter="{StaticResource TreeviewOrdering}"
+                                ConverterParameter="OrderingNum"
+                                Path="ChildrenFlowSteps" />
+                            <Binding Path="SubFlow" />
+                        </MultiBinding>
+                    </HierarchicalDataTemplate.ItemsSource>
                     <Border
                         BorderBrush="White"
                         BorderThickness="1"

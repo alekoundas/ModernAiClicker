@@ -99,6 +99,9 @@
     <Compile Update="Views\Pages\FlowDetail\FlowPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Pages\FlowStepDetail\SubFlowStepPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Pages\FlowStepDetail\CursorScrollFlowStepPage.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

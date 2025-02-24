@@ -171,6 +171,9 @@ namespace StepinFlow
                 services.AddSingleton<LoopFlowStepPage>();
                 services.AddSingleton<LoopFlowStepVM>();
 
+                services.AddSingleton<SubFlowStepPage>();
+                services.AddSingleton<SubFlowStepVM>();
+
                 //Flow execution step detail
                 services.AddSingleton<TemplateSearchExecutionPage>();
                 services.AddSingleton<TemplateSearchExecutionVM>();

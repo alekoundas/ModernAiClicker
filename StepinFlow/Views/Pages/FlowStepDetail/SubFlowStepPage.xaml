@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="StepinFlow.Views.Pages.FlowStepDetail.WaitFlowStepPage"
+    x:Class="StepinFlow.Views.Pages.FlowStepDetail.SubFlowStepPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
@@ -8,50 +8,65 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:StepinFlow.Views.Pages.FlowStepDetail"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="WaitFlowStepPage"
-    d:DataContext="{d:DesignInstance local:WaitFlowStepPage,
-                                     IsDesignTimeCreatable=False}"
+    Title="SubFlowStepPage"
+    d:DataContext="{d:DesignInstance local:SubFlowStepPage,
+    IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
     <StackPanel>
 
-        <Label>Wait time.</Label>
+        <Label>Configure click action</Label>
+
 
         <Grid Margin="10,10,10,50">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.3*" />
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="0.1*" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+
+
+
+
+
 
 
             <StackPanel>
-                <Label>Hours:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.WaitForHours, Mode=TwoWay}" />
+                <Label>Parents successful locations:</Label>
+                <ComboBox
+                    IsSynchronizedWithCurrentItem="True"
+                    ItemsSource="{Binding ViewModel.SubFlows}"
+                    SelectedItem="{Binding ViewModel.SelectedSubFlow, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Id}" />
+                                <TextBlock Text=" - " />
+                                <TextBlock Text="{Binding Path=Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
-                <Label>Minutes:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.WaitForMinutes, Mode=TwoWay}" />
-
-                <Label>Seconds:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.WaitForSeconds, Mode=TwoWay}" />
-
-                <Label>Milliseconds:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.WaitForMilliseconds, Mode=TwoWay}" />
+                <Label>Is sub flow a reference to original sub flow?</Label>
+                <CheckBox IsChecked="{Binding ViewModel.FlowStep.IsSubFlowReferenced, Mode=TwoWay}" />
 
             </StackPanel>
 
-            <StackPanel
-                Grid.Column="2"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom">
-
-                <Label Padding="0,20,0,0">Total time.</Label>
-                <Label Content="{Binding ViewModel.TimeTotal}" />
-            </StackPanel>
         </Grid>
+
+
+
+
+
+
 
         <Grid>
             <Grid.ColumnDefinitions>
