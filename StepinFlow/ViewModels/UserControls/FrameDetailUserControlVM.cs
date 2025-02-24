@@ -20,6 +20,10 @@ namespace StepinFlow.ViewModels.UserControls
         private readonly IBaseDatawork _baseDatawork;
         private readonly IServiceProvider _serviceProvider;
 
+
+        public event OnSaveFlowStep? OnSaveFlowStepEvent;
+        public delegate void OnSaveFlowStep(int Id);
+
         // FlowStep Type
         [ObservableProperty]
         private FlowStepTypesEnum _selectedFlowStepType = FlowStepTypesEnum.NO_SELECTION;
@@ -282,6 +286,8 @@ namespace StepinFlow.ViewModels.UserControls
             if (page != null)
             {
                 page.ViewModel.LoadNewFlowStep(newFlowStep);
+                page.ViewModel.OnSave -= HandleSave;
+                page.ViewModel.OnSave += HandleSave;
                 FrameFlowStep = page;
             }
         }
@@ -310,6 +316,8 @@ namespace StepinFlow.ViewModels.UserControls
             if (page != null)
             {
                 page.ViewModel.LoadFlowStepId(id);
+                page.ViewModel.OnSave -= HandleSave;
+                page.ViewModel.OnSave += HandleSave;
                 FrameFlowStep = page;
             }
         }
@@ -332,6 +340,13 @@ namespace StepinFlow.ViewModels.UserControls
                 page.ViewModel.SetExecution(execution);
                 FrameExecution = page;
             }
+        }
+
+
+
+        private void HandleSave(int id)
+        {
+            OnSaveFlowStepEvent?.Invoke(id);
         }
     }
 }

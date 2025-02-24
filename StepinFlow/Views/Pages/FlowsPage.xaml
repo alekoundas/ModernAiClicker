@@ -160,7 +160,10 @@
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
             <ScrollViewer>
-                <UserControls:FrameDetailUserControl x:Name="FrameDetailUserControl" Padding="20,20,20,20" />
+                <UserControls:FrameDetailUserControl
+                    x:Name="FrameDetailUserControl"
+                    Padding="20,20,20,20"
+                    OnSaveFlowStep="OnSaveFlowStep" />
             </ScrollViewer>
         </Border>
 
@@ -181,7 +184,7 @@
             <Border.Effect>
                 <DropShadowEffect Opacity="1" ShadowDepth="5" />
             </Border.Effect>
-                <!--IsLocked="{Binding ViewModel.IsLocked}"-->
+            <!--  IsLocked="{Binding ViewModel.IsLocked}"  -->
             <UserControls:TreeViewUserControl
                 x:Name="TreeViewControl"
                 OnAddFlowParameterClick="OnAddFlowParameterClick"

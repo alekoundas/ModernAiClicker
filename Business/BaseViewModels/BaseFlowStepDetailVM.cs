@@ -8,6 +8,8 @@ namespace Business.BaseViewModels
     public partial class BaseFlowStepDetailVM : ObservableObject, IFlowStepDetailVM
     {
         private readonly IBaseDatawork _baseDatawork;
+        public virtual event Action<int> OnSave;
+
 
         [ObservableProperty]
         protected FlowStep _flowStep = new FlowStep();

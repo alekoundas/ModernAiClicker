@@ -14,6 +14,8 @@ namespace StepinFlow.ViewModels.Pages
         private readonly IBaseDatawork _baseDatawork;
         private readonly FlowsVM _flowsViewModel;
 
+        public override event Action<int> OnSave;
+
         [ObservableProperty]
         private IEnumerable<MouseButtonsEnum> _mouseButtonsEnum;
         [ObservableProperty]
@@ -74,7 +76,9 @@ namespace StepinFlow.ViewModels.Pages
 
 
             _baseDatawork.SaveChanges();
-            _flowsViewModel.RefreshData();
+            OnSave?.Invoke(FlowStep.Id);
+
+            //_flowsViewModel.RefreshData();
         }
     }
 }

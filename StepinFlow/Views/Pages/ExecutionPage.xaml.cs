@@ -28,9 +28,9 @@ namespace StepinFlow.Views.Pages
             FrameDetailUserControl.ViewModel.NavigateToExecution(execution);
         }
 
-        public async Task InvokeExpandAndSelectFlowStepAction(Execution execution)
+        public async Task InvokeExpandAndSelectFlowStepAction(int id)
         {
-            await TreeViewControl.ViewModel.ExpandAndSelectFlowStep(execution);
+            await TreeViewControl.ViewModel.ExpandAndSelectFlowStep(id);
         }
     }
 }

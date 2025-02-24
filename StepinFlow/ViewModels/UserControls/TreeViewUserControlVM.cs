@@ -45,7 +45,7 @@ namespace StepinFlow.ViewModels.UserControls
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
 
         [ObservableProperty]
-        private bool _isLocked= true;
+        private bool _isLocked = true;
 
         [ObservableProperty]
         private int? _coppiedFlowStepId;
@@ -88,6 +88,11 @@ namespace StepinFlow.ViewModels.UserControls
             //FlowsList = null;
             FlowsList = new ObservableCollection<Flow>(flows);
         }
+        public async Task LoadFlowsAndSelectFlowStep(int id)
+        {
+            await LoadFlows();
+            await ExpandAndSelectFlowStep(id);
+        }
 
         public void ClearCopy()
         {
@@ -109,12 +114,9 @@ namespace StepinFlow.ViewModels.UserControls
             await _baseDatawork.SaveChangesAsync();
             FlowsList = new ObservableCollection<Flow>(flows);
         }
-        public async Task ExpandAndSelectFlowStep(Execution execution)
+        public async Task ExpandAndSelectFlowStep(int id)
         {
-            if (execution.FlowStep == null)
-                return;
-
-            FlowStep? uiFlowStep = await _baseDatawork.FlowSteps.Query.FirstOrDefaultAsync(x => x.Id == execution.FlowStepId);
+            FlowStep? uiFlowStep = await _baseDatawork.FlowSteps.Query.FirstOrDefaultAsync(x => x.Id == id);
 
             if (uiFlowStep != null)
             {
@@ -131,6 +133,7 @@ namespace StepinFlow.ViewModels.UserControls
 
             return;
         }
+
 
 
 
@@ -235,7 +238,7 @@ namespace StepinFlow.ViewModels.UserControls
             await _baseDatawork.SaveChangesAsync();
             await LoadFlows();
         }
-        
+
 
         [RelayCommand]
         private async Task OnFlowButtonDeleteClick(Flow flow)

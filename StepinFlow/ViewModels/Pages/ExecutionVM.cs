@@ -29,7 +29,7 @@ namespace StepinFlow.ViewModels.Pages
         public event NavigateToExecutionEvent? NavigateToExecution;
         public delegate void NavigateToExecutionEvent(Execution execution);
         public event ExpandAndSelectFlowStepEvent? ExpandAndSelectFlowStep;
-        public delegate Task ExpandAndSelectFlowStepEvent(Execution execution);
+        public delegate Task ExpandAndSelectFlowStepEvent(int id);
 
         // Combobox Flows
         [ObservableProperty]
@@ -157,7 +157,7 @@ namespace StepinFlow.ViewModels.Pages
                     ListBoxExecutions.Add(flowStepExecution);
                 });
 
-                await ExpandAndSelectFlowStep?.Invoke(flowStepExecution);
+                await ExpandAndSelectFlowStep?.Invoke(flowStepExecution.FlowStepId ?? -1);
                 //await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, _treeViewUserControlViewModel.FlowsList);
                 await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
                 await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
