@@ -104,6 +104,15 @@ namespace Business.Repository.Entities
 
         public async Task<FlowStep> LoadAllExpandedChildren(FlowStep flowStep)
         {
+
+            flowStep = await InMemoryDbContext.FlowSteps
+                .Where(x => x.Id == flowStep.Id)
+                .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                .Include(x => x.FlowParameter)
+                .Include(x => x.SubFlow!.FlowStep)
+                .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
+                .FirstAsync();
+
             // Initialize a stack to simulate recursion.
             var stack = new Stack<FlowStep>();
             stack.Push(flowStep);
@@ -114,25 +123,20 @@ namespace Business.Repository.Entities
                 FlowStep currentFlowStep = stack.Pop();
 
                 // Load its children from the database.
-                List<FlowStep> childFlowSteps = await InMemoryDbContext.FlowSteps
-                    .Include(x => x.SubFlow)
-                    .Where(x => x.Id == currentFlowStep.Id)
-                    .SelectMany(x => x.ChildrenFlowSteps)
-                    .ToListAsync();
+                var childFlowSteps = await InMemoryDbContext.FlowSteps
+                  .Where(x => x.Id == currentFlowStep.Id)
+                  .SelectMany(x => x.ChildrenFlowSteps)
+                  .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                  .Include(x => x.FlowParameter)
+                  .Include(x => x.SubFlow!.FlowStep)
+                  .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
+                  .ToListAsync();
 
                 currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);
 
                 // Load Sub-Flows if available and not referenced.
-                if (!currentFlowStep.IsSubFlowReferenced && currentFlowStep.SubFlowId != null)
-                {
-                    Flow? subFlow = await InMemoryDbContext.Flows
-                        .Include(x => x.FlowStep).ThenInclude(x => x.ChildrenFlowSteps)
-                        .Include(x => x.FlowParameter).ThenInclude(x => x.ChildrenFlowParameters)
-                        .Where(x => x.Id == currentFlowStep.SubFlowId)
-                        .FirstOrDefaultAsync();
-
-                    currentFlowStep.SubFlow = subFlow;
-                }
+                if (!currentFlowStep.IsSubFlowReferenced && currentFlowStep.SubFlow != null)
+                    stack.Push(currentFlowStep.SubFlow.FlowStep);
                 else
                     currentFlowStep.SubFlow = null;
 
@@ -141,6 +145,7 @@ namespace Business.Repository.Entities
                     if (childFlowStep.IsExpanded)
                         stack.Push(childFlowStep);
 
+                    //TODO this is propably tooo slow
                     // Add one more layer to make expander in ui visible.
                     else
                     {
@@ -156,104 +161,58 @@ namespace Business.Repository.Entities
             return flowStep;
         }
 
-        public async Task<FlowStep?> GetFlowStepClone(int flowStepId)
+        public async Task<FlowStep?> LoadAllClone(int id)
         {
-            Queue<(FlowStep, FlowStep)> queue = new Queue<(FlowStep, FlowStep)>();
-            Dictionary<int, FlowStep> clonedFlowSteps = new Dictionary<int, FlowStep>();
-
-            // Step 1: Load the source branch (including its children and template search relationships)
-            FlowStep? originalFlowStep = await InMemoryDbContext.FlowSteps
-                .Include(fs => fs.ChildrenFlowSteps)
-                .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
-                .FirstOrDefaultAsync(fs => fs.Id == flowStepId);
-
-            if (originalFlowStep == null)
+            FlowStep? flowStep = await InMemoryDbContext.FlowSteps
+                .Where(x => x.Id == id)
+                   .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                   .Include(x => x.FlowParameter)
+                   .Include(x => x.SubFlow!.FlowStep)
+                   .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
+                   .FirstOrDefaultAsync();
+            if (flowStep == null)
                 return null;
 
-
-            // Step 2: Use a queue to clone the tree iteratively
-            FlowStep clonedFlowStep = CreateFlowStepClone(originalFlowStep);
-
-            queue.Enqueue((originalFlowStep, clonedFlowStep));
-            clonedFlowSteps.Add(originalFlowStep.Id, clonedFlowStep);
-
-            while (queue.Count > 0)
-            {
-                var (originalNode, clonedNode) = queue.Dequeue();
-
-                // Children flow steps.
-                List<FlowStep> originalChildrenFlowSteps = await InMemoryDbContext.FlowSteps
-                .Include(fs => fs.ChildrenFlowSteps)
-                .Where(fs => fs.Id == originalNode.Id)
-                .SelectMany(x => x.ChildrenFlowSteps)
-                .ToListAsync();
-
-                foreach (FlowStep child in originalChildrenFlowSteps)
-                {
-                    FlowStep? parentTemplateSearchFlowStep = null;
-                    if (child.ParentTemplateSearchFlowStepId.HasValue)
-                        parentTemplateSearchFlowStep = clonedFlowSteps
-                            .Where(x => x.Key == child.ParentTemplateSearchFlowStepId.Value)
-                            .FirstOrDefault()
-                            .Value;
-
-                    var clonedChild = CreateFlowStepClone(child, clonedNode, parentTemplateSearchFlowStep);
-
-                    // Add to the parent's children
-                    clonedNode.ChildrenFlowSteps.Add(clonedChild);
-
-                    // Enqueue for further processing
-                    queue.Enqueue((child, clonedChild));
-                    clonedFlowSteps.Add(child.Id, clonedChild);
-
-                }
-
-                // Template search flow steps.
-                List<FlowStep> originalChildrenTemplateSearchFlowSteps = await InMemoryDbContext.FlowSteps
-                .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
-                .Where(fs => fs.Id == originalNode.Id)
-                .SelectMany(x => x.ChildrenTemplateSearchFlowSteps)
-                .ToListAsync();
-
-                foreach (FlowStep child in originalChildrenTemplateSearchFlowSteps)
-                    clonedNode.ChildrenTemplateSearchFlowSteps.Add(CreateFlowStepClone(child));
-            }
-
-            return clonedFlowStep;
-
+            await LoadAllChildrenExport(flowStep);
+            return flowStep;
         }
 
-        private FlowStep CreateFlowStepClone(FlowStep flowStep, FlowStep? parentFlowStep = null, FlowStep? parentTemplateSearchFlowStep = null)
+        private async Task<FlowStep> LoadAllChildrenExport(FlowStep flowStep)
         {
-            return new FlowStep
+            // Initialize a stack to simulate recursion.
+            var stack = new Stack<FlowStep>();
+            if (flowStep.SubFlow.FlowStep != null)
+                stack.Push(flowStep.SubFlow.FlowStep);
+            stack.Push(flowStep);
+
+            while (stack.Count > 0)
             {
-                ParentFlowStep = parentFlowStep,
-                ParentTemplateSearchFlowStep = parentTemplateSearchFlowStep,
-                Name = flowStep.Name,
-                ProcessName = flowStep.ProcessName,
-                IsExpanded = flowStep.IsExpanded,
-                IsSelected = false,
-                OrderingNum = flowStep.OrderingNum,
-                Type = flowStep.Type,
-                TemplateImage = flowStep.TemplateImage,
-                Accuracy = flowStep.Accuracy,
-                LocationX = flowStep.LocationX,
-                LocationY = flowStep.LocationY,
-                LoopMaxCount = flowStep.LoopMaxCount,
-                RemoveTemplateFromResult = flowStep.RemoveTemplateFromResult,
-                CursorAction = flowStep.CursorAction,
-                CursorButton = flowStep.CursorButton,
-                CursorScrollDirection = flowStep.CursorScrollDirection,
-                IsLoopInfinite = flowStep.IsLoopInfinite,
-                LoopCount = flowStep.LoopCount,
-                LoopTime = flowStep.LoopTime,
-                WaitForHours = flowStep.WaitForHours,
-                WaitForMinutes = flowStep.WaitForMinutes,
-                WaitForSeconds = flowStep.WaitForSeconds,
-                WaitForMilliseconds = flowStep.WaitForMilliseconds,
-                Height = flowStep.Height,
-                Width = flowStep.Width,
-            };
+                // Process the current node
+                var currentFlowStep = stack.Pop();
+
+                // Load its children from the database.
+                var childFlowSteps = await InMemoryDbContext.FlowSteps
+                    .Where(x => x.Id == currentFlowStep.Id)
+                    .SelectMany(x => x.ChildrenFlowSteps)
+                    .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                    .Include(x => x.FlowParameter)
+                    .Include(x => x.SubFlow!.FlowStep)
+                    .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
+                    .ToListAsync();
+
+                currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);
+                currentFlowStep.IsExpanded = true;
+
+                // Push children onto the stack for further processing.
+                foreach (var childFlowStep in childFlowSteps)
+                    stack.Push(childFlowStep);
+
+                foreach (var subFlowtep in childFlowSteps.Select(x => x.SubFlow?.FlowStep).ToList())
+                    if (subFlowtep != null)
+                        stack.Push(subFlowtep);
+            }
+
+            return flowStep;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Business.Repository.Interfaces
         Task<List<FlowStep>> GetSiblings(int flowStepId);
         Task<FlowStep?> GetNextSibling(int flowStepId);
         Task<FlowStep?> GetNextChild(int flowStepId, ExecutionResultEnum? resultEnum);
-        Task<FlowStep?> GetFlowStepClone(int flowStepId);
+        Task<FlowStep?> LoadAllClone(int id);
         Task<FlowStep> LoadAllExpandedChildren(FlowStep flowStep);
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Model.Enums;
 using Model.Models;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Business.Repository.Entities
 {
@@ -29,7 +30,7 @@ namespace Business.Repository.Entities
 
         public async Task<List<Flow>> LoadAllExpanded()
         {
-            List<Flow> flows= await InMemoryDbContext.Flows
+            List<Flow> flows = await InMemoryDbContext.Flows
                 .Include(x => x.FlowStep.ChildrenFlowSteps)
                 .ToListAsync();
 
@@ -38,7 +39,7 @@ namespace Business.Repository.Entities
                 flow.IsExpanded = true;
 
                 foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
-                    await LoadAllChildren(flowStep,true);
+                    await LoadAllChildren(flowStep, true);
             }
 
             return flows;
@@ -55,7 +56,7 @@ namespace Business.Repository.Entities
                 flow.IsExpanded = false;
 
                 foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
-                    await LoadAllChildren(flowStep,false);
+                    await LoadAllChildren(flowStep, false);
             }
 
             return flows;
@@ -65,19 +66,26 @@ namespace Business.Repository.Entities
         {
             List<Flow> flows = new List<Flow>();
 
-            if(flowId.HasValue)
+            if (flowId.HasValue)
                 flows = await InMemoryDbContext.Flows
-                    .Include(x => x.FlowStep.ChildrenFlowSteps)
+                    .Include(x => x.FlowParameter.ChildrenFlowParameters)
+                    .Include(x => x.FlowStep.ChildrenFlowSteps).ThenInclude(x => x.FlowParameter)
+                    .Include(x => x.FlowStep.ChildrenFlowSteps).ThenInclude(x => x.SubFlow!.FlowStep)
+                    .Include(x => x.FlowStep.ChildrenFlowSteps).ThenInclude(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
+
                     .Where(x => x.Id == flowId)
                     .ToListAsync();
             else
                 flows = await InMemoryDbContext.Flows
-                .Include(x => x.FlowStep.ChildrenFlowSteps)
-                .ToListAsync();
+                    .Include(x => x.FlowParameter.ChildrenFlowParameters)
+                    .Include(x => x.FlowStep.ChildrenFlowSteps).ThenInclude(x => x.FlowParameter)
+                    .Include(x => x.FlowStep.ChildrenFlowSteps).ThenInclude(x => x.SubFlow!.FlowStep)
+                    .Include(x => x.FlowStep.ChildrenFlowSteps).ThenInclude(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
+                    .ToListAsync();
 
             foreach (Flow flow in flows)
                 foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
-                    await LoadAllChildren(flowStep, false);
+                    await LoadAllChildrenExport(flowStep);
 
             return flows;
         }
@@ -97,7 +105,10 @@ namespace Business.Repository.Entities
                 var childFlowSteps = await InMemoryDbContext.FlowSteps
                     .Where(x => x.Id == currentFlowStep.Id)
                     .SelectMany(x => x.ChildrenFlowSteps)
-                    .Include(x=>x.ChildrenTemplateSearchFlowSteps)
+                    .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                    .Include(x => x.FlowParameter)
+                    .Include(x => x.SubFlow!.FlowStep)
+                    .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
                     .ToListAsync();
 
                 currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);
@@ -111,7 +122,7 @@ namespace Business.Repository.Entities
             return flowStep;
         }
 
-        private async Task<FlowStep> LoadAllChildrenExport(FlowStep flowStep, bool isExpanded)
+        private async Task<FlowStep> LoadAllChildrenExport(FlowStep flowStep)
         {
             // Initialize a stack to simulate recursion.
             var stack = new Stack<FlowStep>();
@@ -126,15 +137,22 @@ namespace Business.Repository.Entities
                 var childFlowSteps = await InMemoryDbContext.FlowSteps
                     .Where(x => x.Id == currentFlowStep.Id)
                     .SelectMany(x => x.ChildrenFlowSteps)
-                    .Include(x=>x.ChildrenTemplateSearchFlowSteps)
+                    .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                    .Include(x => x.FlowParameter)
+                    .Include(x => x.SubFlow!.FlowStep)
+                    .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
                     .ToListAsync();
 
                 currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);
-                currentFlowStep.IsExpanded = isExpanded;
+                currentFlowStep.IsExpanded = true;
 
                 // Push children onto the stack for further processing.
                 foreach (var childFlowStep in childFlowSteps)
                     stack.Push(childFlowStep);
+
+                foreach (var subFlowtep in childFlowSteps.Select(x => x.SubFlow?.FlowStep).ToList())
+                    if (subFlowtep != null)
+                        stack.Push(subFlowtep);
             }
 
             return flowStep;

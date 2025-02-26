@@ -18,7 +18,7 @@ namespace Business.Services
         public async Task<FlowStep?> GetFlowStepClone(int flowStepId)
         {
             // Queues for processing different types
-            Queue<(FlowStep Original, FlowStep Cloned, FlowStep? ParentFlowStep, FlowStep? ParentTemplateSearchFlowStep)> flowStepQueue = new();
+            Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue = new();
             Queue<(Flow Original, Flow Cloned)> flowQueue = new();
             Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue = new();
 
@@ -28,28 +28,20 @@ namespace Business.Services
             Dictionary<int, FlowParameter> clonedFlowParameters = new();
 
             // Load the source FlowStep with all related data
-            FlowStep? originalFlowStep = await _baseDatawork.FlowSteps.Query
-                .Include(fs => fs.ChildrenFlowSteps)
-                .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
-                .Include(fs => fs.SubFlow)
-                    .ThenInclude(f => f.FlowParameter)
-                .Include(fs => fs.SubFlow)
-                    .ThenInclude(f => f.SubFlowSteps)
-                .Include(fs => fs.FlowParameter)
-                .FirstOrDefaultAsync(fs => fs.Id == flowStepId);
+            FlowStep? originalFlowStep = await _baseDatawork.FlowSteps.LoadAllClone(flowStepId);
 
             if (originalFlowStep == null)
                 return null;
 
             // Clone the root FlowStep and enqueue it
             FlowStep clonedFlowStep = CreateFlowStepClone(originalFlowStep);
-            flowStepQueue.Enqueue((originalFlowStep, clonedFlowStep, null, null));
+            flowStepQueue.Enqueue((originalFlowStep, clonedFlowStep));
             clonedFlowSteps[originalFlowStep.Id] = clonedFlowStep;
 
             while (flowStepQueue.Count > 0)
             {
                 // Process FlowSteps
-                await ProcessFlowSteps(flowStepQueue, flowQueue, clonedFlowSteps, clonedFlows);
+                ProcessFlowSteps(flowStepQueue, flowQueue, clonedFlowSteps, clonedFlows, clonedFlowParameters);
 
                 // Process Flows
                 ProcessFlow(flowStepQueue, flowQueue, flowParameterQueue, clonedFlowSteps, clonedFlowParameters);
@@ -66,7 +58,7 @@ namespace Business.Services
         {
             // Queues for processing different types
             Queue<(Flow Original, Flow Cloned)> flowQueue = new();
-            Queue<(FlowStep Original, FlowStep Cloned, FlowStep? ParentFlowStep, FlowStep? ParentTemplateSearchFlowStep)> flowStepQueue = new();
+            Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue = new();
             Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue = new();
 
             // Dictionaries to track cloned objects
@@ -75,12 +67,8 @@ namespace Business.Services
             Dictionary<int, FlowParameter> clonedFlowParameters = new();
 
             // Load the source Flow with all related data
-            Flow? originalFlow = await _baseDatawork.Flows.Query
-                .Include(f => f.FlowParameter)
-                    .ThenInclude(f => f.ChildrenFlowParameters)
-                .Include(f => f.FlowStep)
-                .Include(f => f.SubFlowSteps)
-                .FirstOrDefaultAsync(f => f.Id == flowId);
+            List<Flow> originalFlows = await _baseDatawork.Flows.LoadAllExport(flowId);
+            Flow? originalFlow = originalFlows.FirstOrDefault();
 
             if (originalFlow == null)
                 return null;
@@ -99,7 +87,7 @@ namespace Business.Services
                 ProcessFlowParameter(flowStepQueue, flowQueue, flowParameterQueue, clonedFlowSteps, clonedFlows, clonedFlowParameters);
 
                 // Process FlowSteps
-                await ProcessFlowSteps(flowStepQueue, flowQueue, clonedFlowSteps, clonedFlows);
+                ProcessFlowSteps(flowStepQueue, flowQueue, clonedFlowSteps, clonedFlows, clonedFlowParameters);
 
             }
 
@@ -107,11 +95,11 @@ namespace Business.Services
         }
 
         // Existing helper method (unchanged)
-        private async Task ProcessFlowSteps(Queue<(FlowStep Original, FlowStep Cloned, FlowStep? ParentFlowStep, FlowStep? ParentTemplateSearchFlowStep)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, Flow> clonedFlows)
+        private void ProcessFlowSteps(Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, Flow> clonedFlows, Dictionary<int, FlowParameter> clonedFlowParameters)
         {
             while (flowStepQueue.Count > 0)
             {
-                var (originalFS, clonedFS, parentFS, parentTSFS) = flowStepQueue.Dequeue();
+                var (originalFS, clonedFS) = flowStepQueue.Dequeue();
 
                 // Clone SubFlow
                 if (originalFS.SubFlow != null && originalFS.IsSubFlowReferenced == false)
@@ -126,17 +114,17 @@ namespace Business.Services
                     clonedFS.SubFlowId = originalFS.SubFlowId;
                 }
 
-                if (originalFS.FlowParameterId != null)
+
+                // Clone FlowParameter
+                if (originalFS.FlowParameter != null && clonedFlowParameters.ContainsKey(originalFS.FlowParameter.Id))
+                {
+                    clonedFS.FlowParameter = clonedFlowParameters[originalFS.FlowParameter.Id];
+                }
+                else if (originalFS.FlowParameterId != null)
                     clonedFS.FlowParameterId = originalFS.FlowParameterId;
 
                 // Process ChildrenFlowSteps
-                var childrenFlowSteps = await _baseDatawork.FlowSteps.Query
-                    .Include(fs => fs.ChildrenFlowSteps)
-                    .Where(fs => fs.Id == originalFS.Id)
-                    .SelectMany(x => x.ChildrenFlowSteps)
-                    .ToListAsync();
-
-                foreach (var child in childrenFlowSteps)
+                foreach (var child in originalFS.ChildrenFlowSteps)
                 {
                     FlowStep? clonedParentTSFS = child.ParentTemplateSearchFlowStepId.HasValue
                         ? clonedFlowSteps.GetValueOrDefault(child.ParentTemplateSearchFlowStepId.Value)
@@ -144,29 +132,23 @@ namespace Business.Services
 
                     FlowStep clonedChild = CreateFlowStepClone(child, clonedFS, clonedParentTSFS);
                     clonedFS.ChildrenFlowSteps.Add(clonedChild);
-                    flowStepQueue.Enqueue((child, clonedChild, clonedFS, clonedParentTSFS));
+                    flowStepQueue.Enqueue((child, clonedChild));
                     clonedFlowSteps[child.Id] = clonedChild;
                 }
 
                 // Process ChildrenTemplateSearchFlowSteps
-                var childrenTSFlowSteps = await _baseDatawork.FlowSteps.Query
-                    .Include(fs => fs.ChildrenTemplateSearchFlowSteps)
-                    .Where(fs => fs.Id == originalFS.Id)
-                    .SelectMany(x => x.ChildrenTemplateSearchFlowSteps)
-                    .ToListAsync();
-
-                foreach (var child in childrenTSFlowSteps)
+                foreach (var child in originalFS.ChildrenTemplateSearchFlowSteps)
                 {
                     FlowStep clonedChild = CreateFlowStepClone(child);
                     clonedFS.ChildrenTemplateSearchFlowSteps.Add(clonedChild);
-                    flowStepQueue.Enqueue((child, clonedChild, null, null));
+                    flowStepQueue.Enqueue((child, clonedChild));
                     clonedFlowSteps[child.Id] = clonedChild;
                 }
             }
         }
 
         // Modified helper method to handle SubFlowSteps
-        private void ProcessFlow(Queue<(FlowStep Original, FlowStep Cloned, FlowStep? ParentFlowStep, FlowStep? ParentTemplateSearchFlowStep)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, FlowParameter> clonedFlowParameters)
+        private void ProcessFlow(Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, FlowParameter> clonedFlowParameters)
         {
             while (flowQueue.Count > 0)
             {
@@ -186,7 +168,7 @@ namespace Business.Services
                 {
                     FlowStep clonedFS = CreateFlowStepClone(originalF.FlowStep);
                     clonedF.FlowStep = clonedFS;
-                    flowStepQueue.Enqueue((originalF.FlowStep, clonedFS, null, null));
+                    flowStepQueue.Enqueue((originalF.FlowStep, clonedFS));
                     clonedFlowSteps[originalF.FlowStep.Id] = clonedFS;
                 }
 
@@ -205,7 +187,7 @@ namespace Business.Services
         }
 
         // Existing helper method (unchanged)
-        private void ProcessFlowParameter(Queue<(FlowStep Original, FlowStep Cloned, FlowStep? ParentFlowStep, FlowStep? ParentTemplateSearchFlowStep)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, Flow> clonedFlows, Dictionary<int, FlowParameter> clonedFlowParameters)
+        private void ProcessFlowParameter(Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, Flow> clonedFlows, Dictionary<int, FlowParameter> clonedFlowParameters)
         {
             while (flowParameterQueue.Count > 0)
             {
@@ -213,7 +195,7 @@ namespace Business.Services
 
                 clonedFP.ParentFlowParameter = parentFP;
 
-                // Clone Flow
+                // Clone Flow REMOVE
                 if (originalFP.Flow != null && !clonedFlows.ContainsKey(originalFP.Flow.Id))
                 {
                     Flow clonedFlow = CreateFlowClone(originalFP.Flow);
@@ -237,7 +219,7 @@ namespace Business.Services
                         flowParameterQueue.Enqueue((childFP, clonedChildFP, clonedFP));
                         clonedFlowParameters[childFP.Id] = clonedChildFP;
                     }
-                    else
+                    else // REMOVE?
                     {
                         clonedFP.ChildrenFlowParameters.Add(clonedFlowParameters[childFP.Id]);
                     }
