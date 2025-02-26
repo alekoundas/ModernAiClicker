@@ -8,14 +8,14 @@ namespace Business.Factories.Workers
 {
     public class WaitExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
         private CancellationTokenSource _cancellationToken;
 
 
-        public WaitExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService, CancellationTokenSource cancellationToken) : base(baseDatawork, systemService)
+        public WaitExecutionWorker(IDataService dataService, ISystemService systemService, CancellationTokenSource cancellationToken) : base(dataService, systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
             _cancellationToken = cancellationToken;
         }
@@ -46,7 +46,7 @@ namespace Business.Factories.Workers
                 return await Task.FromResult<FlowStep?>(null);
 
             // Get next sibling flow step. 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
     }

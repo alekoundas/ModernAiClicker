@@ -7,20 +7,20 @@ namespace Business.BaseViewModels
 {
     public partial class BaseFlowStepDetailVM : ObservableObject, IFlowStepDetailVM
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         public virtual event Action<int> OnSave;
 
 
         [ObservableProperty]
         protected FlowStep _flowStep = new FlowStep();
-        public BaseFlowStepDetailVM(IBaseDatawork baseDatawork)
+        public BaseFlowStepDetailVM(IDataService dataService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
         }
 
         public virtual async Task LoadFlowStepId(int flowStepId)
         {
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            FlowStep? flowStep = await _dataService.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
             if (flowStep != null)
                 FlowStep = flowStep;
         }

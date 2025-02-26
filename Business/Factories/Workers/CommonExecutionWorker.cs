@@ -9,12 +9,12 @@ namespace Business.Factories.Workers
 {
     public class CommonExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
 
-        public CommonExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService)
+        public CommonExecutionWorker(IDataService dataService, ISystemService systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
         }
 
@@ -22,8 +22,8 @@ namespace Business.Factories.Workers
         {
             Execution execution = new Execution();
             execution.FlowId = flowId;
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+            _dataService.Executions.Add(execution);
+            await _dataService.SaveChangesAsync();
 
             return execution;
         }
@@ -35,11 +35,11 @@ namespace Business.Factories.Workers
             execution.ParentExecutionId = parentExecution.Id;
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
 
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+            _dataService.Executions.Add(execution);
+            await _dataService.SaveChangesAsync();
 
             parentExecution.ChildExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
 
             execution.FlowStep = flowStep;
             return execution;
@@ -51,7 +51,7 @@ namespace Business.Factories.Workers
             execution.StartedOn = DateTime.Now;
             execution.LoopCount += 1;
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
         }
 
         public async virtual Task SetExecutionModelStateComplete(Execution execution)
@@ -59,7 +59,7 @@ namespace Business.Factories.Workers
             execution.Status = ExecutionStatusEnum.COMPLETED;
             execution.EndedOn = DateTime.Now;
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
         }
 
         public virtual Task ExpandAndSelectFlowStep(Execution execution, ObservableCollection<Flow> treeviewFlows)
@@ -97,12 +97,12 @@ namespace Business.Factories.Workers
 
         public async virtual Task SaveToDisk(Execution execution)
         {
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
         }
 
         public void ClearEntityFrameworkChangeTracker()
         {
-            _baseDatawork.Query.ChangeTracker.Clear();
+            _dataService.Query.ChangeTracker.Clear();
         }
     }
 }

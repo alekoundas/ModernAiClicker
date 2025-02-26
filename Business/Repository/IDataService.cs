@@ -3,7 +3,7 @@ using Business.Repository.Interfaces;
 
 namespace DataAccess.Repository.Interface
 {
-    public interface IBaseDatawork : IDisposable
+    public interface IDataService : IDisposable
     {
         InMemoryDbContext Query { get; }
 

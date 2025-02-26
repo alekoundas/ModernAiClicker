@@ -17,7 +17,7 @@ namespace StepinFlow.ViewModels.UserControls
 {
     public partial class FrameDetailUserControlVM : ObservableObject, INotifyPropertyChanged
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly IServiceProvider _serviceProvider;
 
 
@@ -68,9 +68,9 @@ namespace StepinFlow.ViewModels.UserControls
         private FlowStep? _newFlowStep = null;
         private FlowParameter? _newFlowParameter = null;
 
-        public FrameDetailUserControlVM(IBaseDatawork baseDatawork, IServiceProvider serviceProvider)
+        public FrameDetailUserControlVM(IDataService dataService, IServiceProvider serviceProvider)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _serviceProvider = serviceProvider;
 
             // Lazy load the instances needed and not all at once.
@@ -163,7 +163,7 @@ namespace StepinFlow.ViewModels.UserControls
             FrameFlowParameter = null;
             FrameExecution = null;
             // Navigate to existing flow step.
-            FlowStepTypesEnum? Type = await _baseDatawork.FlowSteps.Query
+            FlowStepTypesEnum? Type = await _dataService.FlowSteps.Query
                 .AsNoTracking()
                 .Where(x => x.Id == id)
                 .Select(x => x.Type)
@@ -187,7 +187,7 @@ namespace StepinFlow.ViewModels.UserControls
             FrameFlowStep = null;
             FrameExecution = null;
             // Navigate to existing flow step.
-            FlowParameterTypesEnum? type = await _baseDatawork.FlowParameters.Query
+            FlowParameterTypesEnum? type = await _dataService.FlowParameters.Query
                 .AsNoTracking()
                 .Where(x => x.Id == id)
                 .Select(x => x.Type)
@@ -210,7 +210,7 @@ namespace StepinFlow.ViewModels.UserControls
             FrameFlowParameter = null;
             FrameExecution = null;
             // Navigate to existing flow.
-            FlowTypesEnum? flowType = await _baseDatawork.Flows.Query
+            FlowTypesEnum? flowType = await _dataService.Flows.Query
                 .AsNoTracking()
                 .Where(x => x.Id == id)
                 .Select(x => x.Type)

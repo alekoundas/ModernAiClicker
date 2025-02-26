@@ -7,13 +7,13 @@ namespace StepinFlow.ViewModels.Pages
 {
     public partial class FlowVM : BaseFlowDetailVM
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly FlowsVM _flowsViewModel;
 
 
-        public FlowVM(FlowsVM flowsViewModel, IBaseDatawork baseDatawork) : base(baseDatawork)
+        public FlowVM(FlowsVM flowsViewModel, IDataService dataService) : base(dataService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _flowsViewModel = flowsViewModel;
 
         }
@@ -30,7 +30,7 @@ namespace StepinFlow.ViewModels.Pages
             // Edit mode
             if (Flow.Id > 0)
             {
-                Flow updateFlow = await _baseDatawork.Flows.FirstAsync(x => x.Id == Flow.Id);
+                Flow updateFlow = await _dataService.Flows.FirstAsync(x => x.Id == Flow.Id);
                 updateFlow.Name = Flow.Name;
             }
 
@@ -40,11 +40,11 @@ namespace StepinFlow.ViewModels.Pages
                 if (Flow.Name.Length == 0)
                     Flow.Name = "Flow";
 
-                _baseDatawork.Flows.Add(Flow);
+                _dataService.Flows.Add(Flow);
             }
 
 
-            _baseDatawork.SaveChanges();
+            _dataService.SaveChanges();
             _flowsViewModel.RefreshData();
         }
     }

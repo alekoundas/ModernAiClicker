@@ -12,19 +12,19 @@ namespace Business.Factories.Workers
 {
     public class MultipleTemplateSearchExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
         private byte[]? _resultImage = null;
 
         public MultipleTemplateSearchExecutionWorker(
-              IBaseDatawork baseDatawork
+              IDataService dataService
             , ISystemService systemService
             , ITemplateSearchService templateSearchService
-            ) : base(baseDatawork, systemService)
+            ) : base(dataService, systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _templateSearchService = templateSearchService;
             _systemService = systemService;
         }
@@ -49,16 +49,16 @@ namespace Business.Factories.Workers
             };
 
             // Save execution.
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+            _dataService.Executions.Add(execution);
+            await _dataService.SaveChangesAsync();
 
             // Save relation IDs
             parentExecution.ChildExecutionId = execution.Id;// TODO propably also this is wrong
             parentExecution.ChildLoopExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
 
             // Return execution with relations.
-            execution = await _baseDatawork.Executions.Query
+            execution = await _dataService.Executions.Query
               .Include(x => x.FlowStep)
               .ThenInclude(x => x.ParentTemplateSearchFlowStep)
               .FirstAsync(x => x.Id == execution.Id);
@@ -97,7 +97,7 @@ namespace Business.Factories.Workers
 
 
             byte[]? screenshot = null;
-            Execution? parentLoopExecution = await _baseDatawork.Executions.Query
+            Execution? parentLoopExecution = await _dataService.Executions.Query
                 .Include(x => x.FlowStep)
                 .FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
 
@@ -130,7 +130,7 @@ namespace Business.Factories.Workers
             //execution.ResultImagePath = result.ResultImagePath;
             execution.ResultAccuracy = result.Confidence;
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
             _resultImage = result.ResultImage;
         }
 
@@ -139,7 +139,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep?.ParentTemplateSearchFlowStepId == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStep.ParentTemplateSearchFlowStepId.Value, execution.Result);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextChild(execution.FlowStep.ParentTemplateSearchFlowStepId.Value, execution.Result);
             return nextFlowStep;
         }
 
@@ -155,7 +155,7 @@ namespace Business.Factories.Workers
                 return execution.FlowStep.ParentTemplateSearchFlowStep;
 
             // If not, get next sibling flow step. 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.ParentTemplateSearchFlowStepId.Value);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextSibling(execution.FlowStep.ParentTemplateSearchFlowStepId.Value);
             return nextFlowStep;
         }
 
@@ -183,14 +183,14 @@ namespace Business.Factories.Workers
 
                 execution.ResultImagePath = newFilePath;
 
-                await _baseDatawork.SaveChangesAsync();
+                await _dataService.SaveChangesAsync();
             }
         }
 
         private async Task<FlowStep?> GetChildTemplateSearchFlowStep(int flowStepId, int parentExecutionId)
         {
             // Get all parents of loop execution.
-            List<Execution> parentLoopExecutions = await _baseDatawork.Executions.GetAllParentLoopExecutions(parentExecutionId);
+            List<Execution> parentLoopExecutions = await _dataService.Executions.GetAllParentLoopExecutions(parentExecutionId);
 
             // Get all completed children template flow steps.
             List<int> completedChildrenTemplateFlowStepIds = parentLoopExecutions
@@ -199,7 +199,7 @@ namespace Business.Factories.Workers
                 .ToList();
 
             // Get all child template search flow steps.
-            List<FlowStep> children = await _baseDatawork.Query.FlowSteps
+            List<FlowStep> children = await _dataService.Query.FlowSteps
                 .AsNoTracking()
                 .Where(x => x.ParentTemplateSearchFlowStepId == flowStepId)
                 .Where(x => x.Type == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)

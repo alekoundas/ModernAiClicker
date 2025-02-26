@@ -7,11 +7,11 @@ namespace Business.Services
 {
     public class CloneService : ICloneService
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
 
-        public CloneService(IBaseDatawork baseDatawork)
+        public CloneService(IDataService dataService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
         }
 
         // Existing method for cloning FlowStep (unchanged)
@@ -28,7 +28,7 @@ namespace Business.Services
             Dictionary<int, FlowParameter> clonedFlowParameters = new();
 
             // Load the source FlowStep with all related data
-            FlowStep? originalFlowStep = await _baseDatawork.FlowSteps.LoadAllClone(flowStepId);
+            FlowStep? originalFlowStep = await _dataService.FlowSteps.LoadAllClone(flowStepId);
 
             if (originalFlowStep == null)
                 return null;
@@ -67,7 +67,7 @@ namespace Business.Services
             Dictionary<int, FlowParameter> clonedFlowParameters = new();
 
             // Load the source Flow with all related data
-            List<Flow> originalFlows = await _baseDatawork.Flows.LoadAllExport(flowId);
+            List<Flow> originalFlows = await _dataService.Flows.LoadAllExport(flowId);
             Flow? originalFlow = originalFlows.FirstOrDefault();
 
             if (originalFlow == null)

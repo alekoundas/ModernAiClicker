@@ -10,19 +10,19 @@ namespace Business.Factories.Workers
 {
     public class WaitForTemplateExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
         private byte[]? _resultImage = null;
 
         public WaitForTemplateExecutionWorker(
-              IBaseDatawork baseDatawork
+              IDataService dataService
             , ISystemService systemService
             , ITemplateSearchService templateSearchService
-            ) : base(baseDatawork, systemService)
+            ) : base(dataService, systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _templateSearchService = templateSearchService;
             _systemService = systemService;
         }
@@ -41,11 +41,11 @@ namespace Business.Factories.Workers
             execution.LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1;
 
 
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+            _dataService.Executions.Add(execution);
+            await _dataService.SaveChangesAsync();
 
             parentExecution.ChildExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
 
             execution.FlowStep = flowStep;
             return execution;
@@ -103,7 +103,7 @@ namespace Business.Factories.Workers
                     execution.ResultImagePath = result.ResultImagePath;
                     execution.ResultAccuracy = result.Confidence;
 
-                    await _baseDatawork.SaveChangesAsync();
+                    await _dataService.SaveChangesAsync();
                     _resultImage = result.ResultImage;
 
 
@@ -124,7 +124,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStepId == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.Result);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.Result);
             return nextFlowStep;
         }
 
@@ -133,7 +133,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
 
@@ -152,7 +152,7 @@ namespace Business.Factories.Workers
                 if (_resultImage != null)
                     await _systemService.SaveImageToDisk(newFilePath, _resultImage);
                 execution.ResultImagePath = newFilePath;
-                await _baseDatawork.SaveChangesAsync();
+                await _dataService.SaveChangesAsync();
             }
         }
     }

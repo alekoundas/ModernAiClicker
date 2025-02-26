@@ -13,7 +13,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
 {
     public partial class TemplateSearchAreaFlowParameterVM : BaseFlowParameterDetailVM
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
         private readonly FlowsVM _flowsViewModel;
 
@@ -38,10 +38,10 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
 
         public TemplateSearchAreaFlowParameterVM(
             FlowsVM flowsViewModel,
-            IBaseDatawork baseDatawork,
-            ISystemService systemService) : base(baseDatawork)
+            IDataService dataService,
+            ISystemService systemService) : base(dataService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
             _flowsViewModel = flowsViewModel;
 
@@ -51,7 +51,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
 
         public override async Task LoadFlowParameterId(int flowParameterId)
         {
-            FlowParameter? flowParameter = await _baseDatawork.FlowParameters.FirstOrDefaultAsync(x => x.Id == flowParameterId);
+            FlowParameter? flowParameter = await _dataService.FlowParameters.FirstOrDefaultAsync(x => x.Id == flowParameterId);
             if (flowParameter != null)
                 FlowParameter = flowParameter;
 
@@ -123,11 +123,11 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
-            _baseDatawork.Query.ChangeTracker.Clear();
+            _dataService.Query.ChangeTracker.Clear();
             // Edit mode
             if (FlowParameter.Id > 0)
             {
-                FlowParameter updateFlowParameter = await _baseDatawork.FlowParameters.FirstAsync(x => x.Id == FlowParameter.Id);
+                FlowParameter updateFlowParameter = await _dataService.FlowParameters.FirstAsync(x => x.Id == FlowParameter.Id);
                 updateFlowParameter.Name = FlowParameter.Name;
                 updateFlowParameter.LocationTop = SearchAreaRectangle.Top;
                 updateFlowParameter.LocationLeft = SearchAreaRectangle.Left;
@@ -144,11 +144,11 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
                 if (FlowParameter.ParentFlowParameterId == null)
                     return;
 
-                FlowParameter isNewSimpling = await _baseDatawork.FlowParameters.GetIsNewSibling(FlowParameter.ParentFlowParameterId.Value);
+                FlowParameter isNewSimpling = await _dataService.FlowParameters.GetIsNewSibling(FlowParameter.ParentFlowParameterId.Value);
                 FlowParameter.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                _baseDatawork.Update(isNewSimpling);
-                await _baseDatawork.SaveChangesAsync();
+                _dataService.Update(isNewSimpling);
+                await _dataService.SaveChangesAsync();
 
 
                 if (FlowParameter.Name.Length == 0)
@@ -162,11 +162,11 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
                 FlowParameter.ProcessName = SelectedProcess ?? "";
                 FlowParameter.SystemMonitorDeviceName = SelectedSystemMonitor?.DeviceName ?? "";
 
-                _baseDatawork.FlowParameters.Add(FlowParameter);
+                _dataService.FlowParameters.Add(FlowParameter);
             }
 
 
-            _baseDatawork.SaveChanges();
+            _dataService.SaveChanges();
             _flowsViewModel.RefreshData();
         }
     }

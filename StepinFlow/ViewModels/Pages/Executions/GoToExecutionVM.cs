@@ -11,7 +11,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
 {
     public partial class GoToExecutionVM : ObservableObject, IExecutionViewModel
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
 
         [ObservableProperty]
         private Execution _execution;
@@ -19,9 +19,9 @@ namespace StepinFlow.ViewModels.Pages.Executions
         [ObservableProperty]
         private ObservableCollection<FlowStep> _previousSteps = new ObservableCollection<FlowStep>();
 
-        public GoToExecutionVM(IBaseDatawork baseDatawork)
+        public GoToExecutionVM(IDataService dataService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _execution = new Execution();
         }
 
@@ -37,7 +37,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
             var queue = new Queue<FlowStep>();
             if (Execution.FlowStep?.Id != 0)
             {
-                List<FlowStep> siblings = await _baseDatawork.FlowSteps.GetSiblings(Execution.FlowStep.Id);
+                List<FlowStep> siblings = await _dataService.FlowSteps.GetSiblings(Execution.FlowStep.Id);
                 foreach (FlowStep step in siblings)
                     queue.Enqueue(step);
             }
@@ -46,7 +46,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
                 queue.Enqueue(Execution.FlowStep);
                 if (Execution.FlowStep.ParentFlowStepId != null)
                 {
-                    List<FlowStep> siblings = await _baseDatawork.FlowSteps.Query
+                    List<FlowStep> siblings = await _dataService.FlowSteps.Query
                         .Where(x => x.Id == Execution.FlowStep.ParentFlowStepId.Value)
                         .SelectMany(x => x.ChildrenFlowSteps)
                         .ToListAsync();
@@ -64,8 +64,8 @@ namespace StepinFlow.ViewModels.Pages.Executions
 
                 if (currentFlowStep.ParentFlowStepId != null)
                 {
-                    int parentOrderingNum = _baseDatawork.FlowSteps.Where(x => x.Id == currentFlowStep.ParentFlowStepId.Value).Select(x => x.OrderingNum).First();
-                    List<FlowStep> parentSiblings = await _baseDatawork.FlowSteps.GetSiblings(currentFlowStep.ParentFlowStepId.Value);
+                    int parentOrderingNum = _dataService.FlowSteps.Where(x => x.Id == currentFlowStep.ParentFlowStepId.Value).Select(x => x.OrderingNum).First();
+                    List<FlowStep> parentSiblings = await _dataService.FlowSteps.GetSiblings(currentFlowStep.ParentFlowStepId.Value);
                     List<FlowStep> parentSiblingsAbove = parentSiblings.Where(x => x.OrderingNum <= parentOrderingNum).ToList();
 
                     foreach (var sibling in parentSiblingsAbove)

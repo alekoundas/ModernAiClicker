@@ -14,7 +14,7 @@ namespace StepinFlow.ViewModels.Pages
 {
     public partial class SubFlowsVM : ObservableObject, INavigationAware, INotifyPropertyChanged
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
 
         public event IsLockedChangedEvent? IsLockedChanged;
@@ -70,10 +70,10 @@ namespace StepinFlow.ViewModels.Pages
         private Visibility _visible = Visibility.Collapsed;
 
         public SubFlowsVM(
-            IBaseDatawork baseDatawork,
+            IDataService dataService,
             ISystemService systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
 
 
@@ -154,12 +154,12 @@ namespace StepinFlow.ViewModels.Pages
                 Type = FlowTypesEnum.SUB_FLOW
             };
 
-            _baseDatawork.Flows.Add(flow);
-            await _baseDatawork.SaveChangesAsync();
+            _dataService.Flows.Add(flow);
+            await _dataService.SaveChangesAsync();
 
             flow.FlowStepId = flowSteps.Id;
             flow.FlowParameterId = flowRarameter.Id;
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
 
             LoadFlows?.Invoke(-1, true);
         }

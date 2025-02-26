@@ -8,15 +8,15 @@ namespace Business.Factories.Workers
 {
     public class LoopExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
 
         public LoopExecutionWorker(
-              IBaseDatawork baseDatawork
+              IDataService dataService
             , ISystemService systemService
-            ) : base(baseDatawork, systemService)
+            ) : base(dataService, systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
         }
 
@@ -31,11 +31,11 @@ namespace Business.Factories.Workers
             execution.LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1;
 
 
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+            _dataService.Executions.Add(execution);
+            await _dataService.SaveChangesAsync();
 
             parentExecution.ChildExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
 
             execution.FlowStep = flowStep;
             return execution;
@@ -51,7 +51,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStepId == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, null);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextChild(execution.FlowStepId.Value, null);
             return nextFlowStep;
         }
 
@@ -66,7 +66,7 @@ namespace Business.Factories.Workers
 
 
             // If not, get next sibling flow step. 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
     }

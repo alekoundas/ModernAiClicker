@@ -15,7 +15,7 @@ namespace StepinFlow.ViewModels.Pages
 {
     public partial class DataVM : ObservableObject, INavigationAware
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
 
         [ObservableProperty]
@@ -35,12 +35,12 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<Flow> _comboBoxFlows = new ObservableCollection<Flow>();
 
-        public DataVM(IBaseDatawork baseDatawork, ISystemService systemService)
+        public DataVM(IDataService dataService, ISystemService systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
 
-            ComboBoxFlows = new ObservableCollection<Flow>(_baseDatawork.Flows.GetAll());
+            ComboBoxFlows = new ObservableCollection<Flow>(_dataService.Flows.GetAll());
         }
 
         [RelayCommand]
@@ -81,7 +81,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonExportClick()
         {
-            List<Flow> flows = await _baseDatawork.Flows.LoadAllExport(ComboBoxSelectedFlow?.Id);
+            List<Flow> flows = await _dataService.Flows.LoadAllExport(ComboBoxSelectedFlow?.Id);
 
             string fileDate = DateTime.Now.ToString("yy-MM-dd hh.mm.ss");
             string fileName = "Export " + fileDate + ".json";
@@ -102,21 +102,21 @@ namespace StepinFlow.ViewModels.Pages
                 {
                     Flow? clonedFlow = FlowStepClone(flow);
                     if (clonedFlow != null)
-                        _baseDatawork.Flows.Add(clonedFlow);
+                        _dataService.Flows.Add(clonedFlow);
                 }
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
         }
 
         [RelayCommand]
         private async Task OnButtonDeleteClick()
         {
-            var executions = _baseDatawork.Executions.GetAll();
-            _baseDatawork.Executions.RemoveRange(executions);
-            _baseDatawork.SaveChanges();
+            var executions = _dataService.Executions.GetAll();
+            _dataService.Executions.RemoveRange(executions);
+            _dataService.SaveChanges();
 
             // Reclaim free space in database file.
-            await _baseDatawork.Query.Database.ExecuteSqlRawAsync("VACUUM;");
+            await _dataService.Query.Database.ExecuteSqlRawAsync("VACUUM;");
         }
 
 

@@ -15,7 +15,7 @@ namespace StepinFlow.ViewModels.UserControls
 {
     public partial class TreeViewUserControlVM : ObservableObject, INotifyPropertyChanged
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
         private readonly ICloneService _cloneService;
 
@@ -57,9 +57,9 @@ namespace StepinFlow.ViewModels.UserControls
         [ObservableProperty]
         private Visibility? _pasteVisibility = Visibility.Collapsed;
 
-        public TreeViewUserControlVM(IBaseDatawork baseDatawork, ISystemService systemService, ICloneService cloneService)
+        public TreeViewUserControlVM(IDataService dataService, ISystemService systemService, ICloneService cloneService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
             _cloneService = cloneService;
         }
@@ -76,7 +76,7 @@ namespace StepinFlow.ViewModels.UserControls
             if (flowId > 0)
                 filters.Add(x => x.Id == flowId);
 
-            IQueryable<Flow> query = _baseDatawork.Query.Flows
+            IQueryable<Flow> query = _dataService.Query.Flows
                 .Include(x => x.FlowStep)
                 .ThenInclude(x => x.ChildrenFlowSteps)
                 .ThenInclude(x => x.SubFlow)
@@ -88,20 +88,20 @@ namespace StepinFlow.ViewModels.UserControls
 
 
             // Clear trackers from dbcontext and execute query.
-            _baseDatawork.Query.ChangeTracker.Clear();
+            _dataService.Query.ChangeTracker.Clear();
             List<Flow> flows = await query.ToListAsync();
 
             // Load children.
             foreach (Flow flow in flows)
                 foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
-                    await _baseDatawork.FlowSteps.LoadAllExpandedChildren(flowStep);
+                    await _dataService.FlowSteps.LoadAllExpandedChildren(flowStep);
 
             FlowsList = new ObservableCollection<Flow>(flows);
         }
 
         public async Task LoadFlowsAndSelectFlowStep(int id)
         {
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
             await LoadFlows();
             await ExpandAndSelectFlowStep(id);
         }
@@ -114,21 +114,21 @@ namespace StepinFlow.ViewModels.UserControls
 
         public async Task ExpandAll()
         {
-            List<Flow> flows = await _baseDatawork.Flows.LoadAllExpanded();
-            await _baseDatawork.SaveChangesAsync();
+            List<Flow> flows = await _dataService.Flows.LoadAllExpanded();
+            await _dataService.SaveChangesAsync();
             FlowsList = new ObservableCollection<Flow>(flows);
 
         }
 
         public async Task CollapseAll()
         {
-            List<Flow> flows = await _baseDatawork.Flows.LoadAllCollapsed();
-            await _baseDatawork.SaveChangesAsync();
+            List<Flow> flows = await _dataService.Flows.LoadAllCollapsed();
+            await _dataService.SaveChangesAsync();
             FlowsList = new ObservableCollection<Flow>(flows);
         }
         public async Task ExpandAndSelectFlowStep(int id)
         {
-            FlowStep? uiFlowStep = await _baseDatawork.FlowSteps.Query.FirstOrDefaultAsync(x => x.Id == id);
+            FlowStep? uiFlowStep = await _dataService.FlowSteps.Query.FirstOrDefaultAsync(x => x.Id == id);
 
             if (uiFlowStep != null)
             {
@@ -190,19 +190,19 @@ namespace StepinFlow.ViewModels.UserControls
             int? parentId = flowStep.ParentFlowStepId ?? flowStep.FlowId ?? null;
             if (CoppiedFlowStepId.HasValue)
                 clonedFlowStep = await _cloneService.GetFlowStepClone(CoppiedFlowStepId.Value);
-            //clonedFlowStep = await _baseDatawork.FlowSteps.GetFlowStepClone(CoppiedFlowStepId.Value);
+            //clonedFlowStep = await _dataService.FlowSteps.GetFlowStepClone(CoppiedFlowStepId.Value);
 
             if (flowStep.ParentFlowStepId.HasValue && clonedFlowStep != null)
             {
                 //  Load the target parent.
-                FlowStep? targetParent = await _baseDatawork.FlowSteps.Query
+                FlowStep? targetParent = await _dataService.FlowSteps.Query
                 .Include(fs => fs.ChildrenFlowSteps)
                 .FirstOrDefaultAsync(fs => fs.Id == flowStep.ParentFlowStepId.Value);
 
                 if (targetParent == null)
                     return;
 
-                FlowStep isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(targetParent.Id);
+                FlowStep isNewSimpling = await _dataService.FlowSteps.GetIsNewSibling(targetParent.Id);
                 clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
                 clonedFlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
@@ -213,14 +213,14 @@ namespace StepinFlow.ViewModels.UserControls
             else if (flowStep.FlowId.HasValue && clonedFlowStep != null)
             {
                 //  Load the target parent.
-                Flow? targetParent = await _baseDatawork.Flows.Query
+                Flow? targetParent = await _dataService.Flows.Query
                 .Include(fs => fs.FlowStep.ChildrenFlowSteps)
                 .FirstOrDefaultAsync(fs => fs.Id == flowStep.FlowId.Value);
 
                 if (targetParent == null)
                     return;
 
-                FlowStep isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(targetParent.Id);
+                FlowStep isNewSimpling = await _dataService.Flows.GetIsNewSibling(targetParent.Id);
                 clonedFlowStep.ParentFlowStepId = flowStep.ParentFlowStepId;
                 clonedFlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
@@ -230,7 +230,7 @@ namespace StepinFlow.ViewModels.UserControls
             }
 
             // Save changes.
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
         }
 
 
@@ -238,17 +238,17 @@ namespace StepinFlow.ViewModels.UserControls
         [RelayCommand]
         private async Task OnFlowStepButtonDeleteClick(FlowStep flowStep)
         {
-            _baseDatawork.FlowSteps.Remove(flowStep);
+            _dataService.FlowSteps.Remove(flowStep);
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
         [RelayCommand]
         private async Task OnFlowParameterButtonDeleteClick(FlowParameter flowParameter)
         {
-            _baseDatawork.FlowParameters.Remove(flowParameter);
+            _dataService.FlowParameters.Remove(flowParameter);
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
 
@@ -256,9 +256,9 @@ namespace StepinFlow.ViewModels.UserControls
         [RelayCommand]
         private async Task OnFlowButtonDeleteClick(Flow flow)
         {
-            _baseDatawork.Flows.Remove(flow);
+            _dataService.Flows.Remove(flow);
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
 
@@ -266,7 +266,7 @@ namespace StepinFlow.ViewModels.UserControls
         [RelayCommand]
         private async Task OnButtonUpClick(FlowStep flowStep)
         {
-            List<FlowStep> simplings = await _baseDatawork.FlowSteps.GetSiblings(flowStep.Id);
+            List<FlowStep> simplings = await _dataService.FlowSteps.GetSiblings(flowStep.Id);
             List<FlowStep> simplingsAbove = simplings
                 .Where(x => x.OrderingNum < flowStep.OrderingNum)
                 .Where(x => x.Type != FlowStepTypesEnum.NEW)
@@ -280,7 +280,7 @@ namespace StepinFlow.ViewModels.UserControls
                 // Swap values
                 (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
 
-                await _baseDatawork.SaveChangesAsync();
+                await _dataService.SaveChangesAsync();
                 await LoadFlows();
             }
         }
@@ -288,7 +288,7 @@ namespace StepinFlow.ViewModels.UserControls
         [RelayCommand]
         private async Task OnButtonDownClick(FlowStep flowStep)
         {
-            List<FlowStep> simplings = await _baseDatawork.FlowSteps.GetSiblings(flowStep.Id);
+            List<FlowStep> simplings = await _dataService.FlowSteps.GetSiblings(flowStep.Id);
             List<FlowStep> simplingsBellow = simplings
                 .Where(x => x.OrderingNum > flowStep.OrderingNum)
                 .Where(x => x.Type != FlowStepTypesEnum.NEW)
@@ -302,7 +302,7 @@ namespace StepinFlow.ViewModels.UserControls
                 // Swap values
                 (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
 
-                await _baseDatawork.SaveChangesAsync();
+                await _dataService.SaveChangesAsync();
                 await LoadFlows();
             }
         }
@@ -354,13 +354,13 @@ namespace StepinFlow.ViewModels.UserControls
         private async Task OnExpanded(object eventParameter)
         {
             if (eventParameter is FlowStep flowStep)
-                await _baseDatawork.FlowSteps.LoadAllExpandedChildren(flowStep);
+                await _dataService.FlowSteps.LoadAllExpandedChildren(flowStep);
 
             else if (eventParameter is Flow flow)
                 foreach (var childFlowStep in flow.FlowStep.ChildrenFlowSteps)
-                    await _baseDatawork.FlowSteps.LoadAllExpandedChildren(childFlowStep);
+                    await _dataService.FlowSteps.LoadAllExpandedChildren(childFlowStep);
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
         }
     }
 }

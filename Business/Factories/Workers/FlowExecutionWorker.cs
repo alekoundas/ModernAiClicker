@@ -10,12 +10,12 @@ namespace Business.Factories.Workers
 {
     public class FlowExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
 
-        public FlowExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork, systemService)
+        public FlowExecutionWorker(IDataService dataService, ISystemService systemService) : base(dataService, systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
         }
 
@@ -27,14 +27,14 @@ namespace Business.Factories.Workers
 
         public async override Task<FlowStep?> GetNextChildFlowStep(Execution execution)
         {
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.Query
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.Query
                 .Where(x=>x.FlowId == execution.FlowId)
                 .SelectMany(x=>x.ChildrenFlowSteps)
                 .Where(x => x.Type != FlowStepTypesEnum.NEW)
                 .OrderBy(x=>x.OrderingNum)
                 .FirstOrDefaultAsync();
 
-            var nextFlowStep2 = await _baseDatawork.FlowSteps.Query
+            var nextFlowStep2 = await _dataService.FlowSteps.Query
               .Where(x => x.FlowId == execution.FlowId).ToListAsync();
 
             //TODO return error message 
@@ -57,7 +57,7 @@ namespace Business.Factories.Workers
 
             execution.ExecutionFolderDirectory = folderPath;
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
             Directory.CreateDirectory(folderPath);
         }
     }

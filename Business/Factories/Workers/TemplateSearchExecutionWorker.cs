@@ -12,19 +12,19 @@ namespace Business.Factories.Workers
 {
     public class TemplateSearchExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ITemplateSearchService _templateSearchService;
         private readonly ISystemService _systemService;
 
         private byte[]? _resultImage = null;
 
         public TemplateSearchExecutionWorker(
-              IBaseDatawork baseDatawork
+              IDataService dataService
             , ISystemService systemService
             , ITemplateSearchService templateSearchService
-            ) : base(baseDatawork, systemService)
+            ) : base(dataService, systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _templateSearchService = templateSearchService;
             _systemService = systemService;
         }
@@ -43,11 +43,11 @@ namespace Business.Factories.Workers
                 LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1
             };
 
-            _baseDatawork.Executions.Add(execution);
-            await _baseDatawork.SaveChangesAsync();
+            _dataService.Executions.Add(execution);
+            await _dataService.SaveChangesAsync();
 
             parentExecution.ChildExecutionId = execution.Id;
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
 
             execution.FlowStep = flowStep;
             return execution;
@@ -59,7 +59,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null || execution.FlowStep.TemplateMatchMode == null)
                 return;
             
-            FlowParameter? flowParameter = await _baseDatawork.FlowParameters.Query
+            FlowParameter? flowParameter = await _dataService.FlowParameters.Query
                 .Where(x => x.Id == execution.FlowStep.FlowParameterId)
                 .FirstOrDefaultAsync();
 
@@ -90,7 +90,7 @@ namespace Business.Factories.Workers
             // New if previous doenst exists.
             // Get previous one if exists and is loop with RemoveTemplateFromResult = true.
             byte[]? screenshot = null;
-            Execution? parentLoopExecution = await _baseDatawork.Executions.Query
+            Execution? parentLoopExecution = await _dataService.Executions.Query
                 .Include(x => x.FlowStep)
                 .FirstOrDefaultAsync(x => x.Id == execution.ParentLoopExecutionId);
 
@@ -119,7 +119,7 @@ namespace Business.Factories.Workers
             //execution.ResultImagePath = result.ResultImagePath;
             execution.ResultAccuracy = result.Confidence;
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
 
             _resultImage = result.ResultImage;
         }
@@ -129,7 +129,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStepId == null)
                 return await Task.FromResult<FlowStep?>(null);
 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.Result);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextChild(execution.FlowStepId.Value, execution.Result);
             return nextFlowStep;
         }
 
@@ -145,7 +145,7 @@ namespace Business.Factories.Workers
                     return execution.FlowStep;
 
             // If not, get next sibling flow step. 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
 
@@ -171,7 +171,7 @@ namespace Business.Factories.Workers
 
             execution.ResultImagePath = newFilePath;
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
         }
     }
 }

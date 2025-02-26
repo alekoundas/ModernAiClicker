@@ -19,7 +19,7 @@ namespace StepinFlow.ViewModels.Pages
 {
     public partial class ExecutionVM : ObservableObject, INavigationAware
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
         private readonly IExecutionFactory _executionFactory;
 
@@ -67,15 +67,15 @@ namespace StepinFlow.ViewModels.Pages
 
 
         public ExecutionVM(
-            IBaseDatawork baseDatawork,
+            IDataService dataService,
             ISystemService systemService,
             IExecutionFactory executionFactory)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
             _executionFactory = executionFactory;
 
-            ComboBoxFlows = new ObservableCollection<Flow>(_baseDatawork.Query.Flows.ToList());
+            ComboBoxFlows = new ObservableCollection<Flow>(_dataService.Query.Flows.ToList());
 
             _executionFactory.SetCancellationToken(_cancellationToken);
 
@@ -191,7 +191,7 @@ namespace StepinFlow.ViewModels.Pages
             if (ComboBoxSelectedFlow == null)
                 return;
 
-            List<Execution> executions = await _baseDatawork.Executions.Query
+            List<Execution> executions = await _dataService.Executions.Query
                 .Where(x => x.FlowId == ComboBoxSelectedFlow.Id)
                 .ToListAsync();
 
@@ -202,7 +202,7 @@ namespace StepinFlow.ViewModels.Pages
 
         private async Task LoadExecutionChild(Execution execution)
         {
-            Execution? executionChild = await _baseDatawork.Query.Executions
+            Execution? executionChild = await _dataService.Query.Executions
                         .Where(x => x.Id == execution.Id)
                         .Select(x => x.ChildExecution)
                         .FirstOrDefaultAsync();
@@ -220,12 +220,12 @@ namespace StepinFlow.ViewModels.Pages
         {
 
             //Delete all.
-            var aa = _baseDatawork.Executions.GetAll();
-            _baseDatawork.Executions.RemoveRange(aa);
-            _baseDatawork.SaveChanges();
+            var aa = _dataService.Executions.GetAll();
+            _dataService.Executions.RemoveRange(aa);
+            _dataService.SaveChanges();
 
             // Reclaim free space in database file.
-            await _baseDatawork.Query.Database.ExecuteSqlRawAsync("VACUUM;");
+            await _dataService.Query.Database.ExecuteSqlRawAsync("VACUUM;");
 
             //ComboBoxExecutionHistories.Remove(ComboBoxSelectedExecutionHistory);
             ComboBoxSelectedExecutionHistory = null;
@@ -267,7 +267,7 @@ namespace StepinFlow.ViewModels.Pages
                 return;
             }
 
-            Execution execution = await _baseDatawork.Executions.Query
+            Execution execution = await _dataService.Executions.Query
                 .Include(x => x.ChildExecution)
                 .FirstAsync(x => x.Id == ComboBoxSelectedExecutionHistory.Id);
 

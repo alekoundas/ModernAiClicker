@@ -13,7 +13,7 @@ namespace StepinFlow.ViewModels.Pages
 {
     public partial class SubFlowStepVM : BaseFlowStepDetailVM
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ICloneService _cloneService;
         public override event Action<int> OnSave;
 
@@ -23,18 +23,18 @@ namespace StepinFlow.ViewModels.Pages
         private Flow? _selectedSubFlow = null;
 
 
-        public SubFlowStepVM(IBaseDatawork baseDatawork, ICloneService cloneService) : base(baseDatawork)
+        public SubFlowStepVM(IDataService dataService, ICloneService cloneService) : base(dataService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _cloneService = cloneService;
         }
 
 
         public override async Task LoadFlowStepId(int flowStepId)
         {
-            SubFlows = new ObservableCollection<Flow>(await _baseDatawork.Flows.Query.Where(x => x.Type == FlowTypesEnum.SUB_FLOW).ToListAsync());
+            SubFlows = new ObservableCollection<Flow>(await _dataService.Flows.Query.Where(x => x.Type == FlowTypesEnum.SUB_FLOW).ToListAsync());
 
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
+            FlowStep? flowStep = await _dataService.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
             if (flowStep != null)
                 FlowStep = flowStep;
 
@@ -45,7 +45,7 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)
         {
-            SubFlows = new ObservableCollection<Flow>(await _baseDatawork.Flows.Query.Where(x => x.Type == FlowTypesEnum.SUB_FLOW).ToListAsync());
+            SubFlows = new ObservableCollection<Flow>(await _dataService.Flows.Query.Where(x => x.Type == FlowTypesEnum.SUB_FLOW).ToListAsync());
             FlowStep = newFlowStep;
         }
 
@@ -60,11 +60,11 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
-            _baseDatawork.Query.ChangeTracker.Clear();
+            _dataService.Query.ChangeTracker.Clear();
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
+                FlowStep updateFlowStep = await _dataService.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.IsSubFlowReferenced = FlowStep.IsSubFlowReferenced;
                 updateFlowStep.SubFlowId = SelectedSubFlow?.Id;
@@ -76,15 +76,15 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep isNewSimpling;
 
                 if (FlowStep.ParentFlowStepId != null)
-                    isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
+                    isNewSimpling = await _dataService.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
                 else if (FlowStep.FlowId.HasValue)
-                    isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
+                    isNewSimpling = await _dataService.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
                 else
                     return;
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _baseDatawork.SaveChangesAsync();
+                await _dataService.SaveChangesAsync();
 
 
                 if (FlowStep.Name.Length == 0)
@@ -105,11 +105,11 @@ namespace StepinFlow.ViewModels.Pages
 
 
 
-                _baseDatawork.FlowSteps.Add(FlowStep);
+                _dataService.FlowSteps.Add(FlowStep);
             }
 
 
-            _baseDatawork.SaveChanges();
+            _dataService.SaveChanges();
             OnSave?.Invoke(FlowStep.Id);
         }
     }

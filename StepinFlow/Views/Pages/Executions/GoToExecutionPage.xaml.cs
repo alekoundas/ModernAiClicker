@@ -8,9 +8,9 @@ namespace StepinFlow.Views.Pages.Executions
     public partial class GoToExecutionPage : Page, IExecutionPage
     {
         public IExecutionViewModel ViewModel { get; set; }
-        public GoToExecutionPage(IBaseDatawork baseDatawork)
+        public GoToExecutionPage(IDataService dataService)
         {
-            ViewModel = new GoToExecutionVM(baseDatawork);
+            ViewModel = new GoToExecutionVM(dataService);
             InitializeComponent();
             DataContext = this;
         }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Business.Repository
 {
-    public class BaseDatawork : IBaseDatawork, IDisposable
+    public class DataService : IDataService, IDisposable
     {
         private InMemoryDbContext _dbContext { get; set; }
         public InMemoryDbContext Query { get; set; }
@@ -16,7 +16,7 @@ namespace Business.Repository
         public IFlowParameterRepository FlowParameters { get; set; }
         public IExecutionRepository Executions { get; set; }
 
-        public BaseDatawork(InMemoryDbContext baseDbContext)
+        public DataService(InMemoryDbContext baseDbContext)
         {
             Query = baseDbContext;
             _dbContext = baseDbContext;

@@ -6,12 +6,12 @@ namespace Business.Factories.Workers
 {
     public class CursorScrollExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
 
-        public CursorScrollExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork, systemService)
+        public CursorScrollExecutionWorker(IDataService dataService, ISystemService systemService) : base(dataService, systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
         }
 
@@ -32,7 +32,7 @@ namespace Business.Factories.Workers
                 return await Task.FromResult<FlowStep?>(null);
 
             // Get next sibling flow step. 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
     }

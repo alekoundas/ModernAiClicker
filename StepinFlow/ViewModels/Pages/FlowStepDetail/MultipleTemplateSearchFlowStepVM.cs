@@ -21,7 +21,7 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly IWindowService _windowService;
         public override event Action<int> OnSave;
 
@@ -44,11 +44,11 @@ namespace StepinFlow.ViewModels.Pages
         public MultipleTemplateSearchFlowStepVM(
             ISystemService systemService,
             ITemplateSearchService templateMatchingService,
-            IBaseDatawork baseDatawork,
-            IWindowService windowService) : base(baseDatawork)
+            IDataService dataService,
+            IWindowService windowService) : base(dataService)
 
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
             _windowService = windowService;
@@ -58,7 +58,7 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadFlowStepId(int flowStepId)
         {
-            FlowStep? flowStep = await _baseDatawork.FlowSteps.Query
+            FlowStep? flowStep = await _dataService.FlowSteps.Query
                 .Include(x => x.ChildrenTemplateSearchFlowSteps)
                 .FirstOrDefaultAsync(x => x.Id == flowStepId);
 
@@ -69,7 +69,7 @@ namespace StepinFlow.ViewModels.Pages
                 ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>(flowSteps);
 
 
-                List<FlowParameter> flowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(flowStepId);
+                List<FlowParameter> flowParameters = await _dataService.FlowParameters.FindParametersFromFlowStep(flowStepId);
                 flowParameters = flowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
                 FlowParameters = new ObservableCollection<FlowParameter>(flowParameters);
 
@@ -81,7 +81,7 @@ namespace StepinFlow.ViewModels.Pages
         {
             FlowStep = newFlowStep;
 
-            List<FlowParameter> flowParameters = await _baseDatawork.FlowParameters.FindParametersFromFlowStep(newFlowStep.ParentFlowStepId.Value);
+            List<FlowParameter> flowParameters = await _dataService.FlowParameters.FindParametersFromFlowStep(newFlowStep.ParentFlowStepId.Value);
             flowParameters = flowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
             FlowParameters = new ObservableCollection<FlowParameter>(flowParameters);
 
@@ -254,7 +254,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
-            _baseDatawork.Query.ChangeTracker.Clear();
+            _dataService.Query.ChangeTracker.Clear();
             // Remove flow steps that dont contain a template image.
             List<FlowStep> templateFlowSteps = ChildrenTemplateSearchFlowSteps
                 .Where(x => x.TemplateImage == null)
@@ -269,15 +269,15 @@ namespace StepinFlow.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                FlowStep updateFlowStep = await _baseDatawork.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
+                FlowStep updateFlowStep = await _dataService.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.TemplateMatchMode = FlowStep.TemplateMatchMode;
                 if (SelectedFlowParameter != null)
                     updateFlowStep.FlowParameterId = SelectedFlowParameter.Id;
 
-                _baseDatawork.UpdateRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id > 0).ToList());
-                _baseDatawork.FlowSteps.AddRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id == 0).ToList());
-                _baseDatawork.FlowSteps.RemoveRange(_childrenTemplateSearchFlowStepsToRemove);
+                _dataService.UpdateRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id > 0).ToList());
+                _dataService.FlowSteps.AddRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id == 0).ToList());
+                _dataService.FlowSteps.RemoveRange(_childrenTemplateSearchFlowStepsToRemove);
             }
 
             /// Add mode
@@ -286,15 +286,15 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep isNewSimpling;
 
                 if (FlowStep.ParentFlowStepId != null)
-                    isNewSimpling = await _baseDatawork.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
+                    isNewSimpling = await _dataService.FlowSteps.GetIsNewSibling(FlowStep.ParentFlowStepId.Value);
                 else if (FlowStep.FlowId.HasValue)
-                    isNewSimpling = await _baseDatawork.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
+                    isNewSimpling = await _dataService.Flows.GetIsNewSibling(FlowStep.FlowId.Value);
                 else
                     return;
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _baseDatawork.SaveChangesAsync();
+                await _dataService.SaveChangesAsync();
 
 
                 // "Success" Flow step
@@ -335,15 +335,15 @@ namespace StepinFlow.ViewModels.Pages
                 if (SelectedFlowParameter != null)
                     FlowStep.FlowParameterId = SelectedFlowParameter.Id;
 
-                _baseDatawork.FlowSteps.Add(FlowStep);
+                _dataService.FlowSteps.Add(FlowStep);
             }
 
 
 
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
             OnSave?.Invoke(FlowStep.Id);
 
-            List<FlowStep> flowSteps = await _baseDatawork.FlowSteps.Query
+            List<FlowStep> flowSteps = await _dataService.FlowSteps.Query
                 .AsNoTracking()
                 .Where(x => x.ParentTemplateSearchFlowStepId == FlowStep.Id)
                 .Where(x => x.Type == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)

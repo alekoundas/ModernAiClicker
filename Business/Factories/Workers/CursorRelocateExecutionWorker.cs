@@ -8,12 +8,12 @@ namespace Business.Factories.Workers
 {
     public class CursorRelocateExecutionWorker : CommonExecutionWorker, IExecutionWorker
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
 
-        public CursorRelocateExecutionWorker(IBaseDatawork baseDatawork, ISystemService systemService) : base(baseDatawork, systemService)
+        public CursorRelocateExecutionWorker(IDataService dataService, ISystemService systemService) : base(dataService, systemService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
         }
 
@@ -30,7 +30,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep.ParentTemplateSearchFlowStepId != null)
                 while (currentExecution.ParentExecutionId != null)
                 {
-                    currentExecution = await _baseDatawork.Executions.Query
+                    currentExecution = await _dataService.Executions.Query
                         .Include(x => x.FlowStep)
                         .FirstAsync(x => x.Id == currentExecution.ParentExecutionId.Value);
 
@@ -58,7 +58,7 @@ namespace Business.Factories.Workers
             _systemService.SetCursorPossition(pointToMove);
             execution.ResultLocationX = pointToMove.X;
             execution.ResultLocationY = pointToMove.Y;
-            await _baseDatawork.SaveChangesAsync();
+            await _dataService.SaveChangesAsync();
         }
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)
@@ -67,7 +67,7 @@ namespace Business.Factories.Workers
                 return await Task.FromResult<FlowStep?>(null);
 
             // Get next sibling flow step. 
-            FlowStep? nextFlowStep = await _baseDatawork.FlowSteps.GetNextSibling(execution.FlowStep.Id);
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextSibling(execution.FlowStep.Id);
             return nextFlowStep;
         }
     }

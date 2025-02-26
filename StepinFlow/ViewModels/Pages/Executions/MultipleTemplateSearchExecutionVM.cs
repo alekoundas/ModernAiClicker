@@ -16,7 +16,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
 {
     public partial class MultipleTemplateSearchExecutionVM : ObservableObject, IExecutionViewModel
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly IWindowService _windowService;
 
         [ObservableProperty]
@@ -29,16 +29,16 @@ namespace StepinFlow.ViewModels.Pages.Executions
         private ObservableCollection<FlowStep>? _childrenTemplateSearchFlowSteps;
 
 
-        public MultipleTemplateSearchExecutionVM(IBaseDatawork baseDatawork, IWindowService windowService)
+        public MultipleTemplateSearchExecutionVM(IDataService dataService, IWindowService windowService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _windowService = windowService;
             _execution = new Execution();
         }
 
         public async void  SetExecution(Execution execution)
         {
-            execution = await _baseDatawork.Executions.Query
+            execution = await _dataService.Executions.Query
                 .Include(x=>x.FlowStep.ParentTemplateSearchFlowStep.ChildrenTemplateSearchFlowSteps)
                 .FirstAsync(x=>x.Id==execution.Id);
 

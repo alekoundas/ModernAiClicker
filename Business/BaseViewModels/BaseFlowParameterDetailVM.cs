@@ -7,18 +7,18 @@ namespace Business.BaseViewModels
 {
     public partial class BaseFlowParameterDetailVM : ObservableObject, IFlowParameterDetailVM
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
 
         [ObservableProperty]
         protected FlowParameter _flowParameter = new FlowParameter();
-        public BaseFlowParameterDetailVM(IBaseDatawork baseDatawork)
+        public BaseFlowParameterDetailVM(IDataService dataService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
         }
 
         public virtual async Task LoadFlowParameterId(int flowParameterId)
         {
-            FlowParameter? flowParameter = await _baseDatawork.FlowParameters.FirstOrDefaultAsync(x => x.Id == flowParameterId);
+            FlowParameter? flowParameter = await _dataService.FlowParameters.FirstOrDefaultAsync(x => x.Id == flowParameterId);
             if (flowParameter != null)
                 FlowParameter = flowParameter;
         }

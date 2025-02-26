@@ -8,7 +8,7 @@ namespace Business.Factories
 {
     public class ExecutionFactory : IExecutionFactory
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateSearchService;
         private Dictionary<FlowStepTypesEnum, Lazy<IExecutionWorker>>? _workerCache = null;
@@ -16,9 +16,9 @@ namespace Business.Factories
         private CancellationTokenSource _cancellationToken = new CancellationTokenSource();
 
 
-        public ExecutionFactory(IBaseDatawork baseDatawork, ISystemService systemService, ITemplateSearchService templateSearchService)
+        public ExecutionFactory(IDataService dataService, ISystemService systemService, ITemplateSearchService templateSearchService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _systemService = systemService;
             _templateSearchService = templateSearchService;
         }
@@ -34,7 +34,7 @@ namespace Business.Factories
 
             // Default worker for null or unrecognized types.
             // should never get here
-            return new FlowExecutionWorker(_baseDatawork, _systemService);
+            return new FlowExecutionWorker(_dataService, _systemService);
         }
 
         public void SetCancellationToken(CancellationTokenSource cancellationToken)
@@ -51,17 +51,17 @@ namespace Business.Factories
         {
             return new Dictionary<FlowStepTypesEnum, Lazy<IExecutionWorker>>()
             {
-                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionWorker>(() => new WindowMoveExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionWorker>(() => new WindowResizeExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.CURSOR_RELOCATE, new Lazy<IExecutionWorker>(() => new CursorRelocateExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.CURSOR_CLICK, new Lazy<IExecutionWorker>(() => new CursorClickExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.CURSOR_SCROLL, new Lazy<IExecutionWorker>(() => new CursorScrollExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionWorker>(() => new WaitForTemplateExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },
-                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new TemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },
-                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new MultipleTemplateSearchExecutionWorker(_baseDatawork, _systemService, _templateSearchService)) },
-                { FlowStepTypesEnum.WAIT, new Lazy<IExecutionWorker>(() => new WaitExecutionWorker(_baseDatawork, _systemService,_cancellationToken)) },
-                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionWorker>(() => new GoToExecutionWorker(_baseDatawork, _systemService)) },
-                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionWorker>(() => new LoopExecutionWorker(_baseDatawork, _systemService)) }
+                { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionWorker>(() => new WindowMoveExecutionWorker(_dataService, _systemService)) },
+                { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionWorker>(() => new WindowResizeExecutionWorker(_dataService, _systemService)) },
+                { FlowStepTypesEnum.CURSOR_RELOCATE, new Lazy<IExecutionWorker>(() => new CursorRelocateExecutionWorker(_dataService, _systemService)) },
+                { FlowStepTypesEnum.CURSOR_CLICK, new Lazy<IExecutionWorker>(() => new CursorClickExecutionWorker(_dataService, _systemService)) },
+                { FlowStepTypesEnum.CURSOR_SCROLL, new Lazy<IExecutionWorker>(() => new CursorScrollExecutionWorker(_dataService, _systemService)) },
+                { FlowStepTypesEnum.WAIT_FOR_TEMPLATE, new Lazy<IExecutionWorker>(() => new WaitForTemplateExecutionWorker(_dataService, _systemService, _templateSearchService)) },
+                { FlowStepTypesEnum.TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new TemplateSearchExecutionWorker(_dataService, _systemService, _templateSearchService)) },
+                { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new MultipleTemplateSearchExecutionWorker(_dataService, _systemService, _templateSearchService)) },
+                { FlowStepTypesEnum.WAIT, new Lazy<IExecutionWorker>(() => new WaitExecutionWorker(_dataService, _systemService,_cancellationToken)) },
+                { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionWorker>(() => new GoToExecutionWorker(_dataService, _systemService)) },
+                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionWorker>(() => new LoopExecutionWorker(_dataService, _systemService)) }
             };
         }
 

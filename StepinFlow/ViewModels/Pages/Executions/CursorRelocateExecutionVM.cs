@@ -10,7 +10,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
 {
     public partial class CursorRelocateExecutionVM : ObservableObject, IExecutionViewModel
     {
-        private readonly IBaseDatawork _baseDatawork;
+        private readonly IDataService _dataService;
 
         [ObservableProperty]
         private Execution _execution;
@@ -18,16 +18,16 @@ namespace StepinFlow.ViewModels.Pages.Executions
         [ObservableProperty]
         private ObservableCollection<FlowStep> _parents = new ObservableCollection<FlowStep>();
 
-        public CursorRelocateExecutionVM(IBaseDatawork baseDatawork)
+        public CursorRelocateExecutionVM(IDataService dataService)
         {
-            _baseDatawork = baseDatawork;
+            _dataService = dataService;
             _execution = new Execution() { FlowStep = new FlowStep() };
         }
 
         public void SetExecution(Execution execution)
         {
             Execution = execution;
-            Execution = _baseDatawork.Executions.Query
+            Execution = _dataService.Executions.Query
                 .Where(x => x.Id == Execution.Id)
                 .Include(x => x.FlowStep.ParentTemplateSearchFlowStep)
                 .First();
@@ -40,7 +40,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
             if (!flowStepId.HasValue)
                 return;
 
-            FlowStep? parent = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStepId.Value);
+            FlowStep? parent = _dataService.FlowSteps.FirstOrDefault(x => x.Id == flowStepId.Value);
 
             while (parent != null)
             {
@@ -56,7 +56,7 @@ namespace StepinFlow.ViewModels.Pages.Executions
                 if (!parent.ParentFlowStepId.HasValue)
                     return;
 
-                parent = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == parent.ParentFlowStepId.Value);
+                parent = _dataService.FlowSteps.FirstOrDefault(x => x.Id == parent.ParentFlowStepId.Value);
             }
         }
     }
