@@ -123,6 +123,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
+            _baseDatawork.Query.ChangeTracker.Clear();
             // Edit mode
             if (FlowParameter.Id > 0)
             {
@@ -146,6 +147,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
                 FlowParameter isNewSimpling = await _baseDatawork.FlowParameters.GetIsNewSibling(FlowParameter.ParentFlowParameterId.Value);
                 FlowParameter.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
+                _baseDatawork.Update(isNewSimpling);
                 await _baseDatawork.SaveChangesAsync();
 
 

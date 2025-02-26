@@ -122,14 +122,19 @@ namespace Business.Repository.Entities
 
                 currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);
 
+                // Load Sub-Flows if available and not referenced.
+                if (!currentFlowStep.IsSubFlowReferenced && currentFlowStep.SubFlowId != null)
+                {
+                    Flow? subFlow = await InMemoryDbContext.Flows
+                        .Include(x => x.FlowStep).ThenInclude(x => x.ChildrenFlowSteps)
+                        .Include(x => x.FlowParameter).ThenInclude(x => x.ChildrenFlowParameters)
+                        .Where(x => x.Id == currentFlowStep.SubFlowId)
+                        .FirstOrDefaultAsync();
 
-                Flow? subFlow = await InMemoryDbContext.Flows
-                    .Include(x=>x.FlowStep).ThenInclude(x=>x.ChildrenFlowSteps)
-                    .Include(x=>x.FlowParameter).ThenInclude(x => x.ChildrenFlowParameters)
-                    .Where(x => x.Id == currentFlowStep.SubFlowId)
-                    .FirstOrDefaultAsync();
-
-                currentFlowStep.SubFlow = subFlow;
+                    currentFlowStep.SubFlow = subFlow;
+                }
+                else
+                    currentFlowStep.SubFlow = null;
 
                 // Push only the expanded children onto the stack for further processing.
                 foreach (var childFlowStep in childFlowSteps)

@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using Business.Services;
 
 namespace StepinFlow.ViewModels.UserControls
 {
@@ -16,6 +17,7 @@ namespace StepinFlow.ViewModels.UserControls
     {
         private readonly IBaseDatawork _baseDatawork;
         private readonly ISystemService _systemService;
+        private readonly ICloneService _cloneService;
 
 
 
@@ -55,10 +57,11 @@ namespace StepinFlow.ViewModels.UserControls
         [ObservableProperty]
         private Visibility? _pasteVisibility = Visibility.Collapsed;
 
-        public TreeViewUserControlVM(IBaseDatawork baseDatawork, ISystemService systemService)
+        public TreeViewUserControlVM(IBaseDatawork baseDatawork, ISystemService systemService, ICloneService cloneService)
         {
             _baseDatawork = baseDatawork;
             _systemService = systemService;
+            _cloneService = cloneService;
         }
 
         public async Task LoadFlows(int flowId = 0, bool isSubFlow = false)
@@ -185,7 +188,8 @@ namespace StepinFlow.ViewModels.UserControls
             FlowStep? clonedFlowStep = null;
             int? parentId = flowStep.ParentFlowStepId ?? flowStep.FlowId ?? null;
             if (CoppiedFlowStepId.HasValue)
-                clonedFlowStep = await _baseDatawork.FlowSteps.GetFlowStepClone(CoppiedFlowStepId.Value);
+                clonedFlowStep = await _cloneService.GetFlowStepClone(CoppiedFlowStepId.Value);
+            //clonedFlowStep = await _baseDatawork.FlowSteps.GetFlowStepClone(CoppiedFlowStepId.Value);
 
             if (flowStep.ParentFlowStepId.HasValue && clonedFlowStep != null)
             {

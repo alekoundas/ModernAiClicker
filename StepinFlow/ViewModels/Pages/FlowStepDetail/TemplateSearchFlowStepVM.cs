@@ -65,7 +65,7 @@ namespace StepinFlow.ViewModels.Pages
             flowParameters = flowParameters.Where(x => x.Type == FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA).ToList();
             FlowParameters = new ObservableCollection<FlowParameter>(flowParameters);
 
-            SelectedFlowParameter = FlowStep.FlowParameter;
+                SelectedFlowParameter = FlowParameters.Where(x=>x.Id==FlowStep.FlowParameterId).FirstOrDefault();
         }
 
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)

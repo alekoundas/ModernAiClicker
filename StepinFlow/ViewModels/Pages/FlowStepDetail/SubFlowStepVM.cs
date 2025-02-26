@@ -6,37 +6,41 @@ using Model.Enums;
 using Business.BaseViewModels;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
+using Business.Interfaces;
+using Business.Services;
 
 namespace StepinFlow.ViewModels.Pages
 {
     public partial class SubFlowStepVM : BaseFlowStepDetailVM
     {
         private readonly IBaseDatawork _baseDatawork;
+        private readonly ICloneService _cloneService;
         public override event Action<int> OnSave;
 
         [ObservableProperty]
         private ObservableCollection<Flow> _subFlows = new ObservableCollection<Flow>();
         [ObservableProperty]
-        private Flow? _selectedSubFlow;
+        private Flow? _selectedSubFlow = null;
 
 
-        public SubFlowStepVM(IBaseDatawork baseDatawork) : base(baseDatawork)
+        public SubFlowStepVM(IBaseDatawork baseDatawork, ICloneService cloneService) : base(baseDatawork)
         {
             _baseDatawork = baseDatawork;
+            _cloneService = cloneService;
         }
 
 
         public override async Task LoadFlowStepId(int flowStepId)
         {
+            SubFlows = new ObservableCollection<Flow>(await _baseDatawork.Flows.Query.Where(x => x.Type == FlowTypesEnum.SUB_FLOW).ToListAsync());
 
             FlowStep? flowStep = await _baseDatawork.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
             if (flowStep != null)
                 FlowStep = flowStep;
 
             if (FlowStep.SubFlowId.HasValue)
-                SelectedSubFlow = await _baseDatawork.Flows.Query.Where(x => x.Id == flowStep.SubFlowId).FirstOrDefaultAsync();
+                SelectedSubFlow = SubFlows.Where(x => x.Id == flowStep.SubFlowId).FirstOrDefault();
 
-            SubFlows = new ObservableCollection<Flow>(await _baseDatawork.Flows.Query.Where(x => x.Type == FlowTypesEnum.SUB_FLOW).ToListAsync());
         }
 
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)
@@ -85,7 +89,20 @@ namespace StepinFlow.ViewModels.Pages
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Sub-Flow selector.";
 
-                FlowStep.SubFlowId = SelectedSubFlow?.Id;
+
+
+                if (FlowStep.IsSubFlowReferenced)
+                    FlowStep.SubFlowId = SelectedSubFlow?.Id;
+                else
+                {
+                    if (SelectedSubFlow?.Id != null)
+                    {
+                        FlowStep.SubFlow = await _cloneService.GetFlowClone(SelectedSubFlow.Id);
+
+                    }
+                }
+
+
 
                 _baseDatawork.FlowSteps.Add(FlowStep);
             }

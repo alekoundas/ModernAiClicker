@@ -80,10 +80,10 @@ namespace Model.Models
         public bool _isLoop;
 
         [ObservableProperty]
-        public int _loopCount;
+        public bool _isLoopInfinite;
 
         [ObservableProperty]
-        public bool _isLoopInfinite;
+        public int _loopCount;
 
         [ObservableProperty]
         public int _loopMaxCount;
@@ -99,21 +99,26 @@ namespace Model.Models
 
 
 
-
+        //Flow
         public int? FlowId { get; set; }
         public virtual Flow? Flow { get; set; }
 
         public int? SubFlowId { get; set; }
         public virtual Flow? SubFlow { get; set; }
 
-        public int? ParentFlowStepId { get; set; }
-        public virtual FlowStep? ParentFlowStep { get; set; }
 
+        //FlowParameter
         public int? FlowParameterId { get; set; }
         public virtual FlowParameter? FlowParameter { get; set; }
 
+
+        //FlowStep
+        public int? ParentFlowStepId { get; set; }
+        public virtual FlowStep? ParentFlowStep { get; set; }
+
         public int? ParentTemplateSearchFlowStepId { get; set; } // Used by GoTo, CursorMove, MultipleTemplateSearch, MultipleTemplateSearchLoop
         public virtual FlowStep? ParentTemplateSearchFlowStep { get; set; }
+
 
 
         public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();

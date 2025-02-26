@@ -36,13 +36,14 @@ namespace StepinFlow.ViewModels.Pages
             if (flowStep != null)
             {
                 FlowStep = flowStep;
-                SelectedFlowStep = _baseDatawork.FlowSteps.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
 
                 if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
                     GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);
 
-                if (FlowStep.ParentFlowStepId.HasValue)
+                else if (FlowStep.ParentFlowStepId.HasValue)
                     GetParents(FlowStep.ParentFlowStepId.Value);
+
+                SelectedFlowStep = Parents.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
             }
         }
 

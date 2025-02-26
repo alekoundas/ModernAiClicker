@@ -3,8 +3,6 @@ using Business.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Model.Enums;
 using Model.Models;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Business.Repository.Entities
 {
@@ -22,6 +20,7 @@ namespace Business.Repository.Entities
         public async Task<FlowParameter> GetIsNewSibling(int flowParameterId)
         {
             return await InMemoryDbContext.FlowParameters
+                .AsNoTracking()
                 .Where(x => x.Id == flowParameterId)
                 .Select(x => x.ChildrenFlowParameters.First(y => y.Type == FlowParameterTypesEnum.NEW))
                 .FirstAsync();
