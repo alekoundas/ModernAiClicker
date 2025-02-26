@@ -98,6 +98,7 @@ namespace StepinFlow.ViewModels.UserControls
 
             FlowsList = new ObservableCollection<Flow>(flows);
         }
+
         public async Task LoadFlowsAndSelectFlowStep(int id)
         {
             await _baseDatawork.SaveChangesAsync();
@@ -358,6 +359,8 @@ namespace StepinFlow.ViewModels.UserControls
             else if (eventParameter is Flow flow)
                 foreach (var childFlowStep in flow.FlowStep.ChildrenFlowSteps)
                     await _baseDatawork.FlowSteps.LoadAllExpandedChildren(childFlowStep);
+
+            await _baseDatawork.SaveChangesAsync();
         }
     }
 }
