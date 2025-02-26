@@ -34,6 +34,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
+            _baseDatawork.Query.ChangeTracker.Clear();
             // Edit mode
             if (FlowStep.Id > 0)
             {

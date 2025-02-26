@@ -254,6 +254,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
+            _baseDatawork.Query.ChangeTracker.Clear();
             // Remove flow steps that dont contain a template image.
             List<FlowStep> templateFlowSteps = ChildrenTemplateSearchFlowSteps
                 .Where(x => x.TemplateImage == null)
