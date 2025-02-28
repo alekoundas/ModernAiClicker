@@ -73,6 +73,24 @@ namespace StepinFlow.ViewModels.UserControls
             _dataService = dataService;
             _serviceProvider = serviceProvider;
 
+            FlowTypes = Enum.GetValues(typeof(FlowTypesEnum)).Cast<FlowTypesEnum>().ToList();
+            FlowStepTypes = Enum.GetValues(typeof(FlowStepTypesEnum))
+                .Cast<FlowStepTypesEnum>()
+                .Where(x => x != FlowStepTypesEnum.SUCCESS)
+                .Where(x => x != FlowStepTypesEnum.FAILURE)
+                .Where(x => x != FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)
+                .Where(x => x != FlowStepTypesEnum.NEW)
+                .Where(x => x != FlowStepTypesEnum.FLOW_PARAMETERS)
+                .Where(x => x != FlowStepTypesEnum.FLOW_STEPS)
+                .ToList();
+
+            FlowParameterTypes = Enum.GetValues(typeof(FlowParameterTypesEnum))
+                .Cast<FlowParameterTypesEnum>()
+                .Where(x => x != FlowParameterTypesEnum.NEW)
+                .Where(x => x != FlowParameterTypesEnum.FLOW_PARAMETERS)
+                .ToList();
+
+
             // Lazy load the instances needed and not all at once.
             _flowStepPageFactory = new Dictionary<FlowStepTypesEnum, Lazy<IFlowStepDetailPage>>
             {
