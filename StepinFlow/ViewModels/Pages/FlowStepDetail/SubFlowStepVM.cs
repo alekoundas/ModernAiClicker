@@ -7,7 +7,6 @@ using Business.BaseViewModels;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
 using Business.Interfaces;
-using Business.Services;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -17,6 +16,8 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ICloneService _cloneService;
         public override event Action<int> OnSave;
 
+        [ObservableProperty]
+        private bool _isEnabled;
         [ObservableProperty]
         private ObservableCollection<Flow> _subFlows = new ObservableCollection<Flow>();
         [ObservableProperty]
@@ -32,6 +33,7 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadFlowStepId(int flowStepId)
         {
+            IsEnabled = false;
             SubFlows = new ObservableCollection<Flow>(await _dataService.Flows.Query.Where(x => x.Type == FlowTypesEnum.SUB_FLOW).ToListAsync());
 
             FlowStep? flowStep = await _dataService.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
@@ -47,6 +49,7 @@ namespace StepinFlow.ViewModels.Pages
         {
             SubFlows = new ObservableCollection<Flow>(await _dataService.Flows.Query.Where(x => x.Type == FlowTypesEnum.SUB_FLOW).ToListAsync());
             FlowStep = newFlowStep;
+            IsEnabled = true;
         }
 
 

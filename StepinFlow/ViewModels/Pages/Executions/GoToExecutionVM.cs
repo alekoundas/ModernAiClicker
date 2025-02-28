@@ -4,7 +4,6 @@ using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using System.Collections.ObjectModel;
-using Business.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace StepinFlow.ViewModels.Pages.Executions

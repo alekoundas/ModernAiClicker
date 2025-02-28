@@ -109,7 +109,8 @@ namespace StepinFlow.ViewModels.UserControls
                 { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<GoToExecutionPage>()) },
                 { FlowStepTypesEnum.WINDOW_RESIZE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WindowResizeExecutionPage>()) },
                 { FlowStepTypesEnum.WINDOW_MOVE, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<WindowMoveExecutionPage>()) },
-                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<LoopExecutionPage>()) }
+                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<LoopExecutionPage>()) },
+                { FlowStepTypesEnum.SUB_FLOW_STEP, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<SubFlowStepExecutionPage>()) }
             };
 
             _flowParameterPageFactory = new Dictionary<FlowParameterTypesEnum, Lazy<IFlowParameterDetailPage>>
@@ -311,6 +312,9 @@ namespace StepinFlow.ViewModels.UserControls
                 page.ViewModel.LoadFlowParameterId(id);
                 FrameFlowParameter = page;
             }
+            else
+                FrameFlowParameter = null;
+
         }
 
         private void NavigateToFlowStepDetailPage(int id)
@@ -323,6 +327,8 @@ namespace StepinFlow.ViewModels.UserControls
                 page.ViewModel.OnSave += HandleSave;
                 FrameFlowStep = page;
             }
+            else
+                FrameFlowStep = null;
         }
 
         private void NavigateToFlowDetailPage(int id)
@@ -333,6 +339,8 @@ namespace StepinFlow.ViewModels.UserControls
                 page.ViewModel.LoadFlowId(id);
                 FrameFlow = page;
             }
+            else
+                FrameFlow = null;
         }
 
         private void NavigateToExecutionDetailPage(Execution execution)
@@ -343,6 +351,8 @@ namespace StepinFlow.ViewModels.UserControls
                 page.ViewModel.SetExecution(execution);
                 FrameExecution = page;
             }
+            else
+                FrameExecution = null;
         }
 
 

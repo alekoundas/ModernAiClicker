@@ -74,8 +74,8 @@
 
             <Frame Content="{Binding FrameFlow}" />
             <Frame Content="{Binding FrameFlowStep}" />
-            <Frame Content="{Binding FrameFlowParameter}" />
             <Frame Content="{Binding FrameExecution}" />
+            <Frame Content="{Binding FrameFlowParameter}" />
         </StackPanel>
     </Grid>
 </UserControl>

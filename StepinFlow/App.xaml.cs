@@ -100,6 +100,7 @@ namespace StepinFlow
                 services.AddScoped<WindowResizeExecutionWorker>();
                 services.AddScoped<TemplateSearchExecutionWorker>();
                 services.AddScoped<MultipleTemplateSearchExecutionWorker>();
+                services.AddScoped<SubFlowStepExecutionWorker>();
 
                 // User Controls
                 services.AddTransient<TreeViewUserControl>();
@@ -207,6 +208,9 @@ namespace StepinFlow
 
                 services.AddSingleton<LoopExecutionVM>();
                 services.AddSingleton<LoopExecutionPage>();
+
+                services.AddSingleton<SubFlowStepExecutionVM>();
+                services.AddSingleton<SubFlowStepExecutionPage>();
 
             }).Build();
 

@@ -1,6 +1,5 @@
 ﻿using Business.Factories.Workers;
 using Business.Interfaces;
-using Business.Services;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 
@@ -61,7 +60,8 @@ namespace Business.Factories
                 { FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH, new Lazy<IExecutionWorker>(() => new MultipleTemplateSearchExecutionWorker(_dataService, _systemService, _templateSearchService)) },
                 { FlowStepTypesEnum.WAIT, new Lazy<IExecutionWorker>(() => new WaitExecutionWorker(_dataService, _systemService,_cancellationToken)) },
                 { FlowStepTypesEnum.GO_TO, new Lazy<IExecutionWorker>(() => new GoToExecutionWorker(_dataService, _systemService)) },
-                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionWorker>(() => new LoopExecutionWorker(_dataService, _systemService)) }
+                { FlowStepTypesEnum.LOOP, new Lazy<IExecutionWorker>(() => new LoopExecutionWorker(_dataService, _systemService)) },
+                { FlowStepTypesEnum.SUB_FLOW_STEP, new Lazy<IExecutionWorker>(() => new SubFlowStepExecutionWorker(_dataService, _systemService)) }
             };
         }
 

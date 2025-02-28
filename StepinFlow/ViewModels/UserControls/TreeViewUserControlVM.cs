@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using Business.Services;
 
 namespace StepinFlow.ViewModels.UserControls
 {
