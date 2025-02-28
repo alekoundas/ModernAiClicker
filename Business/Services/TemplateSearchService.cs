@@ -61,6 +61,8 @@ namespace Business.Services
                              out OpenCvSharp.Point minLoc,
                              out OpenCvSharp.Point maxLoc);
 
+            
+
             // Get center possition of template image.
             Rectangle resultRectangle = new Rectangle()
             {
@@ -71,10 +73,16 @@ namespace Business.Services
             };
 
             // Convert to %
+            decimal minValue = (decimal)minConfidence;
+            decimal maxValue = (decimal)maxConfidence;
+            decimal r = (decimal)result.At<float>(maxLoc.Y, maxLoc.X);
+            decimal percentage = ConvertToPercentage(r, templateMatchModesEnum, minValue, maxValue);
+
+            // Convert to %
             maxConfidence *= 100d;
 
             // Draws rectangle in result image.
-            DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle, removeTemplateFromResult);
+            DrawResultRectangle(percentage, matScreenshot, resultRectangle, removeTemplateFromResult);
 
             //Save result image to drive for debugging.
             string resultFilePath = Path.Combine(PathHelper.GetAppDataPath(), "Result.png");
@@ -83,12 +91,51 @@ namespace Business.Services
             return new TemplateMatchingResult()
             {
                 ResultRectangle = resultRectangle,
-                Confidence = (decimal)maxConfidence,
+                Confidence = percentage,
                 ResultImagePath = resultFilePath,
                 ResultImage = matScreenshot.ToBytes()
             };
         }
+        private decimal ConvertToPercentage(decimal r, TemplateMatchModesEnum? method, decimal minValue = decimal.MinValue, decimal maxValue = decimal.MaxValue)
+        {
+            decimal percentage;
 
+            switch (method)
+            {
+                case TemplateMatchModesEnum.SqDiff: // SqDiff (Min: 0, Max: +\infty)
+                        // maxValue should be the practical maximum from your result matrix
+                    percentage = maxValue > 0 ? 100 * (1 - r / maxValue) : 100;
+                    break;
+
+                case TemplateMatchModesEnum.SqDiffNormed: // SqDiffNormed (Min: 0, Max: 1)
+                    percentage = 100 * (1 - r);
+                    break;
+
+                case TemplateMatchModesEnum.CCorr: // CCorr (Min: -\infty, Max: +\infty)
+                        // minValue and maxValue should be practical min/max from your result matrix
+                    percentage = (maxValue - minValue) > 0 ? 100 * (r - minValue) / (maxValue - minValue) : 0;
+                    break;
+
+                case TemplateMatchModesEnum.CCorrNormed: // CCorrNormed (Min: -1, Max: 1)
+                    percentage = 100 * (r + 1) / 2;
+                    break;
+
+                case TemplateMatchModesEnum.CCoeff: // CCoeff (Min: -\infty, Max: +\infty)
+                        // minValue and maxValue should be practical min/max from your result matrix
+                    percentage = (maxValue - minValue) > 0 ? 100 * (r - minValue) / (maxValue - minValue) : 0;
+                    break;
+
+                case TemplateMatchModesEnum.CCoeffNormed: // CCoeffNormed (Min: -1, Max: 1)
+                    percentage = 100 * (r + 1) / 2;
+                    break;
+
+                default:
+                    throw new ArgumentException("Invalid template matching method.");
+            }
+
+            // Clamp to [0, 100] to handle edge cases or arithmetic errors
+            return Decimal.Max(0, Decimal.Min(100, percentage));
+        }
 
         public TemplateMatchingResult SearchForTemplate(Bitmap template, Bitmap screenshot, TemplateMatchModesEnum? templateMatchModesEnum, bool removeTemplateFromResult)
         {
@@ -143,7 +190,7 @@ namespace Business.Services
             maxConfidence *= 100d;
 
             // Draws rectangle in result image.
-            DrawResultRectangle(maxConfidence, matScreenshot, resultRectangle, removeTemplateFromResult);
+            DrawResultRectangle((decimal)maxConfidence, matScreenshot, resultRectangle, removeTemplateFromResult);
 
             //Save result image to drive for debugging.
             string resultFilePath = Path.Combine(PathHelper.GetAppDataPath(), "Result.png");
@@ -180,7 +227,7 @@ namespace Business.Services
             return bitmapSource;
         }
 
-        private static void DrawResultRectangle(double confidence, Mat matScreenshot, Rectangle resultRectangle, bool removeTemplateFromResult)
+        private static void DrawResultRectangle(decimal confidence, Mat matScreenshot, Rectangle resultRectangle, bool removeTemplateFromResult)
         {
             OpenCvSharp.Point point1 = new OpenCvSharp.Point(resultRectangle.Left, resultRectangle.Top);
             OpenCvSharp.Point point2 = new OpenCvSharp.Point(resultRectangle.Right, resultRectangle.Bottom);
