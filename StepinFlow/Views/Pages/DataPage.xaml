@@ -7,7 +7,6 @@
     xmlns:icons="https://github.com/helluvamatt/BootstrapIcons.Wpf/"
     xmlns:local="clr-namespace:StepinFlow.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:StepinFlow.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="DataPage"
     d:DataContext="{d:DesignInstance local:DataPage,
