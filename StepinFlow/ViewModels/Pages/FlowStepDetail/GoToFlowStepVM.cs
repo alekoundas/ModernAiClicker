@@ -1,11 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Model.Enums;
 using System.Collections.ObjectModel;
-using Business.Extensions;
 using Business.BaseViewModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,17 +29,19 @@ namespace StepinFlow.ViewModels.Pages
             if (flowStep != null)
             {
                 FlowStep = flowStep;
-                PreviousSteps = await GetParents();
+                if (flowStep.ParentFlowStepId != null)
+                    PreviousSteps = await GetParents(flowStep.ParentFlowStepId.Value);
             }
         }
 
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)
         {
             FlowStep = newFlowStep;
-            PreviousSteps = await GetParents();
+            if (newFlowStep.ParentFlowStepId != null)
+                PreviousSteps = await GetParents(newFlowStep.ParentFlowStepId.Value);
         }
 
-      
+
 
         [RelayCommand]
         private void OnButtonCancelClick()
@@ -85,58 +85,53 @@ namespace StepinFlow.ViewModels.Pages
             OnSave?.Invoke(FlowStep.Id);
         }
 
-        private async Task<ObservableCollection<FlowStep>> GetParents()
+        private async Task<ObservableCollection<FlowStep>> GetParents(int flowStepId)
         {
             List<FlowStep> previousSteps = new List<FlowStep>();
-            var queue = new Queue<FlowStep>();
-            if (FlowStep?.Id != 0)
+
+            FlowStep? parent = _dataService.FlowSteps.Query
+                .AsNoTracking()
+                .Include(x => x.ParentFlowStep)
+                .FirstOrDefault(x => x.Id == flowStepId);
+
+            while (parent != null)
             {
-                List<FlowStep> siblings = await _dataService.FlowSteps.GetSiblings(FlowStep.Id);
-                foreach (FlowStep step in siblings)
-                    queue.Enqueue(step);
-            }
-            else
-            {
-                queue.Enqueue(FlowStep);
-                if (FlowStep.ParentFlowStepId != null)
-                {
-                    List<FlowStep> siblings = await _dataService.FlowSteps.Query
-                        .Where(x => x.Id == FlowStep.ParentFlowStepId.Value)
-                        .SelectMany(x => x.ChildrenFlowSteps)
-                        .ToListAsync();
 
-                    foreach (var sibling in siblings)
-                        queue.Enqueue(sibling);
-                }
-            }
+                List<FlowStep> siblings = await _dataService.FlowSteps.GetSiblings(parent.Id);
+                siblings = siblings
+                    .Where(x => x.OrderingNum < parent.OrderingNum)
+                    .Where(x => x.Type != FlowStepTypesEnum.NEW)
+                    .Where(x => x.Type != FlowStepTypesEnum.SUCCESS)
+                    .Where(x => x.Type != FlowStepTypesEnum.FAILURE)
+                    .Where(x => x.Type != FlowStepTypesEnum.FLOW_STEPS)
+                    .Where(x => x.Type != FlowStepTypesEnum.FLOW_PARAMETERS)
+                    .Where(x => x.Type != FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH_CHILD)
+                    .OrderByDescending(x => x.OrderingNum)
+                    .ToList();
 
+                previousSteps.AddRange(siblings);
 
-            while (queue.Count > 0)
-            {
-                FlowStep currentFlowStep = queue.Dequeue();
-                previousSteps.Add(currentFlowStep);
+                //Get parent flowStep
+                if (parent?.ParentFlowStepId != null)
+                    parent = _dataService.FlowSteps.Query
+                        .AsNoTracking()
+                        .Include(x => x.ParentFlowStep)
+                        .FirstOrDefault(x => x.Id == parent.ParentFlowStepId);
 
-                if (currentFlowStep.ParentFlowStepId != null)
-                {
-                    int parentOrderingNum = _dataService.FlowSteps.Where(x => x.Id == currentFlowStep.ParentFlowStepId.Value).Select(x => x.OrderingNum).First();
-                    List<FlowStep> parentSiblings = await _dataService.FlowSteps.GetSiblings(currentFlowStep.ParentFlowStepId.Value);
-                    List<FlowStep> parentSiblingsAbove = parentSiblings.Where(x => x.OrderingNum <= parentOrderingNum).ToList();
-
-                    foreach (var sibling in parentSiblingsAbove)
-                        queue.Enqueue(sibling);
-                }
+                //Get parent SubflowStep
+                else if (parent?.FlowId != null)
+                    parent = _dataService.Flows.Query
+                        .AsNoTracking()
+                        .Where(x => x.Id == parent.FlowId)
+                        .Select(x => x.ParentSubFlowStep)
+                        .FirstOrDefault();
+                else
+                    parent = null;
             }
 
-            List<FlowStep> previousStepsFiltered = previousSteps
-           .Where(x => x.Type != FlowStepTypesEnum.SUCCESS)
-           .Where(x => x.Type != FlowStepTypesEnum.FAILURE)
-           .Where(x => x.Type != FlowStepTypesEnum.NEW)
-           .Where(x => x.Type != FlowStepTypesEnum.GO_TO)
-           .Distinct() // TODO: Fix query and remove this.
-           .ToList();
 
 
-            return new ObservableCollection<FlowStep>(previousStepsFiltered);
+            return new ObservableCollection<FlowStep>(previousSteps);
         }
     }
 }
