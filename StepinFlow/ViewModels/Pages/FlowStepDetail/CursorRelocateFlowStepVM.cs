@@ -8,13 +8,16 @@ using Model.Enums;
 using Model.Structs;
 using Business.BaseViewModels;
 using Microsoft.EntityFrameworkCore;
+using Business.Services;
+using System.Windows.Input;
 
 namespace StepinFlow.ViewModels.Pages
 {
     public partial class CursorRelocateFlowStepVM : BaseFlowStepDetailVM
     {
-        private readonly ISystemService _systemService;
         private readonly IDataService _dataService;
+        private readonly ISystemService _systemService;
+        private readonly IKeyboardListenerService _keyboardListenerService;
         public override event Action<int> OnSave;
 
 
@@ -26,10 +29,14 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private IEnumerable<CursorRelocationTypesEnum> _cursorRelocationTypesEnum;
 
-        public CursorRelocateFlowStepVM(ISystemService systemService, IDataService dataService) : base(dataService)
+        public CursorRelocateFlowStepVM(
+            IDataService dataService, 
+            ISystemService systemService,
+            IKeyboardListenerService keyboardListenerService) : base(dataService)
         {
             _dataService = dataService;
             _systemService = systemService;
+            _keyboardListenerService = keyboardListenerService;
 
             CursorRelocationTypesEnum = Enum.GetValues(typeof(CursorRelocationTypesEnum)).Cast<CursorRelocationTypesEnum>();
         }
@@ -44,6 +51,12 @@ namespace StepinFlow.ViewModels.Pages
                     GetParents(FlowStep.ParentFlowStepId.Value);
 
                 SelectedFlowStep = Parents.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
+
+                KeyCombination _combination = new KeyCombination(ModifierKeys.None, Key.F3);
+                _keyboardListenerService.RegisterListener(_combination, () =>
+                {
+                    Console.WriteLine("Ctrl + S pressed globally from Form2!");
+                });
             }
         }
 
@@ -54,6 +67,12 @@ namespace StepinFlow.ViewModels.Pages
             if (FlowStep.ParentFlowStepId.HasValue)
                 GetParents(FlowStep.ParentFlowStepId.Value);
 
+
+            KeyCombination _combination = new KeyCombination(ModifierKeys.None, Key.F4);
+            _keyboardListenerService.RegisterListener(_combination, () =>
+            {
+                Console.WriteLine("Ctrl + S pressed globally from Form2!");
+            });
             return;
         }
 

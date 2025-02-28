@@ -36,16 +36,7 @@
                     <ComboBox
                         ItemsSource="{Binding ViewModel.CursorRelocationTypesEnum}"
                         SelectedIndex="0"
-                        SelectedItem="{Binding ViewModel.FlowStep.CursorRelocationType}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding ViewModel.TemplateSearchAreaTypeCommand}" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="Loaded">
-                                <i:InvokeCommandAction Command="{Binding ViewModel.TemplateSearchAreaTypeCommand}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
+                        SelectedItem="{Binding ViewModel.FlowStep.CursorRelocationType}" />
                 </StackPanel>
 
 

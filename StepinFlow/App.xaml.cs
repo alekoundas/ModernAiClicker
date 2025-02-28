@@ -79,6 +79,7 @@ namespace StepinFlow
                 services.AddScoped<ITemplateSearchService, TemplateSearchService>();
                 services.AddTransient<IDataService, DataService>();
                 services.AddTransient<ICloneService, CloneService>();
+                services.AddTransient<IKeyboardListenerService, KeyboardListenerService>();
 
                 // Repository
                 services.AddScoped<IFlowRepository, FlowRepository>();
