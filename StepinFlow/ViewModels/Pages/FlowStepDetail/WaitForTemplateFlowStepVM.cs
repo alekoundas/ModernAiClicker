@@ -10,6 +10,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
 using Business.BaseViewModels;
+using System.Windows.Input;
+using StepinFlow.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -17,27 +19,30 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly ITemplateSearchService _templateMatchingService;
+        private readonly IWindowService _windowService;
         private readonly IDataService _dataService;
         public override event Action<int> OnSave;
 
         [ObservableProperty]
+        private byte[]? _testResultImage = null;
+        [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
-
-        public event ShowResultImageEvent? ShowResultImage;
-        public delegate void ShowResultImageEvent(string filePath);
-
         [ObservableProperty]
         private IEnumerable<TemplateMatchModesEnum> _matchModes;
 
-        public WaitForTemplateFlowStepVM(ISystemService systemService, ITemplateSearchService templateMatchingService, IDataService dataService) : base(dataService)
+        public WaitForTemplateFlowStepVM(
+            ISystemService systemService, 
+            ITemplateSearchService templateMatchingService, 
+            IDataService dataService,
+            IWindowService windowService) : base(dataService)
         {
 
             _dataService = dataService;
             _systemService = systemService;
             _templateMatchingService = templateMatchingService;
+            _windowService = windowService;
 
             MatchModes = Enum.GetValues(typeof(TemplateMatchModesEnum)).Cast<TemplateMatchModesEnum>();
-
         }
 
         [RelayCommand]
@@ -53,6 +58,35 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep.TemplateImage = File.ReadAllBytes(openFileDialog.FileName);
             }
 
+        }
+        [RelayCommand]
+        private async Task OnButtonTakeScreenshotClick()
+        {
+            byte[]? resultTemplate = await _windowService.OpenScreenshotSelectionWindow();
+            if (resultTemplate == null)
+                return;
+
+            FlowStep.TemplateImage = resultTemplate;
+        }
+
+        [RelayCommand]
+        private async Task OnTemplateImageDoubleClick(MouseButtonEventArgs e)
+        {
+            // Check if it's a double-click.
+            if (e.ClickCount == 2)
+            {
+                byte[]? image = await _windowService.OpenScreenshotSelectionWindow(FlowStep.TemplateImage);
+                if (image != null)
+                    FlowStep.TemplateImage = image;
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnResultImageDoubleClick(MouseButtonEventArgs e)
+        {
+            // Check if it's a double-click.
+            if (e.ClickCount == 2)
+                await _windowService.OpenScreenshotSelectionWindow(TestResultImage, false);
         }
 
 
@@ -83,19 +117,12 @@ namespace StepinFlow.ViewModels.Pages
                 searchRectangle = _systemService.GetScreenSize();
 
             // Get screenshot.
-            Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value, null);
+            byte[]? screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
             if (screenshot == null)
                 return;
 
-            using (var ms = new MemoryStream(FlowStep.TemplateImage))
-            {
-                Bitmap templateImage = new Bitmap(ms);
-                TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(templateImage, screenshot, FlowStep.TemplateMatchMode, false);
-
-
-                if (result.ResultImagePath.Length > 1)
-                    ShowResultImage?.Invoke(result.ResultImagePath);
-            }
+            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(FlowStep.TemplateImage, screenshot, FlowStep.TemplateMatchMode, FlowStep.RemoveTemplateFromResult);
+            TestResultImage = result.ResultImage;
         }
 
         [RelayCommand]

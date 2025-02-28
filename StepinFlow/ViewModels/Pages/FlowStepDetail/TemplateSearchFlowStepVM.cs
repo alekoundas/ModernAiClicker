@@ -138,7 +138,7 @@ namespace StepinFlow.ViewModels.Pages
             // New if not previous exists.
             // Get previous one if exists.
             byte[]? screenshot;
-            if (TestResultImage != null)
+            if (TestResultImage != null && FlowStep.RemoveTemplateFromResult)
                 screenshot = TestResultImage;
             else
                 screenshot = _systemService.TakeScreenShot(searchRectangle.Value);

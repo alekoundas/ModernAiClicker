@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using Business.Helpers;
+using Business.Interfaces;
 using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Business;
@@ -82,40 +83,38 @@ namespace Business.Factories.Workers
             bool isSuccessful = false;
             while (!isSuccessful)
             {
+                // Get screenshot.
+                byte[]? screenshot = _systemService.TakeScreenShot(searchRectangle.Value);
+                if (screenshot == null)
+                    return;
+
+                TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImage, screenshot, execution.FlowStep.TemplateMatchMode, execution.FlowStep.RemoveTemplateFromResult);
                 ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
-                using (var ms = new MemoryStream(execution.FlowStep.TemplateImage))
-                {
-                    // Get screenshot.
-                    Bitmap? screenshot = _systemService.TakeScreenShot(searchRectangle.Value, null);
-                    if (screenshot == null)
-                        return;
 
-                    Bitmap templateImage = new Bitmap(ms);
-                    TemplateMatchingResult result = _templateSearchService.SearchForTemplate(templateImage, screenshot, execution.FlowStep.TemplateMatchMode, execution.FlowStep.RemoveTemplateFromResult);
+                int x = searchRectangle.Value.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
+                int y = searchRectangle.Value.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
 
-                    int x = searchRectangle.Value.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);
-                    int y = searchRectangle.Value.Top + result.ResultRectangle.Top + (imageSizeResult.Height / 2);
+                isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
+                execution.Result = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
+                execution.ResultLocationX = x;
+                execution.ResultLocationY = y;
+                //execution.ResultImagePath = result.ResultImagePath;
+                execution.ResultAccuracy = result.Confidence;
 
-                    isSuccessful = execution.FlowStep.Accuracy <= result.Confidence;
-                    execution.Result = isSuccessful ? ExecutionResultEnum.SUCCESS : ExecutionResultEnum.FAIL;
-                    execution.ResultLocationX = x;
-                    execution.ResultLocationY = y;
-                    execution.ResultImagePath = result.ResultImagePath;
-                    execution.ResultAccuracy = result.Confidence;
-
-                    await _dataService.SaveChangesAsync();
-                    _resultImage = result.ResultImage;
+                await _dataService.SaveChangesAsync();
+                _resultImage = result.ResultImage;
 
 
-                    int miliseconds = 0;
+                int miliseconds = 0;
 
-                    miliseconds += execution.FlowStep.WaitForMilliseconds;
-                    miliseconds += execution.FlowStep.WaitForSeconds * 1000;
-                    miliseconds += execution.FlowStep.WaitForMinutes * 60 * 1000;
-                    miliseconds += execution.FlowStep.WaitForHours * 60 * 60 * 1000;
+                miliseconds += execution.FlowStep.WaitForMilliseconds;
+                miliseconds += execution.FlowStep.WaitForSeconds * 1000;
+                miliseconds += execution.FlowStep.WaitForMinutes * 60 * 1000;
+                miliseconds += execution.FlowStep.WaitForHours * 60 * 60 * 1000;
 
-                    Thread.Sleep(miliseconds);
-                }
+                _resultImage = result.ResultImage;
+                Thread.Sleep(miliseconds);
+
             }
         }
 
@@ -143,17 +142,24 @@ namespace Business.Factories.Workers
             if (!execution.ParentExecutionId.HasValue || execution.ExecutionFolderDirectory.Length == 0)
                 return;
 
-            if (execution.StartedOn.HasValue)
-            {
-                string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
-                string newFilePath = execution.ExecutionFolderDirectory + "\\" + fileDate + ".png";
+            string fileDate = execution.StartedOn.Value.ToString("yy-MM-dd hh.mm.ss.fff");
+            string newFilePath = Path.Combine(execution.ExecutionFolderDirectory, fileDate + ".png");
 
-                //_systemService.CopyImageToDisk(execution.ResultImagePath, newFilePath);_resultImage
+            if (_resultImage != null)
+                await _systemService.SaveImageToDisk(newFilePath, _resultImage);
+
+            if (execution.Result == ExecutionResultEnum.SUCCESS)
+            {
+                string tempFilePath = Path.Combine(PathHelper.GetTempDataPath(), fileDate + ".png");
                 if (_resultImage != null)
-                    await _systemService.SaveImageToDisk(newFilePath, _resultImage);
-                execution.ResultImagePath = newFilePath;
-                await _dataService.SaveChangesAsync();
+                    await _systemService.SaveImageToDisk(tempFilePath, _resultImage);
+
+                execution.TempResultImagePath = tempFilePath;
             }
+
+            execution.ResultImagePath = newFilePath;
+
+            await _dataService.SaveChangesAsync();
         }
     }
 }

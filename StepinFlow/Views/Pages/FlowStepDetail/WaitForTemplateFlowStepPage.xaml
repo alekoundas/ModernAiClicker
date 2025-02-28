@@ -32,69 +32,160 @@
         <StackPanel Grid.Column="1">
             <!--<ComboBox ItemsSource="{Binding Source={StaticResource TypesEnum}}" />-->
 
-            <Label>1. Set Name</Label>
-            <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
+            <!--  Name  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Set Name:</Label>
+                <TextBox Text="{Binding ViewModel.FlowStep.Name, Mode=TwoWay}" />
+            </StackPanel>
 
-            <Label>2. Select Process (leave empty for screen search)</Label>
-            <ComboBox
-                VerticalAlignment="Center"
-                ItemsSource="{Binding ViewModel.ProcessList}"
-                SelectedItem="{Binding ViewModel.FlowStep.ProcessName, Mode=TwoWay}" />
-            <Label>Select match mode:</Label>
-            <ComboBox
-                VerticalAlignment="Center"
-                ItemsSource="{Binding ViewModel.MatchModes}"
-                SelectedItem="{Binding ViewModel.FlowStep.TemplateMatchMode, Mode=TwoWay}" />
+            <!--  FlowParameter  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Select search area from parameters(leave empty for all monitor search)</Label>
+                <ComboBox
+                    VerticalAlignment="Center"
+                    IsSynchronizedWithCurrentItem="True"
+                    ItemsSource="{Binding ViewModel.FlowParameters}"
+                    SelectedItem="{Binding ViewModel.SelectedFlowParameter, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Name}" />
+                                <TextBlock Text=" - " />
+                                <TextBlock Text="{Binding Path=TemplateSearchAreaType}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
 
 
-            <Label>3. Select image for search</Label>
-            <Button Grid.Column="1" Content="Open file">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Button>
+            <!--  TemplateSearchAreaTypesEnum  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Select match mode:</Label>
+                <ComboBox
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding ViewModel.MatchModes}"
+                    SelectedItem="{Binding ViewModel.FlowStep.TemplateMatchMode, Mode=TwoWay}" />
+            </StackPanel>
+
+
+            <!--  Image import  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Select image for search:</Label>
+                <StackPanel Orientation="Horizontal">
+
+                    <Button Content="Open file">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                    <Button Content="Take screenshot">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTakeScreenshotClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <!--  Template Image  -->
             <Image
-                x:Name="UITemplateImage"
-                Grid.Column="0"
                 MaxWidth="100"
                 MaxHeight="100"
                 Source="{Binding ViewModel.FlowStep.TemplateImage, Converter={StaticResource ImageNullConverter}}">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="ImageFailed">
-                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonOpenFileClickCommand}" />
+                    <i:EventTrigger EventName="MouseDown">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.TemplateImageDoubleClickCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Image>
 
+            <!--  Accuracy  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
+                <Label>Select minimum accuracy:</Label>
+                <TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay}" />
+            </StackPanel>
+
+
             <Label>4. Retry search after:</Label>
-            <StackPanel>
+
+            <!--  WaitForHours  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
                 <Label>Set hours:</Label>
                 <TextBox Text="{Binding ViewModel.FlowStep.WaitForHours, Mode=TwoWay}" />
+            </StackPanel>
 
+
+            <!--  WaitForMinutes  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
                 <Label>Set minutes:</Label>
                 <TextBox Text="{Binding ViewModel.FlowStep.WaitForMinutes, Mode=TwoWay}" />
+            </StackPanel>
 
+            <!--  WaitForSeconds  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
                 <Label>Set seconds:</Label>
                 <TextBox Text="{Binding ViewModel.FlowStep.WaitForSeconds, Mode=TwoWay}" />
+            </StackPanel>
 
+            <!--  WaitForMilliseconds  -->
+            <StackPanel
+                MinWidth="200"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Left">
                 <Label>Set milliseconds:</Label>
                 <TextBox Text="{Binding ViewModel.FlowStep.WaitForMilliseconds, Mode=TwoWay}" />
             </StackPanel>
 
-            <Label>5. Select minimum accuracy</Label>
-            <TextBox Text="{Binding ViewModel.FlowStep.Accuracy, Mode=TwoWay}" />
 
-            <Label>6. Test</Label>
-            <Button Grid.Column="1" Content="Test">
+
+
+            <!--  Test  -->
+            <Label>Test:</Label>
+            <Button Content="Test">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Click">
                         <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTestClickCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
-            <Image x:Name="UIResultImage" Grid.Column="0" />
+            <!--  Result image  -->
+            <Image Source="{Binding ViewModel.TestResultImage, Converter={StaticResource ImageNullConverter}}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <i:InvokeCommandAction Command="{Binding ViewModel.ResultImageDoubleClickCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Image>
 
 
             <Grid>
