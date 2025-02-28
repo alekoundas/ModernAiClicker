@@ -8,6 +8,7 @@ namespace Business.BaseViewModels
     public partial class BaseFlowStepDetailVM : ObservableObject, IFlowStepDetailVM
     {
         private readonly IDataService _dataService;
+        
         public virtual event Action<int> OnSave;
 
 
@@ -31,5 +32,8 @@ namespace Business.BaseViewModels
             return Task.CompletedTask;
         }
 
+        public virtual void OnPageExit()
+        {
+        }
     }
 }

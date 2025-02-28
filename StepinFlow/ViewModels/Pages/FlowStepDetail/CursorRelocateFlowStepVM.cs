@@ -39,6 +39,13 @@ namespace StepinFlow.ViewModels.Pages
             _keyboardListenerService = keyboardListenerService;
 
             CursorRelocationTypesEnum = Enum.GetValues(typeof(CursorRelocationTypesEnum)).Cast<CursorRelocationTypesEnum>();
+
+
+            KeyCombination _combination = new KeyCombination(ModifierKeys.None, Key.F3);
+            _keyboardListenerService.RegisterListener(_combination, () =>
+            {
+                OnButtonRecordClick();
+            });
         }
 
         public override async Task LoadFlowStepId(int flowStepId)
@@ -76,11 +83,27 @@ namespace StepinFlow.ViewModels.Pages
             return;
         }
 
+        public override  void OnPageExit()
+        {
+            _keyboardListenerService.UnregisterAllListeners();
+        }
+
+
+
         [RelayCommand]
         private void OnButtonTestClick()
         {
             Point point = new Point(FlowStep.LocationX, FlowStep.LocationY);
             _systemService.SetCursorPossition(point);
+        }
+
+
+        [RelayCommand]
+        private void OnButtonRecordClick()
+        {
+            var point = _systemService.GetCursorPossition();
+            FlowStep.LocationY = point.Y;
+            FlowStep.LocationX = point.X;
         }
 
         [RelayCommand]

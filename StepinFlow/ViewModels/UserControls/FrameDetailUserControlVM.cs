@@ -268,7 +268,7 @@ namespace StepinFlow.ViewModels.UserControls
             {
                 FrameFlow = null;
                 FrameFlowParameter = null;
-                FrameExecution= null;
+                FrameExecution = null;
                 _newFlowStep.Type = SelectedFlowStepType;
                 NavigateToNewFlowStepDetailPage(_newFlowStep);
             }
@@ -276,7 +276,7 @@ namespace StepinFlow.ViewModels.UserControls
             {
                 FrameFlow = null;
                 FrameFlowStep = null;
-                FrameExecution= null;
+                FrameExecution = null;
                 _newFlowParameter.Type = SelectedFlowParameterType;
                 NavigateToNewFlowParameterDetailPage(_newFlowParameter);
             }
@@ -286,9 +286,11 @@ namespace StepinFlow.ViewModels.UserControls
 
         private void NavigateToNewFlowStepDetailPage(FlowStep newFlowStep)
         {
+            FrameFlowStep?.ViewModel.OnPageExit();
             IFlowStepDetailPage? page = _flowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IFlowStepDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page != null)
             {
+
                 page.ViewModel.LoadNewFlowStep(newFlowStep);
                 page.ViewModel.OnSave -= HandleSave;
                 page.ViewModel.OnSave += HandleSave;
@@ -297,6 +299,7 @@ namespace StepinFlow.ViewModels.UserControls
         }
         private void NavigateToNewFlowParameterDetailPage(FlowParameter newflowParameter)
         {
+            FrameFlowStep?.ViewModel.OnPageExit();
             IFlowParameterDetailPage? page = _flowParameterPageFactory.TryGetValue(SelectedFlowParameterType, out Lazy<IFlowParameterDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page != null)
             {
@@ -306,6 +309,7 @@ namespace StepinFlow.ViewModels.UserControls
         }
         private void NavigateToFlowParameterDetailPage(int id)
         {
+            FrameFlowStep?.ViewModel.OnPageExit();
             IFlowParameterDetailPage? page = _flowParameterPageFactory.TryGetValue(SelectedFlowParameterType, out Lazy<IFlowParameterDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page != null)
             {
@@ -319,6 +323,7 @@ namespace StepinFlow.ViewModels.UserControls
 
         private void NavigateToFlowStepDetailPage(int id)
         {
+            FrameFlowStep?.ViewModel.OnPageExit();
             IFlowStepDetailPage? page = _flowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IFlowStepDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page != null)
             {
@@ -333,6 +338,7 @@ namespace StepinFlow.ViewModels.UserControls
 
         private void NavigateToFlowDetailPage(int id)
         {
+            FrameFlowStep?.ViewModel.OnPageExit();
             IFlowDetailPage? page = _flowPageFactory.TryGetValue(SelectedFlowType, out Lazy<IFlowDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page != null)
             {
@@ -345,6 +351,7 @@ namespace StepinFlow.ViewModels.UserControls
 
         private void NavigateToExecutionDetailPage(Execution execution)
         {
+            FrameFlowStep?.ViewModel.OnPageExit();
             IExecutionPage? page = _executionFlowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IExecutionPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page != null)
             {

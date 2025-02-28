@@ -19,7 +19,7 @@ namespace Business.Services
     public class SystemService : ISystemService
     {
         [DllImport("user32.dll")]
-        private static extern bool GetCursorPos(out Model.Structs.Point point);
+        private static extern bool GetCursorPos(out Model.Structs.Point lpPoint);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool GetWindowRect(int hWnd, out Model.Structs.Rectangle lpPoint);
@@ -308,6 +308,12 @@ namespace Business.Services
         public void SetCursorPossition(Model.Structs.Point point)
         {
             SetCursorPos(point.X, point.Y);
+        }
+
+        public Model.Structs.Point GetCursorPossition()
+        {
+             GetCursorPos(out Model.Structs.Point point);
+            return point;
         }
 
         public async Task ExportFlowsJSON(List<Flow> flows, string exportFilePath)

@@ -4,9 +4,11 @@ namespace Business.Interfaces
 {
     public interface IFlowStepDetailVM
     {
-        public event Action<int> OnSave;
+        event Action<int> OnSave;
 
-        public Task LoadFlowStepId(int flowStepId);
-        public Task LoadNewFlowStep(FlowStep newFlowStep);
+        Task LoadFlowStepId(int flowStepId);
+        Task LoadNewFlowStep(FlowStep newFlowStep);
+        void OnPageExit();
+
     }
 }

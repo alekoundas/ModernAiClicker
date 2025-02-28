@@ -20,8 +20,8 @@ namespace Business.Services
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
 
-        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         private const int WH_KEYBOARD_LL = 13; // Low-level keyboard hook
         private const int WM_KEYDOWN = 0x0100; // Key down event
@@ -40,23 +40,20 @@ namespace Business.Services
             UnhookWindowsHookEx(_hookID);
         }
 
-        /// <summary>
-        /// Register a key combination and its action.
-        /// </summary>
         public void RegisterListener(KeyCombination combination, Action action)
         {
-            foreach (var listener in _listeners)
-            _listeners.Remove(listener.);
-
             _listeners[combination] = action;
         }
 
-        /// <summary>
-        /// Unregister a key combination.
-        /// </summary>
         public void UnregisterListener(KeyCombination combination)
         {
             _listeners.Remove(combination);
+        }
+
+        public void UnregisterAllListeners()
+        {
+            foreach (var listener in _listeners)
+                _listeners.Remove(listener.Key);
         }
 
         private static IntPtr SetHook(LowLevelKeyboardProc proc)
