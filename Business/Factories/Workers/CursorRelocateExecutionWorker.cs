@@ -22,7 +22,7 @@ namespace Business.Factories.Workers
             if (execution.FlowStep == null)
                 return;
 
-            Point pointToMove;
+            Point pointToMove = new Point();
             Execution? parentExecution = null;
             Execution? currentExecution = execution;
 
@@ -47,13 +47,20 @@ namespace Business.Factories.Workers
                     }
                 }
 
-
             // If parentExecution exists get value from result.
             // Else get point from flow step.
-            if (parentExecution?.ResultLocationX != null && parentExecution?.ResultLocationY != null)
-                pointToMove = new Point(parentExecution.ResultLocationX.Value, parentExecution.ResultLocationY.Value);
-            else
-                pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
+            switch (execution.FlowStep.CursorRelocationType)
+            {
+                case Model.Enums.CursorRelocationTypesEnum.USE_PARENT_RESULT:
+                    if (parentExecution?.ResultLocationX != null && parentExecution?.ResultLocationY != null)
+                        pointToMove = new Point(parentExecution.ResultLocationX.Value, parentExecution.ResultLocationY.Value);
+                    break;
+                case Model.Enums.CursorRelocationTypesEnum.CUSTOM:
+                    pointToMove = new Point(execution.FlowStep.LocationX, execution.FlowStep.LocationY);
+                    break;
+                case null:
+                    return;
+            }
 
             _systemService.SetCursorPossition(pointToMove);
             execution.ResultLocationX = pointToMove.X;

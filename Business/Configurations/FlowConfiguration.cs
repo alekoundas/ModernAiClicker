@@ -28,6 +28,13 @@ namespace Business.Configurations
                .HasForeignKey<FlowParameter>(x => x.FlowId)
                .IsRequired(false)
                .OnDelete(DeleteBehavior.Cascade); // Deleting Flow deletes FlowStep.
+
+
+            builder.HasOne(x => x.ParentSubFlowStep)
+              .WithMany(x => x.SubFlows)
+              .HasForeignKey(x => x.ParentSubFlowStepId)
+              .IsRequired(false)
+              .OnDelete(DeleteBehavior.SetNull); // Deleting Flow deletes SubFlows.
         }
     }
 }

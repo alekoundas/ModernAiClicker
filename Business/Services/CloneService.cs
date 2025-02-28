@@ -117,9 +117,7 @@ namespace Business.Services
 
                 // Clone FlowParameter
                 if (originalFS.FlowParameter != null && clonedFlowParameters.ContainsKey(originalFS.FlowParameter.Id))
-                {
                     clonedFS.FlowParameter = clonedFlowParameters[originalFS.FlowParameter.Id];
-                }
                 else if (originalFS.FlowParameterId != null)
                     clonedFS.FlowParameterId = originalFS.FlowParameterId;
 
@@ -172,21 +170,19 @@ namespace Business.Services
                     clonedFlowSteps[originalF.FlowStep.Id] = clonedFS;
                 }
 
-                //// Clone SubFlowSteps (added to support Flow cloning)
-                //foreach (var subFlowStep in originalF.SubFlowSteps)
+                // Clone ParentFlowStep
+                if (originalF.ParentSubFlowStep != null && clonedFlowSteps.ContainsKey(originalF.ParentSubFlowStep.Id))
+                    clonedF.ParentSubFlowStep = clonedFlowSteps[originalF.ParentSubFlowStep.Id];
+                //if (originalF.ParentSubFlowStep != null && !clonedFlowSteps.ContainsKey(originalF.ParentSubFlowStep.Id))
                 //{
-                //    if (!clonedFlowSteps.ContainsKey(subFlowStep.Id))
-                //    {
-                //        FlowStep clonedSubFS = CreateFlowStepClone(subFlowStep);
-                //        clonedF.SubFlowSteps.Add(clonedSubFS);
-                //        flowStepQueue.Enqueue((subFlowStep, clonedSubFS, null, null));
-                //        clonedFlowSteps[subFlowStep.Id] = clonedSubFS;
-                //    }
+                //    FlowStep clonedFS = CreateFlowStepClone(originalF.ParentSubFlowStep);
+                //    clonedF.ParentSubFlowStep = clonedFS;
+                //    flowStepQueue.Enqueue((originalF.ParentSubFlowStep, clonedFS));
+                //    clonedFlowSteps[originalF.ParentSubFlowStep.Id] = clonedFS;
                 //}
             }
         }
 
-        // Existing helper method (unchanged)
         private void ProcessFlowParameter(Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, Flow> clonedFlows, Dictionary<int, FlowParameter> clonedFlowParameters)
         {
             while (flowParameterQueue.Count > 0)
@@ -195,15 +191,7 @@ namespace Business.Services
 
                 clonedFP.ParentFlowParameter = parentFP;
 
-                // Clone Flow REMOVE
-                if (originalFP.Flow != null && !clonedFlows.ContainsKey(originalFP.Flow.Id))
-                {
-                    Flow clonedFlow = CreateFlowClone(originalFP.Flow);
-                    clonedFP.Flow = clonedFlow;
-                    flowQueue.Enqueue((originalFP.Flow, clonedFlow));
-                    clonedFlows[originalFP.Flow.Id] = clonedFlow;
-                }
-                else if (originalFP.Flow != null)
+                if (originalFP.Flow != null)
                 {
                     clonedFP.Flow = clonedFlows[originalFP.Flow.Id];
                 }
@@ -227,7 +215,6 @@ namespace Business.Services
             }
         }
 
-        // Existing clone methods (unchanged)
         private FlowStep CreateFlowStepClone(FlowStep original, FlowStep? parentFlowStep = null, FlowStep? parentTemplateSearchFlowStep = null)
         {
             return new FlowStep
@@ -249,6 +236,7 @@ namespace Business.Services
                 CursorAction = original.CursorAction,
                 CursorButton = original.CursorButton,
                 CursorScrollDirection = original.CursorScrollDirection,
+                CursorRelocationType = original.CursorRelocationType,
                 WaitForHours = original.WaitForHours,
                 WaitForMinutes = original.WaitForMinutes,
                 WaitForSeconds = original.WaitForSeconds,
@@ -262,6 +250,7 @@ namespace Business.Services
                 LoopTime = original.LoopTime,
                 LocationX = original.LocationX,
                 LocationY = original.LocationY,
+                
             };
         }
 

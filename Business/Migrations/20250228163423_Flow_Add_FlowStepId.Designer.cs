@@ -3,6 +3,7 @@ using System;
 using Business.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    partial class InMemoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250228163423_Flow_Add_FlowStepId")]
+    partial class Flow_Add_FlowStepId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.12");
@@ -129,7 +132,7 @@ namespace Business.Migrations
                     b.Property<int>("OrderingNum")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ParentSubFlowStepId")
+                    b.Property<int?>("ParentFlowStepId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Type")
@@ -141,7 +144,7 @@ namespace Business.Migrations
                     b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex("ParentSubFlowStepId");
+                    b.HasIndex("ParentFlowStepId");
 
                     b.ToTable("Flows");
                 });
@@ -371,12 +374,12 @@ namespace Business.Migrations
 
             modelBuilder.Entity("Model.Models.Flow", b =>
                 {
-                    b.HasOne("Model.Models.FlowStep", "ParentSubFlowStep")
+                    b.HasOne("Model.Models.FlowStep", "ParentFlowStep")
                         .WithMany("SubFlows")
-                        .HasForeignKey("ParentSubFlowStepId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("ParentFlowStepId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.Navigation("ParentSubFlowStep");
+                    b.Navigation("ParentFlowStep");
                 });
 
             modelBuilder.Entity("Model.Models.FlowParameter", b =>

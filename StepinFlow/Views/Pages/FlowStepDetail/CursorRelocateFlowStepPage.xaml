@@ -4,12 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enum="clr-namespace:Model.Enums;assembly=Model"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:StepinFlow.Views.Pages.FlowStepDetail"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="CursorRelocateFlowStepPage"
     d:DataContext="{d:DesignInstance local:CursorRelocateFlowStepPage,
-                                     IsDesignTimeCreatable=False}"
+    IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -21,54 +22,114 @@
 
 
         <Grid Margin="10,10,10,50">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="0.3*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Label>Parents successful locations:</Label>
-            <ComboBox
-                IsSynchronizedWithCurrentItem="True"
-                ItemsSource="{Binding ViewModel.Parents}"
-                SelectedItem="{Binding ViewModel.SelectedFlowStep, Mode=TwoWay}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Id}" />
-                            <TextBlock Text=" - " />
-                            <TextBlock Text="{Binding Path=Name}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-
-            <StackPanel
-                Grid.Column="1"
-                HorizontalAlignment="Center"
-                Orientation="Horizontal">
-                <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="2">
-                <Label>X:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.LocationX, Mode=TwoWay}" />
-
-                <Label>Y:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.LocationY, Mode=TwoWay}" />
-                <!--  Test Button  -->
-                <StackPanel Margin="0,10,0,0" HorizontalAlignment="Right">
-                    <Button Content="Test">
+            <StackPanel HorizontalAlignment="Left">
+                <StackPanel
+                    MinWidth="200"
+                    Margin="0,0,0,20"
+                    HorizontalAlignment="Left">
+                    <Label>Select relocation type:</Label>
+                    <ComboBox
+                        ItemsSource="{Binding ViewModel.CursorRelocationTypesEnum}"
+                        SelectedIndex="0"
+                        SelectedItem="{Binding ViewModel.FlowStep.CursorRelocationType}">
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Click">
-                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTestClickCommand}" />
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.TemplateSearchAreaTypeCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Loaded">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.TemplateSearchAreaTypeCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </Button>
+                    </ComboBox>
                 </StackPanel>
+
+
+                <!--  USE_PARENT_RESULT  -->
+                <Border>
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ViewModel.FlowStep.CursorRelocationType}" Value="{x:Static enum:CursorRelocationTypesEnum.USE_PARENT_RESULT}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel>
+
+                        <StackPanel Margin="5" VerticalAlignment="Center">
+                            <Label>Parents successful locations:</Label>
+                            <ComboBox
+                                IsSynchronizedWithCurrentItem="True"
+                                ItemsSource="{Binding ViewModel.Parents}"
+                                SelectedItem="{Binding ViewModel.SelectedFlowStep, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Path=Id}" />
+                                            <TextBlock Text=" - " />
+                                            <TextBlock Text="{Binding Path=Name}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+
+
+                    </StackPanel>
+                </Border>
+
+
+
+
+
+                <!--  CUSTOM  -->
+                <Border>
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ViewModel.FlowStep.CursorRelocationType}" Value="{x:Static enum:CursorRelocationTypesEnum.CUSTOM}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel>
+
+                        <StackPanel Margin="5">
+                            <Label Padding="0,0,5,0">X:</Label>
+                            <TextBox VerticalAlignment="Center" Text="{Binding ViewModel.FlowStep.LocationX, Mode=TwoWay}" />
+                        </StackPanel>
+
+
+                        <StackPanel Margin="5">
+                            <Label Padding="0,0,5,0">Y:</Label>
+                            <TextBox VerticalAlignment="Center" Text="{Binding ViewModel.FlowStep.LocationY, Mode=TwoWay}" />
+                        </StackPanel>
+
+
+                        <!--  Test Button  -->
+                        <StackPanel Margin="0,10,0,0" HorizontalAlignment="Left">
+                            <Button Content="Test">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <i:InvokeCommandAction Command="{Binding ViewModel.ButtonTestClickCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+
+
+                    </StackPanel>
+                </Border>
+
             </StackPanel>
         </Grid>
 

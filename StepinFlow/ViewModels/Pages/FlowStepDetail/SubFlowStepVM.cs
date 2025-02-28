@@ -64,16 +64,18 @@ namespace StepinFlow.ViewModels.Pages
         private async Task OnButtonSaveClick()
         {
             _dataService.Query.ChangeTracker.Clear();
+
+            // Edit is disabled.
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                FlowStep updateFlowStep = await _dataService.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
-                updateFlowStep.Name = FlowStep.Name;
-                updateFlowStep.IsSubFlowReferenced = FlowStep.IsSubFlowReferenced;
-                updateFlowStep.SubFlowId = SelectedSubFlow?.Id;
+                //FlowStep updateFlowStep = await _dataService.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
+                //updateFlowStep.Name = FlowStep.Name;
+                //updateFlowStep.IsSubFlowReferenced = FlowStep.IsSubFlowReferenced;
+                //updateFlowStep.SubFlowId = SelectedSubFlow?.Id;
             }
 
-            /// Add mode
+            // Add mode
             else
             {
                 FlowStep isNewSimpling;
@@ -96,24 +98,28 @@ namespace StepinFlow.ViewModels.Pages
 
 
                 if (FlowStep.IsSubFlowReferenced)
-                    FlowStep.SubFlowId = SelectedSubFlow?.Id;
-                else
                 {
-                    if (SelectedSubFlow?.Id != null)
-                    {
-                        FlowStep.SubFlow = await _cloneService.GetFlowClone(SelectedSubFlow.Id);
+                    FlowStep.SubFlowId = SelectedSubFlow?.Id;
+                    _dataService.FlowSteps.Add(FlowStep);
 
-                    }
+                }
+                else if (SelectedSubFlow?.Id != null)
+                {
+                    Flow? flow = await _cloneService.GetFlowClone(SelectedSubFlow.Id);
+                    if (flow == null)
+                        return;
+
+                    FlowStep.SubFlow = flow;
+
+                    _dataService.FlowSteps.Add(FlowStep);
+                    _dataService.SaveChanges();
+
+                    flow.ParentSubFlowStepId = FlowStep.Id;
                 }
 
-
-
-                _dataService.FlowSteps.Add(FlowStep);
+                _dataService.SaveChanges();
+                OnSave?.Invoke(FlowStep.Id);
             }
-
-
-            _dataService.SaveChanges();
-            OnSave?.Invoke(FlowStep.Id);
         }
     }
 }

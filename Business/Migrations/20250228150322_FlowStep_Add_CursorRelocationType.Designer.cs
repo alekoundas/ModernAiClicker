@@ -3,6 +3,7 @@ using System;
 using Business.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    partial class InMemoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250228150322_FlowStep_Add_CursorRelocationType")]
+    partial class FlowStep_Add_CursorRelocationType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.12");
@@ -129,9 +132,6 @@ namespace Business.Migrations
                     b.Property<int>("OrderingNum")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ParentSubFlowStepId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -140,8 +140,6 @@ namespace Business.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
-
-                    b.HasIndex("ParentSubFlowStepId");
 
                     b.ToTable("Flows");
                 });
@@ -369,16 +367,6 @@ namespace Business.Migrations
                     b.Navigation("FlowStep");
                 });
 
-            modelBuilder.Entity("Model.Models.Flow", b =>
-                {
-                    b.HasOne("Model.Models.FlowStep", "ParentSubFlowStep")
-                        .WithMany("SubFlows")
-                        .HasForeignKey("ParentSubFlowStepId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("ParentSubFlowStep");
-                });
-
             modelBuilder.Entity("Model.Models.FlowParameter", b =>
                 {
                     b.HasOne("Model.Models.Flow", "Flow")
@@ -468,8 +456,6 @@ namespace Business.Migrations
                     b.Navigation("ChildrenTemplateSearchFlowSteps");
 
                     b.Navigation("Executions");
-
-                    b.Navigation("SubFlows");
                 });
 #pragma warning restore 612, 618
         }

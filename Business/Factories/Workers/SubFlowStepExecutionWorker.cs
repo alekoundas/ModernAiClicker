@@ -41,8 +41,12 @@ namespace Business.Factories.Workers
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)
         {
-            // Flow steps dont have siblings
-            return await Task.FromResult<FlowStep?>(null);
+            if (execution.FlowStep == null)
+                return await Task.FromResult<FlowStep?>(null);
+
+            // Get next sibling flow step. 
+            FlowStep? nextFlowStep = await _dataService.FlowSteps.GetNextSibling(execution.FlowStep.Id);
+            return nextFlowStep;
         }
 
 

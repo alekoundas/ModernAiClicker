@@ -19,6 +19,7 @@ namespace Business.Configurations
             builder.Property(x => x.CursorScrollDirection).HasConversion<string>();
             builder.Property(x => x.CursorButton).HasConversion<string>();
             builder.Property(x => x.CursorAction).HasConversion<string>();
+            builder.Property(x => x.CursorRelocationType).HasConversion<string>();
 
 
             builder.HasOne(x => x.ParentFlowStep)

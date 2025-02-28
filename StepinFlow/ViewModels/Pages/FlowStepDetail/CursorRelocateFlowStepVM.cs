@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using Model.Enums;
 using Model.Structs;
 using Business.BaseViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -22,12 +23,15 @@ namespace StepinFlow.ViewModels.Pages
 
         [ObservableProperty]
         private FlowStep? _selectedFlowStep = null;
-
+        [ObservableProperty]
+        private IEnumerable<CursorRelocationTypesEnum> _cursorRelocationTypesEnum;
 
         public CursorRelocateFlowStepVM(ISystemService systemService, IDataService dataService) : base(dataService)
         {
             _dataService = dataService;
             _systemService = systemService;
+
+            CursorRelocationTypesEnum = Enum.GetValues(typeof(CursorRelocationTypesEnum)).Cast<CursorRelocationTypesEnum>();
         }
 
         public override async Task LoadFlowStepId(int flowStepId)
@@ -36,11 +40,7 @@ namespace StepinFlow.ViewModels.Pages
             if (flowStep != null)
             {
                 FlowStep = flowStep;
-
-                if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
-                    GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);
-
-                else if (FlowStep.ParentFlowStepId.HasValue)
+                 if (FlowStep.ParentFlowStepId.HasValue)
                     GetParents(FlowStep.ParentFlowStepId.Value);
 
                 SelectedFlowStep = Parents.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
@@ -50,9 +50,6 @@ namespace StepinFlow.ViewModels.Pages
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)
         {
             FlowStep = newFlowStep;
-
-            if (FlowStep.ParentTemplateSearchFlowStepId.HasValue)
-                GetParents(FlowStep.ParentTemplateSearchFlowStepId.Value);
 
             if (FlowStep.ParentFlowStepId.HasValue)
                 GetParents(FlowStep.ParentFlowStepId.Value);
@@ -85,6 +82,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 if (SelectedFlowStep != null)
                     updateFlowStep.ParentTemplateSearchFlowStepId = SelectedFlowStep.Id;
+                updateFlowStep.CursorRelocationType = FlowStep.CursorRelocationType;
             }
 
             /// Add mode
@@ -124,25 +122,41 @@ namespace StepinFlow.ViewModels.Pages
             if (!flowStepId.HasValue)
                 return;
 
-            FlowStep? parent = _dataService.FlowSteps.FirstOrDefault(x => x.Id == flowStepId.Value);
+            FlowStep? parent = _dataService.FlowSteps.Query
+                .AsNoTracking()
+                .Include(x => x.ParentFlowStep)
+                .FirstOrDefault(x => x.Id == flowStepId.Value);
 
             while (parent != null)
             {
-                if (parent.Type == FlowStepTypesEnum.TEMPLATE_SEARCH)
-                    Parents.Add(parent);
+                switch (parent.Type)
+                {
+                    case FlowStepTypesEnum.TEMPLATE_SEARCH:
+                    case FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH:
+                    case FlowStepTypesEnum.WAIT_FOR_TEMPLATE:
+                        Parents.Add(parent);
+                        break;
+                    case FlowStepTypesEnum.FAILURE: // Skip Parent if flowStep is of type: Fail.
+                        parent = parent.ParentFlowStep;
+                        break;
+                }
 
+                //Get parent flowStep
+                if (parent?.ParentFlowStepId != null)
+                    parent = _dataService.FlowSteps.Query
+                        .AsNoTracking()
+                        .Include(x => x.ParentFlowStep)
+                        .FirstOrDefault(x => x.Id == parent.ParentFlowStepId);
 
-                if (parent.Type == FlowStepTypesEnum.MULTIPLE_TEMPLATE_SEARCH)
-                    Parents.Add(parent);
-
-
-                if (parent.Type == FlowStepTypesEnum.WAIT_FOR_TEMPLATE)
-                    Parents.Add(parent);
-
-                if (!parent.ParentFlowStepId.HasValue)
-                    return;
-
-                parent = _dataService.FlowSteps.FirstOrDefault(x => x.Id == parent.ParentFlowStepId.Value);
+                //Get parent SubflowStep
+                else if (parent?.FlowId != null)
+                    parent = _dataService.Flows.Query
+                        .AsNoTracking()
+                        .Where(x => x.Id == parent.FlowId)
+                        .Select(x => x.ParentSubFlowStep)
+                        .FirstOrDefault();
+                else
+                    parent = null;
             }
         }
     }
