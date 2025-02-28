@@ -59,7 +59,9 @@ namespace StepinFlow.ViewModels.Pages
         public override async Task LoadFlowStepId(int flowStepId)
         {
             FlowStep? flowStep = await _dataService.FlowSteps.Query
+                .AsNoTracking()
                 .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                .Include(x => x.FlowParameter)
                 .FirstOrDefaultAsync(x => x.Id == flowStepId);
 
             if (flowStep != null)
@@ -166,7 +168,7 @@ namespace StepinFlow.ViewModels.Pages
         [RelayCommand]
         private void OnButtonTestClick(FlowStep flowStep)
         {
-            if (FlowStep.TemplateImage == null)
+            if (flowStep.TemplateImage == null)
                 return;
 
             // Find search area.
@@ -328,7 +330,7 @@ namespace StepinFlow.ViewModels.Pages
                 };
 
                 if (FlowStep.Name.Length == 0)
-                    FlowStep.Name = "Multiple template search loop.";
+                    FlowStep.Name = "Multiple template search.";
 
                 FlowStep.IsExpanded = true;
                 FlowStep.ChildrenTemplateSearchFlowSteps = ChildrenTemplateSearchFlowSteps;
