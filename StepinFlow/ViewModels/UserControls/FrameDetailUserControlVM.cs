@@ -137,8 +137,9 @@ namespace StepinFlow.ViewModels.UserControls
             _newFlowStep = newFlowStep;
             _newFlowParameter = null;
             FrameFlow = null;
-            FrameFlowParameter = null;
+            FrameFlowStep = null;
             FrameExecution = null;
+            FrameFlowParameter = null;
         }
 
         public void NavigateToNewFlowParameter(FlowParameter newFlowParameter)
@@ -155,6 +156,7 @@ namespace StepinFlow.ViewModels.UserControls
             FrameFlow = null;
             FrameFlowStep = null;
             FrameExecution = null;
+            FrameFlowParameter = null;
         }
 
         public async Task NavigateToFlowStep(int id)
