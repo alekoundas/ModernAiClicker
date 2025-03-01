@@ -45,12 +45,25 @@ namespace Business.Repository.Entities
                 // if FlowStep contains a Flow parent return the parameters.
                 if (currentFlowStep?.FlowId != null)
                 {
-                    flowParameters = await InMemoryDbContext.FlowSteps
+                    Flow? flow = await InMemoryDbContext.Flows
                         .AsNoTracking()
-                        .Where(x => x.Id == currentFlowStep.Id)
-                        .Select(x => x.Flow.FlowParameter)
-                        .SelectMany(x => x.ChildrenFlowParameters)
-                        .ToListAsync();
+                        .Where(x => x.Id == currentFlowStep.FlowId)
+                        .Include(x => x.FlowParameter.ChildrenFlowParameters)
+                        .Include(x => x.ParentSubFlowStep)
+                        .FirstOrDefaultAsync();
+
+                    if (flow?.FlowParameter.ChildrenFlowParameters.Count() > 0)
+                        flowParameters.AddRange(flow.FlowParameter.ChildrenFlowParameters);
+
+                    if (flow?.ParentSubFlowStep != null)
+                        stack.Push(flow.ParentSubFlowStep);
+
+                    //flowParameters = await InMemoryDbContext.FlowSteps
+                    //    .AsNoTracking()
+                    //    .Where(x => x.Id == currentFlowStep.Id)
+                    //    .Select(x => x.Flow.FlowParameter)
+                    //    .SelectMany(x => x.ChildrenFlowParameters)
+                    //    .ToListAsync();
                 }
 
                 // Else load its parent from the database.
