@@ -4,13 +4,20 @@ using System.Windows.Controls;
 
 namespace StepinFlow.Views.Pages.Executions
 {
-    public partial class SubFlowStepExecutionPage : Page, IExecutionPage
+    public partial class SubFlowStepExecutionPage : Page, IExecutionPage, IDetailPage
     {
+        public IFlowDetailVM? FlowViewModel { get; set; }
+        public IFlowStepDetailVM? FlowStepViewModel { get; set; }
+        public IFlowParameterDetailVM? FlowParameterViewModel { get; set; }
+        public IExecutionViewModel? ExecutionViewModel { get; set; }
+
+
         public IExecutionViewModel ViewModel { get; set; }
 
         public SubFlowStepExecutionPage(SubFlowStepExecutionVM viewModel)
         {
             ViewModel = viewModel;
+            ExecutionViewModel = ViewModel;
             InitializeComponent();
             DataContext = this;
         }

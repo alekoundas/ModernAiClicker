@@ -1,16 +1,22 @@
 ﻿using Business.Interfaces;
 using StepinFlow.ViewModels.Pages;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
 
 namespace StepinFlow.Views.Pages.FlowStepDetail
 {
-    public partial class WaitFlowStepPage : Page, IFlowStepDetailPage
+    public partial class WaitFlowStepPage : Page, IFlowStepDetailPage, IDetailPage
     {
+        public IFlowDetailVM? FlowViewModel { get; set; }
+        public IFlowStepDetailVM? FlowStepViewModel { get; set; }
+        public IFlowParameterDetailVM? FlowParameterViewModel { get; set; }
+        public IExecutionViewModel? ExecutionViewModel { get; set; }
+
+
         public IFlowStepDetailVM ViewModel { get; set; }
         public WaitFlowStepPage(WaitFlowStepVM viewModel)
         {
             ViewModel = viewModel;
+            FlowStepViewModel = ViewModel;
             InitializeComponent();
             DataContext = this;
         }

@@ -4,12 +4,19 @@ using System.Windows.Controls;
 
 namespace StepinFlow.Views.Pages.Executions
 {
-    public partial class WindowResizeExecutionPage : Page, IExecutionPage
+    public partial class WindowResizeExecutionPage : Page, IExecutionPage, IDetailPage
     {
+        public IFlowDetailVM? FlowViewModel { get; set; }
+        public IFlowStepDetailVM? FlowStepViewModel { get; set; }
+        public IFlowParameterDetailVM? FlowParameterViewModel { get; set; }
+        public IExecutionViewModel? ExecutionViewModel { get; set; }
+
+
         public IExecutionViewModel ViewModel { get; set; }
         public WindowResizeExecutionPage(WindowResizeExecutionVM viewModel)
         {
             ViewModel = viewModel;
+            ExecutionViewModel = ViewModel;
             InitializeComponent();
             DataContext = this;
         }

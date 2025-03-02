@@ -16,7 +16,7 @@
 
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <StackPanel>
@@ -72,10 +72,38 @@
                 HorizontalAlignment="Stretch"
                 Fill="White" />
 
-            <Frame Content="{Binding FrameFlow}" />
+            <!--<Frame Content="{Binding FrameFlow}" />
             <Frame Content="{Binding FrameFlowStep}" />
             <Frame Content="{Binding FrameExecution}" />
-            <Frame Content="{Binding FrameFlowParameter}" />
+            <Frame Content="{Binding FrameFlowParameter}" />-->
+            <Frame Content="{Binding Frame}" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel HorizontalAlignment="Left">
+                    <Button Content="Cancel">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="right">
+                    <Button Content="Save">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </StackPanel>
     </Grid>
 </UserControl>

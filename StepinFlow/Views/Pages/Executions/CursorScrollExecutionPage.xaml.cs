@@ -4,12 +4,19 @@ using System.Windows.Controls;
 
 namespace StepinFlow.Views.Pages.Executions
 {
-    public partial class CursorScrollExecutionPage : Page, IExecutionPage
+    public partial class CursorScrollExecutionPage : Page, IExecutionPage, IDetailPage
     {
+        public IFlowDetailVM? FlowViewModel { get; set; }
+        public IFlowStepDetailVM? FlowStepViewModel { get; set; }
+        public IFlowParameterDetailVM? FlowParameterViewModel { get; set; }
+        public IExecutionViewModel? ExecutionViewModel { get; set; }
+
+
         public IExecutionViewModel ViewModel { get; set; }
         public CursorScrollExecutionPage()
         {
             ViewModel = new CursorScrollExecutionVM();
+            ExecutionViewModel = ViewModel;
             InitializeComponent();
             DataContext = this;
         }
