@@ -45,16 +45,15 @@ namespace StepinFlow.ViewModels.UserControls
 
         [ObservableProperty]
         private ObservableCollection<Flow> _flowsList = new ObservableCollection<Flow>();
-
         [ObservableProperty]
         private bool _isLocked = true;
-
         [ObservableProperty]
         private int? _coppiedFlowStepId;
-
-
         [ObservableProperty]
         private Visibility? _pasteVisibility = Visibility.Collapsed;
+
+
+        private List<Expression<Func<Flow, bool>>> _loadFilters = new List<Expression<Func<Flow, bool>>>();
 
         public TreeViewUserControlVM(IDataService dataService, ISystemService systemService, ICloneService cloneService)
         {
@@ -65,7 +64,7 @@ namespace StepinFlow.ViewModels.UserControls
 
         public async Task LoadFlows(int flowId = 0, bool isSubFlow = false)
         {
-            List<Expression<Func<Flow, bool>>>? filters = new List<Expression<Func<Flow, bool>>>();
+            List<Expression<Func<Flow, bool>>> filters = new List<Expression<Func<Flow, bool>>>();
 
             if (isSubFlow)
                 filters.Add(x => x.Type == FlowTypesEnum.SUB_FLOW);
@@ -82,20 +81,32 @@ namespace StepinFlow.ViewModels.UserControls
                 .Include(x => x.FlowParameter)
                 .ThenInclude(x => x.ChildrenFlowParameters);
 
-            foreach (var filter in filters)
-                query = query.Where(filter);
+            if (_loadFilters.Count > 0)
+                foreach (var filter in _loadFilters)
+                    query = query.Where(filter);
+            else
+            {
+                _loadFilters = filters;
+                foreach (var filter in filters)
+                    query = query.Where(filter);
+            }
 
 
             // Clear trackers from dbcontext and execute query.
             _dataService.Query.ChangeTracker.Clear();
-            List<Flow> flows = await query.ToListAsync();
+            await Task.Run(async () =>
+            {
+                List<Flow> flows = await query.ToListAsync();
 
-            // Load children.
-            foreach (Flow flow in flows)
-                foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
-                    await _dataService.FlowSteps.LoadAllExpandedChildren(flowStep);
-
-            FlowsList = new ObservableCollection<Flow>(flows);
+                // Load children.
+                foreach (Flow flow in flows)
+                    foreach (FlowStep flowStep in flow.FlowStep.ChildrenFlowSteps)
+                        await _dataService.FlowSteps.LoadAllExpandedChildren(flowStep);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    FlowsList = new ObservableCollection<Flow>(flows);
+                });
+            });
         }
 
         public async Task LoadFlowsAndSelectFlowStep(int id)
@@ -115,16 +126,16 @@ namespace StepinFlow.ViewModels.UserControls
         {
             List<Flow> flows = await _dataService.Flows.LoadAllExpanded();
             await _dataService.SaveChangesAsync();
-            FlowsList = new ObservableCollection<Flow>(flows);
-
+            await LoadFlows();
         }
 
         public async Task CollapseAll()
         {
             List<Flow> flows = await _dataService.Flows.LoadAllCollapsed();
             await _dataService.SaveChangesAsync();
-            FlowsList = new ObservableCollection<Flow>(flows);
+            await LoadFlows();
         }
+
         public async Task ExpandAndSelectFlowStep(int id)
         {
             FlowStep? uiFlowStep = await _dataService.FlowSteps.Query.FirstOrDefaultAsync(x => x.Id == id);
