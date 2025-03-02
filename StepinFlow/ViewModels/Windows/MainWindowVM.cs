@@ -27,7 +27,7 @@ namespace StepinFlow.ViewModels.Windows
             new NavigationViewItem()
             {
                 Content = "Sub-Flows",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Flow16},
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Organization48},
                 TargetPageType = typeof(Views.Pages.SubFlowsPage)
             },
             new NavigationViewItem()
