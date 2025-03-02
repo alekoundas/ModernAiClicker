@@ -131,7 +131,6 @@
                         <Label>Select monitor:</Label>
                         <ComboBox
                             HorizontalAlignment="Left"
-                            IsSynchronizedWithCurrentItem="True"
                             ItemsSource="{Binding ViewModel.SystemMonitors}"
                             SelectedItem="{Binding ViewModel.SelectedSystemMonitor, Mode=TwoWay}">
                             <i:Interaction.Triggers>
@@ -219,7 +218,6 @@
                         <Label>Select application window:</Label>
                         <ComboBox
                             HorizontalAlignment="Left"
-                            IsSynchronizedWithCurrentItem="True"
                             ItemsSource="{Binding ViewModel.ProcessList}"
                             SelectedItem="{Binding ViewModel.SelectedProcess, Mode=TwoWay}">
                             <i:Interaction.Triggers>

@@ -33,7 +33,7 @@ namespace StepinFlow.ViewModels.Pages
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _childrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>();
-        private readonly List<FlowStep> _childrenTemplateSearchFlowStepsToRemove = new List<FlowStep>();
+        private List<FlowStep> _childrenTemplateSearchFlowStepsToRemove = new List<FlowStep>();
 
         [ObservableProperty]
         private IEnumerable<TemplateMatchModesEnum> _matchModes;
@@ -59,6 +59,8 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadFlowStepId(int flowStepId)
         {
+            SelectedFlowParameter = null;
+            TestResultImage = null;
             FlowStep? flowStep = await _dataService.FlowSteps.Query
                 .AsNoTracking()
                 .Include(x => x.ChildrenTemplateSearchFlowSteps)
@@ -82,6 +84,8 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)
         {
+            SelectedFlowParameter = null;
+            TestResultImage = null;
             FlowStep = newFlowStep;
 
             List<FlowParameter> flowParameters = await _dataService.FlowParameters.FindParametersFromFlowStep(newFlowStep.ParentFlowStepId.Value);
@@ -209,7 +213,7 @@ namespace StepinFlow.ViewModels.Pages
                 return;
 
 
-            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(flowStep.TemplateImage, screenshot, flowStep.TemplateMatchMode, flowStep.RemoveTemplateFromResult);
+            TemplateMatchingResult result = _templateMatchingService.SearchForTemplate(flowStep.TemplateImage, screenshot, FlowStep.TemplateMatchMode, flowStep.RemoveTemplateFromResult);
             TestResultImage = result.ResultImage;
         }
 
@@ -250,7 +254,10 @@ namespace StepinFlow.ViewModels.Pages
 
         public override void OnPageExit()
         {
-            TestResultImage = null;
+            ChildrenTemplateSearchFlowSteps = new ObservableCollection<FlowStep>();
+            _childrenTemplateSearchFlowStepsToRemove = new List<FlowStep>();
+            SelectedFlowParameter = null;
+
         }
 
         public override async Task OnSave()

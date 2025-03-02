@@ -50,6 +50,7 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadFlowStepId(int flowStepId)
         {
+            SelectedFlowStep = null;
             FlowStep? flowStep = await _dataService.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStepId);
             if (flowStep != null)
             {
@@ -69,6 +70,7 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)
         {
+            SelectedFlowStep = null;
             FlowStep = newFlowStep;
 
             if (FlowStep.ParentFlowStepId.HasValue)

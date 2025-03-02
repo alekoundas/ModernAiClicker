@@ -40,7 +40,7 @@
                 <Label>Change application window location.</Label>
                 <Label>Select application window to relocate:</Label>
                 <StackPanel Orientation="Horizontal">
-                <ComboBox ItemsSource="{Binding ViewModel.ProcessList}" SelectedItem="{Binding ViewModel.FlowStep.ProcessName}" />
+                    <ComboBox ItemsSource="{Binding ViewModel.ProcessList}" SelectedItem="{Binding ViewModel.FlowStep.ProcessName}" />
                     <Button Grid.Column="2" Content="Refresh">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
@@ -98,33 +98,6 @@
 
 
 
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                <Button Content="Cancel">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" HorizontalAlignment="right">
-                <Button Content="Save">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Button>
-            </StackPanel>
-        </Grid>
     </StackPanel>
 
 </Page>

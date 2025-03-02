@@ -145,7 +145,7 @@ namespace Business.Services
                     flowQueue.Enqueue((originalFS.SubFlow, clonedFlow));
                     clonedFlows[originalFS.SubFlow.Id] = clonedFlow;
                 }
-                else if (originalFS.SubFlow != null)
+                else if (originalFS.SubFlowId != null)
                 {
                     clonedFS.SubFlowId = originalFS.SubFlowId;
                 }

@@ -37,7 +37,7 @@
 
 
             <StackPanel>
-                
+
                 <StackPanel
                     MinWidth="200"
                     Margin="0,0,0,20"
@@ -45,8 +45,8 @@
                     <Label>Sub-Flows:</Label>
                     <ComboBox
                         IsEnabled="{Binding ViewModel.IsEnabled}"
-                        IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding ViewModel.SubFlows}"
+                        
                         SelectedItem="{Binding ViewModel.SelectedSubFlow, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
@@ -59,8 +59,8 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </StackPanel>
-                
-                
+
+
                 <StackPanel
                     MinWidth="200"
                     Margin="0,0,0,20"
@@ -69,7 +69,7 @@
                     <Label>Is sub flow a reference to original sub flow?</Label>
                     <CheckBox IsChecked="{Binding ViewModel.FlowStep.IsSubFlowReferenced, Mode=TwoWay}" IsEnabled="{Binding ViewModel.IsEnabled}" />
                 </StackPanel>
-                
+
             </StackPanel>
         </Grid>
 

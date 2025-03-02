@@ -46,7 +46,6 @@
                     <Label>Sub-Flows:</Label>
                     <ComboBox
                         IsEnabled="{Binding ViewModel.IsEnabled}"
-                        IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding ViewModel.SubFlows}"
                         SelectedItem="{Binding ViewModel.SelectedSubFlow, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>

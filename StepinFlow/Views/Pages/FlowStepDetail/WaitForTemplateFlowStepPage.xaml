@@ -49,7 +49,6 @@
                 <Label>Select search area from parameters(leave empty for all monitor search)</Label>
                 <ComboBox
                     VerticalAlignment="Center"
-                    IsSynchronizedWithCurrentItem="True"
                     ItemsSource="{Binding ViewModel.FlowParameters}"
                     SelectedItem="{Binding ViewModel.SelectedFlowParameter, Mode=TwoWay}">
                     <ComboBox.ItemTemplate>

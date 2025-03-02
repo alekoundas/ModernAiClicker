@@ -41,7 +41,7 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep = flowStep;
 
             if (FlowStep.SubFlowId.HasValue)
-                SelectedSubFlow = SubFlows.Where(x => x.Id == flowStep.SubFlowId).FirstOrDefault();
+                SelectedSubFlow = SubFlows.FirstOrDefault(x => x.Id == FlowStep.SubFlowId);
 
         }
 
@@ -52,7 +52,10 @@ namespace StepinFlow.ViewModels.Pages
             IsEnabled = true;
         }
 
-
+        public override void OnPageExit()
+        {
+            SelectedSubFlow = null;
+        }
 
         public override async Task OnSave()
         {
@@ -88,7 +91,7 @@ namespace StepinFlow.ViewModels.Pages
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Sub-Flow selector.";
 
-
+                FlowStep.IsExpanded = false;
 
                 if (FlowStep.IsSubFlowReferenced)
                 {

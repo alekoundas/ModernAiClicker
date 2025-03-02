@@ -181,7 +181,7 @@ namespace Business.Repository.Entities
         {
             // Initialize a stack to simulate recursion.
             var stack = new Stack<FlowStep>();
-            if (flowStep.SubFlow.FlowStep != null)
+            if (flowStep.SubFlow?.FlowStep != null)
                 stack.Push(flowStep.SubFlow.FlowStep);
             stack.Push(flowStep);
 

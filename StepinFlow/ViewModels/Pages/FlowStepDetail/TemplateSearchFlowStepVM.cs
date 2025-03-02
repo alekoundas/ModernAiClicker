@@ -53,6 +53,8 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadFlowStepId(int flowStepId)
         {
+            SelectedFlowParameter = null;
+            TestResultImage = null;
             FlowStep? flowStep = await _dataService.FlowSteps.Query
                 .AsNoTracking()
                 .Include(x => x.FlowParameter)
@@ -70,6 +72,8 @@ namespace StepinFlow.ViewModels.Pages
 
         public override async Task LoadNewFlowStep(FlowStep newFlowStep)
         {
+            SelectedFlowParameter = null;
+            TestResultImage = null;
             FlowStep = newFlowStep;
 
             List<FlowParameter> flowParameters = await _dataService.FlowParameters.FindParametersFromFlowStep(newFlowStep.ParentFlowStepId.Value);
@@ -171,6 +175,7 @@ namespace StepinFlow.ViewModels.Pages
         }
         public override void OnPageExit()
         {
+            SelectedFlowParameter = null;
             TestResultImage = null;
         }
         public override async Task OnSave()

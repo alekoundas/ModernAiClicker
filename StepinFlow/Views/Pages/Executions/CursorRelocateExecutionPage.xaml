@@ -66,7 +66,6 @@
                         <StackPanel Margin="5" VerticalAlignment="Center">
                             <Label>Parents successful locations:</Label>
                             <ComboBox
-                                IsSynchronizedWithCurrentItem="True"
                                 ItemsSource="{Binding ViewModel.Parents}"
                                 SelectedItem="{Binding ViewModel.SelectedFlowStep, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
