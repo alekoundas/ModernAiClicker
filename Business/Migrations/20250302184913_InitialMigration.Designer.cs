@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    [Migration("20250302172831_InitialMigration")]
+    [Migration("20250302184913_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -26,8 +26,9 @@ namespace Business.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Key")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
                         .IsRequired()

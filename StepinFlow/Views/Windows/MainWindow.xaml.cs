@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using StepinFlow.Services;
+﻿using Business.Interfaces;
+using Business.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Model.Structs;
 using StepinFlow.ViewModels.Windows;
 using System.Windows;
 using Wpf.Ui;
@@ -11,15 +13,20 @@ namespace StepinFlow.Views.Windows
 {
     public partial class MainWindow : INavigationWindow
     {
+        private readonly IWindowStateService _windowStateService;
         public MainWindowVM ViewModel { get; }
 
         public MainWindow(
             MainWindowVM viewModel,
             INavigationViewPageProvider pageService,
             INavigationService navigationService,
-            IServiceProvider serviceProvider
+            IServiceProvider serviceProvider,
+            IWindowStateService windowStateService
         )
         {
+            _windowStateService = windowStateService;
+
+
             ViewModel = viewModel;
             DataContext = this;
 
@@ -33,6 +40,15 @@ namespace StepinFlow.Views.Windows
             SetPageService(pageService);
 
             navigationService.SetNavigationControl(RootNavigation);
+            WindowSize windowState = _windowStateService.GetMainWindowState();
+
+            this.Left = windowState.Left;
+            this.Top = windowState.Top;
+            this.Width = windowState.Width;
+            this.Height = windowState.Height;
+            this.WindowState = windowState.IsMaximized ? WindowState.Maximized : WindowState.Normal;
+            EnsureWindowInBounds();
+
         }
 
 
@@ -54,6 +70,20 @@ namespace StepinFlow.Views.Windows
         {
             base.OnClosed(e);
 
+
+            WindowSize windowState = new WindowSize
+            {
+                Left = this.Left,
+                Top = this.Top,
+                Width = this.Width,
+                Height = this.Height,
+                IsMaximized = this.WindowState == WindowState.Maximized
+            };
+            _windowStateService.SaveMainWindowState(windowState);
+
+
+
+
             // Make sure that closing this window will begin the process of closing the application.
             Application.Current.Shutdown();
         }
@@ -68,6 +98,21 @@ namespace StepinFlow.Views.Windows
         public void SetPageService(INavigationViewPageProvider navigationViewPageProvider)
         {
             RootNavigation.SetPageProviderService(navigationViewPageProvider);
+        }
+
+
+        private void EnsureWindowInBounds()
+        {
+            if (this.Left < SystemParameters.VirtualScreenLeft ||
+                this.Top < SystemParameters.VirtualScreenTop ||
+                this.Left + this.Width > SystemParameters.VirtualScreenWidth ||
+                this.Top + this.Height > SystemParameters.VirtualScreenHeight)
+            {
+                this.Left = 0;
+                this.Top = 0;
+                this.Width = 800;
+                this.Height = 450;
+            }
         }
     }
 }

@@ -10,6 +10,9 @@ namespace Business.Configurations
         {
             builder.HasIndex(x => x.Id).IsUnique();
             builder.HasKey(x => x.Id);
+
+            // Store Enum value as string instead of int.
+            builder.Property(x => x.Key).HasConversion<string>();
         }
     }
 }
