@@ -10,6 +10,7 @@ using Model.Models;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 
 namespace StepinFlow.ViewModels.Pages
@@ -211,7 +212,14 @@ namespace StepinFlow.ViewModels.Pages
                 Width = flowStep.Width,
             };
         }
-        public void OnNavigatedTo() { }
-        public void OnNavigatedFrom() { }
+        public Task OnNavigatedToAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task OnNavigatedFromAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

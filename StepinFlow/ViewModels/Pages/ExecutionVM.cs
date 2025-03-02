@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 
 namespace StepinFlow.ViewModels.Pages
@@ -293,5 +294,15 @@ namespace StepinFlow.ViewModels.Pages
         public void OnNavigatedTo() { }
 
         public void OnNavigatedFrom() { }
+
+        public Task OnNavigatedToAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task OnNavigatedFromAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

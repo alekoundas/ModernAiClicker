@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -60,6 +61,16 @@ namespace StepinFlow.ViewModels.Pages
 
                     break;
             }
+        }
+
+        public Task OnNavigatedToAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task OnNavigatedFromAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

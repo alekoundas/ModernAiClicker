@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using Model.Enums;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -197,5 +198,16 @@ namespace StepinFlow.ViewModels.Pages
         public void OnNavigatedTo() { LoadFlows?.Invoke(); }
 
         public void OnNavigatedFrom() { }
+
+        public Task OnNavigatedToAsync()
+        {
+            LoadFlows?.Invoke();
+            return Task.CompletedTask;
+        }
+
+        public Task OnNavigatedFromAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

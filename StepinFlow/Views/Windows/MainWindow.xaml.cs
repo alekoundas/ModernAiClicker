@@ -1,6 +1,9 @@
-﻿using StepinFlow.ViewModels.Windows;
+﻿using Microsoft.Extensions.DependencyInjection;
+using StepinFlow.Services;
+using StepinFlow.ViewModels.Windows;
 using System.Windows;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -12,8 +15,9 @@ namespace StepinFlow.Views.Windows
 
         public MainWindow(
             MainWindowVM viewModel,
-            IPageService pageService,
-            INavigationService navigationService
+            INavigationViewPageProvider pageService,
+            INavigationService navigationService,
+            IServiceProvider serviceProvider
         )
         {
             ViewModel = viewModel;
@@ -22,6 +26,10 @@ namespace StepinFlow.Views.Windows
             SystemThemeWatcher.Watch(this);
 
             InitializeComponent();
+            var pageProvider = serviceProvider.GetRequiredService<INavigationViewPageProvider>();
+
+            // NavigationControl is x:Name of our NavigationView defined in XAML.
+            RootNavigation.SetPageProviderService(pageProvider);
             SetPageService(pageService);
 
             navigationService.SetNavigationControl(RootNavigation);
@@ -32,7 +40,7 @@ namespace StepinFlow.Views.Windows
 
         public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
 
-        public void SetPageService(IPageService pageService) => RootNavigation.SetPageService(pageService);
+        //public void SetPageService(IPageService pageService) => RootNavigation.SetPageService(pageService);
 
         public void ShowWindow() => Show();
 
@@ -50,14 +58,16 @@ namespace StepinFlow.Views.Windows
             Application.Current.Shutdown();
         }
 
-        INavigationView INavigationWindow.GetNavigation()
-        {
-            throw new NotImplementedException();
-        }
 
         public void SetServiceProvider(IServiceProvider serviceProvider)
         {
+            //RootNavigation.SetPageProviderService(serviceProvider);
             throw new NotImplementedException();
+        }
+
+        public void SetPageService(INavigationViewPageProvider navigationViewPageProvider)
+        {
+            RootNavigation.SetPageProviderService(navigationViewPageProvider);
         }
     }
 }
