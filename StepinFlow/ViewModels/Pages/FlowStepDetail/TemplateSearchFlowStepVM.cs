@@ -112,16 +112,16 @@ namespace StepinFlow.ViewModels.Pages
 
             // Find search area.
             Model.Structs.Rectangle? searchRectangle = null;
-            switch (FlowStep.FlowParameter?.TemplateSearchAreaType)
+            switch (SelectedFlowParameter?.TemplateSearchAreaType)
             {
                 case TemplateSearchAreaTypesEnum.SELECT_EVERY_MONITOR:
                     searchRectangle = _systemService.GetScreenSize();
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_MONITOR:
-                    searchRectangle = _systemService.GetMonitorArea(FlowStep.FlowParameter.SystemMonitorDeviceName);
+                    searchRectangle = _systemService.GetMonitorArea(SelectedFlowParameter.SystemMonitorDeviceName);
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_APPLICATION_WINDOW:
-                    searchRectangle = _systemService.GetWindowSize(FlowStep.FlowParameter.ProcessName);
+                    searchRectangle = _systemService.GetWindowSize(SelectedFlowParameter.ProcessName);
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_CUSTOM_AREA:
                     break;
@@ -169,7 +169,10 @@ namespace StepinFlow.ViewModels.Pages
             if (e.ClickCount == 2)
                 await _windowService.OpenScreenshotSelectionWindow(TestResultImage, false);
         }
-
+        public override void OnPageExit()
+        {
+            TestResultImage = null;
+        }
         public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();

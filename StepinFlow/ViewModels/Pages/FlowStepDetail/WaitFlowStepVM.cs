@@ -30,7 +30,10 @@ namespace StepinFlow.ViewModels.Pages
 
             TimeTotal = TimeSpan.FromMilliseconds(miliseconds).ToString(@"hh\:mm\:ss");
         }
-
+        public override void OnPageExit()
+        {
+            //TestResultImage = null;
+        }
         public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
