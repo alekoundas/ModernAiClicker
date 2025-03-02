@@ -11,14 +11,35 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Business.Migrations
 {
     [DbContext(typeof(InMemoryDbContext))]
-    [Migration("20250224225849_FlowStep_Add_IsSubFlowReferenced")]
-    partial class FlowStep_Add_IsSubFlowReferenced
+    [Migration("20250302172831_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.12");
+
+            modelBuilder.Entity("Model.Models.AppSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Key")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("AppSettings");
+                });
 
             modelBuilder.Entity("Model.Models.Execution", b =>
                 {
@@ -132,6 +153,9 @@ namespace Business.Migrations
                     b.Property<int>("OrderingNum")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ParentSubFlowStepId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -140,6 +164,8 @@ namespace Business.Migrations
 
                     b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex("ParentSubFlowStepId");
 
                     b.ToTable("Flows");
                 });
@@ -222,6 +248,9 @@ namespace Business.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CursorButton")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CursorRelocationType")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CursorScrollDirection")
@@ -364,6 +393,16 @@ namespace Business.Migrations
                     b.Navigation("FlowStep");
                 });
 
+            modelBuilder.Entity("Model.Models.Flow", b =>
+                {
+                    b.HasOne("Model.Models.FlowStep", "ParentSubFlowStep")
+                        .WithMany("SubFlows")
+                        .HasForeignKey("ParentSubFlowStepId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ParentSubFlowStep");
+                });
+
             modelBuilder.Entity("Model.Models.FlowParameter", b =>
                 {
                     b.HasOne("Model.Models.Flow", "Flow")
@@ -453,6 +492,8 @@ namespace Business.Migrations
                     b.Navigation("ChildrenTemplateSearchFlowSteps");
 
                     b.Navigation("Executions");
+
+                    b.Navigation("SubFlows");
                 });
 #pragma warning restore 612, 618
         }

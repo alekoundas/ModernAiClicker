@@ -85,8 +85,9 @@ namespace StepinFlow
                 // Repository
                 services.AddScoped<IFlowRepository, FlowRepository>();
                 services.AddScoped<IFlowStepRepository, FlowStepRepository>();
-                services.AddScoped<IFlowParameterRepository, FlowParameterRepository>();
                 services.AddScoped<IExecutionRepository, ExecutionRepository>();
+                services.AddScoped<IAppSettingRepository, AppSettingRepository>();
+                services.AddScoped<IFlowParameterRepository, FlowParameterRepository>();
 
                 // DB context
                 services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Transient);
@@ -232,6 +233,14 @@ namespace StepinFlow
         /// </summary>
         private void OnStartup(object sender, StartupEventArgs e)
         {
+            InMemoryDbContext? inMemoryDbContext = GetService<InMemoryDbContext>();
+
+            if (inMemoryDbContext != null)
+            {
+                inMemoryDbContext.RunMigrations();
+                inMemoryDbContext.TrySeedInitialData();
+            }
+
             _host.Start();
         }
 

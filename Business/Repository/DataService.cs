@@ -15,6 +15,7 @@ namespace Business.Repository
         public IFlowStepRepository FlowSteps { get; set; }
         public IFlowParameterRepository FlowParameters { get; set; }
         public IExecutionRepository Executions { get; set; }
+        public IAppSettingRepository AppSettings { get; set; }
 
         public DataService(InMemoryDbContext baseDbContext)
         {
@@ -24,6 +25,7 @@ namespace Business.Repository
             FlowSteps = new FlowStepRepository(_dbContext);
             FlowParameters = new FlowParameterRepository(_dbContext);
             Executions = new ExecutionRepository(_dbContext);
+            AppSettings = new AppSettingRepository(_dbContext);
         }
 
 
@@ -31,6 +33,7 @@ namespace Business.Repository
         {
             return await _dbContext.SaveChangesAsync();
         }
+
         public int SaveChanges()
         {
             return _dbContext.SaveChanges();
