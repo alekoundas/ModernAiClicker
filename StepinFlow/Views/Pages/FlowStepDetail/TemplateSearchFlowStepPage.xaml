@@ -11,7 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="TemplateSearchFlowStepPage"
     d:DataContext="{d:DesignInstance local:TemplateSearchFlowStepPage,
-                                     IsDesignTimeCreatable=False}"
+    IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -56,6 +56,8 @@
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Id}" />
+                                <TextBlock Text=". " />
                                 <TextBlock Text="{Binding Path=Name}" />
                                 <TextBlock Text=" - " />
                                 <TextBlock Text="{Binding Path=TemplateSearchAreaType}" />

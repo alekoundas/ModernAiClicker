@@ -124,9 +124,9 @@ namespace Model.Models
 
 
 
-        public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
-        public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
-        public virtual ObservableCollection<Execution> Executions { get; set; }  = new ObservableCollection<Execution>();
         public virtual ObservableCollection<Flow> SubFlows { get; set; }  = new ObservableCollection<Flow>();
+        public virtual ObservableCollection<Execution> Executions { get; set; }  = new ObservableCollection<Execution>();
+        public virtual ObservableCollection<FlowStep> ChildrenFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
+        public virtual ObservableCollection<FlowStep> ChildrenTemplateSearchFlowSteps { get; set; } = new ObservableCollection<FlowStep>();
     }
 }

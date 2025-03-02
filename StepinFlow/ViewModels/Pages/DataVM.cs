@@ -1,6 +1,7 @@
 ﻿using Business.DatabaseContext;
 using Business.Helpers;
 using Business.Interfaces;
+using Business.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DataAccess.Repository.Interface;
@@ -17,6 +18,7 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
+        private readonly ICloneService _cloneService;
 
         [ObservableProperty]
         private string _exportPath = PathHelper.GetExportDataPath();
@@ -35,10 +37,11 @@ namespace StepinFlow.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<Flow> _comboBoxFlows = new ObservableCollection<Flow>();
 
-        public DataVM(IDataService dataService, ISystemService systemService)
+        public DataVM(IDataService dataService, ISystemService systemService, ICloneService cloneService)
         {
             _dataService = dataService;
             _systemService = systemService;
+            _cloneService = cloneService;
 
             ComboBoxFlows = new ObservableCollection<Flow>(_dataService.Flows.GetAll());
         }
@@ -100,7 +103,7 @@ namespace StepinFlow.ViewModels.Pages
             if (flows != null)
                 foreach (Flow flow in flows)
                 {
-                    Flow? clonedFlow = FlowStepClone(flow);
+                    Flow? clonedFlow = _cloneService.GetFlowClone(flow);
                     if (clonedFlow != null)
                         _dataService.Flows.Add(clonedFlow);
                 }

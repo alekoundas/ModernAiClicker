@@ -5,49 +5,59 @@ namespace Model.Models
 {
     public partial class FlowStepDto : ObservableObject
     {
-        public int Id;
-        public string Name = string.Empty;
-        public string ProcessName = string.Empty;
-        public bool IsExpanded;
-        public int OrderingNum;
-        public FlowStepTypesEnum Type;
-        public bool Disabled { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string ProcessName { get; set; } = string.Empty;
+        public bool IsExpanded { get; set; }
+        public bool IsSelected { get; set; }
+        public int OrderingNum { get; set; }
+        public FlowStepTypesEnum Type { get; set; }
+        public TemplateMatchModesEnum? TemplateMatchMode { get; set; }
+
+        // SubFlow
+        public bool IsSubFlowReferenced { get; set; }
 
         // Template search
-        public byte[] TemplateImage = new byte[0];
-        public decimal Accuracy = 0.00m;
-        public int LocationX;
-        public int LocationY;
-        public int MaxLoopCount;
-        public bool RemoveTemplateFromResult;
+        public byte[]? TemplateImage { get; set; } = null;
+        public decimal Accuracy { get; set; } = 0.00m;
+        public bool RemoveTemplateFromResult { get; set; }
 
+        // Cursor
+        public MouseActionsEnum? CursorAction { get; set; }
+        public MouseButtonsEnum? CursorButton { get; set; }
+        public MouseScrollDirectionEnum? CursorScrollDirection { get; set; }
+        public CursorRelocationTypesEnum? CursorRelocationType { get; set; }
 
-        // Mouse
-        public MouseActionsEnum MouseAction;
-        public MouseButtonsEnum MouseButton;
-        public MouseScrollDirectionEnum MouseScrollDirectionEnum;
-        public bool MouseLoopInfinite;
-        public int? MouseLoopTimes;
-        public int? MouseLoopDebounceTime;
-        public TimeOnly? MouseLoopTime;
-
-
-        //System
-        public int? WaitForHours;
-        public int? WaitForMinutes;
-        public int? WaitForSeconds;
-        public int? WaitForMilliseconds;
+        // System
+        public int WaitForHours { get; set; }
+        public int WaitForMinutes { get; set; }
+        public int WaitForSeconds { get; set; }
+        public int WaitForMilliseconds { get; set; }
 
         // Window
-        public int WindowHeight;
-        public int WindowWidth;
+        public int Height { get; set; }
+        public int Width { get; set; }
+
+        // Reusable
+        public bool IsLoop { get; set; }
+        public bool IsLoopInfinite { get; set; }
+        public int LoopCount { get; set; }
+        public int LoopMaxCount { get; set; }
+        public TimeOnly? LoopTime { get; set; }
+        public int LocationX { get; set; }
+        public int LocationY { get; set; }
 
 
         public int? FlowId { get; set; }
+        public int? SubFlowId { get; set; }
+        public FlowDto? SubFlow { get; set; }
+
+        public int? FlowParameterId { get; set; }
         public int? ParentFlowStepId { get; set; }
 
         public int? ParentTemplateSearchFlowStepId;
 
+        public virtual List<FlowDto> SubFlows { get; set; } = new List<FlowDto>();
         public virtual List<FlowStepDto> ChildrenFlowSteps { get; set; } = new List<FlowStepDto>();
         public virtual List<FlowStepDto> ChildrenTemplateSearchFlowSteps { get; set; } = new List<FlowStepDto>();
 

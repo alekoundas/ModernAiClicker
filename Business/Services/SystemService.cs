@@ -322,6 +322,7 @@ namespace Business.Services
             {
                 x.CreateMap<Flow, FlowDto>();
                 x.CreateMap<FlowStep, FlowStepDto>();
+                x.CreateMap<FlowParameter, FlowParameterDto>();
             }).CreateMapper();
 
             List<FlowDto> flowsDto = mapper.Map<List<FlowDto>>(flows);

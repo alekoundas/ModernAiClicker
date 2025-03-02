@@ -53,6 +53,46 @@ namespace Business.Services
             return clonedFlowStep;
         }
 
+        public Flow? GetFlowClone(Flow flow)
+        {
+            // Queues for processing different types
+            Queue<(Flow Original, Flow Cloned)> flowQueue = new();
+            Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue = new();
+            Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue = new();
+
+            // Dictionaries to track cloned objects
+            Dictionary<int, Flow> clonedFlows = new();
+            Dictionary<int, FlowStep> clonedFlowSteps = new();
+            Dictionary<int, FlowParameter> clonedFlowParameters = new();
+
+            // Load the source Flow with all related data
+            List<Flow> originalFlows = new List<Flow>() { flow };
+            Flow? originalFlow = originalFlows.FirstOrDefault();
+
+            if (originalFlow == null)
+                return null;
+
+            // Clone the root Flow and enqueue it
+            Flow clonedFlow = CreateFlowClone(originalFlow);
+            flowQueue.Enqueue((originalFlow, clonedFlow));
+            clonedFlows[originalFlow.Id] = clonedFlow;
+
+            while (flowQueue.Count > 0 || flowStepQueue.Count > 0 || flowParameterQueue.Count > 0)
+            {
+                // Process Flows
+                ProcessFlow(flowStepQueue, flowQueue, flowParameterQueue, clonedFlowSteps, clonedFlowParameters);
+
+                // Process FlowParameters
+                ProcessFlowParameter(flowStepQueue, flowQueue, flowParameterQueue, clonedFlowSteps, clonedFlows, clonedFlowParameters);
+
+                // Process FlowSteps
+                ProcessFlowSteps(flowStepQueue, flowQueue, clonedFlowSteps, clonedFlows, clonedFlowParameters);
+
+            }
+
+            return clonedFlow;
+        }
+
         // New method for cloning Flow
         public async Task<Flow?> GetFlowClone(int flowId)
         {
@@ -94,7 +134,6 @@ namespace Business.Services
             return clonedFlow;
         }
 
-        // Existing helper method (unchanged)
         private void ProcessFlowSteps(Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, Flow> clonedFlows, Dictionary<int, FlowParameter> clonedFlowParameters)
         {
             while (flowStepQueue.Count > 0)
@@ -116,8 +155,8 @@ namespace Business.Services
 
 
                 // Clone FlowParameter
-                if (originalFS.FlowParameter != null && clonedFlowParameters.ContainsKey(originalFS.FlowParameter.Id))
-                    clonedFS.FlowParameter = clonedFlowParameters[originalFS.FlowParameter.Id];
+                if (originalFS.FlowParameterId != null && clonedFlowParameters.ContainsKey(originalFS.FlowParameterId.Value))
+                    clonedFS.FlowParameter = clonedFlowParameters[originalFS.FlowParameterId.Value];
                 else if (originalFS.FlowParameterId != null)
                     clonedFS.FlowParameterId = originalFS.FlowParameterId;
 
@@ -153,12 +192,12 @@ namespace Business.Services
                 var (originalF, clonedF) = flowQueue.Dequeue();
 
                 // Clone FlowParameter
-                if (originalF.FlowParameter != null && !clonedFlowParameters.ContainsKey(originalF.FlowParameter.Id))
+                if (originalF.FlowParameter != null && !clonedFlowParameters.ContainsKey((int)originalF.FlowParameter.Id))
                 {
                     FlowParameter clonedFP = CreateFlowParameterClone(originalF.FlowParameter);
                     clonedF.FlowParameter = clonedFP;
-                    flowParameterQueue.Enqueue((originalF.FlowParameter, clonedFP, null));
-                    clonedFlowParameters[originalF.FlowParameter.Id] = clonedFP;
+                    flowParameterQueue.Enqueue(((FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter))(originalF.FlowParameter, clonedFP, null));
+                    clonedFlowParameters[(int)originalF.FlowParameter.Id] = clonedFP;
                 }
 
                 // Clone FlowStep

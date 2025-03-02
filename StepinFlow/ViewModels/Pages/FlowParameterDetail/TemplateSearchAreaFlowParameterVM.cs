@@ -105,7 +105,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
             {
                 Rectangle? windowRect = _systemService.GetWindowSize(SelectedProcess);
                 if (windowRect == null)
-                    return ;
+                    return;
 
                 SearchAreaRectangle.Top = windowRect.Value.Top;
                 SearchAreaRectangle.Left = windowRect.Value.Left;
