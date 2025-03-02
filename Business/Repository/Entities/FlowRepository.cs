@@ -90,6 +90,99 @@ namespace Business.Repository.Entities
             return flows;
         }
 
+        //public async Task FixOneToOneRelationIds(int flowId)
+        //{
+        //    List<Flow> flows = await InMemoryDbContext.Flows
+        //        .AsNoTracking()
+        //        .Include(x => x.FlowStep.ChildrenFlowSteps).ThenInclude(x => x.SubFlow!.FlowStep)
+        //        .Where(x => x.Type == FlowTypesEnum.FLOW)
+        //        .ToListAsync();
+
+        //    foreach (var flow in flows)
+        //    {
+
+        //        if (flow != null)
+        //        {
+        //            var stack = new Stack<FlowStep>(flow.FlowStep.ChildrenFlowSteps);
+        //            while (stack.Count > 0)
+        //            {
+        //                // Process the current node
+        //                var currentFlowStep = stack.Pop();
+
+        //                // Load its children from the database.
+        //                var childFlowSteps = await InMemoryDbContext.FlowSteps
+        //                    .AsNoTracking()
+        //                    .Where(x => x.Id == currentFlowStep.Id)
+        //                    .SelectMany(x => x.ChildrenFlowSteps)
+        //                    .Include(x => x.SubFlow!.FlowStep)
+        //                    .ToListAsync();
+
+        //                // Do the actual fix!
+        //                if (currentFlowStep.SubFlow != null && currentFlowStep.IsSubFlowReferenced == false)
+        //                {
+        //                    Flow updateFlow = currentFlowStep.SubFlow;
+        //                    updateFlow.ParentSubFlowStepId = currentFlowStep.Id;
+        //                    InMemoryDbContext.Update(updateFlow);
+        //                }
+
+        //                // Push children onto the stack for further processing.
+        //                foreach (var childFlowStep in childFlowSteps)
+        //                    stack.Push(childFlowStep);
+
+        //                foreach (var subFlowtep in childFlowSteps.Select(x => x.SubFlow?.FlowStep).ToList())
+        //                    if (subFlowtep != null)
+        //                        stack.Push(subFlowtep);
+
+        //            }
+        //        }
+        //    }
+        //    await InMemoryDbContext.SaveChangesAsync();
+        //}
+
+        public async Task FixOneToOneRelationIds(int flowId)
+        {
+            Flow? flow = await InMemoryDbContext.Flows
+                .AsNoTracking()
+                .Include(x => x.FlowStep.ChildrenFlowSteps).ThenInclude(x => x.SubFlow!.FlowStep)
+                .Where(x => x.Id == flowId)
+                .FirstOrDefaultAsync();
+
+            if (flow != null)
+            {
+                var stack = new Stack<FlowStep>(flow.FlowStep.ChildrenFlowSteps);
+                while (stack.Count > 0)
+                {
+                    // Process the current node
+                    var currentFlowStep = stack.Pop();
+
+                    // Load its children from the database.
+                    var childFlowSteps = await InMemoryDbContext.FlowSteps
+                        .AsNoTracking()
+                        .Where(x => x.Id == currentFlowStep.Id)
+                        .SelectMany(x => x.ChildrenFlowSteps)
+                        .Include(x => x.SubFlow!.FlowStep)
+                        .ToListAsync();
+
+                    // Do the actual fix!
+                    if (currentFlowStep.SubFlow != null && currentFlowStep.IsSubFlowReferenced == false)
+                    {
+                        Flow updateFlow = await InMemoryDbContext.Flows.FirstAsync(x=>x.Id==currentFlowStep.SubFlowId);
+                        updateFlow.ParentSubFlowStepId = currentFlowStep.Id;
+                    }
+
+                    // Push children onto the stack for further processing.
+                    foreach (var childFlowStep in childFlowSteps)
+                        stack.Push(childFlowStep);
+
+                    foreach (var subFlowtep in childFlowSteps.Select(x => x.SubFlow?.FlowStep).ToList())
+                        if (subFlowtep != null)
+                            stack.Push(subFlowtep);
+
+                }
+            }
+            await InMemoryDbContext.SaveChangesAsync();
+        }
+
         private async Task<FlowStep> LoadAllChildren(FlowStep flowStep, bool isExpanded)
         {
             // Initialize a stack to simulate recursion.

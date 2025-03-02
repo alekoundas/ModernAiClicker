@@ -9,6 +9,7 @@ namespace Business.Repository.Interfaces
         Task<List<Flow>> LoadAllExpanded();
         Task<List<Flow>> LoadAllCollapsed();
         Task<List<Flow>> LoadAllExport(int? flowId = null);
+        Task FixOneToOneRelationIds(int flowId);
 
     }
 }

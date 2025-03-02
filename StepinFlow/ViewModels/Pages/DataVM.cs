@@ -98,17 +98,19 @@ namespace StepinFlow.ViewModels.Pages
         private async Task OnButtonImportClick()
         {
             List<Flow>? flows = _systemService.ImportFlowsJSON(ImportFileLocation);
-            //flowStep.TemplateImage = File.ReadAllBytes(TemplateImgPath);
+            List<Flow> clonedFlows = new List<Flow>();
 
             if (flows != null)
                 foreach (Flow flow in flows)
-                {
-                    Flow? clonedFlow = _cloneService.GetFlowClone(flow);
-                    if (clonedFlow != null)
-                        _dataService.Flows.Add(clonedFlow);
-                }
+                    clonedFlows.Add(_cloneService.GetFlowClone(flow));
+
+            foreach (Flow clonedFlow in clonedFlows)
+                _dataService.Flows.Add(clonedFlow);
 
             await _dataService.SaveChangesAsync();
+
+            foreach (Flow clonedFlow in clonedFlows)
+                await _dataService.Flows.FixOneToOneRelationIds(clonedFlow.Id);
         }
 
         [RelayCommand]

@@ -1,6 +1,5 @@
 ﻿using Business.Interfaces;
 using DataAccess.Repository.Interface;
-using Microsoft.EntityFrameworkCore;
 using Model.Models;
 
 namespace Business.Services
@@ -14,7 +13,6 @@ namespace Business.Services
             _dataService = dataService;
         }
 
-        // Existing method for cloning FlowStep (unchanged)
         public async Task<FlowStep?> GetFlowStepClone(int flowStepId)
         {
             // Queues for processing different types
@@ -93,7 +91,6 @@ namespace Business.Services
             return clonedFlow;
         }
 
-        // New method for cloning Flow
         public async Task<Flow?> GetFlowClone(int flowId)
         {
             // Queues for processing different types
@@ -184,7 +181,6 @@ namespace Business.Services
             }
         }
 
-        // Modified helper method to handle SubFlowSteps
         private void ProcessFlow(Queue<(FlowStep Original, FlowStep Cloned)> flowStepQueue, Queue<(Flow Original, Flow Cloned)> flowQueue, Queue<(FlowParameter Original, FlowParameter Cloned, FlowParameter? ParentFlowParameter)> flowParameterQueue, Dictionary<int, FlowStep> clonedFlowSteps, Dictionary<int, FlowParameter> clonedFlowParameters)
         {
             while (flowQueue.Count > 0)
@@ -209,16 +205,10 @@ namespace Business.Services
                     clonedFlowSteps[originalF.FlowStep.Id] = clonedFS;
                 }
 
-                // Clone ParentFlowStep
-                if (originalF.ParentSubFlowStep != null && clonedFlowSteps.ContainsKey(originalF.ParentSubFlowStep.Id))
-                    clonedF.ParentSubFlowStep = clonedFlowSteps[originalF.ParentSubFlowStep.Id];
-                //if (originalF.ParentSubFlowStep != null && !clonedFlowSteps.ContainsKey(originalF.ParentSubFlowStep.Id))
-                //{
-                //    FlowStep clonedFS = CreateFlowStepClone(originalF.ParentSubFlowStep);
-                //    clonedF.ParentSubFlowStep = clonedFS;
-                //    flowStepQueue.Enqueue((originalF.ParentSubFlowStep, clonedFS));
-                //    clonedFlowSteps[originalF.ParentSubFlowStep.Id] = clonedFS;
-                //}
+
+                // Clone ParentFlowStep results in a circular reference. Fixed by appliyng ids after save.
+                //if (originalF.ParentSubFlowStepId != null && clonedFlowSteps.ContainsKey(originalF.ParentSubFlowStepId.Value))
+                //    clonedF.ParentSubFlowStep = clonedFlowSteps[originalF.ParentSubFlowStepId.Value];
             }
         }
 
