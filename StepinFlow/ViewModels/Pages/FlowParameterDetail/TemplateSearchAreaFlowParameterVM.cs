@@ -114,14 +114,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
             }
         }
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
             // Edit mode

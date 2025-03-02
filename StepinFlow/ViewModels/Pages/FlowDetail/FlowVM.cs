@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using Model.Models;
+﻿using Model.Models;
 using DataAccess.Repository.Interface;
 using Business.BaseViewModels;
 
@@ -18,14 +17,7 @@ namespace StepinFlow.ViewModels.Pages
 
         }
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             // Edit mode
             if (Flow.Id > 0)

@@ -9,7 +9,7 @@ namespace Business.BaseViewModels
     {
         private readonly IDataService _dataService;
         
-        public virtual event Action<int> OnSave;
+        //public virtual event Action<int> OnSave;
 
 
         [ObservableProperty]
@@ -31,9 +31,26 @@ namespace Business.BaseViewModels
             FlowStep = newFlowStep;
             return Task.CompletedTask;
         }
+        public int GetCurrentEntityId()
+        {
+            return FlowStep.Id;
+        }
+        public virtual async Task OnCancel()
+        {
+            if (FlowStep.Id == 0)
+                FlowStep = new FlowStep();
+            else
+                await LoadFlowStepId(FlowStep.Id);
+        }
 
         public virtual void OnPageExit()
         {
+
+        }
+
+        public virtual Task OnSave()
+        {
+            throw new NotImplementedException();
         }
     }
 }

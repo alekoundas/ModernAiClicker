@@ -163,6 +163,8 @@
                 <UserControls:FrameDetailUserControl
                     x:Name="FrameDetailUserControl"
                     Padding="20,20,20,20"
+                    OnSaveFlow="OnSaveFlow"
+                    OnSaveFlowParameter="OnSaveFlowParameter"
                     OnSaveFlowStep="OnSaveFlowStep" />
             </ScrollViewer>
         </Border>

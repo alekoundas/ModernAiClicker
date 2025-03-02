@@ -9,7 +9,7 @@ namespace StepinFlow.Views.Pages.Executions
         public IFlowDetailVM? FlowViewModel { get; set; }
         public IFlowStepDetailVM? FlowStepViewModel { get; set; }
         public IFlowParameterDetailVM? FlowParameterViewModel { get; set; }
-        public IExecutionViewModel? ExecutionViewModel { get; set; }
+        public IExecutionViewModel? FlowExecutionViewModel { get; set; }
 
 
         public IExecutionViewModel ViewModel { get; set; }
@@ -17,7 +17,7 @@ namespace StepinFlow.Views.Pages.Executions
         public SubFlowStepExecutionPage(SubFlowStepExecutionVM viewModel)
         {
             ViewModel = viewModel;
-            ExecutionViewModel = ViewModel;
+            FlowExecutionViewModel = ViewModel;
             InitializeComponent();
             DataContext = this;
         }

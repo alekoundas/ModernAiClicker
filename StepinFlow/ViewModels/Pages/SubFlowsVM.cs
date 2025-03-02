@@ -21,8 +21,12 @@ namespace StepinFlow.ViewModels.Pages
         public event IsLockedChangedEvent? IsLockedChanged;
         public delegate void IsLockedChangedEvent(bool isLocked);
 
+        public event LoadFlowsAndSelectFlowEvent? LoadFlowsAndSelectFlow;
+        public delegate Task LoadFlowsAndSelectFlowEvent(int id);
         public event LoadFlowsAndSelectFlowStepEvent? LoadFlowsAndSelectFlowStep;
         public delegate Task LoadFlowsAndSelectFlowStepEvent(int id);
+        public event LoadFlowsAndSelectFlowParameterEvent? LoadFlowsAndSelectFlowParameter;
+        public delegate Task LoadFlowsAndSelectFlowParameterEvent(int id);
 
         public event LoadFlowsEvent? LoadFlows;
         public delegate Task LoadFlowsEvent(int flowId = 0, bool isSubFlow = false);
@@ -84,9 +88,17 @@ namespace StepinFlow.ViewModels.Pages
         {
             LoadFlows?.Invoke(-1, true);
         }
+        public void OnSaveFlow(int id)
+        {
+            LoadFlowsAndSelectFlow?.Invoke(id);
+        }
         public void OnSaveFlowStep(int id)
         {
             LoadFlowsAndSelectFlowStep?.Invoke(id);
+        }
+        public void OnSaveFlowParameter(int id)
+        {
+            LoadFlowsAndSelectFlowParameter?.Invoke(id);
         }
 
         public void OnAddFlowStepClick(FlowStep newFlowStep)

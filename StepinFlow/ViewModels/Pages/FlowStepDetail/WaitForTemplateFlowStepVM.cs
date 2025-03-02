@@ -21,7 +21,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IWindowService _windowService;
         private readonly IDataService _dataService;
-        public override event Action<int> OnSave;
+        //public override event Action<int> OnSave;
 
         [ObservableProperty]
         private byte[]? _testResultImage = null;
@@ -125,14 +125,7 @@ namespace StepinFlow.ViewModels.Pages
             TestResultImage = result.ResultImage;
         }
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
 
@@ -194,7 +187,7 @@ namespace StepinFlow.ViewModels.Pages
                 _dataService.FlowSteps.Add(FlowStep);
 
                 await _dataService.SaveChangesAsync();
-                OnSave?.Invoke(FlowStep.Id);
+                //OnSave?.Invoke(FlowStep.Id);
             }
         }
     }

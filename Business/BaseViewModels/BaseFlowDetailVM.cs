@@ -5,7 +5,7 @@ using Model.Models;
 
 namespace Business.BaseViewModels
 {
-    public partial class BaseFlowDetailVM:ObservableObject, IFlowDetailVM
+    public partial class BaseFlowDetailVM : ObservableObject, IFlowDetailVM
     {
         private readonly IDataService _dataService;
         [ObservableProperty]
@@ -25,6 +25,30 @@ namespace Business.BaseViewModels
         public void LoadNewFlow(Flow newFlow)
         {
             Flow = newFlow;
+        }
+
+        public int GetCurrentEntityId()
+        {
+            return Flow.Id;
+        }
+
+
+        public virtual async Task OnCancel()
+        {
+            if (Flow.Id == 0)
+                Flow = new Flow();
+            else
+                await LoadFlowId(Flow.Id);
+        }
+
+        public virtual void OnPageExit()
+        {
+
+        }
+
+        public virtual Task OnSave()
+        {
+            throw new NotImplementedException();
         }
     }
 }

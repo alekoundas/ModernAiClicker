@@ -11,7 +11,7 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly ISystemService _systemService;
         private readonly IDataService _dataService;
-        public override event Action<int> OnSave;
+        //public override event Action<int> OnSave;
 
         [ObservableProperty]
         private string _timeTotal;
@@ -31,14 +31,7 @@ namespace StepinFlow.ViewModels.Pages
             TimeTotal = TimeSpan.FromMilliseconds(miliseconds).ToString(@"hh\:mm\:ss");
         }
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
             // Edit mode
@@ -77,7 +70,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
             _dataService.SaveChanges();
-            OnSave?.Invoke(FlowStep.Id);
+            //OnSave?.Invoke(FlowStep.Id);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly IDataService _dataService;
         private readonly ISystemService _systemService;
         private readonly IKeyboardListenerService _keyboardListenerService;
-        public override event Action<int> OnSave;
+        //public override event Action<int> OnSave;
 
 
         [ObservableProperty]
@@ -106,14 +106,7 @@ namespace StepinFlow.ViewModels.Pages
             FlowStep.LocationX = point.X;
         }
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
             // Edit mode
@@ -155,7 +148,6 @@ namespace StepinFlow.ViewModels.Pages
 
 
             _dataService.SaveChanges();
-            OnSave?.Invoke(FlowStep.Id);
         }
 
         private void GetParents(int? flowStepId)

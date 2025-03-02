@@ -11,12 +11,12 @@ namespace StepinFlow.Views.Pages.Executions
         public IFlowDetailVM? FlowViewModel { get; set; }
         public IFlowStepDetailVM? FlowStepViewModel { get; set; }
         public IFlowParameterDetailVM? FlowParameterViewModel { get; set; }
-        public IExecutionViewModel? ExecutionViewModel { get; set; }
+        public IExecutionViewModel? FlowExecutionViewModel { get; set; }
 
         public CursorClickExecutionPage()
         {
             ViewModel = new CursorClickExecutionVM();
-            ExecutionViewModel = ViewModel;
+            FlowExecutionViewModel = ViewModel;
             InitializeComponent();
             DataContext = this;
         }

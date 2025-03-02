@@ -12,7 +12,7 @@ namespace StepinFlow.ViewModels.Pages
     public partial class GoToFlowStepVM : BaseFlowStepDetailVM
     {
         private readonly IDataService _dataService;
-        public override event Action<int> OnSave;
+        //public override event Action<int> OnSave;
 
         [ObservableProperty]
         private ObservableCollection<FlowStep> _previousSteps = new ObservableCollection<FlowStep>();
@@ -43,14 +43,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
             // Edit mode
@@ -82,7 +75,7 @@ namespace StepinFlow.ViewModels.Pages
             }
 
             _dataService.SaveChanges();
-            OnSave?.Invoke(FlowStep.Id);
+            //OnSave?.Invoke(FlowStep.Id);
         }
 
         private async Task<ObservableCollection<FlowStep>> GetParents(int flowStepId)

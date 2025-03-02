@@ -23,7 +23,7 @@ namespace StepinFlow.ViewModels.Pages
         private readonly ITemplateSearchService _templateMatchingService;
         private readonly IDataService _dataService;
         private readonly IWindowService _windowService;
-        public override event Action<int> OnSave;
+        //public override event Action<int> OnSave;
 
         [ObservableProperty]
         private byte[]? _testResultImage = null;
@@ -247,14 +247,7 @@ namespace StepinFlow.ViewModels.Pages
                 await _windowService.OpenScreenshotSelectionWindow(TestResultImage, false);
         }
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
             // Remove flow steps that dont contain a template image.
@@ -343,7 +336,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
             await _dataService.SaveChangesAsync();
-            OnSave?.Invoke(FlowStep.Id);
+            //OnSave?.Invoke(FlowStep.Id);
 
             List<FlowStep> flowSteps = await _dataService.FlowSteps.Query
                 .AsNoTracking()

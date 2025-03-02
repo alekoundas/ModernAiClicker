@@ -14,7 +14,7 @@ namespace StepinFlow.ViewModels.Pages
     {
         private readonly IDataService _dataService;
         private readonly ICloneService _cloneService;
-        public override event Action<int> OnSave;
+        //public override event Action<int> OnSave;
 
         [ObservableProperty]
         private bool _isEnabled;
@@ -54,14 +54,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
 
@@ -118,7 +111,7 @@ namespace StepinFlow.ViewModels.Pages
                 }
 
                 _dataService.SaveChanges();
-                OnSave?.Invoke(FlowStep.Id);
+                //OnSave?.Invoke(FlowStep.Id);
             }
         }
     }

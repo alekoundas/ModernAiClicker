@@ -88,7 +88,7 @@
                     <Button Content="Cancel">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
-                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonCancelClickCommand}" />
+                                <i:InvokeCommandAction Command="{Binding ButtonCancelClickCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </Button>
@@ -98,7 +98,7 @@
                     <Button Content="Save">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Click">
-                                <i:InvokeCommandAction Command="{Binding ViewModel.ButtonSaveClickCommand}" />
+                                <i:InvokeCommandAction Command="{Binding ButtonSaveClickCommand}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </Button>

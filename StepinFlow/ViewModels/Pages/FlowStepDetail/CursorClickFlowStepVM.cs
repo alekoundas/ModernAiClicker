@@ -10,7 +10,7 @@ namespace StepinFlow.ViewModels.Pages
     public partial class CursorClickFlowStepVM : BaseFlowStepDetailVM
     {
         private readonly IDataService _dataService;
-        public override event Action<int> OnSave;
+        //public override event Action<int> OnSave;
 
         [ObservableProperty]
         private IEnumerable<MouseButtonsEnum> _mouseButtonsEnum;
@@ -26,14 +26,8 @@ namespace StepinFlow.ViewModels.Pages
             MouseActionsEnum = Enum.GetValues(typeof(MouseActionsEnum)).Cast<MouseActionsEnum>();
         }
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
 
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
             // Edit mode
@@ -70,7 +64,6 @@ namespace StepinFlow.ViewModels.Pages
 
 
             _dataService.SaveChanges();
-            OnSave?.Invoke(FlowStep.Id);
         }
     }
 }

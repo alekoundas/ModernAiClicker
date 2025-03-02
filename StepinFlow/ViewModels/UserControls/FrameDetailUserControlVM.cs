@@ -21,8 +21,13 @@ namespace StepinFlow.ViewModels.UserControls
         private readonly IServiceProvider _serviceProvider;
 
 
+
+        public event OnSaveFlow? OnSaveFlowEvent;
+        public delegate void OnSaveFlow(int Id);
         public event OnSaveFlowStep? OnSaveFlowStepEvent;
         public delegate void OnSaveFlowStep(int Id);
+        public event OnSaveFlowParameter? OnSaveFlowParameterEvent;
+        public delegate void OnSaveFlowParameter(int Id);
 
         // FlowStep Type
         [ObservableProperty]
@@ -52,14 +57,6 @@ namespace StepinFlow.ViewModels.UserControls
         [ObservableProperty]
         private bool _isEnabled = false;
 
-        //[ObservableProperty]
-        private IFlowStepDetailPage? _frameFlowStep;
-        //[ObservableProperty]
-        //private IFlowParameterDetailPage? _frameFlowParameter;
-        //[ObservableProperty]
-        //private IFlowDetailPage? _frameFlow;
-        //[ObservableProperty]
-        //private IExecutionPage? _frameExecution;
         [ObservableProperty]
         private IDetailPage? _frame;
 
@@ -138,13 +135,6 @@ namespace StepinFlow.ViewModels.UserControls
                 { FlowParameterTypesEnum.TEMPLATE_SEARCH_AREA, new Lazy<IDetailPage>(() => serviceProvider.GetRequiredService<TemplateSearchAreaFlowParameterPage>()) },
             };
 
-            //_executionFlowPageFactory = new Dictionary<FlowTypesEnum, Lazy<IExecutionPage>>
-            //{
-            //    { FlowTypesEnum.FLOW, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<FlowExecutionPage>()) },
-            //    { FlowTypesEnum.SUB_FLOW, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
-            //    { FlowTypesEnum.NO_SELECTION, new Lazy<IExecutionPage>(() => serviceProvider.GetRequiredService<FlowPage>()) },
-            //};
-
         }
 
         public void NavigateToNewFlowStep(FlowStep newFlowStep)
@@ -157,10 +147,6 @@ namespace StepinFlow.ViewModels.UserControls
             SelectedFlowStepType = FlowStepTypesEnum.NO_SELECTION;
             _newFlowStep = newFlowStep;
             _newFlowParameter = null;
-            //FrameFlow = null;
-            //FrameFlowStep = null;
-            //FrameExecution = null;
-            //FrameFlowParameter = null;
         }
 
         public void NavigateToNewFlowParameter(FlowParameter newFlowParameter)
@@ -175,17 +161,10 @@ namespace StepinFlow.ViewModels.UserControls
             _newFlowStep = null;
             _newFlowParameter = newFlowParameter;
             Frame = null;
-            //FrameFlow = null;
-            //FrameFlowStep = null;
-            //FrameExecution = null;
-            //FrameFlowParameter = null;
         }
 
         public async Task NavigateToFlowStep(int id)
         {
-            //FrameFlow = null;
-            //FrameFlowParameter = null;
-            //FrameExecution = null;
             // Navigate to existing flow step.
             FlowStepTypesEnum? Type = await _dataService.FlowSteps.Query
                 .AsNoTracking()
@@ -207,10 +186,6 @@ namespace StepinFlow.ViewModels.UserControls
 
         public async Task NavigateToFlowParameter(int id)
         {
-            //FrameFlow = null;
-            //FrameFlowStep = null;
-            //FrameExecution = null;
-            // Navigate to existing flow step.
             FlowParameterTypesEnum? type = await _dataService.FlowParameters.Query
                 .AsNoTracking()
                 .Where(x => x.Id == id)
@@ -230,9 +205,6 @@ namespace StepinFlow.ViewModels.UserControls
         }
         public async Task NavigateToFlow(int id)
         {
-            //FrameFlowStep = null;
-            //FrameFlowParameter = null;
-            //FrameExecution = null;
             // Navigate to existing flow.
             FlowTypesEnum? flowType = await _dataService.Flows.Query
                 .AsNoTracking()
@@ -254,9 +226,6 @@ namespace StepinFlow.ViewModels.UserControls
 
         public void NavigateToExecution(Execution execution)
         {
-            //FrameFlow = null;
-            //FrameFlowStep = null;
-            //FrameFlowParameter = null;
             if (execution.FlowStep != null)
             {
                 SelectedFlowStepType = execution.FlowStep.Type;
@@ -287,44 +256,70 @@ namespace StepinFlow.ViewModels.UserControls
         {
             if (_newFlowStep != null)
             {
-                //FrameFlow = null;
-                //FrameFlowParameter = null;
-                //FrameExecution = null;
                 _newFlowStep.Type = SelectedFlowStepType;
                 NavigateToNewFlowStepDetailPage(_newFlowStep);
             }
             else if (_newFlowParameter != null)
             {
-                //FrameFlow = null;
-                //FrameFlowStep = null;
-                //FrameExecution = null;
                 _newFlowParameter.Type = SelectedFlowParameterType;
                 NavigateToNewFlowParameterDetailPage(_newFlowParameter);
             }
         }
 
         [RelayCommand]
-        private void OnButtonCancelClick()
+        private async Task OnButtonCancelClick()
         {
-            //TODO
+            if (Frame?.FlowViewModel != null)
+                await Frame.FlowViewModel.OnCancel();
+
+            if (Frame?.FlowStepViewModel != null)
+                await Frame.FlowStepViewModel.OnCancel();
+
+            if (Frame?.FlowParameterViewModel != null)
+                await Frame.FlowParameterViewModel.OnCancel();
+
+            //if (Frame?.FlowExecutionViewModel != null)
+            //await Frame.FlowExecutionViewModel.OnCancel();
         }
 
         [RelayCommand]
         private async Task OnButtonSaveClick()
         {
+            if (Frame?.FlowViewModel != null)
+            {
+                await Frame.FlowViewModel.OnSave();
+                int id = Frame.FlowViewModel.GetCurrentEntityId();
+                OnSaveFlowEvent?.Invoke(id);
+            }
 
+            if (Frame?.FlowStepViewModel != null)
+            {
+                await Frame.FlowStepViewModel.OnSave();
+                int id = Frame.FlowStepViewModel.GetCurrentEntityId();
+                OnSaveFlowStepEvent?.Invoke(id);
+            }
+
+            if (Frame?.FlowParameterViewModel != null)
+            {
+                await Frame.FlowParameterViewModel.OnSave();
+                int id = Frame.FlowParameterViewModel.GetCurrentEntityId();
+                OnSaveFlowParameterEvent?.Invoke(id);
+            }
+
+            //if (Frame?.FlowExecutionViewModel != null)
+            //await Frame.FlowExecutionViewModel.OnSave();
         }
 
 
         private void NavigateToNewFlowStepDetailPage(FlowStep newFlowStep)
         {
-            Frame?.FlowStepViewModel?.OnPageExit();
+            ExitPage();
             IDetailPage? page = _flowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page?.FlowStepViewModel != null)
             {
                 page.FlowStepViewModel.LoadNewFlowStep(newFlowStep);
-                page.FlowStepViewModel.OnSave -= HandleSave;
-                page.FlowStepViewModel.OnSave += HandleSave;
+                //page.FlowStepViewModel.OnSave -= HandleSave;
+                //page.FlowStepViewModel.OnSave += HandleSave;
                 Frame = page;
             }
             else
@@ -332,19 +327,19 @@ namespace StepinFlow.ViewModels.UserControls
         }
         private void NavigateToNewFlowParameterDetailPage(FlowParameter newflowParameter)
         {
-            Frame?.FlowStepViewModel?.OnPageExit();
+            ExitPage();
             IDetailPage? page = _flowParameterPageFactory.TryGetValue(SelectedFlowParameterType, out Lazy<IDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page?.FlowParameterViewModel != null)
             {
                 page.FlowParameterViewModel.LoadNewFlowParameter(newflowParameter);
-                Frame= page;
+                Frame = page;
             }
             else
                 Frame = null;
         }
         private void NavigateToFlowParameterDetailPage(int id)
         {
-            Frame?.FlowStepViewModel?.OnPageExit();
+            ExitPage();
             IDetailPage? page = _flowParameterPageFactory.TryGetValue(SelectedFlowParameterType, out Lazy<IDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page?.FlowParameterViewModel != null)
             {
@@ -352,18 +347,18 @@ namespace StepinFlow.ViewModels.UserControls
                 Frame = page;
             }
             else
-                Frame= null;
+                Frame = null;
         }
 
         private void NavigateToFlowStepDetailPage(int id)
         {
-            Frame?.FlowStepViewModel?.OnPageExit();
+            ExitPage();
             IDetailPage? page = _flowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page?.FlowStepViewModel != null)
             {
                 page.FlowStepViewModel.LoadFlowStepId(id);
-                page.FlowStepViewModel.OnSave -= HandleSave;
-                page.FlowStepViewModel.OnSave += HandleSave;
+                //page.FlowStepViewModel.OnSave -= HandleSave;
+                //page.FlowStepViewModel.OnSave += HandleSave;
                 Frame = page;
             }
             else
@@ -372,7 +367,7 @@ namespace StepinFlow.ViewModels.UserControls
 
         private void NavigateToFlowDetailPage(int id)
         {
-            Frame?.FlowStepViewModel?.OnPageExit();
+            ExitPage();
             IDetailPage? page = _flowPageFactory.TryGetValue(SelectedFlowType, out Lazy<IDetailPage>? lazzyPage) ? lazzyPage.Value : null;
             if (page?.FlowViewModel != null)
             {
@@ -385,11 +380,11 @@ namespace StepinFlow.ViewModels.UserControls
 
         private void NavigateToExecutionDetailPage(Execution execution)
         {
-            Frame?.FlowStepViewModel?.OnPageExit();
+            ExitPage();
             IDetailPage? page = _executionFlowStepPageFactory.TryGetValue(SelectedFlowStepType, out Lazy<IDetailPage>? lazzyPage) ? lazzyPage.Value : null;
-            if (page?.ExecutionViewModel != null)
+            if (page?.FlowExecutionViewModel != null)
             {
-                page.ExecutionViewModel.SetExecution(execution);
+                page.FlowExecutionViewModel.SetExecution(execution);
                 Frame = page;
             }
             else
@@ -397,10 +392,19 @@ namespace StepinFlow.ViewModels.UserControls
         }
 
 
-
-        private void HandleSave(int id)
+        private void ExitPage()
         {
-            OnSaveFlowStepEvent?.Invoke(id);
+            if (Frame != null)
+            {
+                Frame.FlowViewModel?.OnPageExit();
+                Frame.FlowStepViewModel?.OnPageExit();
+                Frame.FlowParameterViewModel?.OnPageExit();
+                //Frame.FlowExecutionViewModel?.OnPageExit();
+            }
         }
+        //private void HandleSave(int id)
+        //{
+        //    OnSaveFlowStepEvent?.Invoke(id);
+        //}
     }
 }

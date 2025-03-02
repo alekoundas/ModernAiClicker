@@ -28,6 +28,27 @@ namespace Business.BaseViewModels
             FlowParameter = newFlowParameter;
             return Task.CompletedTask;
         }
+        public int GetCurrentEntityId()
+        {
+            return FlowParameter.Id;
+        }
+        public virtual async Task OnCancel()
+        {
+            if (FlowParameter.Id == 0)
+                FlowParameter = new FlowParameter();
+            else
+                await LoadFlowParameterId(FlowParameter.Id);
+        }
+
+        public virtual void OnPageExit()
+        {
+
+        }
+
+        public virtual Task OnSave()
+        {
+            throw new NotImplementedException();
+        }
 
     }
 }

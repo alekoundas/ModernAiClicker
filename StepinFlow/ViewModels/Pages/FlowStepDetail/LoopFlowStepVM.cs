@@ -11,7 +11,7 @@ namespace StepinFlow.ViewModels.Pages
     public partial class LoopFlowStepVM : BaseFlowStepDetailVM
     {
         private readonly IDataService _dataService;
-        public override event Action<int> OnSave;
+        //public override event Action<int> OnSave;
 
         [ObservableProperty]
         private List<string> _processList = SystemProcessHelper.GetProcessWindowTitles();
@@ -25,14 +25,7 @@ namespace StepinFlow.ViewModels.Pages
             _dataService = dataService;
         }
 
-        [RelayCommand]
-        private void OnButtonCancelClick()
-        {
-            //TODO
-        }
-
-        [RelayCommand]
-        private async Task OnButtonSaveClick()
+        public override async Task OnSave()
         {
             _dataService.Query.ChangeTracker.Clear();
             // Edit mode
@@ -75,7 +68,7 @@ namespace StepinFlow.ViewModels.Pages
 
 
             await _dataService.SaveChangesAsync();
-            OnSave?.Invoke(FlowStep.Id);
+            //OnSave?.Invoke(FlowStep.Id);
         }
     }
 }

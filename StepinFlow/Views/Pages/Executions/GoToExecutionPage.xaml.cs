@@ -10,14 +10,14 @@ namespace StepinFlow.Views.Pages.Executions
         public IFlowDetailVM? FlowViewModel { get; set; }
         public IFlowStepDetailVM? FlowStepViewModel { get; set; }
         public IFlowParameterDetailVM? FlowParameterViewModel { get; set; }
-        public IExecutionViewModel? ExecutionViewModel { get; set; }
+        public IExecutionViewModel? FlowExecutionViewModel { get; set; }
 
 
         public IExecutionViewModel ViewModel { get; set; }
         public GoToExecutionPage(IDataService dataService)
         {
             ViewModel = new GoToExecutionVM(dataService);
-            ExecutionViewModel = ViewModel;
+            FlowExecutionViewModel = ViewModel;
             InitializeComponent();
             DataContext = this;
         }

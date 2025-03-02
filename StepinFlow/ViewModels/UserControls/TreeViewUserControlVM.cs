@@ -109,11 +109,25 @@ namespace StepinFlow.ViewModels.UserControls
             });
         }
 
+        public async Task LoadFlowsAndSelectFlow(int id)
+        {
+            await _dataService.SaveChangesAsync();
+            await LoadFlows();
+            await ExpandAndSelectFlow(id);
+        }
+
         public async Task LoadFlowsAndSelectFlowStep(int id)
         {
             await _dataService.SaveChangesAsync();
             await LoadFlows();
             await ExpandAndSelectFlowStep(id);
+        }
+
+        public async Task LoadFlowsAndSelectFlowParameter(int id)
+        {
+            await _dataService.SaveChangesAsync();
+            await LoadFlows();
+            await ExpandAndSelectFlowParameter(id);
         }
 
         public void ClearCopy()
@@ -136,6 +150,19 @@ namespace StepinFlow.ViewModels.UserControls
             await LoadFlows();
         }
 
+        public async Task ExpandAndSelectFlow(int id)
+        {
+            Flow? uiFlowStep = await _dataService.Flows.Query.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (uiFlowStep != null)
+            {
+                uiFlowStep.IsExpanded = true;
+                uiFlowStep.IsSelected = true;
+            }
+
+            return;
+        }
+
         public async Task ExpandAndSelectFlowStep(int id)
         {
             FlowStep? uiFlowStep = await _dataService.FlowSteps.Query.FirstOrDefaultAsync(x => x.Id == id);
@@ -146,12 +173,25 @@ namespace StepinFlow.ViewModels.UserControls
                 uiFlowStep.IsSelected = true;
             }
 
-            if (uiFlowStep?.ParentFlowStep != null)
-                uiFlowStep.ParentFlowStep.IsExpanded = true;
-            if (uiFlowStep?.ParentFlowStep?.ParentFlowStep != null)
-                uiFlowStep.ParentFlowStep.ParentFlowStep.IsExpanded = true;
-            if (uiFlowStep?.Flow != null)
-                uiFlowStep.Flow.IsExpanded = true;
+            //if (uiFlowStep?.ParentFlowStep != null)
+            //    uiFlowStep.ParentFlowStep.IsExpanded = true;
+            //if (uiFlowStep?.ParentFlowStep?.ParentFlowStep != null)
+            //    uiFlowStep.ParentFlowStep.ParentFlowStep.IsExpanded = true;
+            //if (uiFlowStep?.Flow != null)
+            //    uiFlowStep.Flow.IsExpanded = true;
+
+            return;
+        }
+
+        public async Task ExpandAndSelectFlowParameter(int id)
+        {
+            FlowParameter? uiFlowStep = await _dataService.FlowParameters.Query.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (uiFlowStep != null)
+            {
+                uiFlowStep.IsExpanded = true;
+                uiFlowStep.IsSelected = true;
+            }
 
             return;
         }
