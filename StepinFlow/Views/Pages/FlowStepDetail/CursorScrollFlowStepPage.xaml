@@ -22,26 +22,6 @@
 
         <Grid Margin="10,10,10,50">
 
-            <Grid.Resources>
-
-                <ObjectDataProvider
-                    x:Key="MouseScrollDirectionEnum"
-                    MethodName="GetValues"
-                    ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:MouseScrollDirectionEnum" />
-                    </ObjectDataProvider.MethodParameters>
-                </ObjectDataProvider>
-                <ObjectDataProvider
-                    x:Key="MouseButtonEnum"
-                    MethodName="GetValues"
-                    ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
-                        <x:Type TypeName="enum:MouseButtonsEnum" />
-                    </ObjectDataProvider.MethodParameters>
-                </ObjectDataProvider>
-            </Grid.Resources>
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="0.3*" />
@@ -62,10 +42,10 @@
             <StackPanel>
 
                 <Label>Scroll direction:</Label>
-                <ComboBox ItemsSource="{Binding ViewModel.MouseScrollDirectionEnum}" SelectedItem="{Binding ViewModel.FlowStep.MouseScrollDirectionEnum}" />
+                <ComboBox ItemsSource="{Binding ViewModel.MouseScrollDirectionEnum}" SelectedItem="{Binding ViewModel.FlowStep.CursorScrollDirection}" />
 
                 <Label>Scroll steps:</Label>
-                <TextBox Text="{Binding ViewModel.FlowStep.MouseLoopTimes}" />
+                <TextBox Text="{Binding ViewModel.FlowStep.LoopCount}" />
 
             </StackPanel>
 

@@ -65,10 +65,11 @@ namespace StepinFlow.ViewModels.Pages
             // Edit mode
             if (FlowStep.Id > 0)
             {
-                //FlowStep updateFlowStep = await _dataService.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
-                //updateFlowStep.Name = FlowStep.Name;
-                //updateFlowStep.IsSubFlowReferenced = FlowStep.IsSubFlowReferenced;
-                //updateFlowStep.SubFlowId = SelectedSubFlow?.Id;
+                FlowStep updateFlowStep = await _dataService.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
+                updateFlowStep.Name = FlowStep.Name;
+                updateFlowStep.IsSubFlowReferenced = FlowStep.IsSubFlowReferenced;
+                updateFlowStep.SubFlowId = SelectedSubFlow?.Id;
+                await _dataService.SaveChangesAsync();
             }
 
             // Add mode
@@ -108,12 +109,12 @@ namespace StepinFlow.ViewModels.Pages
                     FlowStep.SubFlow = flow;
 
                     _dataService.FlowSteps.Add(FlowStep);
-                    _dataService.SaveChanges();
+                    await _dataService.SaveChangesAsync();
 
                     flow.ParentSubFlowStepId = FlowStep.Id;
                 }
 
-                _dataService.SaveChanges();
+                await _dataService.SaveChangesAsync();
                 //OnSave?.Invoke(FlowStep.Id);
             }
         }

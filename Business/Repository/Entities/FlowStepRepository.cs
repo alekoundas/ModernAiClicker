@@ -106,8 +106,8 @@ namespace Business.Repository.Entities
         {
 
             flowStep = await InMemoryDbContext.FlowSteps
+                .AsNoTracking()
                 .Where(x => x.Id == flowStep.Id)
-                .Include(x => x.ChildrenTemplateSearchFlowSteps)
                 .Include(x => x.FlowParameter)
                 .Include(x => x.SubFlow!.FlowStep)
                 .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
@@ -124,32 +124,33 @@ namespace Business.Repository.Entities
 
                 // Load its children from the database.
                 var childFlowSteps = await InMemoryDbContext.FlowSteps
-                  .Where(x => x.Id == currentFlowStep.Id)
-                  .SelectMany(x => x.ChildrenFlowSteps)
-                  .Include(x => x.ChildrenTemplateSearchFlowSteps)
-                  .Include(x => x.FlowParameter)
-                  .Include(x => x.SubFlow!.FlowStep)
-                  .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
-                  .ToListAsync();
+                    .AsNoTracking()
+                    .Where(x => x.Id == currentFlowStep.Id)
+                    .SelectMany(x => x.ChildrenFlowSteps)
+                    .Include(x => x.ChildrenTemplateSearchFlowSteps)
+                    .Include(x => x.FlowParameter)
+                    .Include(x => x.SubFlow!.FlowStep)
+                    .Include(x => x.SubFlow!.FlowParameter.ChildrenFlowParameters)
+                    .ToListAsync();
 
                 currentFlowStep.ChildrenFlowSteps = new ObservableCollection<FlowStep>(childFlowSteps);
 
                 // Load Sub-Flows if available and not referenced.
                 if (!currentFlowStep.IsSubFlowReferenced && currentFlowStep.SubFlow != null)
                     stack.Push(currentFlowStep.SubFlow.FlowStep);
-                else
-                    currentFlowStep.SubFlow = null;
+                //else
+                //    currentFlowStep.SubFlow = null;
 
                 // Push only the expanded children onto the stack for further processing.
                 foreach (var childFlowStep in childFlowSteps)
                     if (childFlowStep.IsExpanded)
                         stack.Push(childFlowStep);
 
-                    //TODO this is propably tooo slow
                     // Add one more layer to make expander in ui visible.
                     else
                     {
                         List<FlowStep> notexpandedFlowSteps = await InMemoryDbContext.FlowSteps
+                            .AsNoTracking()
                             .Where(x => x.Id == childFlowStep.Id)
                             .SelectMany(x => x.ChildrenFlowSteps)
                             .ToListAsync();

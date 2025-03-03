@@ -30,7 +30,7 @@ namespace StepinFlow.ViewModels.Pages
         private IEnumerable<CursorRelocationTypesEnum> _cursorRelocationTypesEnum;
 
         public CursorRelocateFlowStepVM(
-            IDataService dataService, 
+            IDataService dataService,
             ISystemService systemService,
             IKeyboardListenerService keyboardListenerService) : base(dataService)
         {
@@ -41,11 +41,6 @@ namespace StepinFlow.ViewModels.Pages
             CursorRelocationTypesEnum = Enum.GetValues(typeof(CursorRelocationTypesEnum)).Cast<CursorRelocationTypesEnum>();
 
 
-            KeyCombination _combination = new KeyCombination(ModifierKeys.None, Key.F3);
-            _keyboardListenerService.RegisterListener(_combination, () =>
-            {
-                OnButtonRecordClick();
-            });
         }
 
         public override async Task LoadFlowStepId(int flowStepId)
@@ -55,7 +50,7 @@ namespace StepinFlow.ViewModels.Pages
             if (flowStep != null)
             {
                 FlowStep = flowStep;
-                 if (FlowStep.ParentFlowStepId.HasValue)
+                if (FlowStep.ParentFlowStepId.HasValue)
                     GetParents(FlowStep.ParentFlowStepId.Value);
 
                 SelectedFlowStep = Parents.FirstOrDefault(x => x.Id == flowStep.ParentTemplateSearchFlowStepId);
@@ -63,7 +58,7 @@ namespace StepinFlow.ViewModels.Pages
                 KeyCombination _combination = new KeyCombination(ModifierKeys.None, Key.F3);
                 _keyboardListenerService.RegisterListener(_combination, () =>
                 {
-                    Console.WriteLine("Ctrl + S pressed globally from Form2!");
+                    OnButtonRecordClick();
                 });
             }
         }
@@ -80,12 +75,12 @@ namespace StepinFlow.ViewModels.Pages
             KeyCombination _combination = new KeyCombination(ModifierKeys.None, Key.F4);
             _keyboardListenerService.RegisterListener(_combination, () =>
             {
-                Console.WriteLine("Ctrl + S pressed globally from Form2!");
+                OnButtonRecordClick();
             });
             return;
         }
 
-        public override  void OnPageExit()
+        public override void OnPageExit()
         {
             _keyboardListenerService.UnregisterAllListeners();
         }
@@ -116,10 +111,12 @@ namespace StepinFlow.ViewModels.Pages
             {
                 FlowStep updateFlowStep = await _dataService.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
+                updateFlowStep.LocationX = FlowStep.LocationX;
+                updateFlowStep.LocationY = FlowStep.LocationY;
+                updateFlowStep.CursorRelocationType = FlowStep.CursorRelocationType;
 
                 if (SelectedFlowStep != null)
                     updateFlowStep.ParentTemplateSearchFlowStepId = SelectedFlowStep.Id;
-                updateFlowStep.CursorRelocationType = FlowStep.CursorRelocationType;
             }
 
             /// Add mode
