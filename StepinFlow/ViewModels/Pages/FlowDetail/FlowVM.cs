@@ -1,6 +1,6 @@
 ﻿using Model.Models;
-using DataAccess.Repository.Interface;
 using Business.BaseViewModels;
+using Business.Services.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages
 {

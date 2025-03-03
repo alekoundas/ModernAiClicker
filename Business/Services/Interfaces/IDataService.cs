@@ -1,7 +1,7 @@
 ﻿using Business.DatabaseContext;
 using Business.Repository.Interfaces;
 
-namespace DataAccess.Repository.Interface
+namespace Business.Services.Interfaces
 {
     public interface IDataService : IDisposable
     {

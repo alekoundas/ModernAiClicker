@@ -1,6 +1,6 @@
 ﻿using Business.Interfaces;
+using Business.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DataAccess.Repository.Interface;
 using Model.Models;
 
 namespace Business.BaseViewModels

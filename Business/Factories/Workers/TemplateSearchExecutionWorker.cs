@@ -1,7 +1,6 @@
 ﻿using Business.Extensions;
 using Business.Helpers;
-using Business.Interfaces;
-using DataAccess.Repository.Interface;
+using Business.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Model.Business;
 using Model.Enums;

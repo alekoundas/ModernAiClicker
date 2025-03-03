@@ -1,6 +1,5 @@
 ﻿using Business.Factories.Workers;
-using Business.Interfaces;
-using DataAccess.Repository.Interface;
+using Business.Services.Interfaces;
 using Model.Enums;
 
 namespace Business.Factories

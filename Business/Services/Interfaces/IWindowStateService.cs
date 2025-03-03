@@ -1,6 +1,6 @@
 ﻿using Model.Structs;
 
-namespace Business.Interfaces
+namespace Business.Services.Interfaces
 {
     public interface IWindowStateService
     {

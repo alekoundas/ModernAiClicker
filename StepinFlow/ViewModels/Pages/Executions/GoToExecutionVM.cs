@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Models;
 using Business.Interfaces;
-using DataAccess.Repository.Interface;
 using Model.Enums;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore;
+using Business.Services.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages.Executions
 {

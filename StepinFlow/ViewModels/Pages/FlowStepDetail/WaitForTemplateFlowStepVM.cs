@@ -1,17 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using Business.Interfaces;
 using Business.Helpers;
 using Model.Business;
 using Model.Enums;
-using DataAccess.Repository.Interface;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Drawing;
 using Business.BaseViewModels;
 using System.Windows.Input;
 using StepinFlow.Interfaces;
+using Business.Services.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages
 {

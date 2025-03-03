@@ -1,7 +1,7 @@
 ﻿using Model.Business;
 using Model.Enums;
 
-namespace Business.Interfaces
+namespace Business.Services.Interfaces
 {
     public interface ITemplateSearchService
     {

@@ -1,10 +1,8 @@
 ﻿using Business.DatabaseContext;
 using Business.Helpers;
-using Business.Interfaces;
-using Business.Services;
+using Business.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Models;
 using System.Collections.ObjectModel;

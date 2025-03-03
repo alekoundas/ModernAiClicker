@@ -1,5 +1,4 @@
-﻿using Business.Interfaces;
-using Business.Helpers;
+﻿using Business.Helpers;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Drawing;
@@ -12,6 +11,7 @@ using Model.Business;
 using Path = System.IO.Path;
 using System.Drawing.Imaging;
 using Model.Structs;
+using Business.Services.Interfaces;
 
 namespace Business.Services
 {

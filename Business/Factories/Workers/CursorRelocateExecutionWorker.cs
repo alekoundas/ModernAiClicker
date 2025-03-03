@@ -1,5 +1,4 @@
-﻿using Business.Interfaces;
-using DataAccess.Repository.Interface;
+﻿using Business.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Model.Models;
 using Model.Structs;

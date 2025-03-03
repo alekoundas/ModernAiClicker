@@ -1,7 +1,5 @@
 ﻿using Model.Models;
 using CommunityToolkit.Mvvm.Input;
-using Business.Interfaces;
-using DataAccess.Repository.Interface;
 using Wpf.Ui.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
@@ -9,6 +7,7 @@ using System.ComponentModel;
 using System.Windows;
 using Model.Enums;
 using Wpf.Ui.Abstractions.Controls;
+using Business.Services.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages
 {

@@ -1,5 +1,4 @@
-﻿using Business.Interfaces;
-using DataAccess.Repository.Interface;
+﻿using Business.Services.Interfaces;
 using Model.Models;
 
 namespace Business.Factories.Workers

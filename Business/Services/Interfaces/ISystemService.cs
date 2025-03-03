@@ -1,10 +1,9 @@
-﻿
-using Model.Business;
+﻿using Model.Business;
 using Model.Enums;
 using Model.Models;
 using System.Drawing;
 
-namespace Business.Interfaces
+namespace Business.Services.Interfaces
 {
     public interface ISystemService
     {

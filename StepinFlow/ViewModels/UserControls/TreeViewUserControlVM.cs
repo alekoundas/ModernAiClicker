@@ -1,8 +1,6 @@
 ﻿using Model.Models;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
-using Business.Interfaces;
-using DataAccess.Repository.Interface;
 using Model.Enums;
 using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using Business.Repository;
+using Business.Services.Interfaces;
 
 namespace StepinFlow.ViewModels.UserControls
 {

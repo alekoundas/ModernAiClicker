@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using DataAccess.Repository.Interface;
 using Business.BaseViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Model.Enums;
-using Business.Interfaces;
 using Model.Structs;
 using Model.Business;
 using Business.Helpers;
+using Business.Services.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
 {

@@ -1,6 +1,6 @@
 ﻿using Model.Models;
 
-namespace Business.Interfaces
+namespace Business.Services.Interfaces
 {
     public interface ICloneService
     {

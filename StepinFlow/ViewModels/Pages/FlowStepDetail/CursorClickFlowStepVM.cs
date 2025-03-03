@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using DataAccess.Repository.Interface;
 using Model.Enums;
 using Business.BaseViewModels;
+using Business.Services.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages
 {

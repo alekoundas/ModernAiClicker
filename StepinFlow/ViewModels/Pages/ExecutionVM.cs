@@ -1,9 +1,8 @@
 ﻿using Business.Extensions;
 using Business.Factories;
-using Business.Interfaces;
+using Business.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DataAccess.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Model.Enums;
 using Model.Models;

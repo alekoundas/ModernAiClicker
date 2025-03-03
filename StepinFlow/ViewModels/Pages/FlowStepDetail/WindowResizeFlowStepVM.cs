@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Model.Models;
-using Business.Interfaces;
 using Model.Structs;
 using Business.Helpers;
-using DataAccess.Repository.Interface;
 using Business.BaseViewModels;
+using Business.Services.Interfaces;
 
 namespace StepinFlow.ViewModels.Pages
 {

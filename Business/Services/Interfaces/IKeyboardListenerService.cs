@@ -1,6 +1,6 @@
 ﻿using Business.Services;
 
-namespace Business.Interfaces
+namespace Business.Services.Interfaces
 {
     public interface IKeyboardListenerService
     {

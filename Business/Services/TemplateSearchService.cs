@@ -1,6 +1,6 @@
 ﻿using Business.Extensions;
 using Business.Helpers;
-using Business.Interfaces;
+using Business.Services.Interfaces;
 using Model.Business;
 using Model.Enums;
 using OpenCvSharp;
