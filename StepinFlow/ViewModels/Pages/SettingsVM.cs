@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Appearance;
-using Wpf.Ui.Controls;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -12,6 +11,10 @@ namespace StepinFlow.ViewModels.Pages
 
         [ObservableProperty]
         private string _appVersion = String.Empty;
+        [ObservableProperty]
+        private bool _allowExecutionImageSave = true;
+        [ObservableProperty]
+        private double _executionImageQuality = 80d;
 
         [ObservableProperty]
         private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
@@ -22,7 +25,6 @@ namespace StepinFlow.ViewModels.Pages
                 InitializeViewModel();
         }
 
-        public void OnNavigatedFrom() { }
 
         private void InitializeViewModel()
         {
@@ -36,6 +38,12 @@ namespace StepinFlow.ViewModels.Pages
         {
             return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
                 ?? String.Empty;
+        }
+
+        [RelayCommand]
+        private void OnSaveExecution()
+        {
+
         }
 
         [RelayCommand]
