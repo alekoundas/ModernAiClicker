@@ -30,11 +30,10 @@ namespace Business.Factories.Workers
             execution.LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1;
 
 
-            _dataService.Executions.Add(execution);
-            await _dataService.SaveChangesAsync();
+            await _dataService.Executions.AddAsync(execution);
 
             parentExecution.ChildExecutionId = execution.Id;
-            await _dataService.SaveChangesAsync();
+            _dataService.Update(parentExecution);
 
             execution.FlowStep = flowStep;
             return execution;

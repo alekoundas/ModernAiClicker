@@ -41,11 +41,10 @@ namespace Business.Factories.Workers
             execution.LoopCount = parentExecution?.LoopCount == null ? 0 : parentExecution.LoopCount + 1;
 
 
-            _dataService.Executions.Add(execution);
-            await _dataService.SaveChangesAsync();
+            await _dataService.Executions.AddAsync(execution);
 
             parentExecution.ChildExecutionId = execution.Id;
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(parentExecution);
 
             execution.FlowStep = flowStep;
             return execution;
@@ -100,7 +99,7 @@ namespace Business.Factories.Workers
                 //execution.ResultImagePath = result.ResultImagePath;
                 execution.ResultAccuracy = result.Confidence;
 
-                await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
                 _resultImage = result.ResultImage;
 
 
@@ -158,7 +157,7 @@ namespace Business.Factories.Workers
 
             execution.ResultImagePath = newFilePath;
 
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
         }
     }
 }

@@ -145,17 +145,17 @@ namespace StepinFlow.ViewModels.UserControls
 
         public async Task ExpandAll()
         {
-            _dataService.Query.ChangeTracker.Clear();
-            List<Flow> flows = await _dataService.Flows.LoadAllExpanded();
-            await _dataService.SaveChangesAsync();
+            //_dataService.Query.ChangeTracker.Clear();
+            //List<Flow> flows = await _dataService.Flows.LoadAllExpanded();
+            //await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
 
         public async Task CollapseAll()
         {
-            _dataService.Query.ChangeTracker.Clear();
-            List<Flow> flows = await _dataService.Flows.LoadAllCollapsed();
-            await _dataService.SaveChangesAsync();
+            //_dataService.Query.ChangeTracker.Clear();
+            //List<Flow> flows = await _dataService.Flows.LoadAllCollapsed();
+            //await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
 
@@ -169,8 +169,7 @@ namespace StepinFlow.ViewModels.UserControls
                 uiFlowStep.IsExpanded = true;
                 uiFlowStep.IsSelected = true;
             }
-            _dataService.Update(uiFlowStep);
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(uiFlowStep);
 
             return;
         }
@@ -274,6 +273,8 @@ namespace StepinFlow.ViewModels.UserControls
 
                 // Attach the cloned root to the target parent.
                 targetParent.ChildrenFlowSteps.Add(clonedFlowStep);
+                await _dataService.UpdateAsync(targetParent);
+
             }
             else if (flowStep.FlowId.HasValue && clonedFlowStep != null)
             {
@@ -292,10 +293,10 @@ namespace StepinFlow.ViewModels.UserControls
 
                 // Attach the cloned root to the target parent.
                 targetParent.FlowStep.ChildrenFlowSteps.Add(clonedFlowStep);
+                await _dataService.UpdateAsync(targetParent);
             }
 
             // Save changes.
-            await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
 
@@ -307,9 +308,8 @@ namespace StepinFlow.ViewModels.UserControls
             _dataService.Query.ChangeTracker.Clear();
             FlowStep? deleteFlowStep = await _dataService.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStep.Id);
             if (deleteFlowStep != null)
-                _dataService.FlowSteps.Remove(deleteFlowStep);
+                await _dataService.FlowSteps.RemoveAsync(deleteFlowStep);
 
-            await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
         [RelayCommand]
@@ -318,9 +318,8 @@ namespace StepinFlow.ViewModels.UserControls
             _dataService.Query.ChangeTracker.Clear();
             FlowParameter? deleteFlowParameter = await _dataService.FlowParameters.FirstOrDefaultAsync(x => x.Id == flowParameter.Id);
             if (deleteFlowParameter != null)
-                _dataService.FlowParameters.Remove(deleteFlowParameter);
+                await _dataService.FlowParameters.RemoveAsync(deleteFlowParameter);
 
-            await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
 
@@ -331,9 +330,8 @@ namespace StepinFlow.ViewModels.UserControls
             _dataService.Query.ChangeTracker.Clear();
             Flow? deleteFlow = await _dataService.Flows.FirstOrDefaultAsync(x => x.Id == flow.Id);
             if (deleteFlow != null)
-                _dataService.Flows.Remove(deleteFlow);
+                await _dataService.Flows.RemoveAsync(deleteFlow);
 
-            await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
 
@@ -356,9 +354,8 @@ namespace StepinFlow.ViewModels.UserControls
                 // Swap values
                 (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
 
-                _dataService.Update(flowStep);
-                _dataService.Update(simplingAbove);
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(flowStep);
+                await _dataService.UpdateAsync(simplingAbove);
                 await LoadFlows();
             }
         }
@@ -381,10 +378,8 @@ namespace StepinFlow.ViewModels.UserControls
                 // Swap values
                 (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
 
-                _dataService.Update(flowStep);
-                _dataService.Update(simplingBellow);
-
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(flowStep);
+                await _dataService.UpdateAsync(simplingBellow);
                 await LoadFlows();
             }
         }
@@ -443,7 +438,7 @@ namespace StepinFlow.ViewModels.UserControls
                 {
                     updateFlowStep.IsExpanded = true;
                     updateFlowStep.IsSelected = true;
-                    _dataService.Update(updateFlowStep);
+                    await _dataService.UpdateAsync(updateFlowStep);
                 }
             }
             else if (eventParameter is Flow flow)
@@ -453,11 +448,10 @@ namespace StepinFlow.ViewModels.UserControls
                 {
                     updateFlow.IsExpanded = true;
                     updateFlow.IsSelected = true;
-                    _dataService.Update(updateFlow);
+                    await _dataService.UpdateAsync(updateFlow);
                 }
             }
 
-            await _dataService.SaveChangesAsync();
             await LoadFlows();
         }
     }

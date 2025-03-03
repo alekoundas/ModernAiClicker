@@ -281,9 +281,10 @@ namespace StepinFlow.ViewModels.Pages
                 if (SelectedFlowParameter != null)
                     updateFlowStep.FlowParameterId = SelectedFlowParameter.Id;
 
-                _dataService.UpdateRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id > 0).ToList());
-                _dataService.FlowSteps.AddRange(ChildrenTemplateSearchFlowSteps.Where(x => x.Id == 0).ToList());
-                _dataService.FlowSteps.RemoveRange(_childrenTemplateSearchFlowStepsToRemove);
+                await _dataService.UpdateRangeAsync(ChildrenTemplateSearchFlowSteps.Where(x => x.Id > 0).ToList());
+                await _dataService.FlowSteps.AddRangeAsync(ChildrenTemplateSearchFlowSteps.Where(x => x.Id == 0).ToList());
+                await _dataService.FlowSteps.RemoveRangeAsync(_childrenTemplateSearchFlowStepsToRemove);
+                await _dataService.UpdateAsync(updateFlowStep);
             }
 
             /// Add mode
@@ -300,7 +301,8 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(isNewSimpling);
+
 
 
                 // "Success" Flow step
@@ -341,13 +343,11 @@ namespace StepinFlow.ViewModels.Pages
                 if (SelectedFlowParameter != null)
                     FlowStep.FlowParameterId = SelectedFlowParameter.Id;
 
-                _dataService.FlowSteps.Add(FlowStep);
+                await _dataService.FlowSteps.AddAsync(FlowStep);
+
             }
 
 
-
-            await _dataService.SaveChangesAsync();
-            //OnSave?.Invoke(FlowStep.Id);
 
             List<FlowStep> flowSteps = await _dataService.FlowSteps.Query
                 .AsNoTracking()

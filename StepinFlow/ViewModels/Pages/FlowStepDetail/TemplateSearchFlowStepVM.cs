@@ -195,6 +195,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 if (SelectedFlowParameter != null)
                     updateFlowStep.FlowParameterId = SelectedFlowParameter.Id;
+                await _dataService.UpdateAsync(updateFlowStep);
             }
 
             // Add mode.
@@ -211,7 +212,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(isNewSimpling);
 
 
                 // "Success" Flow step
@@ -252,11 +253,9 @@ namespace StepinFlow.ViewModels.Pages
                 if (SelectedFlowParameter != null)
                     FlowStep.FlowParameterId = SelectedFlowParameter.Id;
 
-                _dataService.FlowSteps.Add(FlowStep);
+                await _dataService.FlowSteps.AddAsync(FlowStep);
 
             }
-            await _dataService.SaveChangesAsync();
-            //OnSave?.Invoke(FlowStep.Id);
         }
     }
 }

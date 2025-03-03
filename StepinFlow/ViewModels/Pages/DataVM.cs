@@ -1,5 +1,4 @@
-﻿using Business.DatabaseContext;
-using Business.Helpers;
+﻿using Business.Helpers;
 using Business.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Forms;
 using Wpf.Ui.Abstractions.Controls;
-using Wpf.Ui.Controls;
 
 namespace StepinFlow.ViewModels.Pages
 {
@@ -104,9 +102,8 @@ namespace StepinFlow.ViewModels.Pages
                     clonedFlows.Add(_cloneService.GetFlowClone(flow));
 
             foreach (Flow clonedFlow in clonedFlows)
-                _dataService.Flows.Add(clonedFlow);
+                await _dataService.Flows.AddAsync(clonedFlow);
 
-            await _dataService.SaveChangesAsync();
 
             foreach (Flow clonedFlow in clonedFlows)
                 await _dataService.Flows.FixOneToOneRelationIds(clonedFlow.Id);
@@ -116,8 +113,7 @@ namespace StepinFlow.ViewModels.Pages
         private async Task OnButtonDeleteClick()
         {
             var executions = _dataService.Executions.GetAll();
-            _dataService.Executions.RemoveRange(executions);
-            _dataService.SaveChanges();
+            await _dataService.Executions.RemoveRangeAsync(executions);
 
             // Reclaim free space in database file.
             await _dataService.Query.Database.ExecuteSqlRawAsync("VACUUM;");

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Model.Models;
 using Model.Enums;
 using Business.BaseViewModels;
@@ -68,7 +67,7 @@ namespace StepinFlow.ViewModels.Pages
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.IsSubFlowReferenced = FlowStep.IsSubFlowReferenced;
                 updateFlowStep.SubFlowId = SelectedSubFlow?.Id;
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(updateFlowStep);
             }
 
             // Add mode
@@ -85,8 +84,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _dataService.SaveChangesAsync();
-
+                await _dataService.UpdateAsync(isNewSimpling);
 
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Sub-Flow selector.";
@@ -107,13 +105,12 @@ namespace StepinFlow.ViewModels.Pages
 
                     FlowStep.SubFlow = flow;
 
-                    _dataService.FlowSteps.Add(FlowStep);
-                    await _dataService.SaveChangesAsync();
+                    await _dataService.FlowSteps.AddAsync(FlowStep);
 
                     flow.ParentSubFlowStepId = FlowStep.Id;
+                    await _dataService.UpdateAsync(flow);
                 }
 
-                await _dataService.SaveChangesAsync();
                 //OnSave?.Invoke(FlowStep.Id);
             }
         }

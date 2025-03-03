@@ -128,6 +128,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
                 updateFlowParameter.TemplateSearchAreaType = SelectedTemplateSearchAreaTypesEnum;
                 updateFlowParameter.ProcessName = SelectedProcess ?? "";
                 updateFlowParameter.SystemMonitorDeviceName = SelectedSystemMonitor?.DeviceName ?? "";
+                await _dataService.UpdateAsync(updateFlowParameter);
             }
 
             // Add mode
@@ -139,8 +140,7 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
                 FlowParameter isNewSimpling = await _dataService.FlowParameters.GetIsNewSibling(FlowParameter.ParentFlowParameterId.Value);
                 FlowParameter.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                _dataService.Update(isNewSimpling);
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(isNewSimpling);
 
 
                 if (FlowParameter.Name.Length == 0)
@@ -154,11 +154,10 @@ namespace StepinFlow.ViewModels.Pages.FlowParameterDetail
                 FlowParameter.ProcessName = SelectedProcess ?? "";
                 FlowParameter.SystemMonitorDeviceName = SelectedSystemMonitor?.DeviceName ?? "";
 
-                _dataService.FlowParameters.Add(FlowParameter);
+                await _dataService.FlowParameters.AddAsync(FlowParameter);
             }
 
 
-            _dataService.SaveChanges();
             _flowsViewModel.RefreshData();
         }
     }

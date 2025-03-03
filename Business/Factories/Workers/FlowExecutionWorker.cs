@@ -56,7 +56,7 @@ namespace Business.Factories.Workers
 
             execution.ExecutionFolderDirectory = folderPath;
 
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
             Directory.CreateDirectory(folderPath);
         }
     }

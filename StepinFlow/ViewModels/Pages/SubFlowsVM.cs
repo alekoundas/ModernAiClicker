@@ -166,12 +166,11 @@ namespace StepinFlow.ViewModels.Pages
                 Type = FlowTypesEnum.SUB_FLOW
             };
 
-            _dataService.Flows.Add(flow);
-            await _dataService.SaveChangesAsync();
+            await _dataService.Flows.AddAsync(flow);
 
             flow.FlowStepId = flowSteps.Id;
             flow.FlowParameterId = flowRarameter.Id;
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(flow);
 
             LoadFlows?.Invoke(-1, true);
         }

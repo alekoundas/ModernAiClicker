@@ -1,6 +1,5 @@
 ﻿using Business.DatabaseContext;
 using Business.Repository.Interfaces;
-using DataAccess.Repository;
 using Microsoft.EntityFrameworkCore;
 using Model.Models;
 
@@ -8,19 +7,19 @@ namespace Business.Repository.Entities
 {
     public class ExecutionRepository : BaseRepository<Execution>, IExecutionRepository
     {
-        public ExecutionRepository(InMemoryDbContext dbContext) : base(dbContext)
+        private readonly IDbContextFactory<InMemoryDbContext> _contextFactory;
+        private InMemoryDbContext _dbContext { get => _contextFactory.CreateDbContext(); }
+
+        public ExecutionRepository(IDbContextFactory<InMemoryDbContext> contextFactory) : base(contextFactory)
         {
+            _contextFactory = contextFactory;
         }
 
-        public InMemoryDbContext InMemoryDbContext
-        {
-            get { return Context as InMemoryDbContext; }
-        }
 
         public async Task<List<Execution>> GetAllParentLoopExecutions(int executionId)
         {
             List<Execution> parentLoopExecutions = new List<Execution>();
-            Execution? currentExecution = await InMemoryDbContext.Executions
+            Execution? currentExecution = await _dbContext.Executions
                 .AsNoTracking()
                 .Include(x => x.FlowStep)
                 .FirstAsync(x => x.Id == executionId);
@@ -29,7 +28,7 @@ namespace Business.Repository.Entities
             {
                 parentLoopExecutions.Add(currentExecution);
 
-                currentExecution = await InMemoryDbContext.Executions
+                currentExecution = await _dbContext.Executions
                     .AsNoTracking()
                     .Include(x => x.FlowStep)
                     .FirstAsync(x => x.Id == currentExecution.ParentLoopExecutionId.Value);

@@ -37,10 +37,17 @@ namespace Business.Repository
         int Count(Expression<Func<TEntity, bool>> predicate);
 
         bool Any(Expression<Func<TEntity, bool>> predicate);
+        Task AddAsync(TEntity entity);
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
+        Task AddRangeAsync(IEnumerable<TEntity> entities);
+
         void Remove(TEntity entity);
+        Task RemoveAsync(TEntity entity);
+
         void RemoveRange(IEnumerable<TEntity> entities);
+        Task RemoveRangeAsync(IEnumerable<TEntity> entities);
+
         IEnumerable<TEntity> Where(Expression<Func<TEntity, bool>> expression);
 
         Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);

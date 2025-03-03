@@ -116,6 +116,9 @@ namespace StepinFlow.ViewModels.Pages
 
                 if (SelectedFlowStep != null)
                     updateFlowStep.ParentTemplateSearchFlowStepId = SelectedFlowStep.Id;
+
+                await _dataService.UpdateAsync(updateFlowStep);
+
             }
 
             /// Add mode
@@ -132,7 +135,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(isNewSimpling);
 
 
                 if (FlowStep.Name.Length == 0)
@@ -141,11 +144,10 @@ namespace StepinFlow.ViewModels.Pages
                 if (SelectedFlowStep != null)
                     FlowStep.ParentTemplateSearchFlowStepId = SelectedFlowStep.Id;
 
-                _dataService.FlowSteps.Add(FlowStep);
+                await _dataService.FlowSteps.AddAsync(FlowStep);
             }
 
 
-            _dataService.SaveChanges();
         }
 
         private void GetParents(int? flowStepId)

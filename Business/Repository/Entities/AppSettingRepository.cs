@@ -1,19 +1,19 @@
 ﻿using Business.DatabaseContext;
 using Business.Repository.Interfaces;
-using Model.Enums;
+using Microsoft.EntityFrameworkCore;
 using Model.Models;
 
 namespace Business.Repository.Entities
 {
     public class AppSettingRepository : BaseRepository<AppSetting>, IAppSettingRepository
     {
-        public AppSettingRepository(InMemoryDbContext dbContext) : base(dbContext)
+        private readonly IDbContextFactory<InMemoryDbContext> _contextFactory;
+        private InMemoryDbContext _dbContext { get => _contextFactory.CreateDbContext(); }
+
+        public AppSettingRepository(IDbContextFactory<InMemoryDbContext> contextFactory) : base(contextFactory)
         {
+            _contextFactory = contextFactory;
         }
 
-        public InMemoryDbContext InMemoryDbContext
-        {
-            get { return Context as InMemoryDbContext; }
-        }
     }
 }

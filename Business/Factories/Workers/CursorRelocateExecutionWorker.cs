@@ -64,7 +64,7 @@ namespace Business.Factories.Workers
             _systemService.SetCursorPossition(pointToMove);
             execution.ResultLocationX = pointToMove.X;
             execution.ResultLocationY = pointToMove.Y;
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
         }
 
         public async Task<FlowStep?> GetNextSiblingFlowStep(Execution execution)

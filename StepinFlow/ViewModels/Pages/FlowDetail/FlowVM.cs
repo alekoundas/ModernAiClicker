@@ -24,6 +24,7 @@ namespace StepinFlow.ViewModels.Pages
             {
                 Flow updateFlow = await _dataService.Flows.FirstAsync(x => x.Id == Flow.Id);
                 updateFlow.Name = Flow.Name;
+                await _dataService.UpdateAsync(updateFlow);
             }
 
             /// Add mode
@@ -32,11 +33,10 @@ namespace StepinFlow.ViewModels.Pages
                 if (Flow.Name.Length == 0)
                     Flow.Name = "Flow";
 
-                _dataService.Flows.Add(Flow);
+                await _dataService.Flows.AddAsync(Flow);
             }
 
 
-            _dataService.SaveChanges();
             _flowsViewModel.RefreshData();
         }
     }

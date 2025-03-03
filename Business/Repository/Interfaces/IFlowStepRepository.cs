@@ -1,5 +1,4 @@
-﻿using DataAccess.Repository.Interface;
-using Model.Enums;
+﻿using Model.Enums;
 using Model.Models;
 
 namespace Business.Repository.Interfaces

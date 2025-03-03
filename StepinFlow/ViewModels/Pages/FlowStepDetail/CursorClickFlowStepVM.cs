@@ -37,6 +37,7 @@ namespace StepinFlow.ViewModels.Pages
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.CursorAction = FlowStep.CursorAction;
                 updateFlowStep.CursorButton = FlowStep.CursorButton;
+                await _dataService.UpdateAsync(updateFlowStep);
             }
 
             /// Add mode
@@ -53,17 +54,14 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(isNewSimpling);
 
 
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Set cursor Action.";
 
-                _dataService.FlowSteps.Add(FlowStep);
+                await _dataService.FlowSteps.AddAsync(FlowStep);
             }
-
-
-            _dataService.SaveChanges();
         }
     }
 }

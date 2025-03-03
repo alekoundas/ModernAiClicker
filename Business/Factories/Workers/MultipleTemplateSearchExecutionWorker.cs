@@ -31,7 +31,7 @@ namespace Business.Factories.Workers
         public async override Task<Execution> CreateExecutionModel(FlowStep flowStep, Execution parentExecution, Execution latestParentExecution)
         {
             int loopCount = 0;
-            if (parentExecution?.FlowStepId == flowStep.Id)
+            if (parentExecution.FlowStepId == flowStep.Id)
                 loopCount = parentExecution.LoopCount.Value + 1;
 
             // Get first child template search flow step that isnt completed.
@@ -48,13 +48,12 @@ namespace Business.Factories.Workers
             };
 
             // Save execution.
-            _dataService.Executions.Add(execution);
-            await _dataService.SaveChangesAsync();
+            await _dataService.Executions.AddAsync(execution);
 
             // Save relation IDs
             parentExecution.ChildExecutionId = execution.Id;// TODO propably also this is wrong
             parentExecution.ChildLoopExecutionId = execution.Id;
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
 
             // Return execution with relations.
             execution = await _dataService.Executions.Query
@@ -127,7 +126,7 @@ namespace Business.Factories.Workers
             //execution.ResultImagePath = result.ResultImagePath;
             execution.ResultAccuracy = result.Confidence;
 
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
             _resultImage = result.ResultImage;
         }
 
@@ -180,7 +179,7 @@ namespace Business.Factories.Workers
 
                 execution.ResultImagePath = newFilePath;
 
-                await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
             }
         }
 

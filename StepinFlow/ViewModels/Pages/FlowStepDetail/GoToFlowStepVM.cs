@@ -66,16 +66,13 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(isNewSimpling);
 
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Run again an earlier step.";
 
-                _dataService.FlowSteps.Add(FlowStep);
+                await _dataService.FlowSteps.AddAsync(FlowStep);
             }
-
-            _dataService.SaveChanges();
-            //OnSave?.Invoke(FlowStep.Id);
         }
 
         private async Task<ObservableCollection<FlowStep>> GetParents(int flowStepId)

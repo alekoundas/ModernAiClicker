@@ -1,5 +1,4 @@
-﻿using DataAccess.Repository.Interface;
-using Model.Models;
+﻿using Model.Models;
 
 namespace Business.Repository.Interfaces
 {

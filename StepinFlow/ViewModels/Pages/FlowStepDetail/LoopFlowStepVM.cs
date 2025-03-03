@@ -34,6 +34,7 @@ namespace StepinFlow.ViewModels.Pages
                 FlowStep updateFlowStep = await _dataService.FlowSteps.FirstAsync(x => x.Id == FlowStep.Id);
                 updateFlowStep.Name = FlowStep.Name;
                 updateFlowStep.LoopMaxCount = FlowStep.LoopMaxCount;
+                await _dataService.UpdateAsync(updateFlowStep);
             }
 
             /// Add mode
@@ -50,6 +51,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
+                await _dataService.UpdateAsync(isNewSimpling);
 
                 // "Add" Flow step
                 FlowStep newFlowStep = new FlowStep();
@@ -62,13 +64,8 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.IsExpanded = true;
 
-                _dataService.FlowSteps.Add(FlowStep);
+                await _dataService.FlowSteps.AddAsync(FlowStep);
             }
-
-
-
-            await _dataService.SaveChangesAsync();
-            //OnSave?.Invoke(FlowStep.Id);
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Model.Models;
 using Model.Enums;
 using System.Windows;
+using Microsoft.Data.Sqlite;
 
 namespace Business.DatabaseContext
 {
@@ -51,6 +52,31 @@ namespace Business.DatabaseContext
             this.Database.Migrate();
         }
 
+        public void EnableWAL()
+        {
+            string dataPath = PathHelper.GetDatabaseDataPath();
+            string dataSource = Path.Combine(dataPath, "StepinFlowDatabase.db");
+            using (var connection = new SqliteConnection("Data Source={dataSource}"))
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "PRAGMA journal_mode=WAL;";
+                command.ExecuteNonQuery();
+            }
+        }
+        public void EnableBusyTimeout()
+        {
+            string dataPath = PathHelper.GetDatabaseDataPath();
+            string dataSource = Path.Combine(dataPath, "StepinFlowDatabase.db");
+            using (var connection = new SqliteConnection("Data Source={dataSource}"))
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "PRAGMA busy_timeout = 10000;"; // 10 seconds
+                command.ExecuteNonQuery();
+            }
+        }
+
 
         public void TrySeedInitialData()
         {
@@ -73,8 +99,6 @@ namespace Business.DatabaseContext
                 // Execution history log settings.
                 AppSettings.Add(new AppSetting { Key = AppSettingsEnum.EXECUTION_HISTORY_LOG_ACCURACY, Value = "80" });
                 AppSettings.Add(new AppSetting { Key = AppSettingsEnum.IS_EXECUTION_HISTORY_LOG_ENABLED, Value = "true" });
-
-                SaveChanges();
             }
         }
     }

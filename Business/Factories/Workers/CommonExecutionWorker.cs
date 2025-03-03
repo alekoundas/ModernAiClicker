@@ -21,8 +21,7 @@ namespace Business.Factories.Workers
         {
             Execution execution = new Execution();
             execution.FlowId = flowId;
-            _dataService.Executions.Add(execution);
-            await _dataService.SaveChangesAsync();
+            await _dataService.Executions.AddAsync(execution);
 
             return execution;
         }
@@ -33,12 +32,12 @@ namespace Business.Factories.Workers
             execution.FlowStepId = flowStep.Id;
             execution.ParentExecutionId = parentExecution.Id;
             execution.ExecutionFolderDirectory = parentExecution.ExecutionFolderDirectory;
+            await _dataService.Executions.AddAsync(execution);
 
-            _dataService.Executions.Add(execution);
-            await _dataService.SaveChangesAsync();
 
             parentExecution.ChildExecutionId = execution.Id;
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(parentExecution);
+
 
             execution.FlowStep = flowStep;
             return execution;
@@ -50,7 +49,7 @@ namespace Business.Factories.Workers
             execution.StartedOn = DateTime.Now;
             execution.LoopCount += 1;
 
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
         }
 
         public async virtual Task SetExecutionModelStateComplete(Execution execution)
@@ -58,7 +57,7 @@ namespace Business.Factories.Workers
             execution.Status = ExecutionStatusEnum.COMPLETED;
             execution.EndedOn = DateTime.Now;
 
-            await _dataService.SaveChangesAsync();
+            await _dataService.UpdateAsync(execution);
         }
 
         public virtual Task ExpandAndSelectFlowStep(Execution execution, ObservableCollection<Flow> treeviewFlows)

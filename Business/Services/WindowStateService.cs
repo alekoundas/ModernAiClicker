@@ -18,7 +18,8 @@ namespace Business.Services
             SystemService = systemService;
             _dataService = dataService;
 
-            _appSettings = _dataService.AppSettings.Query.AsNoTracking().ToDictionary(x => x.Key, x => x);
+
+            _appSettings = _dataService.Query.AppSettings.ToList().ToDictionary(x => x.Key, x => x);
         }
 
 

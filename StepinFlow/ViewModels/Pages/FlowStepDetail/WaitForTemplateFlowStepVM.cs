@@ -139,6 +139,7 @@ namespace StepinFlow.ViewModels.Pages
                 updateFlowStep.WaitForMinutes = FlowStep.WaitForMinutes;
                 updateFlowStep.WaitForSeconds = FlowStep.WaitForSeconds;
                 updateFlowStep.WaitForMilliseconds = FlowStep.WaitForMilliseconds;
+                await _dataService.UpdateAsync(updateFlowStep);
             }
 
             /// Add mode
@@ -155,7 +156,7 @@ namespace StepinFlow.ViewModels.Pages
 
                 FlowStep.OrderingNum = isNewSimpling.OrderingNum;
                 isNewSimpling.OrderingNum++;
-                await _dataService.SaveChangesAsync();
+                await _dataService.UpdateAsync(isNewSimpling);
 
 
 
@@ -181,12 +182,8 @@ namespace StepinFlow.ViewModels.Pages
                 if (FlowStep.Name.Length == 0)
                     FlowStep.Name = "Wait for Template.";
 
-                FlowStep.IsExpanded = true;
+                await _dataService.FlowSteps.AddAsync(FlowStep);
 
-                _dataService.FlowSteps.Add(FlowStep);
-
-                await _dataService.SaveChangesAsync();
-                //OnSave?.Invoke(FlowStep.Id);
             }
         }
     }

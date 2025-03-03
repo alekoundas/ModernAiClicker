@@ -6,12 +6,10 @@
 using Business.DatabaseContext;
 using Business.Factories;
 using Business.Factories.Workers;
-using Business.Interfaces;
-using Business.Repository;
 using Business.Repository.Entities;
 using Business.Repository.Interfaces;
 using Business.Services;
-using DataAccess.Repository.Interface;
+using Business.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -91,7 +89,7 @@ namespace StepinFlow
                 services.AddScoped<IFlowParameterRepository, FlowParameterRepository>();
 
                 // DB context
-                services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Transient);
+                services.AddDbContextFactory<InMemoryDbContext>();
 
                 // Factory.
                 services.AddScoped<IExecutionFactory, ExecutionFactory>();
@@ -239,6 +237,8 @@ namespace StepinFlow
             if (inMemoryDbContext != null)
             {
                 inMemoryDbContext.RunMigrations();
+                inMemoryDbContext.EnableWAL();
+                inMemoryDbContext.EnableBusyTimeout();
                 inMemoryDbContext.TrySeedInitialData();
             }
 

@@ -157,7 +157,7 @@ namespace StepinFlow.ViewModels.Pages
                     ListBoxExecutions.Add(flowStepExecution);
                 });
 
-                await ExpandAndSelectFlowStep?.Invoke(flowStepExecution.FlowStepId ?? -1);
+                //await ExpandAndSelectFlowStep?.Invoke(flowStepExecution.FlowStepId ?? -1);
                 //await factoryWorker.ExpandAndSelectFlowStep(flowStepExecution, _treeViewUserControlViewModel.FlowsList);
                 await factoryWorker.SetExecutionModelStateRunning(flowStepExecution);
                 await factoryWorker.ExecuteFlowStepAction(flowStepExecution);
@@ -221,8 +221,7 @@ namespace StepinFlow.ViewModels.Pages
 
             //Delete all.
             var aa = _dataService.Executions.GetAll();
-            _dataService.Executions.RemoveRange(aa);
-            _dataService.SaveChanges();
+            await _dataService.Executions.RemoveRangeAsync(aa);
 
             // Reclaim free space in database file.
             await _dataService.Query.Database.ExecuteSqlRawAsync("VACUUM;");
@@ -267,10 +266,11 @@ namespace StepinFlow.ViewModels.Pages
                 return;
             }
 
-            Execution execution = await _dataService.Executions.Query
+            Execution? execution = await _dataService.Executions.Query
                 .Include(x => x.ChildExecution)
-                .FirstAsync(x => x.Id == ComboBoxSelectedExecutionHistory.Id);
+                .FirstOrDefaultAsync(x => x.Id == ComboBoxSelectedExecutionHistory.Id);
 
+            if(execution !=null)
             await LoadExecutionChild(execution);
 
             List<Execution> executions = execution

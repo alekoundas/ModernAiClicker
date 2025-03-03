@@ -17,6 +17,9 @@ namespace Business.Services.Interfaces
         int SaveChanges();
         void Update<TEntity>(TEntity model);
         void UpdateRange<TEntity>(List<TEntity> models);
+        Task UpdateRangeAsync<TEntity>(List<TEntity> models);
 
+
+        Task UpdateAsync<TEntity>(TEntity model);
     }
 }
