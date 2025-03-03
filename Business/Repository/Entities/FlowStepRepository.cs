@@ -31,15 +31,17 @@ namespace Business.Repository.Entities
         {
             //TODO remove 1st call to db.
             List<FlowStep> simplings = new List<FlowStep>();
-            FlowStep flowStep = await InMemoryDbContext.FlowSteps.FirstAsync(x => x.Id == flowStepId);
+            FlowStep flowStep = await InMemoryDbContext.FlowSteps.AsNoTracking().FirstAsync(x => x.Id == flowStepId);
 
             if (flowStep.ParentFlowStepId.HasValue)
                 simplings = await InMemoryDbContext.FlowSteps
+                    .AsNoTracking()
                     .Where(x => x.Id == flowStep.ParentFlowStepId.Value)
                     .SelectMany(x => x.ChildrenFlowSteps)
                     .ToListAsync();
             else if (flowStep.FlowId.HasValue)
                 simplings = await InMemoryDbContext.Flows
+                    .AsNoTracking()
                     .Where(x => x.Id == flowStep.FlowId.Value)
                     .SelectMany(x => x.FlowStep.ChildrenFlowSteps)
                     .ToListAsync();
@@ -138,8 +140,8 @@ namespace Business.Repository.Entities
                 // Load Sub-Flows if available and not referenced.
                 if (!currentFlowStep.IsSubFlowReferenced && currentFlowStep.SubFlow != null)
                     stack.Push(currentFlowStep.SubFlow.FlowStep);
-                //else
-                //    currentFlowStep.SubFlow = null;
+                else
+                    currentFlowStep.SubFlow = null;
 
                 // Push only the expanded children onto the stack for further processing.
                 foreach (var childFlowStep in childFlowSteps)

@@ -306,7 +306,9 @@ namespace StepinFlow.ViewModels.UserControls
         private async Task OnFlowStepButtonDeleteClick(FlowStep flowStep)
         {
             _dataService.Query.ChangeTracker.Clear();
-            _dataService.FlowSteps.Remove(flowStep);
+            FlowStep? deleteFlowStep = await _dataService.FlowSteps.FirstOrDefaultAsync(x => x.Id == flowStep.Id);
+            if (deleteFlowStep != null)
+                _dataService.FlowSteps.Remove(deleteFlowStep);
 
             await _dataService.SaveChangesAsync();
             await LoadFlows();
@@ -315,7 +317,9 @@ namespace StepinFlow.ViewModels.UserControls
         private async Task OnFlowParameterButtonDeleteClick(FlowParameter flowParameter)
         {
             _dataService.Query.ChangeTracker.Clear();
-            _dataService.FlowParameters.Remove(flowParameter);
+            FlowParameter? deleteFlowParameter = await _dataService.FlowParameters.FirstOrDefaultAsync(x => x.Id == flowParameter.Id);
+            if (deleteFlowParameter != null)
+                _dataService.FlowParameters.Remove(deleteFlowParameter);
 
             await _dataService.SaveChangesAsync();
             await LoadFlows();
@@ -326,7 +330,9 @@ namespace StepinFlow.ViewModels.UserControls
         private async Task OnFlowButtonDeleteClick(Flow flow)
         {
             _dataService.Query.ChangeTracker.Clear();
-            _dataService.Flows.Remove(flow);
+            Flow? deleteFlow = await _dataService.Flows.FirstOrDefaultAsync(x => x.Id == flow.Id);
+            if (deleteFlow != null)
+                _dataService.Flows.Remove(deleteFlow);
 
             await _dataService.SaveChangesAsync();
             await LoadFlows();
@@ -351,6 +357,8 @@ namespace StepinFlow.ViewModels.UserControls
                 // Swap values
                 (flowStep.OrderingNum, simplingAbove.OrderingNum) = (simplingAbove.OrderingNum, flowStep.OrderingNum);
 
+                _dataService.Update(flowStep);
+                _dataService.Update(simplingAbove);
                 await _dataService.SaveChangesAsync();
                 await LoadFlows();
             }
@@ -373,6 +381,9 @@ namespace StepinFlow.ViewModels.UserControls
 
                 // Swap values
                 (flowStep.OrderingNum, simplingBellow.OrderingNum) = (simplingBellow.OrderingNum, flowStep.OrderingNum);
+
+                _dataService.Update(flowStep);
+                _dataService.Update(simplingBellow);
 
                 await _dataService.SaveChangesAsync();
                 await LoadFlows();
