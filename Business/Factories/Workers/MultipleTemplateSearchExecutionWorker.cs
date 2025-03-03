@@ -59,8 +59,7 @@ namespace Business.Factories.Workers
 
             // Return execution with relations.
             execution = await _dataService.Executions.Query
-              .Include(x => x.FlowStep)
-              .ThenInclude(x => x.ParentTemplateSearchFlowStep)
+              .Include(x => x.FlowStep!.ParentTemplateSearchFlowStep)
               .FirstAsync(x => x.Id == execution.Id);
 
             return execution;
@@ -68,21 +67,20 @@ namespace Business.Factories.Workers
 
         public async Task ExecuteFlowStepAction(Execution execution)
         {
-            if (execution.FlowStep?.ParentTemplateSearchFlowStep == null || execution.FlowStep.TemplateMatchMode == null)
+            if (execution.FlowStep?.ParentTemplateSearchFlowStep == null || execution.FlowStep.ParentTemplateSearchFlowStep.TemplateMatchMode == null)
                 return;
-
             // Find search area.
             Model.Structs.Rectangle? searchRectangle = null;
-            switch (execution.FlowStep.FlowParameter?.TemplateSearchAreaType)
+            switch (execution.FlowStep.ParentTemplateSearchFlowStep.FlowParameter?.TemplateSearchAreaType)
             {
                 case TemplateSearchAreaTypesEnum.SELECT_EVERY_MONITOR:
                     searchRectangle = _systemService.GetScreenSize();
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_MONITOR:
-                    searchRectangle = _systemService.GetMonitorArea(execution.FlowStep.FlowParameter.SystemMonitorDeviceName);
+                    searchRectangle = _systemService.GetMonitorArea(execution.FlowStep.ParentTemplateSearchFlowStep.FlowParameter.SystemMonitorDeviceName);
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_APPLICATION_WINDOW:
-                    searchRectangle = _systemService.GetWindowSize(execution.FlowStep.FlowParameter.ProcessName);
+                    searchRectangle = _systemService.GetWindowSize(execution.FlowStep.ParentTemplateSearchFlowStep.FlowParameter.ProcessName);
                     break;
                 case TemplateSearchAreaTypesEnum.SELECT_CUSTOM_AREA:
                     break;
@@ -117,7 +115,7 @@ namespace Business.Factories.Workers
 
 
 
-            TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImage, screenshot, execution.FlowStep.TemplateMatchMode, execution.FlowStep.RemoveTemplateFromResult);
+            TemplateMatchingResult result = _templateSearchService.SearchForTemplate(execution.FlowStep.TemplateImage, screenshot, execution.FlowStep.ParentTemplateSearchFlowStep.TemplateMatchMode, execution.FlowStep.RemoveTemplateFromResult);
             ImageSizeResult imageSizeResult = _systemService.GetImageSize(execution.FlowStep.TemplateImage);
 
             int x = searchRectangle.Value.Left + result.ResultRectangle.Left + (imageSizeResult.Width / 2);

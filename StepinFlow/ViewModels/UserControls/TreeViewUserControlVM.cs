@@ -443,6 +443,7 @@ namespace StepinFlow.ViewModels.UserControls
                 if (updateFlowStep != null)
                 {
                     updateFlowStep.IsExpanded = true;
+                    updateFlowStep.IsSelected = true;
                     _dataService.Update(updateFlowStep);
                 }
             }
@@ -452,6 +453,7 @@ namespace StepinFlow.ViewModels.UserControls
                 if (updateFlow != null)
                 {
                     updateFlow.IsExpanded = true;
+                    updateFlow.IsSelected = true;
                     _dataService.Update(updateFlow);
                 }
             }
